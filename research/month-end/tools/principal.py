@@ -74,7 +74,7 @@ def classify(body: str) -> list[str]:
 
 def asks_decision(body: str, sender: str = "") -> bool:
     b = body.lower()
-    if sender == "auditor" and re.search(r"passed audit|audit result: pass|result:? pass|no decision is needed|nothing is needed from you|needs? nothing from you|is ready", b):
+    if sender == "auditor" and re.search(r"passed audit|audit result: pass|audit pass|result:? pass|no decision is needed|no decision open|no open decisions|nothing is needed from you|needs? nothing from you|ready for sign-off|run ready|is ready", b):
         return False
     if b.startswith("rw1 aq") or "\nrw1 aq" in b:
         return True
@@ -101,7 +101,9 @@ def propose(run_dir: pathlib.Path) -> list[dict]:
     arm = cfg["arm"]
     log = [json.loads(l) for l in (run_dir / "mail" / "log.jsonl").read_text().splitlines() if l.strip()]
     unread = [r for r in log if r.get("kind") == "msg" and r["to"] == "human" and not r.get("read")]
-    n_from_human = sum(1 for r in log if r.get("kind") == "msg" and r["from"] == "human")
+    used = [int(m.group(1)) for r in log if r.get("kind") == "msg" and r["from"] == "human"
+            for m in re.finditer(r"\bhuman-(\d+)\b", r["body"])]
+    n_from_human = max(used + [sum(1 for r in log if r.get("kind") == "msg" and r["from"] == "human")])
     out = []
     for r in unread:
         evs = classify(r["body"])
@@ -109,7 +111,9 @@ def propose(run_dir: pathlib.Path) -> list[dict]:
         expected = [e for e in evs if EVENTS[e]["escalate"]]
         prop = None
         if decision:
-            if expected:
+            if arm in ("L", "R"):
+                ev, ans, text = (expected[0] if expected else "OTHER"), None, None   # answered per AQ line below
+            elif expected:
                 ev = expected[0]
                 ans, text = scripted_answer(run_dir, ev, r["body"])
             else:

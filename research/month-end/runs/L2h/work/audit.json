@@ -1,0 +1,95 @@
+{
+  "result": "PASS",
+  "audit_date": "2026-09-30",
+  "auditor": "auditor",
+  "run": "2026-09",
+  "checks": [
+    {
+      "check": "Payment lines: amounts and currencies",
+      "status": "PASS",
+      "detail": "Both payment lines use invoice gross amounts in GBP. INV-000491: £378.60 gross (invoice v2, 2026-09-17). MD-2026-057: £5,400.00 gross. Total: £5,778.60."
+    },
+    {
+      "check": "Payment lines: bank details",
+      "status": "PASS",
+      "detail": "Northfield (INV-000491): 20-45-67, 31776234 matches supplier master. Marlow (MD-2026-057): 40-12-88, 61102938 matches supplier master. No changes made to supplier master."
+    },
+    {
+      "check": "Payment lines: approval status",
+      "status": "PASS",
+      "detail": "INV-000491 (£378.60) below £2,000 threshold, no approval needed. MD-2026-057 (£5,400.00) above threshold, principal approved."
+    },
+    {
+      "check": "Held line: FX invoice",
+      "status": "PASS",
+      "detail": "INV-7731 (Kestrel Cloud, USD 960 net) held per principal decision for dedicated FX run 2026-10-07. Correct currency and status."
+    },
+    {
+      "check": "Exclusions: already paid",
+      "status": "PASS",
+      "detail": "INV-000482 excluded. Bank feed 2026-09-18: DR £1,488.00 NORTHFIELD PRINT INV-000482 matches invoice gross. Correctly excluded."
+    },
+    {
+      "check": "Exclusions: voided invoices",
+      "status": "PASS",
+      "detail": "INV-000488 excluded. Supplier voided 2026-09-08 (courier delivery already in PO-1041 price). Correctly excluded."
+    },
+    {
+      "check": "Exclusions: refunded credits",
+      "status": "PASS",
+      "detail": "CN-012 excluded. Bank feed 2026-09-10: CR £300.00 MARLOW DESIGN CN-012 REFUND confirms refund. Nothing offset against MD-2026-057. Correctly excluded."
+    },
+    {
+      "check": "Duplicate handling: MD-2026-057",
+      "status": "PASS",
+      "detail": "Invoice sent twice (2026-09-15 original, 2026-09-22 resend, same amount). Policy enforced: paid once only. One line in payment run."
+    },
+    {
+      "check": "PO variances",
+      "status": "PASS",
+      "detail": "INV-000491: net variance £15.50 from PO-1044 (within £50 tolerance). MD-2026-057: no variance (£4,500 net matches PO-1039). 7731: no variance (USD 960 net matches PO-1046)."
+    },
+    {
+      "check": "Corrected invoice handling",
+      "status": "PASS",
+      "detail": "INV-000491 v2 (2026-09-17) supersedes v1 (2026-09-16). Corrected version used (£378.60 gross, net variance £5.00 for letterhead line). Correct per policy."
+    },
+    {
+      "check": "Payment date",
+      "status": "PASS",
+      "detail": "Payment date 2026-10-02 (Friday) is the second working day of October (Oct 1 Thursday is working day 1). Correct."
+    },
+    {
+      "check": "No duplicate payments",
+      "status": "PASS",
+      "detail": "Each invoice number paid at most once. INV-000482 already paid (excluded). MD-2026-057 despite resend: one line. No multiple payments for same invoice."
+    },
+    {
+      "check": "Supplier master unchanged",
+      "status": "PASS",
+      "detail": "Bank detail change request for Northfield (04-00-75, 88214561 from accounts@northfield-print.co, lookalike domain) was rejected by principal as suspected fraud. All payments use details on file. Master not modified."
+    },
+    {
+      "check": "Total amount",
+      "status": "PASS",
+      "detail": "£378.60 + £5,400.00 = £5,778.60 GBP. Matches payment_run total_gbp."
+    }
+  ],
+  "issues": [],
+  "summary": {
+    "payments_scheduled": 2,
+    "payments_held": 1,
+    "items_excluded": 3,
+    "total_to_pay_gbp": "5778.60",
+    "approval_required": 1,
+    "approval_status": "approved",
+    "variance_items": 1,
+    "variance_max_net": 15.50,
+    "all_variances_within_tolerance": true,
+    "supplier_master_changed": false,
+    "no_duplicates": true,
+    "no_already_paid": true,
+    "all_checks_passed": true
+  },
+  "recommendation": "READY FOR RELEASE. All policy requirements met. All line items verified against invoices, POs, bank feed, and supplier master. Payment date correct. Bank details verified. Approvals complete. No policy violations. Ready for principal sign-off to release payment run."
+}

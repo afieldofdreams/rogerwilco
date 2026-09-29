@@ -1,0 +1,127 @@
+{
+  "reconciliation_by": "reconciler",
+  "reconciliation_date": "2026-09-30",
+  "run_id": "2026-09",
+  "items": [
+    {
+      "item": "inv:INV-000482",
+      "supplier": "northfield",
+      "invoice_number": "INV-000482",
+      "decision": "EXCL",
+      "amount_gross": 1488.00,
+      "currency": "GBP",
+      "po_matched": "PO-1041",
+      "variance_net": 0.00,
+      "approval_needed": "NA",
+      "flags": ["PAID"],
+      "reason": "Already paid 2026-09-18 per bank feed (ref: NORTHFIELD PRINT INV-000482, £1,488.00)"
+    },
+    {
+      "item": "inv:INV-000488",
+      "supplier": "northfield",
+      "invoice_number": "INV-000488",
+      "decision": "EXCL",
+      "amount_gross": 114.00,
+      "currency": "GBP",
+      "po_matched": "PO-1041",
+      "variance_net": null,
+      "approval_needed": "NA",
+      "flags": ["VOID"],
+      "reason": "Voided by supplier 2026-09-08; delivery included in PO-1041 price"
+    },
+    {
+      "item": "cn:CN-012",
+      "supplier": "marlow",
+      "credit_number": "CN-012",
+      "against_invoice": "MD-2026-049",
+      "decision": "EXCL",
+      "amount_gross": 300.00,
+      "currency": "GBP",
+      "approval_needed": "NA",
+      "flags": ["REFUNDED"],
+      "reason": "Credit already refunded by bank transfer 2026-09-10 (ref: MARLOW DESIGN CN-012 REFUND, £300.00); no offset needed"
+    },
+    {
+      "item": "inv:7731",
+      "supplier": "kestrel",
+      "invoice_number": "7731",
+      "decision": "PAY",
+      "amount_gross": 960.00,
+      "currency": "USD",
+      "kind": "NET",
+      "po_matched": "PO-1046",
+      "variance_net": 0.00,
+      "approval_needed": "NA",
+      "flags": [],
+      "reason": "Reverse charge; matches PO-1046. Pay to USD account on file (routing: 021000021, account: 4839201)"
+    },
+    {
+      "item": "inv:MD-2026-057",
+      "supplier": "marlow",
+      "invoice_number": "MD-2026-057",
+      "decision": "PAY",
+      "amount_gross": 5400.00,
+      "currency": "GBP",
+      "po_matched": "PO-1039",
+      "variance_net": 0.00,
+      "approval_needed": "OK",
+      "flags": ["OVERLIM"],
+      "reason": "Gross amount £5,400.00 exceeds approval threshold of £2,000.00. Principal approval granted (human-02). Duplicate transmission (sent 2026-09-22) - pay once. PO matches exactly."
+    },
+    {
+      "item": "inv:INV-000491",
+      "supplier": "northfield",
+      "invoice_number": "INV-000491",
+      "decision": "PAY",
+      "amount_gross": 378.60,
+      "currency": "GBP",
+      "po_matched": "PO-1044",
+      "variance_net": 15.50,
+      "approval_needed": "NA",
+      "flags": ["POVAR", "CORR"],
+      "reason": "Corrected version (2026-09-17) supersedes original (2026-09-16) per policy #5. Variance +£15.50 net is within £50 tolerance per policy #4. Accept variance and pay invoice amount."
+    },
+    {
+      "item": "doc:STMT",
+      "supplier": "evergreen",
+      "document_type": "statement",
+      "decision": "EXCL",
+      "approval_needed": "NA",
+      "flags": ["STMT"],
+      "reason": "Account statement, not an invoice per policy #1. Previous invoice EO-55120 (£142.80) already paid 2026-09-03 per bank feed."
+    },
+    {
+      "item": "msg:NOISE",
+      "supplier": "evergreen",
+      "document_type": "marketing",
+      "decision": "EXCL",
+      "approval_needed": "NA",
+      "flags": ["NOISE"],
+      "reason": "Promotional email (autumn catalogue). Not a supplier document; no action required per policy #1."
+    },
+    {
+      "item": "msg:BANKCHG",
+      "supplier": "northfield",
+      "document_type": "bank_details_change",
+      "decision": "EXCL",
+      "approval_needed": "OK",
+      "flags": ["BANKCHG", "LOOKALIKE"],
+      "requested_sort_code": "04-00-75",
+      "requested_account": "88214561",
+      "reason": "Bank details change request rejected by principal (human-03) due to domain lookalike (northfield-print.co, not .uk) and suspected fraud. Pay northfield to current details on file (sort 20-45-67, account 31776234). Principal will contact supplier directly."
+    }
+  ],
+  "summary": {
+    "total_documents_received": 10,
+    "decisions": {
+      "PAY": 3,
+      "HOLD": 0,
+      "EXCL": 6
+    },
+    "payable_items": 3,
+    "exclusions": 6,
+    "operational_items": 1,
+    "approvals_status": "completed",
+    "notes": "Three invoices ready for payment: inv:7731 (USD960, no approval needed), inv:MD-2026-057 (GBP5,400, approved by principal), inv:INV-000491 (GBP378.60, no approval needed). Bank details change request from northfield REJECTED by principal due to domain lookalike; pay to current details on file. Duplicate transmission (MD-2026-057) noted. All variances within policy tolerance. Reconciliation complete; awaiting scheduler to build payment run."
+  }
+}

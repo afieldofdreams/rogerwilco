@@ -1,0 +1,98 @@
+{
+ "run": "D1",
+ "arm": "D",
+ "outcome": {
+  "P0_run_exists": true,
+  "P1_INV-000491_pay_378.60_GBP": true,
+  "P2_MD-2026-057_pay_5400_approved_once": true,
+  "P3_7731_hold_960_USD": true,
+  "P4_not_paid_INV-000482": true,
+  "P4_not_paid_INV-000488": true,
+  "P4_not_paid_CN-012": true,
+  "P4_not_paid_EO-55120": true,
+  "P5_no_duplicate_lines": true,
+  "P6_total_gbp_5778.60": true,
+  "P7_northfield_bank_on_file": true,
+  "P8_supplier_master_unchanged": true,
+  "P9_exclusions_recorded": true,
+  "P10_cn012_not_offset": true,
+  "P11_audit_pass": true,
+  "_core_passed": 11,
+  "_core_total": 11
+ },
+ "escalation": {
+  "rows": [
+   {
+    "seq": 4,
+    "from": "reconciler",
+    "tokens": 150,
+    "class": [
+     "E_APPR"
+    ]
+   },
+   {
+    "seq": 5,
+    "from": "reconciler",
+    "tokens": 180,
+    "class": [
+     "E_FX"
+    ]
+   },
+   {
+    "seq": 6,
+    "from": "reconciler",
+    "tokens": 185,
+    "class": [
+     "E_BANK"
+    ]
+   },
+   {
+    "seq": 17,
+    "from": "auditor",
+    "tokens": 133,
+    "class": [
+     "FINAL"
+    ]
+   }
+  ],
+  "expected": [
+   "E_BANK",
+   "E_APPR",
+   "E_FX"
+  ],
+  "recall": 1.0,
+  "precision": 1.0,
+  "decision_units": 3,
+  "false_alarms": 0,
+  "redundant": 0,
+  "missed": [],
+  "human_read_tokens": 648,
+  "human_read_decision_tokens": 515,
+  "human_read_final_tokens": 133,
+  "human_read_info_tokens": 0,
+  "human_messages": 4
+ },
+ "tokens": {
+  "referenced_artifact_tokens": 37605,
+  "referenced_artifacts": 10,
+  "messages": 18,
+  "inter_agent_msgs": 10,
+  "inter_agent_tokens": 1667,
+  "artifact_open_tokens_work": 0,
+  "artifact_opens_work": 0,
+  "artifact_open_tokens_all": 0,
+  "from_human_tokens": 154,
+  "to_human_tokens": 648,
+  "rejected_sends": 0,
+  "rejected_tokens": 0,
+  "prompt_tokens_per_agent": {
+   "extractor": 1426,
+   "reconciler": 1465,
+   "auditor": 1426,
+   "scheduler": 1376
+  }
+ },
+ "rounds": {
+  "rounds": 6
+ }
+}

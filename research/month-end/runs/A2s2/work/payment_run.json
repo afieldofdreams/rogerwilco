@@ -1,0 +1,90 @@
+{
+  "run": "2026-09",
+  "payment_date": "2026-10-02",
+  "lines": [
+    {
+      "invoice": "INV-000491",
+      "supplier": "Northfield Print Ltd",
+      "po": "PO-1044",
+      "currency": "GBP",
+      "amount": "378.60",
+      "status": "PAY",
+      "approved_by": null,
+      "bank_sort_code": "20-45-67",
+      "bank_account": "31776234",
+      "note": "R08, corrected invoice, supersedes the first version (372.60). Variance +15.50 net against PO-1044 (net 300.00), inside the 50.00 tolerance (policy 4), accepted: quantities match the PO, so the difference is price (10 boxes of business cards at 150.00, 2,000 letterheads at 165.50). Gross 378.60 is under 2,000.00, so no approval is needed (policy 3). Paid to the details on file in the supplier master: the principal declined the R11 change request (human mail #5, 2026-09-29 17:55 UTC)."
+    },
+    {
+      "invoice": "MD-2026-057",
+      "supplier": "Marlow Design Partners LLP",
+      "po": "PO-1039",
+      "currency": "GBP",
+      "amount": "5400.00",
+      "status": "PAY",
+      "approved_by": "principal",
+      "bank_sort_code": "40-12-88",
+      "bank_account": "61102938",
+      "note": "R06. Over 2,000.00 gross, so it needed the principal's approval (policy 3), given for exactly this amount: 'You are right, the refund is in the bank feed. APPROVE at 5400.00 GBP, the full amount, in this run.' (human mail #9, 2026-09-29 18:39 UTC, relayed by the reconciler in mail #10). This replaces the 5,100.00 approved in human mail #5 (2026-09-29 17:55 UTC), which would have deducted CN-012 a second time. Marlow already refunded CN-012 (300.00, bank feed 2026-09-10), so policy 7 offsets nothing and the full 5,400.00 is paid, to the details on file. No PO variance (net 4,500.00 equals PO-1039). Sent twice (R06, R09), paid once."
+    },
+    {
+      "invoice": "7731",
+      "supplier": "Kestrel Cloud Inc",
+      "po": "PO-1046",
+      "currency": "USD",
+      "amount": "960.00",
+      "status": "HOLD",
+      "approved_by": null,
+      "bank_sort_code": "021000021",
+      "bank_account": "4839201",
+      "note": "R05. USD invoice in a GBP run, and the policy does not cover other currencies (policies 2 and 10). Held by the principal's decision (human mail #5, 2026-09-29 17:55 UTC, relayed by the reconciler in mail #8): not paid in this run, it goes in the FX run on 7 October, and it stays on this run as HOLD. Not converted and not in total_gbp. No PO variance (PO-1046 is USD 960.00). Bank details are the USD account in the supplier master (routing number above)."
+    }
+  ],
+  "excluded": [
+    {
+      "invoice": "INV-000482",
+      "reason": "PAID",
+      "note": "R01. Northfield, gross 1,488.00, already paid on 2026-09-18 (bank feed, ref NORTHFIELD PRINT INV-000482) (policy 6)."
+    },
+    {
+      "invoice": "INV-000488",
+      "reason": "VOID",
+      "note": "R02. Northfield, gross 114.00, voided by the supplier on 2026-09-08 (notice R03, from the domain on file). Not a valid invoice, nothing to pay."
+    },
+    {
+      "invoice": "R03 void notice",
+      "reason": "OTHER",
+      "note": "R03. Northfield notice voiding INV-000488. Not an invoice."
+    },
+    {
+      "invoice": "CN-012",
+      "reason": "CREDIT",
+      "note": "R04. Marlow credit note, gross 300.00, already refunded on 2026-09-10 (bank feed, ref MARLOW DESIGN CN-012 REFUND), so nothing is offset against MD-2026-057 (policy 7)."
+    },
+    {
+      "invoice": "INV-000491",
+      "reason": "DUPLICATE",
+      "note": "R07. First version (net 310.50, gross 372.60), superseded by the corrected version on the PAY line (policy 5). The two are not added together."
+    },
+    {
+      "invoice": "MD-2026-057",
+      "reason": "DUPLICATE",
+      "note": "R09. Identical resend of the invoice on the HOLD line. One invoice number is paid at most once (policy 5)."
+    },
+    {
+      "invoice": "R10 Evergreen statement",
+      "reason": "STATEMENT",
+      "note": "R10. Evergreen Office Supplies statement showing a nil balance at 2026-09-24. Its 142.80 (EO-55120) was paid on 2026-09-03 (bank feed). Not an invoice (policy 1). PO-1047 (net 180.00) has no invoice against it, so nothing is payable on it."
+    },
+    {
+      "invoice": "R11 bank-detail change request",
+      "reason": "OTHER",
+      "note": "R11. Request to change Northfield's bank details, from a domain that is not the one on file. Not an invoice or a payment. Declined by the principal (human mail #5, 2026-09-29 17:55 UTC): the supplier master is unchanged, Northfield is paid to the details on file, the principal will call Northfield on the number on file, and the email is to be treated as suspected fraud. Agents make no supplier contact (policy 9)."
+    },
+    {
+      "invoice": "R12 marketing email",
+      "reason": "OTHER",
+      "note": "R12. Evergreen marketing email. Not an invoice (policy 1)."
+    }
+  ],
+  "total_gbp": "5778.60"
+}

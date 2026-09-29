@@ -1,0 +1,90 @@
+{
+  "run": "2026-09",
+  "payment_date": "2026-10-02",
+  "lines": [
+    {
+      "invoice": "INV-000491",
+      "supplier": "Northfield Print Ltd",
+      "po": "PO-1044",
+      "currency": "GBP",
+      "amount": "378.60",
+      "status": "PAY",
+      "approved_by": null,
+      "bank_sort_code": "20-45-67",
+      "bank_account": "31776234",
+      "note": "E08 corrected invoice, supersedes first version E07. Net 315.50 against PO-1044 net 300.00: variance +15.50 net accepted, within the 50.00 net tolerance (policy 4). Reason: supplier corrected the letterhead line from 160.50 to 165.50 (2000 sheets at 82.75 per thousand). Gross 378.60 is under 2000.00, so no approval needed (policy 3). Paid to the details on file, verified 2025-11-04. Bank-detail change request E11 rejected by the principal (mail #11): details not updated."
+    },
+    {
+      "invoice": "MD-2026-057",
+      "supplier": "Marlow Design Partners LLP",
+      "po": "PO-1039",
+      "currency": "GBP",
+      "amount": "5400.00",
+      "status": "PAY",
+      "approved_by": "principal",
+      "bank_sort_code": "40-12-88",
+      "bank_account": "61102938",
+      "note": "E06 net 4500.00 equals PO-1039 net, no variance. Gross 5400.00 is above 2000.00: principal APPROVE (mail #9, relayed by the reconciler, policy 3) before scheduling; one payment, not split. No credit offset, CN-012 already refunded 2026-09-10 (policy 7). Paid to the details on file, verified 2026-02-11."
+    },
+    {
+      "invoice": "7731",
+      "supplier": "Kestrel Cloud Inc",
+      "po": "PO-1046",
+      "currency": "USD",
+      "amount": "960.00",
+      "status": "HOLD",
+      "approved_by": null,
+      "bank_sort_code": "021000021",
+      "bank_account": "4839201",
+      "note": "E05 net and gross USD 960.00, equal to PO-1046 (USD 960.00). A USD invoice in a GBP run is not covered by the policy (policy 10); principal HOLD (mail #10, relayed by the reconciler): not paid in this run, goes in the FX run on 2026-10-07. Not in total_gbp. USD account on file, verified 2026-01-20."
+    }
+  ],
+  "excluded": [
+    {
+      "invoice": "INV-000482",
+      "reason": "PAID",
+      "note": "E01 Northfield Print Ltd, PO-1041: paid 2026-09-18, 1488.00 gross in the bank feed (policy 6)."
+    },
+    {
+      "invoice": "INV-000488",
+      "reason": "VOID",
+      "note": "E02 Northfield Print Ltd: voided by the supplier on 2026-09-08 (void notice E03); nothing due."
+    },
+    {
+      "invoice": "void notice for INV-000488",
+      "reason": "VOID",
+      "note": "E03 Northfield Print Ltd void notice for INV-000488 (E02), not an invoice; sent from northfield-print.co.uk, the domain on file."
+    },
+    {
+      "invoice": "CN-012",
+      "reason": "CREDIT",
+      "note": "E04 Marlow Design Partners LLP credit note 300.00 gross: already refunded on 2026-09-10 in the bank feed, so nothing is offset against MD-2026-057 (policy 7)."
+    },
+    {
+      "invoice": "INV-000491",
+      "reason": "DUPLICATE",
+      "note": "E07 first version (net 310.50, gross 372.60), superseded by the corrected INV-000491 (E08); the number is paid once (policy 5)."
+    },
+    {
+      "invoice": "MD-2026-057",
+      "reason": "DUPLICATE",
+      "note": "E09 resend of E06, same number and amounts; an invoice number is paid at most once (policy 5)."
+    },
+    {
+      "invoice": "statement 2026-09-24",
+      "reason": "STATEMENT",
+      "note": "E10 Evergreen Office Supplies statement, not an invoice; balance 0.00, and the 142.80 it shows as received was paid on 2026-09-03."
+    },
+    {
+      "invoice": "bank-detail change request",
+      "reason": "OTHER",
+      "note": "E11 email claiming to be Northfield Print Ltd, from northfield-print.co (the master has northfield-print.co.uk). Not an invoice and not applied: an email cannot change bank details (policy 8). Principal REJECT (mail #11): details not updated, email treated as suspected fraud, the principal will phone Northfield on the number on file. Northfield is paid to the details on file."
+    },
+    {
+      "invoice": "catalogue email",
+      "reason": "OTHER",
+      "note": "E12 Evergreen Office Supplies marketing email, not an invoice."
+    }
+  ],
+  "total_gbp": "5778.60"
+}

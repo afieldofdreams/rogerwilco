@@ -9,7 +9,13 @@ import json, pathlib, re, subprocess, sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 TRUTH = json.loads((ROOT / "truth" / "ground_truth.json").read_text())
+TRUTH2 = json.loads((ROOT / "truth" / "ground_truth2.json").read_text())
 QUIZ = TRUTH["legibility_quiz"]
+
+
+def quiz_for(run_dir: pathlib.Path) -> list[dict]:
+    cfg = json.loads((run_dir / "run.json").read_text())
+    return TRUTH2["legibility_quiz"] if cfg.get("scenario") == 2 else QUIZ
 FORMCORE = ROOT.parents[1] / "rogerwilco" / "scripts" / "rogerwilco.py"
 
 
@@ -32,9 +38,10 @@ def prompt(run_dir: pathlib.Path) -> pathlib.Path:
         parts.append("The agents wrote messages with three sections: ACTION, STATE, RESULT.\n")
     parts.append("## Message log\n\n" + transcript(run_dir))
     parts.append("## Questions\n\nAnswer each in one or two sentences, with the specific figures, dates or reasons the log gives. If the log does not say, write \"not in the log\".\n")
-    for i, q in enumerate(QUIZ, 1):
+    quiz = quiz_for(run_dir)
+    for i, q in enumerate(quiz, 1):
         parts.append(f"{i}. {q['q']}")
-    parts.append(f"\nWrite your answers as a JSON object with keys \"1\" to \"{len(QUIZ)}\" and string values, and nothing else, to the file {run_dir / 'legibility_answers.json'}. Then reply DONE.")
+    parts.append(f"\nWrite your answers as a JSON object with keys \"1\" to \"{len(quiz)}\" and string values, and nothing else, to the file {run_dir / 'legibility_answers.json'}. Then reply DONE.")
     p = run_dir / "legibility_prompt.md"
     p.write_text("\n".join(parts))
     return p
@@ -62,12 +69,15 @@ def score(run_dir: pathlib.Path) -> dict:
     except json.JSONDecodeError:
         m = re.search(r"\{.*\}", raw, re.S)
         ans = json.loads(m.group(0)) if m else {}
+    rules = list(RULES)
+    if len(quiz_for(run_dir)) == 9:
+        rules.append(lambda a: re.search(r"5,?100", a) is not None and re.search(r"refund|CN-012|bank feed", a, re.I) is not None and re.search(r"5,?400", a) is not None)
     detail = {}
-    for i, rule in enumerate(RULES, 1):
+    for i, rule in enumerate(rules, 1):
         a = str(ans.get(str(i), ""))
         detail[str(i)] = {"ok": bool(rule(a)), "answer": a}
     s = sum(1 for v in detail.values() if v["ok"])
-    res = {"run": run_dir.name, "score": s, "of": len(RULES), "detail": detail}
+    res = {"run": run_dir.name, "score": s, "of": len(rules), "detail": detail}
     (run_dir / "legibility_score.json").write_text(json.dumps(res, indent=1))
     return res
 

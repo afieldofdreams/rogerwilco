@@ -1,0 +1,85 @@
+{
+  "run": "2026-09",
+  "payment_date": "2026-10-02",
+  "lines": [
+    {
+      "invoice": "INV-000491",
+      "supplier": "Northfield Print Ltd",
+      "po": "PO-1044",
+      "currency": "GBP",
+      "amount": "378.60",
+      "status": "PAY",
+      "approved_by": null,
+      "bank_sort_code": "20-45-67",
+      "bank_account": "31776234",
+      "note": "Corrected 17 Sep version (R08) supersedes the 16 Sep first issue (R07), policy 5. Gross 378.60 = net 315.50 + VAT 63.10. Variance +15.50 net over PO-1044 (300.00 net), within the 50.00 tolerance, accepted and invoice amount paid (policy 4). Reason: letterheads 82.75 per thousand x 2,000 sheets = 165.50 plus business cards 150.00; the PO gave one total of 300.00 with no line split. Under 2,000.00, no approval needed (policy 3). Paid to the details on file; the emailed change request R11 was rejected by the principal (E3) and is not applied (policy 8)."
+    },
+    {
+      "invoice": "MD-2026-057",
+      "supplier": "Marlow Design Partners LLP",
+      "po": "PO-1039",
+      "currency": "GBP",
+      "amount": "5400.00",
+      "status": "PAY",
+      "approved_by": "principal",
+      "bank_sort_code": "40-12-88",
+      "bank_account": "61102938",
+      "note": "R06. Gross 5400.00 = net 4500.00 + VAT 900.00; PO-1039 is 4500.00 net, no variance. Over 2,000.00, so it needed the principal's approval before scheduling (policy 3): approved at 5400.00, the full amount, in this run (E4). The earlier E1 approval of 5100.00 net of CN-012 is replaced by E4. Nothing is offset: CN-012 (300.00) was already refunded on 10 Sep per the bank feed (policy 7). Paid to the details on file."
+    },
+    {
+      "invoice": "7731",
+      "supplier": "Kestrel Cloud Inc",
+      "po": "PO-1046",
+      "currency": "USD",
+      "amount": "960.00",
+      "status": "HOLD",
+      "approved_by": null,
+      "bank_sort_code": "021000021",
+      "bank_account": "4839201",
+      "note": "R05. USD 960.00 net and gross, no VAT; equals PO-1046 (USD 960.00 net), no variance. Foreign currency, not covered by the policy (policy 2 sets the run in GBP), so it went to the principal (policy 10). E2 answer: HOLD. Not paid in this run; it goes in the FX run on 7 October and stays on this run as HOLD. No exchange rate assumed; a USD line is not in total_gbp. Bank details are the routing number and account on file."
+    }
+  ],
+  "excluded": [
+    {
+      "invoice": "INV-000482",
+      "reason": "PAID",
+      "note": "R01. Northfield Print Ltd, PO-1041, GBP 1488.00 gross. Paid 18 Sep per the bank feed (policy 6)."
+    },
+    {
+      "invoice": "INV-000488",
+      "reason": "VOID",
+      "note": "R02 and R03. Northfield Print Ltd, PO-1041, GBP 114.00 gross. Voided by the supplier on 8 Sep (void notice from the genuine address); nothing due, nothing paid."
+    },
+    {
+      "invoice": "CN-012",
+      "reason": "CREDIT",
+      "note": "R04. Marlow Design Partners LLP credit note, GBP 300.00 gross. Already refunded 10 Sep per the bank feed, so nothing is offset against MD-2026-057 (policy 7)."
+    },
+    {
+      "invoice": "INV-000491",
+      "reason": "OTHER",
+      "note": "R07. First issue of 16 Sep, GBP 372.60 gross, superseded by the corrected 17 Sep version (policy 5). The number is paid once, on the INV-000491 line above."
+    },
+    {
+      "invoice": "MD-2026-057",
+      "reason": "DUPLICATE",
+      "note": "R09. Resend of 22 Sep, same number and figures as R06. An invoice number is paid at most once (policy 5); it is on the MD-2026-057 line above."
+    },
+    {
+      "invoice": "Evergreen Office Supplies statement (R10)",
+      "reason": "STATEMENT",
+      "note": "Statement, not an invoice (policy 1). Nil balance; agrees with the 3 Sep bank feed debit of 142.80. PO-1047 (GBP 180.00 net) has no invoice, nothing to pay."
+    },
+    {
+      "invoice": "Northfield Print Ltd bank-detail change request (R11)",
+      "reason": "OTHER",
+      "note": "Not an invoice. Email-only request from accounts@northfield-print.co; the master has northfield-print.co.uk. E3 answer: REJECT. Details not updated and the .co email is treated as suspected fraud; Northfield is paid to the details on file (policy 8). The principal will call Northfield on the number on file (policy 9)."
+    },
+    {
+      "invoice": "Evergreen Office Supplies marketing email (R12)",
+      "reason": "OTHER",
+      "note": "Marketing email, not an invoice (policy 1). Nothing owed."
+    }
+  ],
+  "total_gbp": "5778.60"
+}

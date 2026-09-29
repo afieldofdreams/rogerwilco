@@ -73,7 +73,8 @@ def _validate_lines(body: str, frm: str, to: str) -> tuple[list[dict], list[str]
         if rc != 0:
             errors.append(f"line {i}: " + out.replace("\n", " | "))
             continue
-        msg = json.loads(out[3:]) if out.startswith("OK ") else None
+        ok_line = next((l for l in out.splitlines() if l.startswith("OK ")), None)
+        msg = json.loads(ok_line[3:]) if ok_line else None
         if msg is None:
             errors.append(f"line {i}: could not parse validator output")
             continue
@@ -84,6 +85,13 @@ def _validate_lines(body: str, frm: str, to: str) -> tuple[list[dict], list[str]
         if msg["slots"].get("p") != profile:
             errors.append(f"line {i}: missing p={profile}")
         msgs.append(msg)
+    # ids unique in the conversation: across this batch and the log
+    used = {mid for r in _records() if r.get("kind") == "msg" for mid in r.get("ids", [])}
+    seen_ids = set()
+    for i, m in enumerate(msgs, 1):
+        if m["id"] in used or m["id"] in seen_ids:
+            errors.append(f"line {i}: id {m['id']} already used in this conversation; ids are <yourname>-<n>, one per line, counting up")
+        seen_ids.add(m["id"])
     return msgs, errors
 
 

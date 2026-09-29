@@ -1,0 +1,43 @@
+{
+ "run": "L1s2",
+ "score": 9,
+ "of": 9,
+ "detail": {
+  "1": {
+   "ok": true,
+   "answer": "INV-000491 (Northfield) at 378.60 GBP gross and MD-2026-057 (Marlow) at 5400.00 GBP gross, total 5778.60 GBP, paid on 20261002. Marlow joined the run only after the principal's approval (human-05); Kestrel 7731 (960.00 USD) stays on HOLD and is outside this total."
+  },
+  "2": {
+   "ok": true,
+   "answer": "It is on HOLD and not paid in this run: it is a 960.00 USD invoice asking for a USD wire in a GBP run, a case policy 2 does not cover, so the reconciler asked the principal (reconciler-3). The principal answered HOLD (human-04): it goes in the FX run on 20261007 and stays on this run as HOLD, outside the GBP total."
+  },
+  "3": {
+   "ok": true,
+   "answer": "No, the supplier master was left unchanged and Northfield is paid to the details on file. The request came by email on 20260926 from accounts@northfield-print.co, a lookalike of the genuine .co.uk domain, citing approval ref FD-0925, and policy 8 says email is never enough; the principal answered REJECT (human-02), will phone Northfield on the number on file and treats the .co email as suspected fraud."
+  },
+  "4": {
+   "ok": true,
+   "answer": "It had already been paid: the bank feed shows a debit of 1488.00 on 20260918, ref NORTHFIELD PRINT INV-000482 (policy 6). It was therefore excluded (EXCL, flag PAID) so it would not be paid twice."
+  },
+  "5": {
+   "ok": true,
+   "answer": "The supplier voided it on 20260908 as raised in error: it was a courier delivery invoice dated 20260905 for 114.00 gross, and the delivery is already in the PO-1041 price. Nothing is due, so it was excluded (flag VOID)."
+  },
+  "6": {
+   "ok": true,
+   "answer": "CN-012 is a Marlow credit note for 300.00 GBP gross (net 250.00, VAT 50.00) against MD-2026-049; Marlow said it refunded it by bank transfer on 20260909, and the reconciler confirmed the credit of 300.00 in the bank feed on 20260910 (ref MARLOW DESIGN CN-012 REFUND). It was excluded (flags CN+REFUNDED) and nothing was offset against MD-2026-057 (policy 7), which is paid in full at 5400.00."
+  },
+  "7": {
+   "ok": true,
+   "answer": "The corrected INV-000491 (net 315.50, gross 378.60) is 15.50 net over PO-1044 (300.00), recorded as var=15.50. That is inside the 50.00 tolerance (policy 4), so it was accepted with no approval needed, noted in the run notes, and scheduled to pay the gross 378.60 to the details on file."
+  },
+  "8": {
+   "ok": true,
+   "answer": "The principal approved it, in human-05, at the full 5400.00 GBP, replacing the 5100.00 in human-03 (appr=OK, approved_by principal). It was scheduled once: the invoice arrived twice (20260915 and an unchanged resend on 20260922) under one number, and the log says it is paid once, to the details on file, which the auditor re-audited as PASS."
+  },
+  "9": {
+   "ok": true,
+   "answer": "The principal first said APPROVE but at 5100.00 GBP, net of the 300.00 credit note CN-012 (human-03). The reconciler pointed out that CN-012 was already refunded on 20260910 per the bank feed (policy 7), so deducting it again would short-pay Marlow, and asked the principal to confirm (reconciler-15) while keeping the line on HOLD; the principal replied that the reconciler was right and approved the full 5400.00 in this run (human-05), so the line became PAY, total 5778.60, and passed re-audit."
+  }
+ }
+}

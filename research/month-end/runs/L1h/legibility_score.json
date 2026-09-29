@@ -1,0 +1,39 @@
+{
+ "run": "L1h",
+ "score": 8,
+ "of": 8,
+ "detail": {
+  "1": {
+   "ok": true,
+   "answer": "Three invoices are on the run: Kestrel inv 7731 for USD 960.00 net, Marlow Design MD-2026-057 for GBP 5400.00 gross and Northfield INV-000491 for GBP 378.60 gross, giving a GBP total of 5778.60 (the USD invoice is not in that total). The auditor passed the run and asked the principal to authorize payment, but no reply is in the log."
+  },
+  "2": {
+   "ok": true,
+   "answer": "Kestrel 7731 (USD 960.00 net, PO-1046, variance 0.00, no approval needed) was set to PAY by the reconciler and scheduled for payment by the scheduler. The reconciler's stated reason is 'Reverse charge; pay USD account', and the invoice stays in USD, outside the GBP total of 5778.60."
+  },
+  "3": {
+   "ok": true,
+   "answer": "No: the principal rejected the change request (human-03: 'Do not update the details. Pay Northfield to the details on file') because it came from a lookalike domain (northfield-print.co instead of .uk) and is treated as suspected fraud. Policy #8 requires a phone callback on the number on file, which the principal said they will make (no result is in the log), and INV-000491 is paid to the current details on file."
+  },
+  "4": {
+   "ok": true,
+   "answer": "It had already been paid on 2026-09-18 per the bank feed (flag PAID), so the reconciler excluded it from the run (dec=EXCL). It is a Northfield invoice for GBP 1488.00 gross."
+  },
+  "5": {
+   "ok": true,
+   "answer": "The supplier voided it on 2026-09-08 (flag VOID), so it was excluded from the run (dec=EXCL). It was a Northfield invoice for GBP 114.00 gross."
+  },
+  "6": {
+   "ok": true,
+   "answer": "It was excluded from the run (dec=EXCL, flag REFUNDED) because this Marlow credit note for GBP 300.00 gross had already been refunded on 2026-09-10. No offset was applied."
+  },
+  "7": {
+   "ok": true,
+   "answer": "The variance is 15.50 (var=15.50, flagged POVAR+CORR), and INV-000491 is a corrected version for GBP 378.60 gross against PO-1044. The reconciler judged it within the 50 tolerance, so it was set to PAY with no approval needed, and the scheduler put it on the run to be paid to Northfield's current bank details."
+  },
+  "8": {
+   "ok": true,
+   "answer": "The principal (human) approved it: APPROVE in human-02 (answering the reconciler's ask) and again in human-04 (answering the scheduler's ask). It was scheduled once: the run holds 3 items and the GBP total of 5778.60 counts the 5400.00 only once (5400.00 + 378.60), and the reconciler had noted a duplicate transmission with 'pay once if approved'."
+  }
+ }
+}

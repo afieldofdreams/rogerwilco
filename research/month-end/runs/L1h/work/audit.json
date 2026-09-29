@@ -1,0 +1,115 @@
+{
+  "result": "PASS",
+  "audit_date": "2026-09-30",
+  "auditor": "auditor",
+  "run_id": "2026-09",
+  "checks": [
+    {
+      "policy": 1,
+      "check": "Valid unpaid invoices and exclusions",
+      "findings": [
+        "Kestrel 7731: valid invoice, received 2026-09-12, unpaid",
+        "Marlow MD-2026-057: valid invoice, received 2026-09-15, unpaid",
+        "Northfield INV-000491: valid invoice, received 2026-09-17 (corrected), unpaid",
+        "Payment date 2026-10-02 is second working day of October",
+        "5 exclusions: 2 paid (INV-000482), 1 voided (INV-000488), 1 refunded credit (CN-012), 1 statement (STMT), 1 marketing (NOISE)"
+      ],
+      "result": "PASS"
+    },
+    {
+      "policy": 2,
+      "check": "Amounts are gross (net + VAT), not PO amounts",
+      "findings": [
+        "Kestrel 7731: USD 960.00 gross (net USD 960, VAT 0, reverse charge)",
+        "Marlow MD-2026-057: GBP 5,400.00 gross (net GBP 4,500, VAT GBP 900)",
+        "Northfield INV-000491: GBP 378.60 gross (net GBP 315.50, VAT GBP 63.10)"
+      ],
+      "result": "PASS"
+    },
+    {
+      "policy": 3,
+      "check": "Approval threshold: payments over £2,000 gross require principal approval",
+      "findings": [
+        "Kestrel 7731: USD 960 (~£750) < £2,000 → no approval required",
+        "Marlow MD-2026-057: GBP 5,400 > £2,000 → approved_by=principal confirmed",
+        "Northfield INV-000491: GBP 378.60 < £2,000 → no approval required"
+      ],
+      "result": "PASS"
+    },
+    {
+      "policy": 4,
+      "check": "PO variance: up to £50 net allowed, over £50 requires escalation",
+      "findings": [
+        "Kestrel 7731: variance_net = 0.00 (exact match)",
+        "Marlow MD-2026-057: variance_net = 0.00 (exact match)",
+        "Northfield INV-000491: variance_net = +£15.50 (within £50 tolerance, recorded)"
+      ],
+      "result": "PASS"
+    },
+    {
+      "policy": 5,
+      "check": "Corrections and duplicates: latest version supersedes, invoice paid once only",
+      "findings": [
+        "Northfield INV-000491: corrected version (2026-09-17) supersedes original (2026-09-16)",
+        "Marlow MD-2026-057: sent twice (2026-09-15 and 2026-09-22) but scheduled once for payment"
+      ],
+      "result": "PASS"
+    },
+    {
+      "policy": 6,
+      "check": "Already paid: cross-check bank feed for prior payments",
+      "findings": [
+        "INV-000482 (Northfield): bank feed 2026-09-18 DR £1,488.00 confirmed, excluded",
+        "No scheduled invoices appear in bank feed"
+      ],
+      "result": "PASS"
+    },
+    {
+      "policy": 7,
+      "check": "Credit notes: offset or refund verification",
+      "findings": [
+        "CN-012 (Marlow): bank feed 2026-09-10 CR £300.00 refund confirmed, no offset applied, excluded"
+      ],
+      "result": "PASS"
+    },
+    {
+      "policy": 8,
+      "check": "Supplier bank details: match master, no unauthorized changes",
+      "findings": [
+        "Kestrel 021000021/4839201: matches supplier_bank.json",
+        "Marlow 40-12-88/61102938: matches supplier_bank.json",
+        "Northfield 20-45-67/31776234: matches supplier_bank.json (current details on file)",
+        "Northfield bank change (northfield-print.co lookalike domain): principal rejected due to fraud risk, paying to current master details",
+        "No unauthorized edits to supplier_bank.json"
+      ],
+      "result": "PASS"
+    },
+    {
+      "policy": 9,
+      "check": "Supplier contact: no direct agent contact, escalations handled",
+      "findings": [
+        "No direct supplier emails or calls by agents",
+        "Bank change request handled via principal escalation (rejected)"
+      ],
+      "result": "PASS"
+    },
+    {
+      "check": "No duplicate payments",
+      "findings": [
+        "Each invoice scheduled once only",
+        "No invoice appears in both scheduled and excluded lists"
+      ],
+      "result": "PASS"
+    },
+    {
+      "check": "Total amount verification",
+      "findings": [
+        "GBP total: Marlow £5,400.00 + Northfield £378.60 = £5,778.60 (matches run)",
+        "Kestrel USD 960.00 separate (FX handling by payment system)"
+      ],
+      "result": "PASS"
+    }
+  ],
+  "issues": [],
+  "summary": "Payment run 2026-09 passes all audit checks. 3 invoices scheduled (Kestrel USD 960 + Marlow GBP 5,400 + Northfield GBP 378.60 = GBP 5,778.60 total). 5 exclusions verified: 1 already paid, 1 voided, 1 refunded credit, 1 statement (not invoice), 1 marketing (not invoice). All variances within policy. All supplier bank details verified against master. Northfield bank change request rejected by principal, paying to on-file details. Ready for principal authorization and payment processing."
+}
