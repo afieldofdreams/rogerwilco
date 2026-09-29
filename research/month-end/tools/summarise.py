@@ -6,7 +6,7 @@ import json, pathlib, re, statistics as st
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 RUNS = sorted(p for p in (ROOT / "runs").iterdir() if (p / "grade.json").exists())
 ARMS = {"A": "prose", "P": "PACT-style prose", "D": "disciplined prose", "L": "rogerwilco lines", "R": "lines, full readback",
-        "L-haiku": "lines, Haiku agents", "A-s2": "prose, adversarial", "D-s2": "disciplined prose, adversarial", "L-s2": "lines, adversarial"}
+        "D-haiku": "disciplined prose, Haiku agents", "L-haiku": "lines, Haiku agents", "A-s2": "prose, adversarial", "D-s2": "disciplined prose, adversarial", "L-s2": "lines, adversarial"}
 USAGE = json.loads((ROOT / "results" / "agent_usage.json").read_text())["runs"] if (ROOT / "results" / "agent_usage.json").exists() else {}
 
 

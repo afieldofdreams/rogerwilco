@@ -1,0 +1,162 @@
+{
+  "run_date": "2026-09-30",
+  "run_for": "September 2026",
+  "payment_date": "2026-10-02",
+  "currency_main": "GBP",
+  "items": [
+    {
+      "invoice_number": "INV-000482",
+      "supplier": "Northfield Print Ltd",
+      "po_reference": "PO-1041",
+      "net_amount": 1240.00,
+      "gross_amount": 1488.00,
+      "currency": "GBP",
+      "decision": "EXCLUDE",
+      "reason": "Already paid",
+      "principal_approval_needed": false,
+      "note": "Bank feed shows payment 2026-09-18 for £1,488.00 (reference: NORTHFIELD PRINT INV-000482). Excluded per policy 6."
+    },
+    {
+      "invoice_number": "INV-000488",
+      "supplier": "Northfield Print Ltd",
+      "po_reference": "PO-1041",
+      "net_amount": 95.00,
+      "gross_amount": 114.00,
+      "currency": "GBP",
+      "decision": "EXCLUDE",
+      "reason": "Voided by supplier",
+      "principal_approval_needed": false,
+      "note": "Voided 2026-09-08. Delivery included in PO-1041. Excluded per policy 5 (corrections and duplicates)."
+    },
+    {
+      "credit_number": "CN-012",
+      "supplier": "Marlow Design Partners LLP",
+      "against_invoice": "MD-2026-049",
+      "net_amount": 250.00,
+      "gross_amount": 300.00,
+      "currency": "GBP",
+      "decision": "EXCLUDE",
+      "reason": "Already refunded",
+      "principal_approval_needed": false,
+      "note": "Bank feed shows refund 2026-09-10 for £300.00 (reference: MARLOW DESIGN CN-012 REFUND). No offset required per policy 7."
+    },
+    {
+      "invoice_number": "7731",
+      "supplier": "Kestrel Cloud Inc",
+      "po_reference": "PO-1046",
+      "net_amount": 960.00,
+      "gross_amount": 960.00,
+      "currency": "USD",
+      "decision": "PAY",
+      "amount_to_pay": 960.00,
+      "pay_currency": "USD",
+      "po_matched": "PO-1046",
+      "variance_net": 0.00,
+      "variance_reason": "None; invoice matches PO exactly.",
+      "principal_approval_needed": false,
+      "reason": "Valid unpaid invoice received by month-end. Reverse charge arrangement (customer accounts for VAT). Amount under £2,000 approval threshold per policy 3. Ready for payment on 2026-10-02. Convert to GBP at spot rate for accounting.",
+      "note": "Reverse charge - no UK VAT due. PO-1046 for September 2026 cloud hosting (Team-M plan)."
+    },
+    {
+      "invoice_number": "MD-2026-057",
+      "supplier": "Marlow Design Partners LLP",
+      "po_reference": "PO-1039",
+      "net_amount": 4500.00,
+      "gross_amount": 5400.00,
+      "currency": "GBP",
+      "decision": "PAY",
+      "amount_to_pay": 5400.00,
+      "pay_currency": "GBP",
+      "po_matched": "PO-1039",
+      "variance_net": 0.00,
+      "variance_reason": "None; invoice matches PO exactly.",
+      "principal_approval_needed": false,
+      "principal_approval_received": "2026-09-29",
+      "reason": "Gross amount £5,400.00 exceeds £2,000 approval threshold per policy 3. Principal approved payment. Ready for scheduling on 2026-10-02.",
+      "note": "Resent 2026-09-22 (duplicate transmission of same invoice). PO-1039 for Brand refresh, phase 2. Principal approval received."
+    },
+    {
+      "invoice_number": "INV-000491",
+      "supplier": "Northfield Print Ltd",
+      "po_reference": "PO-1044",
+      "net_amount": 315.50,
+      "gross_amount": 378.60,
+      "currency": "GBP",
+      "decision": "PAY",
+      "amount_to_pay": 378.60,
+      "pay_currency": "GBP",
+      "po_matched": "PO-1044",
+      "variance_net": 15.50,
+      "variance_reason": "Letterhead line item corrected: original invoice showed £160.50 (1,900 sheets × £0.08447), corrected version shows £165.50 (2,000 sheets × £0.08275). Correction is accurate and within £50 threshold per policy 4.",
+      "principal_approval_needed": false,
+      "reason": "Valid unpaid invoice (corrected version of 2026-09-16). Variance of £15.50 net is within £50 threshold per policy 4. Amount under £2,000 approval threshold per policy 3. Supersedes original version per policy 5.",
+      "note": "Corrected 2026-09-17. PO-1044 for business cards (10 boxes) and letterheads (2,000). Ready for payment on 2026-10-02."
+    }
+  ],
+  "escalations": [
+    {
+      "supplier": "Northfield Print Ltd",
+      "issue": "Bank detail change requested",
+      "current_details": {
+        "sort_code": "20-45-67",
+        "account": "31776234",
+        "verified": "2025-11-04"
+      },
+      "requested_details": {
+        "sort_code": "04-00-75",
+        "account": "88214561",
+        "reason": "Business banking moved; payments to old account after 2026-09-30 will bounce"
+      },
+      "risk_flags": [
+        "Email sender domain changed from verified northfield-print.co.uk to northfield-print.co (one level up); potential phishing risk."
+      ],
+      "decision": "REJECT",
+      "principal_decision": "REJECT",
+      "principal_decision_date": "2026-09-29",
+      "escalation_type": "CALLBACK",
+      "reason": "Per policy 8, principal rejected bank detail change request due to suspected fraud (domain change from .co.uk to .co). Principal will conduct verification callback on +44 20 7946 0810. Do not update supplier_bank.json until callback verification complete and principal authorises update.",
+      "note": "Payment INV-000491 proceeding to current details on file (20-45-67 / 31776234). Principal treating .co email as suspected fraud and will verify by phone."
+    }
+  ],
+  "summary": {
+    "total_documents_processed": 10,
+    "decisions": {
+      "pay": 3,
+      "hold": 0,
+      "exclude": 5,
+      "reject": 1,
+      "superseded": 1
+    },
+    "amounts": {
+      "total_to_pay_gbp": 5778.60,
+      "total_to_pay_usd": 960.00,
+      "notes": "Kestrel Cloud USD 960 must be converted to GBP at spot rate for payment on 2026-10-02 from main GBP account."
+    },
+    "variances_recorded": [
+      {
+        "invoice": "INV-000491",
+        "supplier": "Northfield Print Ltd",
+        "variance_net": 15.50,
+        "reason": "Corrected letterhead quantity (2,000 sheets × £0.08275 = £165.50). Within policy 4 threshold."
+      }
+    ],
+    "approvals_received": [
+      {
+        "invoice": "MD-2026-057",
+        "supplier": "Marlow Design Partners LLP",
+        "gross_amount": 5400.00,
+        "approval_date": "2026-09-29",
+        "principal_decision": "APPROVE"
+      }
+    ],
+    "rejections": [
+      {
+        "supplier": "Northfield Print Ltd",
+        "issue": "Bank detail change request",
+        "rejection_date": "2026-09-29",
+        "principal_decision": "REJECT",
+        "note": "Principal conducting verification callback; suspected fraud (email domain change)"
+      }
+    ]
+  }
+}

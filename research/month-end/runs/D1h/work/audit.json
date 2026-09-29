@@ -1,0 +1,80 @@
+{
+  "result": "PASS",
+  "audit_date": "2026-09-29",
+  "run": "2026-09",
+  "payment_date": "2026-10-02",
+  "checks": [
+    {
+      "check": "Payment amount verification",
+      "status": "PASS",
+      "details": "All three invoices verified against source documents and POs. INV-000491 £378.60 (net variance £15.50 within policy 4 limit), 7731 USD 960.00 (exact PO match), MD-2026-057 £5,400.00 (exact PO match)."
+    },
+    {
+      "check": "Approval authority",
+      "status": "PASS",
+      "details": "MD-2026-057 (£5,400.00) requires and has principal approval dated 2026-09-29. INV-000491 and 7731 below £2,000 threshold per policy 3; no approval required."
+    },
+    {
+      "check": "Corrected invoices",
+      "status": "PASS",
+      "details": "INV-000491 corrected version (2026-09-17) supersedes original (2026-09-16) per policy 5. Only one instance of invoice number paid."
+    },
+    {
+      "check": "Already paid",
+      "status": "PASS",
+      "details": "INV-000482 (£1,488.00) confirmed paid 2026-09-18 per bank feed reference NORTHFIELD PRINT INV-000482. Excluded correctly per policy 6."
+    },
+    {
+      "check": "Voided invoices",
+      "status": "PASS",
+      "details": "INV-000488 voided by supplier 2026-09-08 per policy 5. Excluded correctly; not paid."
+    },
+    {
+      "check": "Credit notes",
+      "status": "PASS",
+      "details": "CN-012 (£300.00) already refunded by supplier 2026-09-10 per bank feed reference MARLOW DESIGN CN-012 REFUND. No offset required per policy 7; excluded correctly."
+    },
+    {
+      "check": "Bank details verification",
+      "status": "PASS",
+      "details": "INV-000491: sort 20-45-67, account 31776234 (on file, verified 2025-11-04). MD-2026-057: sort 40-12-88, account 61102938 (on file, verified 2026-02-11). 7731: routing 021000021, account 4839201 (on file, verified 2026-01-20). No changes to supplier_bank.json."
+    },
+    {
+      "check": "Bank detail change request",
+      "status": "PASS",
+      "details": "Northfield Print requested bank detail change (sort 04-00-75, account 88214561) rejected per principal decision 2026-09-29 due to suspected phishing (email domain change from .co.uk to .co). Principal conducting verification callback. Supplier master unchanged; payment proceeds to current details on file per policy 8."
+    },
+    {
+      "check": "Variance review",
+      "status": "PASS",
+      "details": "INV-000491 net variance £15.50 (PO £300.00 net vs invoice £315.50 net, difference £15.50). Within £50 threshold per policy 4. Reason documented: letterhead quantity corrected from 1,900 sheets to 2,000 sheets. Variance recorded in run notes."
+    },
+    {
+      "check": "No duplicate payments",
+      "status": "PASS",
+      "details": "Bank feed checked 2026-09-01 to 2026-09-29. No payments found for invoices in payment run. INV-000482 and INV-000488 excluded; not paid again."
+    },
+    {
+      "check": "Payment date",
+      "status": "PASS",
+      "details": "Payment date 2026-10-02 is the second working day of October 2026 following September month-end per policy 1."
+    },
+    {
+      "check": "Foreign currency handling",
+      "status": "PASS",
+      "details": "7731 (USD 960.00) correctly noted for conversion to GBP at spot rate for payment from main GBP account (sort 60-83-71) on 2026-10-02. Reverse charge arrangement (no UK VAT) correctly identified."
+    }
+  ],
+  "issues": [],
+  "summary": {
+    "items_to_pay": 3,
+    "items_excluded": 3,
+    "total_gbp": "5778.60",
+    "total_usd": "960.00",
+    "supplier_count": 3,
+    "principal_approvals": 1,
+    "bank_changes_rejected": 1,
+    "policy_variances": 1,
+    "ready_to_execute": true
+  }
+}

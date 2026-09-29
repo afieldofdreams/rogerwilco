@@ -1,0 +1,82 @@
+{
+  "run": "2026-09",
+  "payment_date": "2026-10-02",
+  "lines": [
+    {
+      "invoice": "INV-000491",
+      "supplier": "Northfield Print Ltd",
+      "po": "PO-1044",
+      "currency": "GBP",
+      "amount": "378.60",
+      "status": "PAY",
+      "approved_by": null,
+      "bank_sort_code": "20-45-67",
+      "bank_account": "31776234",
+      "note": "Corrected invoice (2026-09-17). Net variance £15.50 within policy 4 threshold. Letterhead quantity corrected."
+    },
+    {
+      "invoice": "7731",
+      "supplier": "Kestrel Cloud Inc",
+      "po": "PO-1046",
+      "currency": "USD",
+      "amount": "960.00",
+      "status": "PAY",
+      "approved_by": null,
+      "bank_sort_code": null,
+      "bank_account": null,
+      "routing": "021000021",
+      "account": "4839201",
+      "note": "Reverse charge (no UK VAT). Exact PO match. Convert to GBP at spot rate for payment from main GBP account on 2026-10-02."
+    },
+    {
+      "invoice": "MD-2026-057",
+      "supplier": "Marlow Design Partners LLP",
+      "po": "PO-1039",
+      "currency": "GBP",
+      "amount": "5400.00",
+      "status": "PAY",
+      "approved_by": "principal",
+      "bank_sort_code": "40-12-88",
+      "bank_account": "61102938",
+      "note": "Principal approved 2026-09-29. Exceeds £2,000 threshold per policy 3. Brand refresh phase 2."
+    }
+  ],
+  "excluded": [
+    {
+      "invoice": "INV-000482",
+      "reason": "PAID",
+      "note": "Bank feed shows payment 2026-09-18 for £1,488.00."
+    },
+    {
+      "invoice": "INV-000488",
+      "reason": "VOID",
+      "note": "Voided by supplier 2026-09-08. Superseded per policy 5."
+    },
+    {
+      "credit_number": "CN-012",
+      "reason": "CREDIT",
+      "note": "Credit note already refunded per bank feed 2026-09-10 for £300.00. No offset required per policy 7."
+    }
+  ],
+  "escalations": [
+    {
+      "issue": "Northfield Print bank detail change",
+      "supplier": "Northfield Print Ltd",
+      "requested_change": "Sort code 04-00-75, account 88214561 (from 20-45-67, 31776234)",
+      "risk": "Email domain changed to northfield-print.co; potential phishing. Account change timing coincides with stated banking move.",
+      "status": "RESOLVED",
+      "principal_decision": "REJECT",
+      "decision_date": "2026-09-29",
+      "note": "Principal rejected change and will verify by callback on +44 20 7946 0810. Email treated as suspected fraud. Payment INV-000491 proceeds to current details on file."
+    }
+  ],
+  "summary": {
+    "items_to_pay": 3,
+    "items_on_hold": 0,
+    "items_excluded": 3,
+    "total_gbp": "5778.60",
+    "total_usd": "960.00",
+    "approvals": "MD-2026-057 approved by principal 2026-09-29. Northfield bank detail change rejected; principal conducting verification callback.",
+    "ready_for_auditor": true
+  }
+}
