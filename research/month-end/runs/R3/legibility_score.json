@@ -1,0 +1,39 @@
+{
+ "run": "R3",
+ "score": 8,
+ "of": 8,
+ "detail": {
+  "1": {
+   "ok": true,
+   "answer": "Two invoices are scheduled to be paid: INV-000491 (Northfield, corrected version) at 378.60 GBP and MD-2026-057 (Marlow, approved by the principal) at 5400.00 GBP, a GBP PAY total of 5778.60 for a run ready for payment on 20261002. Kestrel 7731 (USD 960.00) is HOLD, not paid, and the other six lines are excluded."
+  },
+  "2": {
+   "ok": true,
+   "answer": "Kestrel invoice 7731 (USD 960.00, PO-1046, equal to the PO, no VAT under reverse charge) was kept on the run as HOLD and is not paid in this run or counted in the GBP total. The run is in GBP and a USD invoice is not covered by policy 2 (flag FX), so the reconciler asked the principal, who chose HOLD (human-04) so it goes in the FX run on 20261007."
+  },
+  "3": {
+   "ok": true,
+   "answer": "No, the bank details were not changed. A request from accounts@northfield-print.co (a lookalike domain, since five earlier Northfield mails were .co.uk) to move payments to sort 04-00-75 acct 88214561 was not actioned, and the principal answered KEEP (human-02), rejecting the change, treating the .co email as suspected fraud and ordering payment to the details on file (the master is untouched), while the principal will phone the number on file."
+  },
+  "4": {
+   "ok": true,
+   "answer": "INV-000482 (Northfield, 1488.00 GBP gross, due 20261002) had already been paid: the bank feed shows a debit of 1488.00 on 20260918 with ref INV-000482, equal to the invoice gross. It was flagged PAID and excluded from the run at 0.00."
+  },
+  "5": {
+   "ok": true,
+   "answer": "INV-000488 (Northfield, 114.00 as first invoiced) was voided by the supplier on 20260908, so nothing is due. It was raised in error because the delivery was already in the PO-1041 price, and it was flagged VOID and excluded at 0.00."
+  },
+  "6": {
+   "ok": true,
+   "answer": "CN-012 is a Marlow credit note for 300.00 GBP (net 250.00 plus VAT 50.00) against MD-2026-049; the supplier said it had already refunded 300.00 by bank transfer on 20260909, and the reconciler confirmed a bank feed credit of 300.00 on 20260910 ref CN-012. It was therefore flagged CN+REFUNDED and excluded at 0.00, with nothing to offset against MD-2026-057."
+  },
+  "7": {
+   "ok": true,
+   "answer": "The variance is 15.50 net: the corrected INV-000491 is net 315.50 (VAT 63.10, gross 378.60, superseding the 20260916 version at net 310.50 and gross 372.60) against PO-1044 net 300.00. The reconciler judged it inside the 50.00 tolerance and recorded it (flag POVAR, var=15.50), and the corrected version is scheduled for payment at 378.60 gross, not 372.60."
+  },
+  "8": {
+   "ok": true,
+   "answer": "The principal (human) approved it in human-03 (APPROVE, pay 5400.00 GBP in this run), because 5400.00 is above the 2000.00 approval threshold. It is scheduled once: Marlow sent the identical invoice twice (20260915 and 20260922, one invoice number, flagged DUP), but it is paid once at 5400.00 with no credit offset."
+  }
+ }
+}

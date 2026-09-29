@@ -1,0 +1,39 @@
+{
+ "run": "R2",
+ "score": 8,
+ "of": 8,
+ "detail": {
+  "1": {
+   "ok": true,
+   "answer": "Two invoices are scheduled for payment on 20261002: Northfield INV-000491 at 378.60 GBP gross and Marlow MD-2026-057 at 5400.00 GBP gross, a run total of 5778.60 GBP."
+  },
+  "2": {
+   "ok": true,
+   "answer": "Kestrel 7731 (USD 960.00, reverse charge so no VAT, due 20261012) is on HOLD and is not paid, converted or counted in the total in this run, because the policy has no rule for a USD invoice and the run is paid in GBP from the main account. The principal answered SEPARATE, saying it goes in the FX run on 7 October (20261007) and should stay on the run as HOLD."
+  },
+  "3": {
+   "ok": true,
+   "answer": "No. The request came from a look-alike domain (accounts@northfield-print.co, while the master has .co.uk), was not applied and got no reply, and the principal rejected it (appr=NO), telling the team to pay to the details on file, saying he will call the number on file himself, and to treat the .co email as suspected fraud."
+  },
+  "4": {
+   "ok": true,
+   "answer": "INV-000482 (Northfield, 1488.00 GBP gross) had already been paid on 20260918 per the bank feed (flag PAID), so it was excluded (EXCL) with nothing to schedule."
+  },
+  "5": {
+   "ok": true,
+   "answer": "INV-000488 (Northfield, 114.00 GBP gross) was voided by the supplier on 20260908 (voided in rec 3, same .co.uk sender), so nothing was due and it was excluded (EXCL)."
+  },
+  "6": {
+   "ok": true,
+   "answer": "CN-012 (Marlow credit note, 300.00 GBP gross, net 250.00 plus VAT 50.00, against MD-2026-049) was excluded (flags CN+REFUNDED) because the bank feed shows it already refunded on 20260910 (the supplier had claimed 20260909 by bank transfer). Nothing was therefore offset against MD-2026-057, which is paid in full at 5400.00."
+  },
+  "7": {
+   "ok": true,
+   "answer": "The variance is +15.50 net against the PO (var=15.50), on the corrected INV-000491 (rec 8: net 315.50, VAT 63.10, gross 378.60) that supersedes rec 7 (net 310.50, gross 372.60). It is inside the 50.00 tolerance, so the invoice is paid gross at 378.60 GBP to the bank details on file, with the variance noted (flags CORR+POVAR)."
+  },
+  "8": {
+   "ok": true,
+   "answer": "The principal (human) approved it in AN human-02 (val=APPROVE), relayed to the scheduler by reconciler-27 as appr=OK. It was scheduled once: recs 6 and 9 were identical copies of the same invoice (flag DUP), so it is a single 5400.00 GBP payment in the 20261002 run."
+  }
+ }
+}
