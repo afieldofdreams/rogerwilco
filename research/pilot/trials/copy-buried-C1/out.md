@@ -1,0 +1,3 @@
+# Your AI demo worked. The rollout did not.
+
+On Monday morning your AI feature is still stalled, and the compliance review keeps sending it back. You own the launch date, and someone else in your organisation owns the approval. Reviewers ask where the data goes and what happens when the model is wrong. Real users send inputs the demo never saw. We help you get AI features through compliance review and into production. We have shipped AI in regulated industries, including health and financial services, where compliance and reliability are conditions of launch. We are a small consultancy. We work directly with your product and engineering leads, not through procurement. Most engagements run three to six months. If that is your Monday, tell us where it is stuck.

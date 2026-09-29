@@ -1,0 +1,64 @@
+You are a strict judge. For each item, an agent has stated its understanding of a task before starting. You are given the hidden acceptance criteria the sender holds. Decide, per item, whether the stated understanding CONTRADICTS any criterion (states a different value) or OMITS a criterion that a competent worker would need to state to show they understood the brief. Ignore criteria that are generic hygiene (e.g. 'parses as JSON array', 'H1 headline') unless the understanding contradicts them.
+Reply with only a JSON array of objects: {"id": ..., "pass": true|false, "contradictions": [..], "omissions": [..]} where pass is false if there is at least one contradiction or one material omission.
+
+### extract-clean-D1
+UNDERSTANDING: I understand the task is to extract every supplier invoice in the August 2026 email thread into one JSON array, one object per invoice, with fields supplier, invoice_number (exactly as written, keeping leading zeros and prefixes), date (YYYY-MM-DD), amount (net of VAT), currency (ISO 4217), vat (number or null) and due_date (ISO or null). Only GBP invoices are in scope; voided or cancelled invoices, credit notes and statements are excluded. Acceptance: the output is one raw JSON array, no prose, no code fences. Where only payment terms are given, I derive due_date as invoice date plus those days, else null.
+CRITERIA:
+- parses as a JSON array
+- exactly the expected invoice numbers, as written
+- net amounts correct, corrected figure used for INV-000491
+- dates ISO and correct
+- currency codes correct
+- voided invoice and credit note absent
+
+### extract-clean-D2
+UNDERSTANDING: I understand the task as extracting every supplier invoice from the email thread into a single JSON array, one object per invoice, with supplier, invoice_number (verbatim, keeping prefixes and leading zeros), date (YYYY-MM-DD), amount (net of VAT), currency (ISO 4217), vat (number or null) and due_date (ISO 8601 or null). Only GBP invoices are in scope; other currencies, voided or cancelled invoices, credit notes and statements are excluded. Later corrections supersede earlier figures. due_date is the stated date, or invoice date plus stated payment days, otherwise null. Supplier names come from sender domains. Acceptance: one valid JSON array, no prose, no code fences.
+CRITERIA:
+- parses as a JSON array
+- exactly the expected invoice numbers, as written
+- net amounts correct, corrected figure used for INV-000491
+- dates ISO and correct
+- currency codes correct
+- voided invoice and credit note absent
+
+### extract-artifact_only-D1
+UNDERSTANDING: A single raw JSON array (no prose, no code fences), one object per in-scope supplier invoice from the thread. Fields: supplier, invoice_number (verbatim, keeping prefixes and leading zeros), date (YYYY-MM-DD), amount (net of VAT), currency (ISO 4217), vat (number or null), due_date (ISO or null; derived from stated payment terms, else null). Scope: GBP only; exclude other currencies, voided or cancelled invoices, credit notes and statements. If a later email corrects an invoice, use the corrected figures and add "corrected": true. Acceptance: exactly the in-scope invoices, correct net amounts and VAT, valid ISO dates, exact invoice numbers, valid JSON, saved to out.md by 2 October 2026.
+CRITERIA:
+- parses as a JSON array
+- exactly the expected invoice numbers, as written
+- net amounts correct, corrected figure used for INV-000491
+- dates ISO and correct
+- currency codes correct
+- voided invoice and credit note absent
+- corrected:true on the corrected invoice
+
+### extract-artifact_only-D2
+UNDERSTANDING: Extract every August 2026 supplier invoice from the thread into one JSON array, one object per invoice: supplier, invoice_number, date, amount, currency, vat, due_date. Amounts are net of VAT, dates ISO YYYY-MM-DD, invoice numbers exactly as written (leading zeros, prefixes kept). GBP only: exclude other currencies, voided or cancelled invoices, credit notes and statements. Where a later email corrects an invoice, use the corrected figures and add "corrected": true. vat is null if absent; due_date is invoice date plus stated payment terms, else null. Acceptance: one valid JSON array, no prose, no code fences. The 2 October 2026 date is my delivery deadline, not a due_date.
+CRITERIA:
+- parses as a JSON array
+- exactly the expected invoice numbers, as written
+- net amounts correct, corrected figure used for INV-000491
+- dates ISO and correct
+- currency codes correct
+- voided invoice and credit note absent
+- corrected:true on the corrected invoice
+
+### extract-near_miss-D1
+UNDERSTANDING: Based on the brief: deliver one JSON array (no prose, no code fences), one object per in-scope invoice, with supplier, invoice_number (verbatim, leading zeros and prefixes kept), date (YYYY-MM-DD), amount, currency, vat (number or null) and due_date (YYYY-MM-DD or null). GBP only; exclude other currencies, voided or cancelled invoices, credit notes and statements. Conflict: the brief says amount is GROSS (including VAT) but your message says net; I follow the brief and flag it, so tell me if net is intended. Supplier corrections supersede earlier figures. Due dates come from stated payment terms, otherwise null. Acceptance: valid JSON containing exactly the in-scope invoices with correct values.
+CRITERIA:
+- parses as a JSON array
+- exactly the expected invoice numbers, as written
+- gross amounts correct, corrected figure used for INV-000491
+- dates ISO and correct
+- currency codes correct
+- voided invoice and credit note absent
+
+### extract-near_miss-D2
+UNDERSTANDING: Requirements per the brief: output one bare JSON array (no prose, no code fences), one object per invoice, with supplier (from sender domain), invoice_number exactly as written (leading zeros and prefixes kept), ISO date, amount, currency, vat and due_date. Scope is GBP invoices only; exclude voided or cancelled invoices, credit notes, statements and other currencies. Apply corrections in the thread. Conflict: lead's message says net amounts, but the brief requires gross (VAT included) in amount, so I follow the brief; tell me if net was intended. due_date is the stated date, else invoice date plus stated terms, else null. Acceptance: valid JSON, only qualifying invoices, correct figures, nothing else.
+CRITERIA:
+- parses as a JSON array
+- exactly the expected invoice numbers, as written
+- gross amounts correct, corrected figure used for INV-000491
+- dates ISO and correct
+- currency codes correct
+- voided invoice and credit note absent

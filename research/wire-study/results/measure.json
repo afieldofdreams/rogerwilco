@@ -1,0 +1,131 @@
+{
+ "n": 240,
+ "tokens": {
+  "o200k": {
+   "english": {
+    "mean": 68.9,
+    "median": 68.5,
+    "total": 16535
+   },
+   "json": {
+    "mean": 64.5,
+    "median": 64.0,
+    "total": 15477,
+    "vs_english_pct": 6.4
+   },
+   "pform": {
+    "mean": 48.9,
+    "median": 49.0,
+    "total": 11732,
+    "vs_english_pct": 29.0
+   },
+   "tight": {
+    "mean": 28.0,
+    "median": 28.0,
+    "total": 6722,
+    "vs_english_pct": 59.3
+   },
+   "glyph": {
+    "mean": 42.2,
+    "median": 42.0,
+    "total": 10117,
+    "vs_english_pct": 38.8
+   },
+   "legend_tokens": {
+    "pform": 435,
+    "tight": 271,
+    "glyph": 752
+   },
+   "breakeven_msgs_tight": 6.6,
+   "breakeven_msgs_pform": 21.7
+  },
+  "cl100k": {
+   "english": {
+    "mean": 71.2,
+    "median": 71.0,
+    "total": 17090
+   },
+   "json": {
+    "mean": 66.3,
+    "median": 66.0,
+    "total": 15901,
+    "vs_english_pct": 7.0
+   },
+   "pform": {
+    "mean": 49.7,
+    "median": 50.0,
+    "total": 11935,
+    "vs_english_pct": 30.2
+   },
+   "tight": {
+    "mean": 28.1,
+    "median": 28.0,
+    "total": 6756,
+    "vs_english_pct": 60.5
+   },
+   "glyph": {
+    "mean": 47.6,
+    "median": 48.0,
+    "total": 11426,
+    "vs_english_pct": 33.1
+   },
+   "legend_tokens": {
+    "pform": 439,
+    "tight": 275,
+    "glyph": 771
+   },
+   "breakeven_msgs_tight": 6.4,
+   "breakeven_msgs_pform": 20.4
+  }
+ },
+ "roundtrip": {
+  "exact": 240,
+  "of": 240
+ },
+ "roundtrip_tight": {
+  "exact": 480,
+  "of": 480
+ },
+ "tight_corruption": {
+  "no_checksum": {
+   "mutations": 698,
+   "caught_or_harmless": 513,
+   "silent_wrong": 185,
+   "silent_by_kind": {
+    "digit": 170,
+    "swapval": 15
+   }
+  },
+  "checksum": {
+   "mutations": 699,
+   "caught_or_harmless": 699,
+   "silent_wrong": 0,
+   "silent_by_kind": {}
+  }
+ },
+ "corruption": {
+  "mutations": 697,
+  "rejected": 629,
+  "accepted_silently": 68,
+  "silent_by_kind": {
+   "drop": 58,
+   "dupe": 5,
+   "truncate": 5
+  }
+ },
+ "delta_example": {
+  "full": "HO|CPY>ARC|P2617|stg=DEC|imp=10|heat=HOT|stall=6d|conf=L|ask=SPEC|keep=DAT|src=74",
+  "delta": "DHO|CPY>ARC|P2617|stg=DEC|stall=6d",
+  "full_tokens": 43,
+  "delta_tokens": 21
+ },
+ "example": {
+  "id": 3,
+  "english": "Handing this over from Ideator. Flagging node 4131, pipeline stage action, operational status scheduled, importance 10 out of 10. It's been stalled for 5 days. I'd put confidence at high. I need Strategist to retire or merge node. Keep Triage and Adam on the assignment.",
+  "json": "{\"type\":\"handoff\",\"from\":\"Ideator\",\"to\":\"Strategist\",\"node\":4131,\"stage\":\"action\",\"confidence\":\"high\",\"ask\":\"retire or merge node\",\"opstatus\":\"scheduled\",\"importance\":10,\"stall_days\":5,\"keep_assigned\":[\"Triage\",\"Adam\"]}",
+  "pform": "HO|IDE>STR|P4131|stg=ACT|os=SCH|imp=10|stall=5d|conf=H|ask=PRUNE|keep=TRI+ADAM",
+  "tight": "HO IDE STR 4131 ACT SCH 10 - 5 H PRUNE TRI+ADAM - - -",
+  "glyph": "⇄ ✦→♟ ◉4131 ▲ε ◐◷ ★10 ⧗5d ✓█ ➤✂ ⚓⚕+☺"
+ },
+ "example_tight_check": "HO IDE STR 4131 ACT SCH 10 - 5 H PRUNE TRI+ADAM - - - #38a"
+}

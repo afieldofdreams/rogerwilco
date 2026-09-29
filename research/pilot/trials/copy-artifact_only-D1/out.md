@@ -1,0 +1,3 @@
+# We get AI features through compliance review and into production
+
+It is Monday morning, and the demo that impressed everyone last quarter still has not become a rollout, because the compliance review keeps sending your AI feature back with questions about data handling, audit trails and what the model does when it is wrong, and every week of delay makes the launch date you promised your customers harder to defend. We have shipped AI in regulated industries, including health and financial services, for organisations we do not name, so we know both what a compliance reviewer needs to see before saying yes and what a feature has to survive once real customers use it, and we help your team get the feature approved, reliable and doing what the demo promised.

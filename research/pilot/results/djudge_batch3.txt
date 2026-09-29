@@ -1,0 +1,66 @@
+You are a strict judge. For each item, an agent has stated its understanding of a task before starting. You are given the hidden acceptance criteria the sender holds. Decide, per item, whether the stated understanding CONTRADICTS any criterion (states a different value) or OMITS a criterion that a competent worker would need to state to show they understood the brief. Ignore criteria that are generic hygiene (e.g. 'parses as JSON array', 'H1 headline') unless the understanding contradicts them.
+Reply with only a JSON array of objects: {"id": ..., "pass": true|false, "contradictions": [..], "omissions": [..]} where pass is false if there is at least one contradiction or one material omission.
+
+### extract-contradiction-D1
+UNDERSTANDING: I understand the deliverable as one JSON array, no prose or fences, one object per genuine supplier invoice: supplier (from sender domain), invoice_number verbatim, ISO date, net amount, currency code, vat (0 if none charged), due_date (stated date, else date plus stated terms, else null). Exclude voided INV-000488, credit note CN-012 and the Evergreen statement; use Northfield's corrected INV-000491 figures. Conflict: lead's message says GBP only, but the brief says all currencies, no conversion. I follow the brief as the detailed spec, so USD invoice 7731 is included and can be filtered out. Acceptance: valid JSON, correct fields, types, inclusions and exclusions. Please confirm the currency scope.
+CRITERIA:
+- parses as a JSON array
+- exactly the expected invoice numbers, as written
+- net amounts correct, corrected figure used for INV-000491
+- dates ISO and correct
+- currency codes correct
+- voided invoice and credit note absent
+
+### extract-contradiction-D2
+UNDERSTANDING: Per the brief: output one JSON array (no prose, no code fences), one object per supplier invoice, with supplier, invoice_number (verbatim), date (YYYY-MM-DD), amount (net of VAT), currency (ISO 4217, no conversion), vat (number or null), due_date (ISO or null). Exclude voided invoices, credit notes and statements; use corrected INV-000491 figures. Acceptance: valid JSON, correct inclusions and values. Conflict: lead's message says GBP only, but the brief says all currencies. I follow the brief: the USD invoice is included, tagged USD; filter on currency if GBP-only is wanted. due_date: stated date, else invoice date plus payment terms, else null.
+CRITERIA:
+- parses as a JSON array
+- exactly the expected invoice numbers, as written
+- net amounts correct, corrected figure used for INV-000491
+- dates ISO and correct
+- currency codes correct
+- voided invoice and credit note absent
+
+### extract-buried-D1
+UNDERSTANDING: Requirements: a single JSON array, no prose or code fences, one object per August 2026 supplier invoice: supplier, invoice_number exactly as written, ISO date, net amount, currency, vat, due_date or null. amount and vat are strings with exactly two decimals (ledger import rejects floats). GBP only; exclude voided invoices, credit notes, statements, other currencies. Use corrected INV-000491 figures. Acceptance: figures reconcile to the bank feed; precision beats coverage, so doubtful items are flagged in a note field, ambiguous invoices kept. Deadline conflict: brief says before the 3rd working day of September (already past); lead says 2 October 2026. I am following lead's date; please confirm.
+CRITERIA:
+- parses as a JSON array
+- exactly the expected invoice numbers, as written
+- net amounts correct, corrected figure used for INV-000491
+- dates ISO and correct
+- currency codes correct
+- voided invoice and credit note absent
+- amount and vat are strings with two decimals (rule stated mid-brief)
+
+### extract-buried-D2
+UNDERSTANDING: Extract every GBP supplier invoice from the thread as one object each, in a single bare JSON array (no prose, no code fences). Fields: supplier, invoice_number (verbatim), date, amount (net of VAT), currency, vat, due_date; dates ISO 8601, due_date null if not determinable. Amount and vat must be strings with exactly two decimals ("1240.00"), since the ledger import rejects floats. Exclude non-GBP, voided or cancelled invoices, credit notes and statements; use corrected figures where a later email supersedes. Precision beats coverage; ambiguous invoices stay in with a note field. Deadline conflict: brief says before the 3rd working day of September, lead says 2 October 2026.
+CRITERIA:
+- parses as a JSON array
+- exactly the expected invoice numbers, as written
+- net amounts correct, corrected figure used for INV-000491
+- dates ISO and correct
+- currency codes correct
+- voided invoice and credit note absent
+- amount and vat are strings with two decimals (rule stated mid-brief)
+
+### extract-categorical-D1
+UNDERSTANDING: I understand the task is to extract every supplier invoice from the email thread into one JSON array, one object per invoice, with fields supplier, invoice_number, date, amount, currency, vat and due_date. Amount is the net figure excluding VAT; dates are ISO 8601; invoice numbers are kept exactly as written. Only GBP invoices are in scope, so other currencies are excluded, along with voided or cancelled invoices, credit notes and statements. Later corrections supersede earlier figures. due_date is computed from stated payment terms, otherwise null. Supplier names are inferred from sender domains. Output must be only the JSON array, with no prose and no code fences. Deliver by 2 October 2026.
+CRITERIA:
+- parses as a JSON array
+- exactly the expected invoice numbers, as written
+- net amounts correct, corrected figure used for INV-000491
+- dates ISO and correct
+- currency codes correct
+- voided invoice and credit note absent
+- due dates computed from terms (30 days, 14 days) where stated
+
+### extract-categorical-D2
+UNDERSTANDING: I understand the task is to extract supplier invoices from the August 2026 email thread into one bare JSON array (no prose, no code fences), one object per invoice: supplier, invoice_number, date, amount, currency, vat, due_date. Amount is net of VAT; dates are ISO 8601; invoice numbers are verbatim, including prefixes and leading zeros. Only GBP invoices count; other currencies, voided or cancelled invoices, credit notes and statements are excluded. The later correction to INV-000491 supersedes its earlier figures. due_date is computed from the invoice date only where terms are stated for that invoice, otherwise null. Delivery is due 2 October 2026.
+CRITERIA:
+- parses as a JSON array
+- exactly the expected invoice numbers, as written
+- net amounts correct, corrected figure used for INV-000491
+- dates ISO and correct
+- currency codes correct
+- voided invoice and credit note absent
+- due dates computed from terms (30 days, 14 days) where stated

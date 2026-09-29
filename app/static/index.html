@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>rogerwilco playground</title>
+<meta name="description" content="Validate rogerwilco RW1 lines, build readbacks and check them against the handoff they answer.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a58ab'/%3E%3Cpath d='M8 17l5 5 11-12' fill='none' stroke='%23fff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+/* Layout: one column and two panels. A decoded message sits in ruled cells, like the strip a controller pins in a
+   holder; a readback result shows the four tiers, roger (received, intact) then wilco (understood, will comply). */
+:root {
+  --bg: #eceff3;
+  --surface: #ffffff;
+  --field: #f3f5f8;
+  --ink: #15202b;
+  --ink-soft: #465565;
+  --rule: #c9d1da;
+  --accent: #0a58ab;
+  --on-accent: #ffffff;
+  --good: #14653b;
+  --good-tint: #e0f2e8;
+  --bad: #a3231a;
+  --bad-tint: #fbe6e3;
+  --warn: #7f4b00;
+  --warn-tint: #fcefd6;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1319;
+    --surface: #151d26;
+    --field: #1b2531;
+    --ink: #e6ecf2;
+    --ink-soft: #9aa9b8;
+    --rule: #2b3846;
+    --accent: #62aef5;
+    --on-accent: #08131d;
+    --good: #5fd08f;
+    --good-tint: #133423;
+    --bad: #ff8f85;
+    --bad-tint: #3b1b19;
+    --warn: #f0b955;
+    --warn-tint: #372a12;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1319;
+  --surface: #151d26;
+  --field: #1b2531;
+  --ink: #e6ecf2;
+  --ink-soft: #9aa9b8;
+  --rule: #2b3846;
+  --accent: #62aef5;
+  --on-accent: #08131d;
+  --good: #5fd08f;
+  --good-tint: #133423;
+  --bad: #ff8f85;
+  --bad-tint: #3b1b19;
+  --warn: #f0b955;
+  --warn-tint: #372a12;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  padding-inline: 16px;
+  padding-block: 24px 56px;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.5 var(--sans);
+}
+.wrap { max-width: 56rem; margin-inline: auto; display: grid; gap: 20px; }
+a { color: var(--accent); text-underline-offset: 3px; }
+code { font: 0.92em var(--mono); }
+
+header { display: grid; gap: 12px; }
+.top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; }
+.mark { margin: 0; display: flex; align-items: baseline; gap: 10px; font: 700 1.7rem/1.1 var(--mono); letter-spacing: -0.02em; }
+.roger { font-weight: 400; color: var(--ink-soft); }
+.wilco { color: var(--accent); }
+.ver { padding: 3px 6px; border: 1px solid var(--rule); border-radius: 4px; color: var(--ink-soft); font: 600 0.72rem/1 var(--mono); letter-spacing: 0.06em; }
+nav { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 0.95rem; }
+.lede { margin: 0; max-width: 65ch; font-size: 1.05rem; text-wrap: pretty; }
+
+.bar { display: grid; grid-template-columns: minmax(10rem, 16rem) 1fr; gap: 6px 16px; align-items: end; }
+.bar p { margin: 0; color: var(--ink-soft); font-size: 0.9rem; min-width: 0; }
+
+.panel { display: grid; gap: 14px; min-width: 0; padding: 16px; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; }
+.panel h2 { margin: 0; font: 700 1.15rem/1.25 var(--sans); text-wrap: balance; }
+.hint { margin: 4px 0 0; color: var(--ink-soft); font-size: 0.92rem; max-width: 65ch; }
+.field { min-width: 0; }
+.pairbox { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); gap: 14px; }
+.label { display: block; margin-bottom: 6px; color: var(--ink-soft); font: 600 0.74rem/1.2 var(--sans); text-transform: uppercase; letter-spacing: 0.08em; }
+textarea, input[type="text"], select {
+  width: 100%; padding: 10px 12px; color: var(--ink); background: var(--field);
+  border: 1px solid var(--rule); border-radius: 6px; font: 16px/1.5 var(--mono);
+}
+select { font-family: var(--sans); }
+textarea { min-height: 5.6rem; resize: vertical; }
+::placeholder { color: var(--ink-soft); opacity: 1; }
+
+.row { display: flex; flex-wrap: wrap; gap: 8px; }
+button {
+  min-height: 40px; padding: 0 16px; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--rule); border-radius: 6px; font: 600 0.95rem/1 var(--sans); cursor: pointer;
+}
+button:hover { border-color: var(--accent); }
+button.primary { color: var(--on-accent); background: var(--accent); border-color: var(--accent); }
+button.small { min-height: 30px; padding: 0 10px; font-size: 0.82rem; }
+@media (pointer: coarse) { button { min-height: 44px; } button.small { min-height: 36px; } }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+details { background: var(--field); border: 1px solid var(--rule); border-radius: 6px; }
+summary { padding: 8px 12px; font-size: 0.92rem; font-weight: 600; cursor: pointer; }
+.opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr)); gap: 12px; padding: 4px 12px 12px; }
+.opts input[type="text"] { background: var(--surface); }
+.tick { display: flex; align-items: center; gap: 8px; min-height: 40px; font-size: 0.92rem; }
+
+.out { display: grid; gap: 12px; min-width: 0; }
+.out[hidden] { display: none; }
+.verdict { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; padding: 10px 12px; color: var(--good); background: var(--good-tint); border-radius: 6px; }
+.verdict strong { font-size: 1.05rem; }
+.verdict.bad { color: var(--bad); background: var(--bad-tint); }
+.verdict.warn { color: var(--warn); background: var(--warn-tint); }
+.detail { min-width: 0; font-size: 0.95rem; overflow-wrap: anywhere; }
+
+.issues { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.issues li { display: grid; grid-template-columns: 5.5rem 1fr; gap: 10px; align-items: baseline; font: 0.9rem/1.45 var(--mono); overflow-wrap: anywhere; }
+.badge { justify-self: start; padding: 3px 6px; border-radius: 4px; font: 700 0.66rem/1 var(--sans); text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
+.badge.err { color: var(--bad); background: var(--bad-tint); }
+.badge.warn { color: var(--warn); background: var(--warn-tint); }
+.badge.note { color: var(--ink-soft); background: var(--field); border: 1px solid var(--rule); }
+
+.codebox { display: grid; gap: 6px; min-width: 0; }
+.codehead { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.codehead .label { margin: 0; }
+.code { margin: 0; padding: 10px 12px; background: var(--field); border: 1px solid var(--rule); border-radius: 6px; font: 0.9rem/1.5 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+.note-text { margin: 0; color: var(--ink-soft); font-size: 0.9rem; max-width: 65ch; }
+
+.strip { display: flex; flex-wrap: wrap; border-top: 1px solid var(--rule); border-left: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.cell { flex: 1 1 9rem; display: grid; gap: 2px; align-content: start; min-width: 0; padding: 8px 10px; background: var(--surface); border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.cell.type { flex: 0 1 11rem; }
+.cell.wide { flex: 1 1 100%; }
+.k { color: var(--ink-soft); font: 600 0.66rem/1.2 var(--sans); text-transform: uppercase; letter-spacing: 0.1em; }
+.v { font: 600 0.95rem/1.35 var(--mono); overflow-wrap: anywhere; }
+.type .v { color: var(--accent); font-size: 1.15rem; }
+.sub { color: var(--ink-soft); font: 400 0.85rem var(--sans); }
+.tail .v { font: 400 0.95rem/1.45 var(--sans); }
+
+.tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr)); gap: 12px; }
+.cap { margin-bottom: 6px; font: 700 0.95rem/1.2 var(--mono); }
+.cap span { margin-left: 8px; color: var(--ink-soft); font: 400 0.85rem var(--sans); }
+.pair { display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; border: 1px solid var(--rule); border-radius: 6px; }
+.tier { display: grid; gap: 2px; min-width: 0; padding: 8px 10px; background: var(--field); }
+.tier + .tier { border-left: 1px solid var(--rule); }
+.tier .name { font-size: 0.95rem; font-weight: 600; }
+.tier .st { color: var(--ink-soft); font: 400 0.82rem/1.2 var(--mono); }
+.tier.pass { background: var(--good-tint); }
+.tier.pass .st { color: var(--good); font-weight: 600; }
+.tier.fail { background: var(--bad-tint); }
+.tier.fail .st { color: var(--bad); font-weight: 600; }
+.tier.part { background: var(--warn-tint); }
+.tier.part .st { color: var(--warn); font-weight: 600; }
+
+.foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; color: var(--ink-soft); font-size: 0.85rem; }
+.foot > span { min-width: 0; overflow-wrap: anywhere; }
+noscript p { margin: 0; padding: 10px 12px; color: var(--warn); background: var(--warn-tint); border-radius: 6px; }
+
+@media (max-width: 560px) {
+  .bar { grid-template-columns: 1fr; }
+  .mark { font-size: 1.45rem; }
+  .issues li { grid-template-columns: 1fr; gap: 4px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="top">
+      <h1 class="mark"><span><span class="roger">roger</span><span class="wilco">wilco</span></span><span class="ver">RW1</span></h1>
+      <nav aria-label="Reference">
+        <a href="/spec">Spec</a>
+        <a href="/skill">Skill</a>
+        <a href="/legend?profile=core" id="legend-link">Legend</a>
+        <a href="/docs">API</a>
+      </nav>
+    </div>
+    <p class="lede">Agents hand work to each other in one typed line instead of a paragraph, with the facts in slots and the reasoning in a short tail. The receiver reads the line back before it owns the work, and the sender checks that readback in code. Roger means received and wilco means understood and will comply, and the receiver has to prove both before the sender lets go.</p>
+  </header>
+
+  <noscript><p>The playground needs JavaScript. The JSON API works without it: see <a href="/docs">/docs</a>.</p></noscript>
+
+  <div class="bar">
+    <div class="field">
+      <label class="label" for="profile">Profile</label>
+      <select id="profile"><option value="core">core</option><option value="pform">pform</option><option value="pay">pay</option></select>
+    </div>
+    <p id="profile-note">Both panels use it.</p>
+  </div>
+
+  <section class="panel" id="line-panel" aria-labelledby="h-line">
+    <div>
+      <h2 id="h-line">Try a line</h2>
+      <p class="hint">One message on one line. Pick an example or write your own, and the codec says what it understood.</p>
+    </div>
+    <div class="field">
+      <label class="label" for="example">Example</label>
+      <select id="example"></select>
+    </div>
+    <div class="field">
+      <label class="label" for="line">Message</label>
+      <textarea id="line" rows="4" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></textarea>
+    </div>
+    <div class="row">
+      <button type="button" class="primary" id="btn-validate">Validate</button>
+      <button type="button" id="btn-json">JSON</button>
+      <button type="button" id="btn-rb">Make readback</button>
+      <button type="button" id="btn-digest">Digest</button>
+    </div>
+    <details>
+      <summary>Readback options</summary>
+      <div class="opts">
+        <div class="field"><label class="label" for="rb-id">Readback id</label><input type="text" id="rb-id" autocomplete="off" spellcheck="false" placeholder="writer-01"></div>
+        <div class="field"><label class="label" for="rb-acc">acc (optional)</label><input type="text" id="rb-acc" autocomplete="off" spellcheck="false" placeholder="len:120w+tone:plain"></div>
+        <div class="field"><label class="label" for="rb-do">do (optional)</label><input type="text" id="rb-do" autocomplete="off" spellcheck="false" placeholder="copy"></div>
+        <label class="tick"><input type="checkbox" id="rb-hash" checked> Add h= digest</label>
+      </div>
+    </details>
+    <div class="out" id="out-line" aria-live="polite" hidden></div>
+  </section>
+
+  <section class="panel" id="check-panel" aria-labelledby="h-check">
+    <div>
+      <h2 id="h-check">Check a readback</h2>
+      <p class="hint">The sender's check. Paste the HO you sent and the RB that came back. Four tiers run, receipt and integrity (roger), then echo and comprehension (wilco). The receiver owns the item only if all of them pass.</p>
+    </div>
+    <div class="field">
+      <label class="label" for="pairs">Example</label>
+      <select id="pairs"></select>
+    </div>
+    <div class="pairbox">
+      <div class="field">
+        <label class="label" for="ho">HO the sender sent</label>
+        <textarea id="ho" rows="5" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></textarea>
+      </div>
+      <div class="field">
+        <label class="label" for="rb">RB that came back</label>
+        <textarea id="rb" rows="5" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></textarea>
+      </div>
+    </div>
+    <div class="field">
+      <label class="label" for="expect">Expected acc (optional, the criteria the sender kept back)</label>
+      <input type="text" id="expect" autocomplete="off" spellcheck="false" placeholder="len:120w+tone:plain+no:em-dash+must:monday-problem">
+    </div>
+    <div class="row"><button type="button" class="primary" id="btn-check">Check readback</button></div>
+    <div class="out" id="out-check" aria-live="polite" hidden></div>
+  </section>
+
+  <footer class="foot">
+    <span>Protocol RW1</span>
+    <span id="build"></span>
+    <span>MCP for agents: <code id="mcp-url">/mcp</code> <button type="button" class="small" id="copy-mcp">Copy URL</button></span>
+  </footer>
+</div>
+
+<script type="application/json" id="examples">
+{
+  "lines": [
+    {"label": "HO: hand work over", "line": "RW1 HO research-01 from=research to=writer item=gh:crox/site#42 ask=DRAFT due=20261002 pri=2 conf=M keep=research // hero copy, 120 words, no em dashes", "profile": null, "valid": true},
+    {"label": "HO: asks for a comprehension readback", "line": "RW1 HO research-03 from=research to=writer item=gh:crox/site#42 ask=DRAFT due=20261002 rb=acc keys=len+tone+must+no art=url:https://example.com/brief // hero copy, 120 words, plain tone, no em dashes, must name the reader's Monday problem", "profile": null, "valid": true},
+    {"label": "RB: readback with digest", "line": "RW1 RB writer-01 re=research-01 from=writer to=research item=gh:crox/site#42 ask=DRAFT due=20261002 h=c40bba4360dc", "profile": null, "valid": true},
+    {"label": "AQ: bounded question", "line": "RW1 AQ writer-02 re=research-01 from=writer to=research item=gh:crox/site#42 need=ENUM opts=formal+plain+punchy // tone?", "profile": null, "valid": true},
+    {"label": "AN: answer", "line": "RW1 AN research-02 re=writer-02 from=research to=writer val=plain", "profile": null, "valid": true},
+    {"label": "ST: status", "line": "RW1 ST builder-10 from=builder to=ops item=jira:OPS-77 pct=60 eta=20261003 blk=jira:OPS-80", "profile": null, "valid": true},
+    {"label": "DN: done", "line": "RW1 DN writer-03 re=research-01 from=writer to=research item=gh:crox/site#42 out=OK art=sha256:9f3e1c // v1, 118 words", "profile": null, "valid": true},
+    {"label": "UN: unable", "line": "RW1 UN writer-04 re=research-01 from=writer to=research item=gh:crox/site#42 why=NOCTX alt=copywriter // no style guide on file", "profile": null, "valid": true},
+    {"label": "FL: failed", "line": "RW1 FL builder-09 re=ops-04 from=builder to=ops item=jira:OPS-77 why=ERR art=url:https://ci.example/run/812 retry=Y // test suite red on 3 cases", "profile": null, "valid": true},
+    {"label": "AQ to a human: escalation", "line": "RW1 AQ triage-09 from=triage to=human item=pensive:4664 need=ENUM opts=RETIRE+ACTIVATE+PARK by=20261005 // stale 15d, no owner active; default PARK", "profile": null, "valid": true},
+    {"label": "pay profile: invoice handoff", "line": "RW1 HO extractor-01 p=pay from=extractor to=reconciler item=inv:INV-000491 ask=RECON sup=northfield po=PO-2291 amt=5400.00 cur=GBP kind=NET // 5400.00 net, check against the PO", "profile": "pay", "valid": true},
+    {"label": "pform profile: knowledge-graph handoff", "line": "RW1 HO TRI-01 p=pform from=TRI to=ARC item=pensive:4102 ask=SCORE4 stg=DIA os=NOW imp=7 heat=HOT stall=15d touch=20260914", "profile": "pform", "valid": true},
+    {"label": "Invalid: unknown ask code", "line": "RW1 HO research-01 from=research to=writer item=gh:crox/site#42 ask=WRITE", "profile": null, "valid": false},
+    {"label": "Invalid: missing item", "line": "RW1 HO research-01 from=research to=writer ask=DRAFT", "profile": null, "valid": false}
+  ],
+  "pairs": [
+    {"label": "Passes: envelope echoed, digest matches", "ho": "RW1 HO research-01 from=research to=writer item=gh:crox/site#42 ask=DRAFT due=20261002 pri=2 conf=M keep=research // hero copy, 120 words, no em dashes", "rb": "RW1 RB writer-01 re=research-01 from=writer to=research item=gh:crox/site#42 ask=DRAFT due=20261002 h=c40bba4360dc", "expect": "", "profile": null, "passes": true},
+    {"label": "Passes: comprehension readback, one assumption to confirm", "ho": "RW1 HO research-03 from=research to=writer item=gh:crox/site#42 ask=DRAFT due=20261002 rb=acc keys=len+tone+must+no art=url:https://example.com/brief // hero copy, 120 words, plain tone, no em dashes, must name the reader's Monday problem", "rb": "RW1 RB writer-05 re=research-03 from=writer to=research item=gh:crox/site#42 ask=DRAFT due=20261002 acc=len:120w+tone:plain+must:monday-problem+no:em-dash+fmt:md do=copy // landing hero, 120 words, plain, lead with the Monday problem", "expect": "len:120w+tone:plain+no:em-dash+must:monday-problem", "profile": null, "passes": true},
+    {"label": "Fails: receiver misread the ask", "ho": "RW1 HO ops-03 from=ops to=builder item=jira:OPS-77 ask=FIX due=20261001", "rb": "RW1 RB builder-05 re=ops-03 from=builder to=ops item=jira:OPS-77 ask=BUILD due=20261001", "expect": "", "profile": null, "passes": false},
+    {"label": "Fails: receiver understood 150 words, sender meant 120", "ho": "RW1 HO research-03 from=research to=writer item=gh:crox/site#42 ask=DRAFT due=20261002 rb=acc keys=len+tone+must+no art=url:https://example.com/brief // hero copy, 120 words, plain tone, no em dashes, must name the reader's Monday problem", "rb": "RW1 RB writer-05 re=research-03 from=writer to=research item=gh:crox/site#42 ask=DRAFT due=20261002 acc=len:150w+tone:plain+must:monday-problem+no:em-dash do=copy // landing hero, 150 words", "expect": "len:120w+tone:plain+no:em-dash+must:monday-problem", "profile": null, "passes": false},
+    {"label": "Fails: digest does not match the HO", "ho": "RW1 HO research-01 from=research to=writer item=gh:crox/site#42 ask=DRAFT due=20261002 pri=2 conf=M keep=research // hero copy, 120 words, no em dashes", "rb": "RW1 RB writer-01 re=research-01 from=writer to=research item=gh:crox/site#42 ask=DRAFT due=20261002 h=000000000000", "expect": "", "profile": null, "passes": false},
+    {"label": "Fails: readback answers a different message", "ho": "RW1 HO research-01 from=research to=writer item=gh:crox/site#42 ask=DRAFT due=20261002 pri=2 conf=M keep=research // hero copy, 120 words, no em dashes", "rb": "RW1 RB writer-01 re=research-09 from=writer to=research item=gh:crox/site#42 ask=DRAFT due=20261002", "expect": "", "profile": null, "passes": false}
+  ]
+}
+</script>
+
+<script>
+"use strict";
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const DATA = JSON.parse($("examples").textContent);
+  const TYPE_NAMES = { HO: "handoff", RB: "readback", AQ: "ask", AN: "answer", ST: "status", DN: "done", UN: "unable", FL: "fail" };
+
+  // ---------------------------------------------------------------- small helpers
+
+  // Builds DOM nodes. Every string goes in as a text node, so nothing the user types is ever parsed as HTML.
+  function h(tag, props, ...kids) {
+    const node = document.createElement(tag);
+    for (const [key, value] of Object.entries(props || {})) {
+      if (value == null || value === false) continue;
+      node.setAttribute(key, value === true ? "" : value);
+    }
+    for (const kid of kids.flat()) if (kid != null && kid !== false) node.append(kid);
+    return node;
+  }
+
+  async function api(path, body) {
+    try {
+      const res = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      const data = await res.json().catch(() => null);
+      if (res.ok) return { data };
+      return { error: (data && data.error) || "The server answered " + res.status + "." };
+    } catch (e) {
+      return { error: "Could not reach the server.", network: true };
+    }
+  }
+
+  const show = (outId, nodes) => { const box = $(outId); box.replaceChildren(...nodes.filter(Boolean)); box.hidden = false; };
+  const verdict = (kind, title, detail) => h("div", { class: "verdict " + kind, role: "status" }, h("strong", null, title), detail ? h("span", { class: "detail" }, detail) : null);
+  const issues = (kind, label, items) => items.length ? h("ul", { class: "issues" }, items.map((t) => h("li", null, h("span", { class: "badge " + kind }, label), h("span", null, t)))) : null;
+  const plural = (n, word) => n + " " + word + (n === 1 ? "" : "s");
+
+  function selectText(node) {
+    const range = document.createRange();
+    range.selectNodeContents(node);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
+  async function copy(text, button, fallbackNode) {
+    const old = button.textContent;
+    try { await navigator.clipboard.writeText(text); button.textContent = "Copied"; }
+    catch (e) { if (fallbackNode) selectText(fallbackNode); button.textContent = "Selected"; }
+    setTimeout(() => { button.textContent = old; }, 1500);
+  }
+
+  function codeBox(label, text) {
+    const pre = h("pre", { class: "code" }, text);
+    const btn = h("button", { type: "button", class: "small" }, "Copy");
+    btn.addEventListener("click", () => copy(text, btn, pre));
+    return h("div", { class: "codebox" }, h("div", { class: "codehead" }, h("span", { class: "label" }, label), btn), pre);
+  }
+
+  // The head of a line is everything before the tail. slotOf reads one key=value from it.
+  const head = (line) => line.split(" // ")[0];
+  const slotOf = (line, key) => { const m = head(line).match(new RegExp("(?:^| )" + key + "=(\\S+)")); return m ? m[1] : null; };
+  const fmt = (v) => Array.isArray(v) ? v.join("+") : typeof v === "boolean" ? (v ? "Y" : "N") : String(v);
+
+  // Lines are long and wrap on a phone, so a textarea grows to show all of its text.
+  const AUTOSIZE = ["line", "ho", "rb"];
+  const fit = (el) => { el.style.height = "auto"; el.style.height = (el.scrollHeight + 2) + "px"; };
+  const put = (id, text) => { $(id).value = text; fit($(id)); };
+
+  // Returns the box's single line, or null after saying what is wrong.
+  function readLine(id, outId, what) {
+    const raw = $(id).value.replace(/[\r\n]+$/, "");
+    if (!raw.trim()) { show(outId, [verdict("warn", "Nothing to check", "Write or paste " + what + " first.")]); return null; }
+    if (/[\r\n]/.test(raw)) { show(outId, [verdict("warn", "One line per box", "A rogerwilco message is a single line. Remove the line break, or paste the next message in its own box.")]); return null; }
+    return raw;
+  }
+
+  async function call(outId, path, body) {
+    const res = await api(path, body);
+    if (res.error) { show(outId, [verdict("bad", res.network ? "No answer" : "Not accepted", res.error)]); return null; }
+    return res.data;
+  }
+
+  const profile = () => { const v = $("profile").value; return v === "core" ? null : v; };
+
+  // ---------------------------------------------------------------- panel 1: one line
+
+  function strip(m) {
+    const cells = [];
+    const cell = (cls, k, v) => cells.push(h("div", { class: "cell " + cls }, h("span", { class: "k" }, k), h("span", { class: "v" }, v)));
+    cell("type", "type", [m.type, h("span", { class: "sub" }, TYPE_NAMES[m.type] ? " " + TYPE_NAMES[m.type] : "")]);
+    if (m.id) cell("", "id", m.id);
+    if (m.re) cell("", "re", m.re);
+    if (m.from || m.to) cell("", "from to", (m.from || "?") + " → " + (m.to || "?"));
+    if (m.item) cell("", "item", m.item);
+    for (const [k, v] of Object.entries(m.slots || {})) cell("", k, fmt(v));
+    if (m.tail != null) cell("wide tail", "tail", m.tail);
+    return h("div", { class: "strip", role: "group", "aria-label": "Decoded message" }, cells);
+  }
+
+  async function doValidate() {
+    const line = readLine("line", "out-line", "a message");
+    if (line == null) return;
+    const r = await call("out-line", "/validate", { line, profile: profile() });
+    if (!r) return;
+    const m = r.message;
+    const what = m.type ? m.type + (TYPE_NAMES[m.type] ? ", " + TYPE_NAMES[m.type] : "") : "";
+    const tally = [];
+    if (r.errors.length) tally.push(plural(r.errors.length, "error"));
+    if (r.warnings.length) tally.push(plural(r.warnings.length, "warning"));
+    show("out-line", [
+      r.ok ? verdict(r.warnings.length ? "warn" : "good", "Valid", [what, tally.join(", ")].filter(Boolean).join(". "))
+           : verdict("bad", "Not valid", tally.join(", ") + ". The cells below show what the codec could read."),
+      m.type ? strip(m) : null,
+      issues("err", "error", r.errors),
+      issues("warn", "warning", r.warnings),
+    ]);
+  }
+
+  async function doJson() {
+    const line = readLine("line", "out-line", "a message");
+    if (line == null) return;
+    const r = await call("out-line", "/to-json", { line, profile: profile() });
+    if (!r) return;
+    show("out-line", [
+      verdict("good", "JSON form", "The same message in its other form. The codec maps both ways."),
+      codeBox("JSON", JSON.stringify(r.message, null, 2)),
+    ]);
+  }
+
+  async function doDigest() {
+    const line = readLine("line", "out-line", "a message");
+    if (line == null) return;
+    const r = await call("out-line", "/digest", { line, profile: profile() });
+    if (!r) return;
+    show("out-line", [
+      verdict("good", "Digest", "h=" + r.digest),
+      codeBox("h= value", r.digest),
+      h("p", { class: "note-text" }, "The first 12 hex characters of SHA-256 over the message's canonical JSON. A receiver that runs code puts it in h= on its readback, and the sender checks it in tier 2."),
+    ]);
+  }
+
+  function suggestedId(line) {
+    const num = (line.split(" ")[2] || "").match(/(\d+)$/);
+    return (slotOf(line, "to") || "receiver") + "-" + (num ? num[1] : "01");
+  }
+
+  async function doReadback() {
+    const line = readLine("line", "out-line", "an HO");
+    if (line == null) return;
+    const id = $("rb-id").value.trim() || suggestedId(line);
+    $("rb-id").value = id;
+    const r = await call("out-line", "/make-rb", {
+      ho: line, id, profile: profile(), acc: $("rb-acc").value.trim() || null,
+      do: $("rb-do").value.trim() || null, hash: $("rb-hash").checked,
+    });
+    if (!r) return;
+    const toCheck = h("button", { type: "button", class: "primary" }, "Check this pair");
+    toCheck.addEventListener("click", () => {
+      put("ho", line); put("rb", r.rb); $("expect").value = ""; $("pairs").value = "";
+      run("out-check", doCheck);
+      $("check-panel").scrollIntoView({ block: "start" });
+    });
+    show("out-line", [
+      verdict("good", "Readback built", "What the receiver sends back before it owns the work."),
+      codeBox("RB", r.rb),
+      h("div", { class: "row" }, toCheck),
+    ]);
+  }
+
+  // ---------------------------------------------------------------- panel 2: check a readback
+
+  // Which tiers ran, read from the codec's problems and notes. Only presentation: the verdict is the codec's.
+  function tierStates(ho, rb, problems, notes) {
+    const reached = problems.every((p) => /^tier\d/.test(p));
+    const failed = (n) => problems.some((p) => p.startsWith("tier" + n));
+    const asked = (slotOf(ho, "rb") || "").toLowerCase().split("+");
+    const state = (n, skipped) => !reached ? ["skip", "not reached"] : skipped ? ["skip", skipped] : failed(n) ? ["fail", "fail"] : ["pass", "pass"];
+    let t4 = state(4, !(asked.includes("acc") || asked.includes("plan")) && "not asked");
+    if (t4[0] === "pass" && notes.some((n) => n.startsWith("tier4:"))) t4 = ["part", "recorded, not compared"];
+    return { reached, tiers: [state(1), state(2, slotOf(rb, "h") == null && "no h= sent"), state(3), t4] };
+  }
+
+  function tierGroup(title, meaning, items) {
+    const tier = ([n, name, [cls, label]]) => h("div", { class: "tier " + cls }, h("span", { class: "k" }, "tier " + n), h("span", { class: "name" }, name), h("span", { class: "st" }, label));
+    return h("div", null, h("div", { class: "cap" }, title, h("span", null, meaning)), h("div", { class: "pair" }, items.map(tier)));
+  }
+
+  async function doCheck() {
+    const ho = readLine("ho", "out-check", "the HO");
+    if (ho == null) return;
+    const rb = readLine("rb", "out-check", "the RB");
+    if (rb == null) return;
+    const r = await call("out-check", "/check-rb", { ho, rb, profile: profile(), expect_acc: $("expect").value.trim() || null });
+    if (!r) return;
+    const { reached, tiers } = tierStates(ho, rb, r.problems, r.notes);
+    const to = slotOf(ho, "to");
+    let banner;
+    if (!reached) banner = verdict("bad", "Not checked", "A line did not parse or is the wrong type, so no tier ran.");
+    else if (r.ok) banner = verdict(r.notes.length ? "warn" : "good", "Roger, wilco", "The readback passes and " + (to || "the receiver") + " owns the item." + (r.notes.length ? " " + plural(r.notes.length, "note") + " to confirm." : ""));
+    else banner = verdict("bad", "Say again", "The readback fails, so it is void. The sender still owns the item and re-sends the HO with re= pointing at this RB.");
+    show("out-check", [
+      banner,
+      h("div", { class: "tiers" },
+        tierGroup("roger", "received, intact", [[1, "Receipt", tiers[0]], [2, "Integrity", tiers[1]]]),
+        tierGroup("wilco", "understood, will comply", [[3, "Echo", tiers[2]], [4, "Comprehension", tiers[3]]])),
+      issues("err", "problem", r.problems),
+      issues("note", "note", r.notes),
+    ]);
+  }
+
+  // ---------------------------------------------------------------- wiring
+
+  async function run(outId, fn) {
+    try { await fn(); }
+    catch (e) { show(outId, [verdict("bad", "Something broke", String(e && e.message || e))]); }
+  }
+
+  function setProfile(name) {
+    const sel = $("profile");
+    sel.value = name || "core";
+    if (sel.value !== (name || "core")) sel.value = "core";
+    updateProfileNote();
+  }
+
+  let profiles = [];
+  function updateProfileNote() {
+    const name = $("profile").value;
+    const found = profiles.find((p) => p.name === name);
+    $("profile-note").textContent = (found && found.description ? found.description + " " : "") + "Both panels use it.";
+    $("legend-link").setAttribute("href", "/legend?profile=" + encodeURIComponent(name));
+  }
+
+  async function loadProfiles() {
+    try {
+      const res = await fetch("/profiles");
+      if (!res.ok) return;
+      profiles = await res.json();
+      const sel = $("profile");
+      sel.replaceChildren(...profiles.map((p) => h("option", { value: p.name }, p.name)));
+    } catch (e) { /* keep the three built-in options */ }
+    updateProfileNote();
+  }
+
+  function fillExamples() {
+    const options = (sel, items) => sel.replaceChildren(h("option", { value: "" }, "Your own"), ...items.map((it, i) => h("option", { value: String(i) }, it.label)));
+    options($("example"), DATA.lines);
+    options($("pairs"), DATA.pairs);
+    $("example").addEventListener("change", () => {
+      const it = DATA.lines[$("example").value]; if (!it) return;
+      put("line", it.line); setProfile(it.profile); $("rb-id").value = "";
+      run("out-line", doValidate);
+    });
+    $("pairs").addEventListener("change", () => {
+      const it = DATA.pairs[$("pairs").value]; if (!it) return;
+      put("ho", it.ho); put("rb", it.rb); $("expect").value = it.expect; setProfile(it.profile);
+      run("out-check", doCheck);
+    });
+    $("line").addEventListener("input", () => { $("example").value = ""; });
+    for (const id of ["ho", "rb", "expect"]) $(id).addEventListener("input", () => { $("pairs").value = ""; });
+    for (const id of AUTOSIZE) $(id).addEventListener("input", (e) => fit(e.target));
+    window.addEventListener("resize", () => AUTOSIZE.forEach((id) => fit($(id))));
+  }
+
+  function start() {
+    $("btn-validate").addEventListener("click", () => run("out-line", doValidate));
+    $("btn-json").addEventListener("click", () => run("out-line", doJson));
+    $("btn-rb").addEventListener("click", () => run("out-line", doReadback));
+    $("btn-digest").addEventListener("click", () => run("out-line", doDigest));
+    $("btn-check").addEventListener("click", () => run("out-check", doCheck));
+    $("profile").addEventListener("change", updateProfileNote);
+    const mcp = location.origin + "/mcp";
+    $("mcp-url").textContent = mcp;
+    $("copy-mcp").addEventListener("click", (e) => copy(mcp, e.currentTarget, $("mcp-url")));
+    fillExamples();
+
+    // Open in a working state: the first example and the first readback pair, already run.
+    $("example").value = "0"; $("example").dispatchEvent(new Event("change"));
+    $("pairs").value = "0"; $("pairs").dispatchEvent(new Event("change"));
+    loadProfiles();
+    fetch("/healthz").then((r) => r.json()).then((j) => { $("build").textContent = "Build " + j.commit; }).catch(() => {});
+  }
+
+  start();
+})();
+</script>
+</body>
+</html>

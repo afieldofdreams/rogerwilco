@@ -1,0 +1,3 @@
+# Your AI demo worked. Your rollout did not.
+
+It is Monday morning, and the compliance review has bounced your AI feature again. The launch date has slipped, and the Slack thread about it is getting longer. You keep hitting the same two walls, compliance and reliability, and neither one fixes itself. We are Crox, a small consultancy. We help teams get AI features through compliance review and into production, and keep them reliable once real users arrive. We have shipped AI in regulated industries, including health and financial services. Most engagements run three to six months, and we work directly with product and engineering leads. Tell us where your feature is stuck. If we can help, we will say how. If we cannot, we will say that too.

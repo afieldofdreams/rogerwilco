@@ -1,0 +1,3 @@
+# Your AI feature stalled in compliance review. We know why.
+
+Getting AI into production is harder than it looks. The model works perfectly in the demo, the team is confident, but then compliance finds something and pushes back. Or a pilot goes live and you discover edge cases nobody saw during testing. We have shipped regulated-industry AI to companies in health and financial services. The work is hard because it has to be. We build the infrastructure that keeps you moving when the rules get tight. We handle the audit trails, the failure logging, the rollback paths. We think through the scenarios your team hasn't yet encountered. Your next sprint doesn't need to pause while compliance catches up with your business needs. That's exactly what Crox does.

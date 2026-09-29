@@ -1,0 +1,3 @@
+# Your AI feature is built. Now it won't pass compliance.
+
+You have worked months to get an AI feature into your product. It works. But when your compliance team reviews it, the answer bounces back. Or it ships, and your first customer's audit fails. We work with founders and product teams to ship AI when regulation stands in the way. We have built systems in healthcare and financial services, and we know what regulators actually need. Our engagements usually run three to six months. We work directly with your engineering team, not through procurement. We are a small group who have been building AI products and living with their fallout for more than a decade. We know where most teams get stuck.

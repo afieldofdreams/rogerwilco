@@ -1,0 +1,3 @@
+# What is keeping your AI feature out of production?
+
+It is Monday morning, the demo worked, the rollout did not, and the compliance review keeps sending your AI feature back. Customers and investors are asking for a date. At Crox, we have shipped AI in regulated industries, including health and financial services. In those settings a wrong answer has real consequences. Shipping there taught us what reviewers ask for and where features break once real users arrive. We build compliance and reliability into the work from the start, so reviewers get the evidence they need and customers get the same behaviour you saw in the demo. If that sounds like your Monday, tell us where it is stuck and we will tell you plainly what it takes to ship.

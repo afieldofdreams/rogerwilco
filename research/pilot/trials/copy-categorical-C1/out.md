@@ -1,0 +1,3 @@
+# What is stopping your AI feature from reaching production?
+
+It is Monday morning, and the AI feature that worked in your demo is still not live, because the compliance review keeps sending it back. We know that Monday well. At Crox, we have shipped AI for organisations in regulated industries, including health and financial services, so we know what reviewers ask for and what breaks under real load. A demo runs once, on good inputs. Production runs all day, on everything else. We build for the reviewer and for the rollout from the start, so the feature you demo is the feature you ship. If you are a founder or product lead with a feature stuck behind a compliance or reliability wall, talk to us about getting it live.

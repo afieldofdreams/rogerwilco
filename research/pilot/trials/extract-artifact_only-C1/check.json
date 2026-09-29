@@ -1,0 +1,20 @@
+{
+ "first": {
+  "rb": "FC1 RB extractor-01 re=lead-01 from=extractor to=lead item=fin:aug-2026-invoices ask=EXTRACT due=20261002 acc=fmt:json+scope:gbp-only+scope:august-2026+must:net-amount+must:iso-dates+must:invoice-numbers-exactly-as-written+must:one-object-per-invoice+must:corrected-figures+must:corrected-true+no:voided-invoices+no:cancelled-invoices+no:credit-notes+no:statements+no:prose+no:code-fences do=dataset not=INV-000488+7731+CN-012+evergreen-statement asm=due-date-is-invoice-date-plus-terms+null-due-date-when-no-terms+supplier-names-from-sender-domains+slash-dates-read-as-dmy // one JSON object per GBP supplier invoice in the thread: net amount, ISO dates, numbers verbatim, drop voided, credit notes, statements and USD, apply the later INV-000491 correction with corrected:true, bare JSON array only",
+  "passed": true,
+  "problems": [],
+  "notes": [
+   "assumption: receiver added scope:august-2026; confirm or correct",
+   "loose match: sender must:exact-invoice-numbers taken as receiver must:one-object-per-invoice",
+   "loose match: sender must:corrected-flag taken as receiver must:corrected-true",
+   "assumption: receiver added no:cancelled-invoices; confirm or correct",
+   "assumption: receiver added no:prose; confirm or correct",
+   "assumption: receiver added no:code-fences; confirm or correct",
+   "assumption: receiver added no:INV-000488; confirm or correct",
+   "assumption: receiver added no:7731; confirm or correct",
+   "assumption: receiver added no:CN-012; confirm or correct",
+   "assumption: receiver added no:evergreen-statement; confirm or correct"
+  ],
+  "rb_file": "rb.txt"
+ }
+}

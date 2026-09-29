@@ -1,0 +1,72 @@
+{
+ "id": "extract-clean-C2",
+ "domain": "extract",
+ "variant": "clean",
+ "fault": "clean",
+ "arm": "C",
+ "seed": 2,
+ "crit": {
+  "code": [
+   {
+    "id": "json",
+    "check": "json_array",
+    "value": null,
+    "desc": "parses as a JSON array"
+   },
+   {
+    "id": "set",
+    "check": "invoice_set",
+    "value": [
+     "INV-000482",
+     "INV-000491",
+     "MD-2026-057"
+    ],
+    "desc": "exactly the expected invoice numbers, as written"
+   },
+   {
+    "id": "amounts",
+    "check": "amounts",
+    "value": {
+     "INV-000482": 1240.0,
+     "INV-000491": 315.5,
+     "MD-2026-057": 4500.0
+    },
+    "desc": "net amounts correct, corrected figure used for INV-000491"
+   },
+   {
+    "id": "dates",
+    "check": "dates_iso",
+    "value": {
+     "INV-000482": "2026-08-04",
+     "INV-000491": "2026-08-18",
+     "MD-2026-057": "2026-08-27"
+    },
+    "desc": "dates ISO and correct"
+   },
+   {
+    "id": "currency",
+    "check": "currencies",
+    "value": {
+     "INV-000482": "GBP",
+     "INV-000491": "GBP",
+     "MD-2026-057": "GBP"
+    },
+    "desc": "currency codes correct"
+   },
+   {
+    "id": "excluded",
+    "check": "invoice_absent",
+    "value": [
+     "INV-000488",
+     "CN-012"
+    ],
+    "desc": "voided invoice and credit note absent"
+   }
+  ],
+  "semantic": [],
+  "acc": "fmt:json+scope:gbp-only+must:net-amounts+must:iso-dates+must:exact-invoice-numbers+no:voided+no:credit-notes+no:statements",
+  "keys": "fmt+scope+must+no"
+ },
+ "tail": "extract August supplier invoices from the email thread into a JSON array: net amounts, GBP only, ISO dates, invoice numbers exactly as written, exclude voided invoices, credit notes and statements",
+ "ho": "FC1 HO lead-01 from=lead to=extractor item=fin:aug-2026-invoices ask=EXTRACT due=20261002 rb=acc keys=fmt+scope+must+no art=file:brief.md // extract August supplier invoices from the email thread into a JSON array: net amounts, GBP only, ISO dates, invoice numbers exactly as written, exclude voided invoices, credit notes and statements"
+}

@@ -1,0 +1,3 @@
+# Why does your AI feature keep stalling between the demo and the rollout?
+
+It is Monday morning, and the compliance review has sent your AI feature back again. The demo worked, and everyone who saw it keeps asking when it ships. You still cannot give them a date. A demo only has to work once. Production needs predictable behaviour, a record of what the feature did and why, and monitoring that catches problems before your customers do. At Crox, we have shipped AI in regulated industries, including health and financial services, so we know the questions before the reviewer asks them. We work alongside your product and engineering team to build the answers into the feature. So the next review has fewer reasons to send it back, and the rollout has fewer surprises.

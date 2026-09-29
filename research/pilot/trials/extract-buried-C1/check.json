@@ -1,0 +1,21 @@
+{
+ "first": {
+  "rb": "FC1 RB extractor-01 re=lead-01 from=extractor to=lead item=fin:aug-2026-invoices ask=EXTRACT due=20261002 acc=fmt:json+scope:gbp-only+must:single-json-array+must:one-object-per-invoice+must:net-amount-excluding-vat+must:amount-and-vat-as-strings-with-exactly-two-decimal-places+must:iso-8601-dates+must:invoice-number-exactly-as-written+must:note-field-if-ambiguous+must:precision-beats-coverage+no:voided-or-cancelled-invoices+no:credit-notes+no:statements+no:invoices-in-another-currency+no:json-floats+no:prose+no:code-fences do=dataset not=voided-INV-000488+credit-note-CN-012+usd-invoice-7731+evergreen-statement asm=INV-000491-uses-corrected-net-315.50-vat-63.10+due-date-null-where-only-payment-terms-given+supplier-names-from-sender-domains // extract Aug supplier invoices from the thread into one bare JSON array: GBP only, net and vat as 2dp strings, ISO dates, numbers verbatim, latest correction wins, note field if ambiguous. Brief says before 3rd working day of Sept, HO due is 20261002; echoing the HO.",
+  "passed": true,
+  "problems": [],
+  "notes": [
+   "loose match: sender must:net-amounts taken as receiver must:amount-and-vat-as-strings-with-exactly-two-decimal-places",
+   "loose match: sender must:exact-invoice-numbers taken as receiver must:one-object-per-invoice",
+   "loose match: sender must:amounts-as-2dp-strings taken as receiver must:net-amount-excluding-vat",
+   "assumption: receiver added must:single-json-array; confirm or correct",
+   "assumption: receiver added must:note-field-if-ambiguous; confirm or correct",
+   "assumption: receiver added must:precision-beats-coverage; confirm or correct",
+   "assumption: receiver added no:invoices-in-another-currency; confirm or correct",
+   "assumption: receiver added no:json-floats; confirm or correct",
+   "assumption: receiver added no:prose; confirm or correct",
+   "assumption: receiver added no:code-fences; confirm or correct",
+   "assumption: receiver added no:usd-invoice-7731; confirm or correct"
+  ],
+  "rb_file": "rb.txt"
+ }
+}

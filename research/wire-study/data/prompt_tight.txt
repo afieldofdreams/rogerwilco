@@ -1,0 +1,87 @@
+You are a receiving agent in a multi-agent system. Other agents send you handoff messages about nodes in a knowledge graph. For each message, decide what to do by applying the policy below exactly. Today is 27 September 2026.
+
+Do not run code, write scripts, or use any tools. Read each message yourself and decide. This tests reading comprehension.
+
+Receiver policy. Apply rules in order; the first rule that matches decides.
+1. WAIT if the node is blocked by any other node.
+2. BOUNCE if confidence is low AND the ask is DECIDE (make a decision) or BUILD (build it).
+3. EXPEDITE if there is a due date earlier than 4 October 2026 (20261004).
+4. ESCALATE if it has been stalled 14 days or more AND importance is 7 or higher.
+5. CLOSE if the pipeline stage is done.
+6. ACCEPT otherwise.
+Stall days or importance that are not stated do not satisfy rule 4.
+
+Message format reference:
+P-Form tight form. Space-separated, fixed positions, '-' = not stated.
+HO from to node stage opstatus importance heat stall_days confidence ask keep_assigned due source_view blocked_by // optional note
+Lists join with '+'. Dates YYYYMMDD. stall_days is a number of days.
+stance: TRI=Triage, STR=Strategist, ARC=Architect, BLD=Builder, QAR=QA Reviewer, CPY=Copywriter, GRD=Gardener, DAT=Data Analyst, MKT=Market Researcher, SCT=Scout, IDE=Ideator, ADAM=Adam
+stage: DIA=diagnose, REV=review, OPT=options, DEC=decide, ACT=action, DONE=done
+opstatus: NOW=now, WAIT=waiting, SCH=scheduled, DONE=done, NONE=none
+conf: L=low, M=medium, H=high
+heat: COLD=cold, WARM=warm, HOT=hot
+ask: SCORE4=run 4-axis scoring, SPEC=write implementation spec, BUILD=build it, REVIEW=review against criteria, ENRICH=fill missing fields, PRUNE=retire or merge node, DECIDE=make a decision, RESEARCH=validate the pain point, DRAFT=draft public copy
+
+Messages:
+m01: HO CPY ARC 3828 ACT NONE 7 HOT 9 H SCORE4 MKT 20261015 119 -
+m02: HO MKT TRI 1300 OPT NONE 9 - 15 L BUILD IDE 20261003 - -
+m03: HO QAR BLD 3025 DONE NONE 2 - 9 L DRAFT ADAM+GRD - 120 - // Related thread in Claude Questions.
+m04: HO IDE TRI 3049 DONE - 4 - - H SCORE4 - - - -
+m05: HO QAR MKT 4935 DIA - 5 COLD 7 L REVIEW - - - - // Description field is thin.
+m06: HO DAT SCT 3244 DIA NONE - - 28 L RESEARCH - - - 3776+4488 // Adam mentioned this on the call, no decision yet.
+m07: HO SCT ARC 2121 ACT NOW 8 - 40 H RESEARCH ADAM+SCT - 97 - // Came in via the Inbox Queue last week.
+m08: HO BLD STR 1862 DIA - 7 HOT 21 M DRAFT - - 97 -
+m09: HO IDE SCT 1705 DIA NONE 9 - 19 M DRAFT DAT - - - // Description field is thin.
+m10: HO IDE BLD 1346 ACT - 10 WARM - H BUILD SCT+STR - 74 -
+m11: HO DAT MKT 3089 DONE - 6 - 2 L SCORE4 - - - - // Last touched during the Q3 review.
+m12: HO DAT SCT 4427 OPT NOW 9 - - M REVIEW - 20261011 - 2740+3568 // Last touched during the Q3 review.
+m13: HO TRI CPY 4312 DIA WAIT 7 - 28 H RESEARCH DAT+ARC - 121 -
+m14: HO IDE GRD 3464 REV - 5 HOT - M ENRICH - - 120 -
+m15: HO MKT SCT 4534 DONE - 10 WARM - L BUILD TRI+STR - - - // Description field is thin.
+m16: HO STR DAT 4227 DONE - 7 - - H SPEC ADAM+QAR - 121 -
+m17: HO MKT DAT 3300 DIA WAIT 8 - - L RESEARCH BLD+DAT - - - // Two stale edges to archived nodes.
+m18: HO SCT GRD 1390 DEC - - HOT 13 L BUILD TRI - 74 -
+m19: HO QAR MKT 2038 OPT - 4 HOT 14 H PRUNE - - 120 - // Last touched during the Q3 review.
+m20: HO QAR TRI 1992 OPT NONE - WARM 9 L REVIEW BLD 20261016 119 3481
+m21: HO SCT GRD 3607 ACT - 8 WARM 14 H DECIDE QAR - 97 - // Came in via the Inbox Queue last week.
+m22: HO QAR STR 3131 DIA - 5 COLD 21 M REVIEW - - - 2802 // Related thread in Claude Questions.
+m23: HO BLD QAR 3713 OPT NONE 5 HOT - L BUILD DAT 20261003 120 -
+m24: HO QAR CPY 1672 REV - 5 - 21 L RESEARCH GRD+ARC 20261003 94 -
+m25: HO GRD IDE 1801 OPT - 7 - 14 H DRAFT - 20261017 - -
+m26: HO IDE TRI 4207 DEC NOW 6 - 7 H SCORE4 - - - 3819 // Linked to the partner pipeline.
+m27: HO GRD IDE 2695 DONE SCH 8 WARM 19 H REVIEW - - - 2575 // Two stale edges to archived nodes.
+m28: HO ARC STR 2801 DEC NOW 4 COLD - M BUILD TRI 20261025 74 1416 // Came in via the Inbox Queue last week.
+m29: HO STR QAR 2680 DEC NONE 6 HOT - L BUILD - - - -
+m30: HO STR GRD 2810 OPT WAIT 2 - 40 L REVIEW STR - - -
+m31: HO TRI SCT 1960 REV WAIT 2 - 13 H SCORE4 - 20261003 - - // Related thread in Claude Questions.
+m32: HO QAR CPY 4939 OPT SCH 3 WARM 12 H PRUNE ADAM+TRI - 119 2613 // Adam mentioned this on the call, no decision yet.
+m33: HO MKT STR 4025 DONE - 3 COLD 19 M ENRICH STR+CPY - - -
+m34: HO STR SCT 4594 REV NONE 10 - 15 L RESEARCH - 20261023 - - // Two stale edges to archived nodes.
+m35: HO DAT ARC 1446 DIA NONE - COLD 12 L ENRICH IDE - 121 - // Adam mentioned this on the call, no decision yet.
+m36: HO QAR IDE 2454 DEC SCH - COLD 5 M PRUNE SCT+TRI 20261023 - 3233+3351 // Adam mentioned this on the call, no decision yet.
+m37: HO GRD QAR 4476 DIA NONE - COLD 19 L SCORE4 - - 119 - // Linked to the partner pipeline.
+m38: HO IDE TRI 3200 DONE - 6 WARM - L RESEARCH STR+ARC - 94 - // Related thread in Claude Questions.
+m39: HO TRI GRD 1468 ACT WAIT - WARM - L BUILD - - 120 -
+m40: HO BLD CPY 3405 REV SCH 8 COLD 14 M SCORE4 MKT - - - // Came in via the Inbox Queue last week.
+m41: HO MKT SCT 3025 DONE WAIT 2 COLD 12 M SPEC GRD 20261003 95 -
+m42: HO BLD SCT 2860 DIA - 1 - - H REVIEW ADAM - - 1779+3122
+m43: HO CPY GRD 1755 DONE WAIT 6 - 2 M PRUNE - 20261102 94 -
+m44: HO MKT DAT 1391 DONE - 8 COLD 5 H SPEC - - 74 - // Linked to the partner pipeline.
+m45: HO TRI IDE 1170 REV - 2 - - H SCORE4 - 20260928 - - // Related thread in Claude Questions.
+m46: HO SCT DAT 4894 OPT - 1 WARM 2 L DECIDE - - 74 - // Description field is thin.
+m47: HO IDE SCT 4967 REV NOW 1 HOT - H RESEARCH - 20261001 121 - // Related thread in Claude Questions.
+m48: HO GRD ARC 2498 DIA - 9 HOT 14 L RESEARCH DAT+SCT - 74 -
+m49: HO GRD DAT 1666 DONE - - WARM 13 L BUILD GRD 20261001 - -
+m50: HO QAR SCT 3822 DONE NONE - COLD 21 H BUILD - 20260928 - - // Adam mentioned this on the call, no decision yet.
+m51: HO BLD TRI 4620 ACT - 7 - 28 H SCORE4 - - 120 -
+m52: HO STR BLD 3050 DEC SCH - COLD 9 H REVIEW QAR 20261018 95 - // Came in via the Inbox Queue last week.
+m53: HO BLD DAT 3190 REV NONE 6 - 28 L REVIEW ADAM+IDE 20261003 - -
+m54: HO TRI MKT 2108 DEC NOW 9 - - L SPEC DAT 20261003 - - // Came in via the Inbox Queue last week.
+m55: HO DAT GRD 3247 DIA WAIT 7 HOT 5 L RESEARCH IDE 20261003 - -
+m56: HO DAT CPY 4764 DEC - - - 19 L BUILD STR - 94 - // Two stale edges to archived nodes.
+m57: HO QAR STR 4907 DONE WAIT 2 COLD 12 M RESEARCH IDE+ARC 20261003 74 -
+m58: HO CPY GRD 3129 DIA - 1 HOT 5 L DECIDE MKT+CPY - 120 -
+m59: HO CPY ARC 2617 DONE - 10 HOT 5 L SPEC DAT - 74 -
+m60: HO GRD DAT 1329 DONE NOW 1 HOT - H RESEARCH BLD - - -
+
+Reply with only a JSON object mapping each message id to one of WAIT, BOUNCE, EXPEDITE, ESCALATE, CLOSE, ACCEPT. Example: {"m01": "ACCEPT", "m02": "WAIT"}. Include all 60 ids. No other text.

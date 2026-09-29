@@ -1,0 +1,3 @@
+# Get your AI feature past compliance and into production
+
+Your AI demo worked, your rollout did not, and this Monday morning, compliance has bounced the feature again. Demos are forgiving. Reviewers and real users are not. We work in the gap between a demo that works and a feature that ships. We help product and engineering leads get past the compliance and reliability problems that keep AI out of production. We have shipped AI in regulated industries, including health and financial services. We are a small consultancy and we work directly with you, as peers. Most engagements run three to six months. If that sounds like your Monday, tell us where the feature is stuck.

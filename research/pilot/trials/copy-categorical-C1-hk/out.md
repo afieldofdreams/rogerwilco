@@ -1,0 +1,3 @@
+# Your demo worked. Why did the rollout fail?
+
+Your AI feature is ready. Compliance keeps sending it back. Your demo worked perfectly in test. But the rollout to users stalled. We know this problem well. We have shipped AI into regulated industries: health, financial services. The rules are strict and complex. The tools to handle them often are not. We built Crox to bridge that gap. Our platform handles the compliance work so you can focus on building the feature itself. No guessing at regulations. No surprises during review. No waiting for legal to figure out what the requirements actually are. You get the reliability you need without the compliance walls getting in your way.

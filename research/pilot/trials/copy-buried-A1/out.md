@@ -1,0 +1,3 @@
+# The AI demo worked. We help you ship it.
+
+Your AI feature came back from compliance review again, and it is only Monday morning. Or the feature passed review and behaved differently once real users arrived. You do not need another demo. You need a launch date you can defend. We are Crox, a small consultancy that helps teams get AI features out of the demo and into production. We have shipped AI in health and financial services, two regulated industries where a review can stop a launch. We work directly with product and engineering leads, as peers, and most engagements run three to six months. If that sounds like your Monday, tell us where the feature is stuck and we will tell you straight whether we can help.

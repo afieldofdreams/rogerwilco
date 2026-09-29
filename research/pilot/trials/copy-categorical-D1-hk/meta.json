@@ -1,0 +1,83 @@
+{
+ "id": "copy-categorical-D1-hk",
+ "domain": "copy",
+ "variant": "categorical",
+ "fault": "categorical",
+ "arm": "D",
+ "seed": 1,
+ "model": "haiku",
+ "crit": {
+  "code": [
+   {
+    "id": "len",
+    "check": "max_words_paragraph",
+    "value": 120,
+    "desc": "paragraph at most 120 words"
+   },
+   {
+    "id": "no_emdash",
+    "check": "no_substring",
+    "value": [
+     "\u2014"
+    ],
+    "desc": "no em dashes"
+   },
+   {
+    "id": "fmt_h1",
+    "check": "regex",
+    "value": "(?m)^# .+",
+    "desc": "H1 headline"
+   },
+   {
+    "id": "no_pricing",
+    "check": "no_regex",
+    "value": "[\u00a3$\u20ac]\\s?\\d|\\bper (month|seat|user)\\b|\\bpricing\\b",
+    "desc": "no pricing"
+   },
+   {
+    "id": "no_vendors",
+    "check": "no_regex",
+    "value": "\\b(OpenAI|Anthropic|Google|Meta|Mistral|GPT|Claude|Gemini|Llama)\\b",
+    "desc": "no vendor names"
+   },
+   {
+    "id": "lang",
+    "check": "spelling",
+    "value": "UK",
+    "desc": "UK spelling"
+   },
+   {
+    "id": "headline_q",
+    "check": "regex",
+    "value": "(?m)^# .*\\?\\s*$",
+    "desc": "headline is a question"
+   }
+  ],
+  "semantic": [
+   {
+    "id": "monday",
+    "desc": "The FIRST sentence of the paragraph names the reader's specific Monday-morning problem (a stalled AI feature, a compliance review bouncing it, a demo that worked and a rollout that didn't, or similar)."
+   },
+   {
+    "id": "regulated",
+    "desc": "Mentions that Crox has shipped AI in regulated industries (health and/or financial services) WITHOUT naming any client."
+   },
+   {
+    "id": "voice_we",
+    "desc": "Written in first person plural ('we'), not 'I' and not third person."
+   },
+   {
+    "id": "no_hype",
+    "desc": "No hype words such as revolutionary, unlock, supercharge, game-changing, cutting-edge."
+   },
+   {
+    "id": "no_testimonial",
+    "desc": "Contains no testimonial or quoted endorsement."
+   }
+  ],
+  "acc": "len:120w+lang:uk+tone:plain+voice:we+fmt:md+must:monday-problem+must:regulated-industry-ai+no:em-dash+no:pricing+no:vendor-names+no:testimonials+no:hype+must:headline-question",
+  "keys": "len+lang+tone+voice+fmt+must+no"
+ },
+ "tail": "hero copy per the brief: H1 plus a 120-word paragraph, UK English, we-voice, plain, no em dashes; open on the Monday problem; mention regulated-industry AI",
+ "ho": null
+}

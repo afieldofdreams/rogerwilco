@@ -1,0 +1,16 @@
+{
+ "first": {
+  "rb": "FC1 RB extractor-01 re=lead-01 from=extractor to=lead item=fin:aug-2026-invoices ask=EXTRACT due=20261002 acc=fmt:json+scope:gbp-only+must:net-amounts+must:iso-dates+must:invoice-numbers-exactly-as-written+no:voided-invoices+no:cancelled-invoices+no:credit-notes+no:statements+no:prose+no:code-fences do=dataset not=voided-invoices+cancelled-invoices+credit-notes+statements+non-gbp-invoices asm=due-date-is-invoice-date-plus-stated-terms+due-date-null-if-no-terms+supplier-name-from-sender-domain+later-correction-supersedes // JSON array only, one object per GBP supplier invoice in the thread: net amount, VAT, ISO dates, invoice numbers verbatim; drop voided, credit notes, statements and the USD invoice; use the corrected INV-000491 figures",
+  "passed": true,
+  "problems": [],
+  "notes": [
+   "loose match: sender must:exact-invoice-numbers taken as receiver must:invoice-numbers-exactly-as-written",
+   "assumption: receiver added no:cancelled-invoices; confirm or correct",
+   "assumption: receiver added no:prose; confirm or correct",
+   "assumption: receiver added no:code-fences; confirm or correct",
+   "assumption: receiver added no:cancelled-invoices; confirm or correct",
+   "assumption: receiver added no:non-gbp-invoices; confirm or correct"
+  ],
+  "rb_file": "rb.txt"
+ }
+}

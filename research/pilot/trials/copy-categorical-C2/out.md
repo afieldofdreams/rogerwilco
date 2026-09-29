@@ -1,0 +1,3 @@
+# What is stopping your AI feature reaching production?
+
+It is Monday morning, the demo worked, and your AI feature is stuck behind a compliance review that keeps bouncing it. We know that Monday well. At Crox, we have shipped AI in regulated industries, including health and financial services, so we know what reviewers need to see. Many AI features stall for the same reason: they were built for the demo, and compliance and reliability were left until the end. We put both at the centre of the design while the feature is still a prototype. Then the people who sign it off can see how it behaves, how it fails and who is responsible when it does. That is how a demo becomes a rollout you can defend.

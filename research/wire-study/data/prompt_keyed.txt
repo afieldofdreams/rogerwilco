@@ -1,0 +1,102 @@
+You are a receiving agent in a multi-agent system. Other agents send you handoff messages about nodes in a knowledge graph. For each message, decide what to do by applying the policy below exactly. Today is 27 September 2026.
+
+Do not run code, write scripts, or use any tools. Read each message yourself and decide. This tests reading comprehension.
+
+Receiver policy. Apply rules in order; the first rule that matches decides.
+1. WAIT if the node is blocked by any other node.
+2. BOUNCE if confidence is low AND the ask is DECIDE (make a decision) or BUILD (build it).
+3. EXPEDITE if there is a due date earlier than 4 October 2026 (20261004).
+4. ESCALATE if it has been stalled 14 days or more AND importance is 7 or higher.
+5. CLOSE if the pipeline stage is done.
+6. ACCEPT otherwise.
+Stall days or importance that are not stated do not satisfy rule 4.
+
+Message format reference:
+P-Form v0.1 codebook
+Message HO = handoff. Format: HO|FROM>TO|P<node>|key=value|...|note=text
+  route: from (enum:stance, required)
+  route: to (enum:stance, required)
+  P: node (int, required)
+  stg: stage (enum:stage, required)
+  os: opstatus (enum:opstatus, optional)
+  imp: importance (int[1-10], optional)
+  heat: heat (enum:heat, optional)
+  stall: stall_days (days, optional)
+  conf: confidence (enum:conf, required)
+  ask: ask (enum:ask, required)
+  keep: keep_assigned (list:stance, optional)
+  due: due (date, optional)
+  src: source_view (int, optional)
+  blk: blocked_by (list:int, optional)
+  note: note (text, optional)
+Enum stance: TRI=Triage, STR=Strategist, ARC=Architect, BLD=Builder, QAR=QA Reviewer, CPY=Copywriter, GRD=Gardener, DAT=Data Analyst, MKT=Market Researcher, SCT=Scout, IDE=Ideator, ADAM=Adam
+Enum stage: DIA=diagnose, REV=review, OPT=options, DEC=decide, ACT=action, DONE=done
+Enum opstatus: NOW=now, WAIT=waiting, SCH=scheduled, DONE=done, NONE=none
+Enum conf: L=low, M=medium, H=high
+Enum heat: COLD=cold, WARM=warm, HOT=hot
+Enum ask: SCORE4=run 4-axis scoring, SPEC=write implementation spec, BUILD=build it, REVIEW=review against criteria, ENRICH=fill missing fields, PRUNE=retire or merge node, DECIDE=make a decision, RESEARCH=validate the pain point, DRAFT=draft public copy
+Lists join with '+'. Dates YYYYMMDD. Durations like 19d.
+
+Messages:
+m01: HO|CPY>ARC|P3828|stg=ACT|os=NONE|imp=7|heat=HOT|stall=9d|conf=H|ask=SCORE4|keep=MKT|due=20261015|src=119
+m02: HO|MKT>TRI|P1300|stg=OPT|os=NONE|imp=9|stall=15d|conf=L|ask=BUILD|keep=IDE|due=20261003
+m03: HO|QAR>BLD|P3025|stg=DONE|os=NONE|imp=2|stall=9d|conf=L|ask=DRAFT|keep=ADAM+GRD|src=120|note=Related thread in Claude Questions.
+m04: HO|IDE>TRI|P3049|stg=DONE|imp=4|conf=H|ask=SCORE4
+m05: HO|QAR>MKT|P4935|stg=DIA|imp=5|heat=COLD|stall=7d|conf=L|ask=REVIEW|note=Description field is thin.
+m06: HO|DAT>SCT|P3244|stg=DIA|os=NONE|stall=28d|conf=L|ask=RESEARCH|blk=3776+4488|note=Adam mentioned this on the call, no decision yet.
+m07: HO|SCT>ARC|P2121|stg=ACT|os=NOW|imp=8|stall=40d|conf=H|ask=RESEARCH|keep=ADAM+SCT|src=97|note=Came in via the Inbox Queue last week.
+m08: HO|BLD>STR|P1862|stg=DIA|imp=7|heat=HOT|stall=21d|conf=M|ask=DRAFT|src=97
+m09: HO|IDE>SCT|P1705|stg=DIA|os=NONE|imp=9|stall=19d|conf=M|ask=DRAFT|keep=DAT|note=Description field is thin.
+m10: HO|IDE>BLD|P1346|stg=ACT|imp=10|heat=WARM|conf=H|ask=BUILD|keep=SCT+STR|src=74
+m11: HO|DAT>MKT|P3089|stg=DONE|imp=6|stall=2d|conf=L|ask=SCORE4|note=Last touched during the Q3 review.
+m12: HO|DAT>SCT|P4427|stg=OPT|os=NOW|imp=9|conf=M|ask=REVIEW|due=20261011|blk=2740+3568|note=Last touched during the Q3 review.
+m13: HO|TRI>CPY|P4312|stg=DIA|os=WAIT|imp=7|stall=28d|conf=H|ask=RESEARCH|keep=DAT+ARC|src=121
+m14: HO|IDE>GRD|P3464|stg=REV|imp=5|heat=HOT|conf=M|ask=ENRICH|src=120
+m15: HO|MKT>SCT|P4534|stg=DONE|imp=10|heat=WARM|conf=L|ask=BUILD|keep=TRI+STR|note=Description field is thin.
+m16: HO|STR>DAT|P4227|stg=DONE|imp=7|conf=H|ask=SPEC|keep=ADAM+QAR|src=121
+m17: HO|MKT>DAT|P3300|stg=DIA|os=WAIT|imp=8|conf=L|ask=RESEARCH|keep=BLD+DAT|note=Two stale edges to archived nodes.
+m18: HO|SCT>GRD|P1390|stg=DEC|heat=HOT|stall=13d|conf=L|ask=BUILD|keep=TRI|src=74
+m19: HO|QAR>MKT|P2038|stg=OPT|imp=4|heat=HOT|stall=14d|conf=H|ask=PRUNE|src=120|note=Last touched during the Q3 review.
+m20: HO|QAR>TRI|P1992|stg=OPT|os=NONE|heat=WARM|stall=9d|conf=L|ask=REVIEW|keep=BLD|due=20261016|src=119|blk=3481
+m21: HO|SCT>GRD|P3607|stg=ACT|imp=8|heat=WARM|stall=14d|conf=H|ask=DECIDE|keep=QAR|src=97|note=Came in via the Inbox Queue last week.
+m22: HO|QAR>STR|P3131|stg=DIA|imp=5|heat=COLD|stall=21d|conf=M|ask=REVIEW|blk=2802|note=Related thread in Claude Questions.
+m23: HO|BLD>QAR|P3713|stg=OPT|os=NONE|imp=5|heat=HOT|conf=L|ask=BUILD|keep=DAT|due=20261003|src=120
+m24: HO|QAR>CPY|P1672|stg=REV|imp=5|stall=21d|conf=L|ask=RESEARCH|keep=GRD+ARC|due=20261003|src=94
+m25: HO|GRD>IDE|P1801|stg=OPT|imp=7|stall=14d|conf=H|ask=DRAFT|due=20261017
+m26: HO|IDE>TRI|P4207|stg=DEC|os=NOW|imp=6|stall=7d|conf=H|ask=SCORE4|blk=3819|note=Linked to the partner pipeline.
+m27: HO|GRD>IDE|P2695|stg=DONE|os=SCH|imp=8|heat=WARM|stall=19d|conf=H|ask=REVIEW|blk=2575|note=Two stale edges to archived nodes.
+m28: HO|ARC>STR|P2801|stg=DEC|os=NOW|imp=4|heat=COLD|conf=M|ask=BUILD|keep=TRI|due=20261025|src=74|blk=1416|note=Came in via the Inbox Queue last week.
+m29: HO|STR>QAR|P2680|stg=DEC|os=NONE|imp=6|heat=HOT|conf=L|ask=BUILD
+m30: HO|STR>GRD|P2810|stg=OPT|os=WAIT|imp=2|stall=40d|conf=L|ask=REVIEW|keep=STR
+m31: HO|TRI>SCT|P1960|stg=REV|os=WAIT|imp=2|stall=13d|conf=H|ask=SCORE4|due=20261003|note=Related thread in Claude Questions.
+m32: HO|QAR>CPY|P4939|stg=OPT|os=SCH|imp=3|heat=WARM|stall=12d|conf=H|ask=PRUNE|keep=ADAM+TRI|src=119|blk=2613|note=Adam mentioned this on the call, no decision yet.
+m33: HO|MKT>STR|P4025|stg=DONE|imp=3|heat=COLD|stall=19d|conf=M|ask=ENRICH|keep=STR+CPY
+m34: HO|STR>SCT|P4594|stg=REV|os=NONE|imp=10|stall=15d|conf=L|ask=RESEARCH|due=20261023|note=Two stale edges to archived nodes.
+m35: HO|DAT>ARC|P1446|stg=DIA|os=NONE|heat=COLD|stall=12d|conf=L|ask=ENRICH|keep=IDE|src=121|note=Adam mentioned this on the call, no decision yet.
+m36: HO|QAR>IDE|P2454|stg=DEC|os=SCH|heat=COLD|stall=5d|conf=M|ask=PRUNE|keep=SCT+TRI|due=20261023|blk=3233+3351|note=Adam mentioned this on the call, no decision yet.
+m37: HO|GRD>QAR|P4476|stg=DIA|os=NONE|heat=COLD|stall=19d|conf=L|ask=SCORE4|src=119|note=Linked to the partner pipeline.
+m38: HO|IDE>TRI|P3200|stg=DONE|imp=6|heat=WARM|conf=L|ask=RESEARCH|keep=STR+ARC|src=94|note=Related thread in Claude Questions.
+m39: HO|TRI>GRD|P1468|stg=ACT|os=WAIT|heat=WARM|conf=L|ask=BUILD|src=120
+m40: HO|BLD>CPY|P3405|stg=REV|os=SCH|imp=8|heat=COLD|stall=14d|conf=M|ask=SCORE4|keep=MKT|note=Came in via the Inbox Queue last week.
+m41: HO|MKT>SCT|P3025|stg=DONE|os=WAIT|imp=2|heat=COLD|stall=12d|conf=M|ask=SPEC|keep=GRD|due=20261003|src=95
+m42: HO|BLD>SCT|P2860|stg=DIA|imp=1|conf=H|ask=REVIEW|keep=ADAM|blk=1779+3122
+m43: HO|CPY>GRD|P1755|stg=DONE|os=WAIT|imp=6|stall=2d|conf=M|ask=PRUNE|due=20261102|src=94
+m44: HO|MKT>DAT|P1391|stg=DONE|imp=8|heat=COLD|stall=5d|conf=H|ask=SPEC|src=74|note=Linked to the partner pipeline.
+m45: HO|TRI>IDE|P1170|stg=REV|imp=2|conf=H|ask=SCORE4|due=20260928|note=Related thread in Claude Questions.
+m46: HO|SCT>DAT|P4894|stg=OPT|imp=1|heat=WARM|stall=2d|conf=L|ask=DECIDE|src=74|note=Description field is thin.
+m47: HO|IDE>SCT|P4967|stg=REV|os=NOW|imp=1|heat=HOT|conf=H|ask=RESEARCH|due=20261001|src=121|note=Related thread in Claude Questions.
+m48: HO|GRD>ARC|P2498|stg=DIA|imp=9|heat=HOT|stall=14d|conf=L|ask=RESEARCH|keep=DAT+SCT|src=74
+m49: HO|GRD>DAT|P1666|stg=DONE|heat=WARM|stall=13d|conf=L|ask=BUILD|keep=GRD|due=20261001
+m50: HO|QAR>SCT|P3822|stg=DONE|os=NONE|heat=COLD|stall=21d|conf=H|ask=BUILD|due=20260928|note=Adam mentioned this on the call, no decision yet.
+m51: HO|BLD>TRI|P4620|stg=ACT|imp=7|stall=28d|conf=H|ask=SCORE4|src=120
+m52: HO|STR>BLD|P3050|stg=DEC|os=SCH|heat=COLD|stall=9d|conf=H|ask=REVIEW|keep=QAR|due=20261018|src=95|note=Came in via the Inbox Queue last week.
+m53: HO|BLD>DAT|P3190|stg=REV|os=NONE|imp=6|stall=28d|conf=L|ask=REVIEW|keep=ADAM+IDE|due=20261003
+m54: HO|TRI>MKT|P2108|stg=DEC|os=NOW|imp=9|conf=L|ask=SPEC|keep=DAT|due=20261003|note=Came in via the Inbox Queue last week.
+m55: HO|DAT>GRD|P3247|stg=DIA|os=WAIT|imp=7|heat=HOT|stall=5d|conf=L|ask=RESEARCH|keep=IDE|due=20261003
+m56: HO|DAT>CPY|P4764|stg=DEC|stall=19d|conf=L|ask=BUILD|keep=STR|src=94|note=Two stale edges to archived nodes.
+m57: HO|QAR>STR|P4907|stg=DONE|os=WAIT|imp=2|heat=COLD|stall=12d|conf=M|ask=RESEARCH|keep=IDE+ARC|due=20261003|src=74
+m58: HO|CPY>GRD|P3129|stg=DIA|imp=1|heat=HOT|stall=5d|conf=L|ask=DECIDE|keep=MKT+CPY|src=120
+m59: HO|CPY>ARC|P2617|stg=DONE|imp=10|heat=HOT|stall=5d|conf=L|ask=SPEC|keep=DAT|src=74
+m60: HO|GRD>DAT|P1329|stg=DONE|os=NOW|imp=1|heat=HOT|conf=H|ask=RESEARCH|keep=BLD
+
+Reply with only a JSON object mapping each message id to one of WAIT, BOUNCE, EXPEDITE, ESCALATE, CLOSE, ACCEPT. Example: {"m01": "ACCEPT", "m02": "WAIT"}. Include all 60 ids. No other text.
