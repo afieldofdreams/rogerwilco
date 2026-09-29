@@ -41,8 +41,10 @@ def classify(body: str) -> list[str]:
     return hits
 
 
-def asks_decision(body: str) -> bool:
+def asks_decision(body: str, sender: str = "") -> bool:
     b = body.lower()
+    if sender == "auditor" and re.search(r"passed audit|audit result: pass|result:? pass|no decision is needed|nothing is needed from you|needs? nothing from you|is ready", b):
+        return False
     if b.startswith("rw1 aq") or "\nrw1 aq" in b:
         return True
     if b.startswith("rw1 dn") or b.startswith("rw1 st") or b.startswith("rw1 rb"):
@@ -72,7 +74,7 @@ def propose(run_dir: pathlib.Path) -> list[dict]:
     out = []
     for r in unread:
         evs = classify(r["body"])
-        decision = asks_decision(r["body"])
+        decision = asks_decision(r["body"], r["from"])
         expected = [e for e in evs if EVENTS[e]["escalate"]]
         prop = None
         if decision:

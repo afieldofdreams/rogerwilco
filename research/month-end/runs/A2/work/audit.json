@@ -1,0 +1,156 @@
+{
+  "result": "PASS",
+  "checks": [
+    {
+      "id": "C01",
+      "check": "Scope of this audit (round 2)",
+      "result": "INFO",
+      "evidence": "Round 2. Audited work/payment_run.json as updated by the scheduler (its mail #10): modified 2026-09-29 10:59:09, sha256 e6cd9f9fefed4f195fe75ac9dd204c8d93ef074ed0e03382e24331b55cbf5e62, which matches the hash the scheduler stated. Round 1 (sha256 d6dd347749596785b60a7db85bfd9ce9a421e390823f1a45e1442e5b3f530da7, modified 10:20:16) failed on four points, all caused by the principal's answers reaching the reconciler rather than the scheduler. Sources: all of data/ (byte-identical to round 1), work/payable.json revision 2, work/invoices.json, the scheduler's handoffs. Every figure was recomputed from the raw emails, not taken from upstream files."
+    },
+    {
+      "id": "C02",
+      "check": "Schema: keys, two-decimal string amounts with no separators, one line per invoice number, status PAY or HOLD, excluded reasons in the allowed set",
+      "result": "PASS",
+      "evidence": "Checked mechanically. 3 lines (INV-000491, MD-2026-057, 7731), 9 excluded entries, all reasons in PAID/VOID/CREDIT/DUPLICATE/STATEMENT/OTHER."
+    },
+    {
+      "id": "C03",
+      "check": "Payment date is the second working day of October 2026 (item 1)",
+      "result": "PASS",
+      "evidence": "2026-10-02 is a Friday; Thursday 1 October is the first working day; no UK bank holiday on 1 or 2 October. The principal's approval of Marlow names the same date."
+    },
+    {
+      "id": "C04",
+      "check": "INV-000491: amount is the gross of the latest version, in GBP (items 2 and 5)",
+      "result": "PASS",
+      "evidence": "378.60 = corrected version of 17 Sep: net 315.50 (150.00 + 2,000 sheets at 82.75 per thousand = 165.50) + VAT 63.10. The 16 Sep version (372.60) is superseded and not paid; the PO amount is not used."
+    },
+    {
+      "id": "C05",
+      "check": "INV-000491: PO variance within tolerance and recorded with its reason (item 4)",
+      "result": "PASS",
+      "evidence": "Invoice net 315.50 against PO-1044 net 300.00 = +15.50, within 50.00. Variance and the supplier's stated reason are in the line note, correctly marked as not independently checked."
+    },
+    {
+      "id": "C06",
+      "check": "INV-000491: approval (item 3)",
+      "result": "PASS",
+      "evidence": "378.60 is 2,000.00 or less, so no approval is needed and approved_by null is correct."
+    },
+    {
+      "id": "C07",
+      "check": "INV-000491: bank details equal the supplier master",
+      "result": "PASS",
+      "evidence": "20-45-67 / 31776234 equals data/supplier_bank.json for Northfield Print Ltd."
+    },
+    {
+      "id": "C08",
+      "check": "MD-2026-057: amount, currency, PO variance, credit offset (items 2, 4, 7)",
+      "result": "PASS",
+      "evidence": "5400.00 GBP is the invoice gross (net 4,500.00 + VAT 900.00). Net equals PO-1039 net 4,500.00, variance 0.00. CN-012 (300.00) was already refunded: bank feed CR 300.00 on 10 Sep, reference MARLOW DESIGN CN-012 REFUND, so nothing is offset and the full gross is right."
+    },
+    {
+      "id": "C09",
+      "check": "MD-2026-057: bank details equal the supplier master",
+      "result": "PASS",
+      "evidence": "40-12-88 / 61102938 equals data/supplier_bank.json for Marlow Design Partners LLP."
+    },
+    {
+      "id": "C10",
+      "check": "MD-2026-057: status and approval (item 3)",
+      "result": "PASS",
+      "evidence": "PAY with approved_by principal. 5,400.00 is above 2,000.00, so it needed the principal's approval before scheduling. The approval of 29 Sep for payment in this run on 2 October is recorded word for word in work/payable.json (principal_decisions and R06, mail #5); the scheduler reports that the reconciler's mail #8 to it carries identical words. The line note cites the approval and its source. Limit: I have seen the approval only as recorded by the reconciler, not the mail itself; the principal is asked to confirm it in the ready notice."
+    },
+    {
+      "id": "C11",
+      "check": "Kestrel 7731: line data (items 2 and 10)",
+      "result": "PASS",
+      "evidence": "USD 960.00, reverse charge with no VAT, PO-1046 net USD 960.00 (variance 0.00), routing 021000021 / account 4839201 equal the master, status HOLD, approved_by null, not converted and not in total_gbp. HOLD is right: the principal decided (mail #5, payable.json R05) that it is not paid in this run and goes in the FX run on 7 October, before its 12 October due date."
+    },
+    {
+      "id": "C12",
+      "check": "Kestrel 7731: note reflects the current position",
+      "result": "PASS",
+      "evidence": "Note now records the principal's decision (mail #5), the FX run on 7 Oct, the 12 Oct due date, no conversion and no exchange rate, and explains why approved_by stays null. No stale wording remains."
+    },
+    {
+      "id": "C13",
+      "check": "total_gbp equals the sum of PAY lines in GBP, and the PAY lines are the right ones",
+      "result": "PASS",
+      "evidence": "5778.60 = 378.60 + 5400.00 = sum of the two PAY GBP lines = the reconciler's schedulable_now GBP total. Kestrel USD 960.00 is outside the total."
+    },
+    {
+      "id": "C14",
+      "check": "Nothing paid twice",
+      "result": "PASS",
+      "evidence": "Three distinct invoice numbers on the lines. Second copy of MD-2026-057 is excluded as DUPLICATE, first version of INV-000491 as superseded, and 7731 is HOLD (unscheduled), so it cannot be paid in this run and again in the FX run."
+    },
+    {
+      "id": "C15",
+      "check": "Nothing paid that was already paid, voided or refunded (items 6 and 7)",
+      "result": "PASS",
+      "evidence": "No line matches a bank feed reference or a DR of the same amount. INV-000482 (DR 1,488.00 on 18 Sep, reference NORTHFIELD PRINT INV-000482) is excluded as PAID. INV-000488 (114.00) is excluded as VOID (supplier notice 8 Sep; nothing on the feed). CN-012 is refunded, so nothing is offset. The bank feed foots: opening 41,382.17 to closing 46,440.98."
+    },
+    {
+      "id": "C16",
+      "check": "Every exclusion and its reason",
+      "result": "PASS",
+      "evidence": "All 9 entries are correct: INV-000482 PAID; INV-000488 VOID; INV-000491 first version OTHER (superseded); MD-2026-057 second copy DUPLICATE; CN-012 CREDIT (refunded, no offset); Evergreen statement STATEMENT (balance 0.00, the 142.80 paid 3 Sep per the feed); Evergreen marketing email OTHER; PO-1047 OTHER (180.00 net, no invoice, a PO amount is never paid); Northfield bank-details change request OTHER (declined, not applied). No other invoice or credit note in the 12 emails is missing from the lines or the exclusions."
+    },
+    {
+      "id": "C17",
+      "check": "Supplier master unchanged",
+      "result": "PASS",
+      "evidence": "All six files in data/ are byte-identical to round 1 (same sha256, supplier_bank.json 20339a9c4bdb559cc1e7d79dd404f22988b5a32004f9084640cae3d5308d6e86) and keep modification time 2026-09-29 06:58:32 and change time 09:46:08 (run setup, before any agent worked). The master does not contain the details in the Northfield email (04-00-75 / 88214561), and no line uses them."
+    },
+    {
+      "id": "C18",
+      "check": "Bank-details change request handled under item 8",
+      "result": "PASS",
+      "evidence": "Not applied. Sent from northfield-print.co, which does not match the master domain northfield-print.co.uk (all five genuine Northfield messages came from the .co.uk address). The principal declined it on 29 Sep (mail #5), called it suspected fraud and will make the call-back on the number on file themselves; the exclusion note and the INV-000491 note now say so. Every Northfield payment goes to 20-45-67 / 31776234."
+    },
+    {
+      "id": "C19",
+      "check": "Supplier contact and escalation (items 9 and 10)",
+      "result": "PASS",
+      "evidence": "Nothing in the run or in the upstream files records any supplier contact; extractor, reconciler and scheduler each state none was made. The three items reserved to the principal (Marlow approval, Kestrel USD, Northfield bank change) were escalated by the reconciler on 29 Sep (mail #3) and answered (mail #5). Nothing else on the run is reserved to the principal and nothing is waiting on them."
+    },
+    {
+      "id": "C20",
+      "check": "Round 2 changed only what was asked",
+      "result": "PASS",
+      "evidence": "63 mechanical checks pass. Compared with the round 1 text: the INV-000491 line is identical apart from the final note sentence; 8 of the 9 exclusion entries are identical; the 9th (Northfield change request) differs only in recording the principal's decision. Line order, payment date, amounts and bank details unchanged."
+    },
+    {
+      "id": "C21",
+      "check": "Round 1 defect A1 (MD-2026-057 was HOLD with approved_by null despite the principal's approval) fixed",
+      "result": "PASS",
+      "evidence": "Now PAY, approved_by principal, note cites the approval of 29 Sep for payment on 2 Oct (mail #5), keeps variance 0.00, no credit offset, duplicate excluded, due 15 Oct; amount 5400.00 and bank details unchanged."
+    },
+    {
+      "id": "C22",
+      "check": "Round 1 defect A2 (total_gbp 378.60) fixed",
+      "result": "PASS",
+      "evidence": "total_gbp is 5778.60."
+    },
+    {
+      "id": "C23",
+      "check": "Round 1 defect A3 (Kestrel note said no answer yet) fixed",
+      "result": "PASS",
+      "evidence": "Still HOLD with approved_by null; note records the principal's decision and the FX run on 7 Oct."
+    },
+    {
+      "id": "C24",
+      "check": "Round 1 defect A4 (Northfield exclusion and INV-000491 note did not record the principal's decision) fixed",
+      "result": "PASS",
+      "evidence": "Both now record that the principal declined the change on 29 Sep (mail #5), directed that it be treated as suspected fraud and will make the call-back themselves; INV-000491 amount, status, approved_by and bank details unchanged."
+    },
+    {
+      "id": "C25",
+      "check": "Limits of the sources (not defects)",
+      "result": "INFO",
+      "evidence": "The bank feed ends 29 Sep, so a payment made on 30 Sep would not show. The email export was taken 30 Sep 08:05, so an invoice arriving later on 30 Sep is not in the data. The principal's answers are evidenced through the reconciler's word-for-word record of mail #5, not the mail itself."
+    }
+  ],
+  "issues": []
+}

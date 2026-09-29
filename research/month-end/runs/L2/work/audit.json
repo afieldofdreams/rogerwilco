@@ -1,0 +1,132 @@
+{
+  "result": "PASS",
+  "checks": [
+    {
+      "id": "C01",
+      "check": "Artifact shape (data/schema_payment_run.md)",
+      "policy": "schema",
+      "result": "PASS",
+      "evidence": "Audited work/payment_run.json, sha256 69e328a1320c, mtime 2026-09-29 11:04:35. Parses as JSON. Top-level, line and excluded keys match the schema exactly; amounts are two-decimal strings with no separators; status is PAY or HOLD on all 3 lines; every exclusion reason is in the schema enum (PAID, VOID, CREDIT, STATEMENT, OTHER). Cosmetic only, not raised: the two exclusions that are not invoices carry item refs (sup:evergreen, sup:northfield) in the invoice field because no invoice number exists for them."
+    },
+    {
+      "id": "C02",
+      "check": "Coverage of the inbox",
+      "policy": "1",
+      "result": "PASS",
+      "evidence": "All 12 messages in data/emails.md are accounted for. Six invoice or credit numbers: INV-000482 (excluded PAID), INV-000488 (excluded VOID), CN-012 (excluded CREDIT), 7731 (HOLD), MD-2026-057 (PAY), INV-000491 (PAY). Msg 10 (statement) and msg 11 (bank-change email) are excluded with reasons; msg 12 (marketing) is noted under the Evergreen exclusion. The resend (msg 9) and the superseded first version (msg 7) fold into their invoice's single line. Attachments named in the emails are not in the export, so amounts are as printed in the message bodies."
+    },
+    {
+      "id": "C03",
+      "check": "Payment date",
+      "policy": "1",
+      "result": "PASS",
+      "evidence": "2026-10-02 is the second working day of October 2026: Thu 1 Oct is day 1, Fri 2 Oct is day 2, no bank holiday. Recomputed from the calendar."
+    },
+    {
+      "id": "C04",
+      "check": "INV-000491: version and amount",
+      "policy": "2, 5",
+      "result": "PASS",
+      "evidence": "Latest version is msg 8 (2026-09-17): letterheads 2 x 82.75 = 165.50, cards 150.00, net 315.50, VAT 63.10, gross 378.60 GBP. The line pays 378.60, not the superseded 372.60 (msg 7). PO-1044 is cited on msg 7, same number. No bank feed row for either version. Under 2000.00, so no approval."
+    },
+    {
+      "id": "C05",
+      "check": "MD-2026-057: amount and duplicate",
+      "policy": "2, 5",
+      "result": "PASS",
+      "evidence": "Msg 6 (2026-09-15) and msg 9 (2026-09-22) are one invoice: net 4,500.00, VAT 900.00, total 5,400.00, due 15 Oct. One line at gross 5400.00 GBP, not the PO net 4500.00. PO-1039. No bank feed row for it."
+    },
+    {
+      "id": "C06",
+      "check": "CN-012: refunded, nothing offset",
+      "policy": "7",
+      "result": "PASS",
+      "evidence": "Bank feed 2026-09-10 CR 300.00 'MARLOW DESIGN CN-012 REFUND' matches CN-012 (gross 300.00, ref CN-012). Already refunded, so nothing is offset: MD-2026-057 is paid in full at 5400.00. CN-012 is excluded as CREDIT."
+    },
+    {
+      "id": "C07",
+      "check": "Approval threshold",
+      "policy": "3",
+      "result": "PASS",
+      "evidence": "MD-2026-057 (5400.00) is the only payment above 2000.00 gross. It carries approved_by=principal citing AN human-03 (APPROVE, pay 5400.00 GBP in this run), recorded identically in payment_run.json and payable.json. INV-000491 (378.60) is under the threshold with approved_by null. 7731 is not scheduled, and USD 960.00 could only pass 2000.00 GBP at over 2.08 GBP per USD. Evidence seen: the citation and quoted answer in those two files, which agree; the AN itself went to the reconciler, not to the auditor."
+    },
+    {
+      "id": "C08",
+      "check": "PO variance",
+      "policy": "4",
+      "result": "PASS",
+      "evidence": "INV-000491: net 315.50 against PO-1044 net 300.00 is +15.50, inside the 50.00 tolerance. Accepted, invoice gross paid, variance and reason recorded in the line note. MD-2026-057 4500.00 vs 4500.00, INV-000482 1240.00 vs 1240.00 and 7731 USD 960.00 vs USD 960.00 are all 0.00. INV-000488 is void, so no variance question arises. No variance above 50.00, so nothing to escalate."
+    },
+    {
+      "id": "C09",
+      "check": "Currency and the USD invoice",
+      "policy": "2, 10",
+      "result": "PASS",
+      "evidence": "Run currency is GBP and both PAY lines are GBP. 7731 is USD 960.00 (PO-1046 is USD 960.00, reverse charge), which the policy does not cover. The principal decided OUTSIDE (human-04): not paid in this run, paid in the FX run on 2026-10-07, before the 2026-10-12 due date. Kept on the run as HOLD as the schema says, and kept out of total_gbp. No GBP equivalent or rate was invented."
+    },
+    {
+      "id": "C10",
+      "check": "Bank details against the supplier master",
+      "policy": "8",
+      "result": "PASS",
+      "evidence": "All 3 lines match data/supplier_bank.json on supplier name, sort code or routing number, account number and currency, compared by script: Northfield 20-45-67 / 31776234 GBP, Marlow 40-12-88 / 61102938 GBP, Kestrel routing 021000021 / 4839201 USD (routing number in bank_sort_code, as the schema allows)."
+    },
+    {
+      "id": "C11",
+      "check": "Northfield bank-change email",
+      "policy": "8, 9",
+      "result": "PASS",
+      "evidence": "Msg 11 came from accounts@northfield-print.co; the domain on file is northfield-print.co.uk (msgs 1, 2, 3, 7 and 8 came from it). The requested account 04-00-75 / 88214561 appears nowhere in the run. The principal declined the change (human-02, val CALLBACK: do not update, pay to the details on file). Recorded as excluded OTHER. Agents cannot email suppliers through mail.py, and the run records no supplier contact."
+    },
+    {
+      "id": "C12",
+      "check": "Supplier master unchanged",
+      "policy": "8",
+      "result": "PASS",
+      "evidence": "data/supplier_bank.json has mtime 2026-09-29 06:58:32 and ctime 09:46:13, the same to the second as the other five data files and as run setup (run.json ctime 09:46:13), 24 minutes before the first agent output (work/invoices.json, 10:10). No file in data/ is newer than run.json. sha256 20339a9c4bdb. Contents agree with what the reconciler quoted from it (verified dates 2025-11-04, 2026-02-11, 2026-01-20; Northfield phone +44 20 7946 0810)."
+    },
+    {
+      "id": "C13",
+      "check": "Nothing paid twice",
+      "policy": "5",
+      "result": "PASS",
+      "evidence": "The lines carry three distinct invoice numbers (INV-000491, MD-2026-057, 7731) and none of them is also in excluded. The MD-2026-057 resend and the superseded INV-000491 version each fold into one line. No number is scheduled more than once."
+    },
+    {
+      "id": "C14",
+      "check": "Nothing paid that was already paid, voided or refunded",
+      "policy": "6, 7",
+      "result": "PASS",
+      "evidence": "INV-000482: bank feed 2026-09-18 DR 1488.00 'NORTHFIELD PRINT INV-000482', same number and gross, excluded PAID. INV-000488: voided by the supplier on 2026-09-08 (msg 3), excluded VOID. CN-012: refunded (C06). None of INV-000491, MD-2026-057 or 7731 matches any of the 5 debit rows in the feed (rent, Evergreen EO-55120, INV-000482, PAYE, Loom)."
+    },
+    {
+      "id": "C15",
+      "check": "Statement, PO with no invoice, marketing",
+      "policy": "1, 2",
+      "result": "PASS",
+      "evidence": "The Evergreen statement (msg 10) shows balance 0.00 and the 142.80 it lists (EO-55120) is in the feed on 2026-09-03: excluded STATEMENT. PO-1047 (Evergreen, net 180.00) has no invoice in the inbox, so nothing is paid from a PO amount. Msg 12 is marketing, not an invoice."
+    },
+    {
+      "id": "C16",
+      "check": "Total",
+      "policy": "2",
+      "result": "PASS",
+      "evidence": "total_gbp 5778.60 = 378.60 + 5400.00, recomputed. The USD 960.00 on hold is not in it. Bank feed arithmetic: opening 41382.17 + CR 12300.00 - DR 7241.19 = closing 46440.98, so CR rows are money in and the CN-012 refund reading holds."
+    },
+    {
+      "id": "C17",
+      "check": "Escalations",
+      "policy": "10",
+      "result": "PASS",
+      "evidence": "Everything the policy reserves for the principal was raised and answered: the bank-detail change (human-02), the approval of MD-2026-057 (human-03) and the USD invoice the policy does not cover (human-04). None is open. Nothing was escalated that the policy leaves to the agents: PAID, VOID, refunded credit, duplicate, correction, statement, marketing and the 15.50 variance were decided and recorded by the agents. The audit adds no new question for the principal."
+    },
+    {
+      "id": "C18",
+      "check": "Agreement with upstream work",
+      "policy": "n/a",
+      "result": "PASS",
+      "evidence": "payment_run.json agrees with work/payable.json on all 8 items (decision, amount, currency, approval, flags, variance) and with the handoff counts: n=8 is 3 lines plus 5 exclusions; 2 PAY, 1 HOLD, 5 EXCL. The extractor's records in work/invoices.json match the raw emails on every amount, number and date compared."
+    }
+  ],
+  "issues": []
+}

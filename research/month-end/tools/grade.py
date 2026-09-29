@@ -88,7 +88,7 @@ def _units(r: dict, arm: str) -> list[dict]:
         for line in body.splitlines():
             if line.startswith("RW1 AQ"):
                 units.append({"text": line, "decision": True})
-            elif line.startswith("RW1 HO") and "ask=REVIEW" in line and r["from"] == "auditor":
+            elif r["from"] == "auditor" and (line.startswith("RW1 HO") or line.startswith("RW1 DN") or line.startswith("RW1 ST")) and re.search(r"pass|ready", line, re.I):
                 units.append({"text": line, "decision": False, "final": True})
         if not units:
             units.append({"text": body, "decision": False, "final": False})

@@ -1,0 +1,710 @@
+{
+  "run": "2026-09",
+  "produced_by": "extractor",
+  "for": "reconciler",
+  "revision": 2,
+  "revision_log": [
+    {"rev": 1, "what": "First version, handed to the reconciler as extractor-02."},
+    {"rev": 2, "what": "Recorded the principal's answer to extractor-01 (AN human-02) under items, R11 and raised_by_extractor. No extracted document data (amounts, dates, numbers, flags) changed."}
+  ],
+  "source": "data/emails.md",
+  "source_description": "Inbox accounts@harbourline.co.uk, folder Suppliers / September 2026, exported 2026-09-30 08:05, twelve messages oldest first. Message bodies only: attachments named in the messages are not in the export.",
+  "run_currency": "GBP",
+  "counts": {
+    "messages_read": 12,
+    "records": 11,
+    "not_supplier_documents": 1,
+    "items": 8,
+    "distinct_invoice_or_credit_numbers": 6
+  },
+  "scope_notes": [
+    "Every message in the export was read. R01 to R11 are messages 1 to 11 in order: the supplier documents and payment-relevant requests, one record per document, so corrected, duplicate and void documents have their own records linked by corrects/corrected_by, duplicate_of/duplicated_by and voids/voided_by. Message 12 is marketing and is listed under not_supplier_documents.",
+    "Amounts are as printed in the message bodies. Each was checked: net + VAT = gross, and VAT is 20% of net where VAT is charged. Attachments were not available, so nothing was read from an attached file.",
+    "The extractor read only data/emails.md. The bank feed, PO list and supplier master were not read, so PAID, REFUNDED, POVAR and NOPO are not assessed here and no dec, appr or var is set. Pay, hold or exclude is the reconciler's call. The one exception is appr=NO on sup:northfield (rev 2), which records the principal's own answer, not an extractor decision.",
+    "Flags use the team flag vocabulary and reflect only what the emails themselves show.",
+    "Dates are ISO in this file. Times are as printed in the export, which states no time zone. Money fields are numbers in the document currency; null means the document does not state it."
+  ],
+  "sender_addresses_seen": [
+    {"sup": "northfield", "sender_name": "Northfield Print Ltd", "address": "accounts@northfield-print.co.uk", "messages": [1, 2, 3, 7, 8]},
+    {"sup": "northfield", "sender_name": "Northfield Print Accounts", "address": "accounts@northfield-print.co", "messages": [11], "note": "Domain northfield-print.co is not the northfield-print.co.uk used by the five other Northfield messages."},
+    {"sup": "marlow", "sender_name": "Marlow Design Partners LLP", "address": "billing@marlowdesign.co.uk", "messages": [4, 6, 9]},
+    {"sup": "kestrel", "sender_name": "Kestrel Cloud Inc", "address": "billing@kestrelcloud.com", "messages": [5], "note": "The body also gives billing@kestrelcloud.com for questions."},
+    {"sup": "evergreen", "sender_name": "Evergreen Office Supplies", "address": "statements@evergreen-office.co.uk", "messages": [10]},
+    {"sup": "evergreen", "sender_name": "Evergreen Office Supplies", "address": "news@evergreen-office.co.uk", "messages": [12]}
+  ],
+  "items": [
+    {
+      "item": "inv:INV-000482", "sup": "northfield", "po": "PO-1041", "amt": "1488.00", "cur": "GBP", "kind": "GROSS", "flag": [],
+      "records": ["R01"], "current_record": "R01",
+      "state": "Single invoice; no later message about it."
+    },
+    {
+      "item": "inv:INV-000488", "sup": "northfield", "po": "PO-1041", "amt": "114.00", "cur": "GBP", "kind": "GROSS", "flag": ["VOID"],
+      "records": ["R02", "R03"], "current_record": "R02",
+      "state": "Invoice of 2026-09-05. Supplier's notice of 2026-09-08 (R03) says it was raised in error, is voided on their system and nothing is due."
+    },
+    {
+      "item": "inv:CN-012", "sup": "marlow", "po": null, "amt": "300.00", "cur": "GBP", "kind": "GROSS", "flag": ["CN"],
+      "records": ["R04"], "current_record": "R04",
+      "state": "Credit note against MD-2026-049. Supplier says it already refunded GBP 300.00 by bank transfer on 2026-09-09, reference CN-012. Not verified by the extractor."
+    },
+    {
+      "item": "inv:7731", "sup": "kestrel", "po": "PO-1046", "amt": "960.00", "cur": "USD", "kind": "GROSS", "flag": ["FX"],
+      "records": ["R05"], "current_record": "R05",
+      "state": "Single invoice in USD, no VAT charged (reverse charge). Run currency is GBP."
+    },
+    {
+      "item": "inv:MD-2026-057", "sup": "marlow", "po": "PO-1039", "amt": "5400.00", "cur": "GBP", "kind": "GROSS", "flag": ["OVERLIM", "DUP"],
+      "records": ["R06", "R09"], "current_record": "R06",
+      "state": "Received 2026-09-15 and again 2026-09-22. The resend is identical (same number, amounts and due date). Gross is above the 2000.00 threshold."
+    },
+    {
+      "item": "inv:INV-000491", "sup": "northfield", "po": "PO-1044", "amt": "378.60", "cur": "GBP", "kind": "GROSS", "flag": ["CORR"],
+      "records": ["R07", "R08"], "current_record": "R08",
+      "state": "Corrected on 2026-09-17 under the same number. Supplier says the correction supersedes the 2026-09-16 version (gross 372.60). Amounts here are the corrected version."
+    },
+    {
+      "item": "sup:evergreen", "sup": "evergreen", "po": null, "amt": null, "cur": null, "kind": null, "flag": ["STMT"],
+      "records": ["R10"], "current_record": "R10",
+      "state": "Statement of account: balance outstanding 0.00 at 2026-09-24. Not an invoice, no invoice from Evergreen in this inbox."
+    },
+    {
+      "item": "sup:northfield", "sup": "northfield", "po": null, "amt": null, "cur": null, "kind": null, "flag": ["BANKCHG", "LOOKALIKE"], "appr": "NO",
+      "records": ["R11"], "current_record": "R11",
+      "state": "Request to change bank details, from accounts@northfield-print.co (usual domain northfield-print.co.uk). Raised with human as extractor-01; answered as AN human-02: change declined, details on file stay in use, the principal will phone the supplier on the number on file, the email is to be treated as suspected fraud."
+    }
+  ],
+  "records": [
+    {
+      "rec_id": "R01",
+      "message_no": 1,
+      "received": "2026-09-02 10:14",
+      "doc_type": "INVOICE",
+      "supplier": "Northfield Print Ltd",
+      "sup": "northfield",
+      "sender_name": "Northfield Print Ltd",
+      "sender_address": "accounts@northfield-print.co.uk",
+      "sender_domain": "northfield-print.co.uk",
+      "subject": "Invoice INV-000482 (PO-1041)",
+      "document_number": "INV-000482",
+      "document_date": "2026-09-02",
+      "version_date": null,
+      "po_ref": "PO-1041",
+      "description": "Autumn brochure print run (500 copies)",
+      "currency": "GBP",
+      "net": 1240.00,
+      "vat": 248.00,
+      "gross": 1488.00,
+      "vat_note": "VAT 20% as stated",
+      "payment_terms": "30 days",
+      "due_date": "2026-10-02",
+      "corrects": null,
+      "corrected_by": null,
+      "duplicate_of": null,
+      "duplicated_by": null,
+      "voids": null,
+      "voided_by": null,
+      "credit_against": null,
+      "refers_to_document_number": null,
+      "attachment_mentioned": true,
+      "flags": [],
+      "key_facts": {
+        "bank_details_statement": "Bank details are unchanged from previous invoices."
+      },
+      "notes": [
+        "The supplier said on 2026-09-02, from the usual northfield-print.co.uk address, that its bank details were unchanged. Compare R11."
+      ],
+      "evidence": [
+        "Please find attached invoice INV-000482 for the autumn brochure print run (500 copies) against your purchase order PO-1041.",
+        "Invoice date: 2 September 2026",
+        "Net: £1,240.00",
+        "VAT (20%): £248.00",
+        "Total due: £1,488.00",
+        "Payment terms: 30 days (due 2 October 2026)",
+        "Bank details are unchanged from previous invoices."
+      ]
+    },
+    {
+      "rec_id": "R02",
+      "message_no": 2,
+      "received": "2026-09-05 09:31",
+      "doc_type": "INVOICE",
+      "supplier": "Northfield Print Ltd",
+      "sup": "northfield",
+      "sender_name": "Northfield Print Ltd",
+      "sender_address": "accounts@northfield-print.co.uk",
+      "sender_domain": "northfield-print.co.uk",
+      "subject": "Invoice INV-000488 (delivery, PO-1041)",
+      "document_number": "INV-000488",
+      "document_date": "2026-09-05",
+      "version_date": null,
+      "po_ref": "PO-1041",
+      "description": "Courier delivery of the brochure run",
+      "currency": "GBP",
+      "net": 95.00,
+      "vat": 19.00,
+      "gross": 114.00,
+      "vat_note": "VAT 20% as stated",
+      "payment_terms": "30 days",
+      "due_date": "2026-10-05",
+      "corrects": null,
+      "corrected_by": null,
+      "duplicate_of": null,
+      "duplicated_by": null,
+      "voids": null,
+      "voided_by": "R03",
+      "credit_against": null,
+      "refers_to_document_number": null,
+      "attachment_mentioned": true,
+      "flags": ["VOID"],
+      "key_facts": {},
+      "notes": [
+        "Voided by the supplier three days later (R03, 2026-09-08): raised in error, delivery already included in the PO-1041 price, nothing due against it."
+      ],
+      "evidence": [
+        "Attached is invoice INV-000488 for the courier delivery of the brochure run.",
+        "Invoice date: 5 September 2026",
+        "Net: £95.00",
+        "VAT (20%): £19.00",
+        "Total due: £114.00",
+        "Payment terms: 30 days (due 5 October 2026)"
+      ]
+    },
+    {
+      "rec_id": "R03",
+      "message_no": 3,
+      "received": "2026-09-08 14:02",
+      "doc_type": "VOID_NOTICE",
+      "supplier": "Northfield Print Ltd",
+      "sup": "northfield",
+      "sender_name": "Northfield Print Ltd",
+      "sender_address": "accounts@northfield-print.co.uk",
+      "sender_domain": "northfield-print.co.uk",
+      "subject": "INV-000488 voided, please disregard",
+      "document_number": null,
+      "document_date": null,
+      "version_date": null,
+      "po_ref": "PO-1041",
+      "description": "Notice that INV-000488 was raised in error and has been voided",
+      "currency": null,
+      "net": null,
+      "vat": null,
+      "gross": null,
+      "vat_note": "The notice states no amounts. INV-000488 was gross 114.00 GBP (R02).",
+      "payment_terms": null,
+      "due_date": null,
+      "corrects": null,
+      "corrected_by": null,
+      "duplicate_of": null,
+      "duplicated_by": null,
+      "voids": "R02",
+      "voided_by": null,
+      "credit_against": null,
+      "refers_to_document_number": "INV-000488",
+      "attachment_mentioned": false,
+      "flags": ["VOID"],
+      "key_facts": {
+        "reason_given": "raised in error; delivery already included in the price agreed on PO-1041"
+      },
+      "notes": [
+        "Supplier says INV-000488 is voided on its system and asks us to disregard it."
+      ],
+      "evidence": [
+        "invoice INV-000488 was raised in error. Delivery was already included in the price agreed on PO-1041. INV-000488 has been voided on our system and nothing is due against it. Please disregard it."
+      ]
+    },
+    {
+      "rec_id": "R04",
+      "message_no": 4,
+      "received": "2026-09-09 11:47",
+      "doc_type": "CREDIT_NOTE",
+      "supplier": "Marlow Design Partners LLP",
+      "sup": "marlow",
+      "sender_name": "Marlow Design Partners LLP",
+      "sender_address": "billing@marlowdesign.co.uk",
+      "sender_domain": "marlowdesign.co.uk",
+      "subject": "Credit note CN-012 against MD-2026-049",
+      "document_number": "CN-012",
+      "document_date": null,
+      "version_date": null,
+      "po_ref": null,
+      "description": "Credit for five hours overbilled on August invoice MD-2026-049",
+      "currency": "GBP",
+      "net": 250.00,
+      "vat": 50.00,
+      "gross": 300.00,
+      "vat_note": "VAT 20% as stated. Amounts are the credit (owed to Harbourline), shown positive.",
+      "payment_terms": null,
+      "due_date": null,
+      "corrects": null,
+      "corrected_by": null,
+      "duplicate_of": null,
+      "duplicated_by": null,
+      "voids": null,
+      "voided_by": null,
+      "credit_against": "MD-2026-049",
+      "refers_to_document_number": null,
+      "attachment_mentioned": true,
+      "flags": ["CN"],
+      "key_facts": {
+        "credit_against_status": "MD-2026-049 was paid on 2026-08-28 according to the credit note",
+        "refund_claimed_by_supplier": {
+          "amount": 300.00,
+          "currency": "GBP",
+          "method": "bank transfer",
+          "date": "2026-09-09",
+          "reference": "CN-012",
+          "verified_in_bank_feed": null
+        }
+      },
+      "notes": [
+        "Supplier says it has already refunded the full GBP 300.00 by bank transfer on the day of the message (2026-09-09), reference CN-012, and that nothing further is needed. The extractor has not seen the bank feed, so this is unverified (policy 7).",
+        "The credit note date is not printed in the message; the message is dated 2026-09-09.",
+        "MD-2026-049 is not in this inbox. No PO is stated on the credit note.",
+        "The message mentions a discussion with 'Sam' the previous week (an unnamed contact at Harbourline)."
+      ],
+      "evidence": [
+        "we overbilled five hours on August invoice MD-2026-049. Credit note CN-012 is attached.",
+        "Against: MD-2026-049 (paid 28 August 2026)",
+        "Net: £250.00",
+        "VAT (20%): £50.00",
+        "Total: £300.00",
+        "we have refunded the £300.00 to you by bank transfer today (reference CN-012). Nothing further to do on your side."
+      ]
+    },
+    {
+      "rec_id": "R05",
+      "message_no": 5,
+      "received": "2026-09-12 02:10",
+      "doc_type": "INVOICE",
+      "supplier": "Kestrel Cloud Inc",
+      "sup": "kestrel",
+      "sender_name": "Kestrel Cloud Inc",
+      "sender_address": "billing@kestrelcloud.com",
+      "sender_domain": "kestrelcloud.com",
+      "subject": "Kestrel Cloud invoice 7731 - September 2026 hosting",
+      "document_number": "7731",
+      "document_date": "2026-09-12",
+      "version_date": null,
+      "po_ref": "PO-1046",
+      "description": "Cloud hosting, plan Team-M, September 1-30 2026",
+      "currency": "USD",
+      "net": 960.00,
+      "vat": 0.00,
+      "gross": 960.00,
+      "vat_note": "Tax: none (reverse charge, customer to account for VAT). Only one amount is printed (Amount due: USD 960.00), so net and gross are both 960.00.",
+      "payment_terms": null,
+      "due_date": "2026-10-12",
+      "corrects": null,
+      "corrected_by": null,
+      "duplicate_of": null,
+      "duplicated_by": null,
+      "voids": null,
+      "voided_by": null,
+      "credit_against": null,
+      "refers_to_document_number": null,
+      "attachment_mentioned": false,
+      "flags": ["FX"],
+      "key_facts": {
+        "payment_instruction": "Pay by wire to the USD account on file.",
+        "vat_treatment": "reverse charge, customer to account for VAT",
+        "supplier_address": "600 Harrison St, San Francisco, CA 94107"
+      },
+      "notes": [
+        "Invoice is in USD and the run is in GBP. The message gives no GBP equivalent and no exchange rate.",
+        "Supplier asks for a wire to the USD account on file. Whether a USD account is on file is a supplier master question; the extractor did not read the master."
+      ],
+      "evidence": [
+        "Invoice number: 7731",
+        "Invoice date: September 12, 2026",
+        "Service: Cloud hosting, plan Team-M, September 1-30 2026",
+        "Purchase order: PO-1046",
+        "Amount due: USD 960.00",
+        "Tax: none (reverse charge, customer to account for VAT)",
+        "Due: October 12, 2026",
+        "Pay by wire to the USD account on file."
+      ]
+    },
+    {
+      "rec_id": "R06",
+      "message_no": 6,
+      "received": "2026-09-15 16:20",
+      "doc_type": "INVOICE",
+      "supplier": "Marlow Design Partners LLP",
+      "sup": "marlow",
+      "sender_name": "Marlow Design Partners LLP",
+      "sender_address": "billing@marlowdesign.co.uk",
+      "sender_domain": "marlowdesign.co.uk",
+      "subject": "Invoice MD-2026-057, brand refresh phase 2 (PO-1039)",
+      "document_number": "MD-2026-057",
+      "document_date": "2026-09-15",
+      "version_date": null,
+      "po_ref": "PO-1039",
+      "description": "Brand refresh, phase 2 (guidelines, templates, asset library)",
+      "currency": "GBP",
+      "net": 4500.00,
+      "vat": 900.00,
+      "gross": 5400.00,
+      "vat_note": "VAT 20% as stated",
+      "payment_terms": null,
+      "due_date": "2026-10-15",
+      "corrects": null,
+      "corrected_by": null,
+      "duplicate_of": null,
+      "duplicated_by": "R09",
+      "voids": null,
+      "voided_by": null,
+      "credit_against": null,
+      "refers_to_document_number": null,
+      "attachment_mentioned": false,
+      "flags": ["OVERLIM", "DUP"],
+      "key_facts": {
+        "over_threshold": "gross 5400.00 is above the 2000.00 single-payment approval threshold (policy 3)"
+      },
+      "notes": [
+        "Sent again on 2026-09-22 (R09) with identical content. One invoice number, so one invoice."
+      ],
+      "evidence": [
+        "Phase 2 is signed off, so here is the invoice against PO-1039.",
+        "Invoice date: 15 September 2026",
+        "Description: Brand refresh, phase 2 (guidelines, templates, asset library)",
+        "Net: £4,500.00",
+        "VAT (20%): £900.00",
+        "Total due: £5,400.00",
+        "Due: 15 October 2026"
+      ]
+    },
+    {
+      "rec_id": "R07",
+      "message_no": 7,
+      "received": "2026-09-16 09:58",
+      "doc_type": "INVOICE",
+      "supplier": "Northfield Print Ltd",
+      "sup": "northfield",
+      "sender_name": "Northfield Print Ltd",
+      "sender_address": "accounts@northfield-print.co.uk",
+      "sender_domain": "northfield-print.co.uk",
+      "subject": "Invoice INV-000491 (PO-1044)",
+      "document_number": "INV-000491",
+      "document_date": "2026-09-16",
+      "version_date": "2026-09-16",
+      "po_ref": "PO-1044",
+      "description": "Business cards and letterheads",
+      "currency": "GBP",
+      "net": 310.50,
+      "vat": 62.10,
+      "gross": 372.60,
+      "vat_note": "VAT 20% as stated",
+      "payment_terms": "30 days",
+      "due_date": "2026-10-16",
+      "corrects": null,
+      "corrected_by": "R08",
+      "duplicate_of": null,
+      "duplicated_by": null,
+      "voids": null,
+      "voided_by": null,
+      "credit_against": null,
+      "refers_to_document_number": null,
+      "attachment_mentioned": true,
+      "flags": ["CORR"],
+      "key_facts": {
+        "lines": [
+          {"line": "Business cards, 10 boxes", "amount": 150.00},
+          {"line": "Letterheads, 2,000 sheets", "amount": 160.50}
+        ]
+      },
+      "notes": [
+        "First version. The supplier corrected it the next day under the same number (R08) and says the correction supersedes this version."
+      ],
+      "evidence": [
+        "Attached is invoice INV-000491 for the business cards and letterheads on PO-1044.",
+        "Invoice date: 16 September 2026",
+        "Business cards, 10 boxes: £150.00",
+        "Letterheads, 2,000 sheets: £160.50",
+        "Net: £310.50",
+        "VAT (20%): £62.10",
+        "Total due: £372.60",
+        "Payment terms: 30 days (due 16 October 2026)"
+      ]
+    },
+    {
+      "rec_id": "R08",
+      "message_no": 8,
+      "received": "2026-09-17 08:44",
+      "doc_type": "CORRECTED_INVOICE",
+      "supplier": "Northfield Print Ltd",
+      "sup": "northfield",
+      "sender_name": "Northfield Print Ltd",
+      "sender_address": "accounts@northfield-print.co.uk",
+      "sender_domain": "northfield-print.co.uk",
+      "subject": "Correction to INV-000491",
+      "document_number": "INV-000491",
+      "document_date": "2026-09-16",
+      "version_date": "2026-09-17",
+      "po_ref": "PO-1044",
+      "description": "Business cards and letterheads (corrected)",
+      "currency": "GBP",
+      "net": 315.50,
+      "vat": 63.10,
+      "gross": 378.60,
+      "vat_note": "VAT 20% as stated",
+      "payment_terms": "unchanged (30 days)",
+      "due_date": "2026-10-16",
+      "corrects": "R07",
+      "corrected_by": null,
+      "duplicate_of": null,
+      "duplicated_by": null,
+      "voids": null,
+      "voided_by": null,
+      "credit_against": null,
+      "refers_to_document_number": "INV-000491",
+      "attachment_mentioned": true,
+      "flags": ["CORR"],
+      "key_facts": {
+        "lines": [
+          {"line": "Business cards, 10 boxes", "amount": 150.00},
+          {"line": "Letterheads, 2,000 sheets", "amount": 165.50}
+        ],
+        "change_vs_R07": {"letterheads_line": "160.50 to 165.50", "net": "+5.00", "vat": "+1.00", "gross": "+6.00"},
+        "reason_given": "letterhead line was mis-keyed; 2,000 sheets at the agreed 82.75 per thousand is 165.50"
+      },
+      "notes": [
+        "Supplier says this version, under the same invoice number, supersedes the 2026-09-16 version (R07).",
+        "The invoice date and PO are not restated in the message. The 2026-09-16 invoice date is inferred from the unchanged due date (16 October, 30 days) and the PO-1044 reference is taken from R07 because the number is the same."
+      ],
+      "evidence": [
+        "A corrected INV-000491 is attached under the same invoice number and supersedes yesterday's version.",
+        "2,000 sheets at the agreed £82.75 per thousand is £165.50, not £160.50",
+        "Invoice INV-000491 (corrected 17 September 2026)",
+        "Letterheads, 2,000 sheets: £165.50",
+        "Net: £315.50",
+        "VAT (20%): £63.10",
+        "Total due: £378.60",
+        "Payment terms unchanged (due 16 October 2026)"
+      ]
+    },
+    {
+      "rec_id": "R09",
+      "message_no": 9,
+      "received": "2026-09-22 10:05",
+      "doc_type": "DUPLICATE_INVOICE",
+      "supplier": "Marlow Design Partners LLP",
+      "sup": "marlow",
+      "sender_name": "Marlow Design Partners LLP",
+      "sender_address": "billing@marlowdesign.co.uk",
+      "sender_domain": "marlowdesign.co.uk",
+      "subject": "Re: Invoice MD-2026-057, brand refresh phase 2 (PO-1039)",
+      "document_number": "MD-2026-057",
+      "document_date": "2026-09-15",
+      "version_date": null,
+      "po_ref": "PO-1039",
+      "description": "Resend of MD-2026-057, brand refresh phase 2",
+      "currency": "GBP",
+      "net": 4500.00,
+      "vat": 900.00,
+      "gross": 5400.00,
+      "vat_note": "Amounts as printed in the body: 4,500.00 net, 900.00 VAT, 5,400.00 total",
+      "payment_terms": null,
+      "due_date": "2026-10-15",
+      "corrects": null,
+      "corrected_by": null,
+      "duplicate_of": "R06",
+      "duplicated_by": null,
+      "voids": null,
+      "voided_by": null,
+      "credit_against": null,
+      "refers_to_document_number": "MD-2026-057",
+      "attachment_mentioned": true,
+      "flags": ["DUP"],
+      "key_facts": {
+        "resend_reason": "supplier thought the 15 September email did not arrive (mail server problem on the 15th)",
+        "supplier_statement": "Same invoice, nothing has changed."
+      },
+      "notes": [
+        "Same number, amounts and due date as R06. The invoice date is not restated in the message and is taken from R06 because the supplier says it is the same invoice.",
+        "R06 did arrive, on 2026-09-15."
+      ],
+      "evidence": [
+        "Resending this in case last week's email didn't reach you (our mail server had a wobble on the 15th).",
+        "Invoice MD-2026-057 attached again: £4,500.00 net, £900.00 VAT, £5,400.00 total, due 15 October.",
+        "Same invoice, nothing has changed."
+      ]
+    },
+    {
+      "rec_id": "R10",
+      "message_no": 10,
+      "received": "2026-09-24 06:00",
+      "doc_type": "STATEMENT",
+      "supplier": "Evergreen Office Supplies",
+      "sup": "evergreen",
+      "sender_name": "Evergreen Office Supplies",
+      "sender_address": "statements@evergreen-office.co.uk",
+      "sender_domain": "evergreen-office.co.uk",
+      "subject": "Statement of account, 24 September 2026",
+      "document_number": null,
+      "document_date": "2026-09-24",
+      "version_date": null,
+      "po_ref": null,
+      "description": "Statement of account for Harbourline Studio Ltd (customer 20917)",
+      "currency": "GBP",
+      "net": null,
+      "vat": null,
+      "gross": null,
+      "vat_note": "Statement, not an invoice. No invoice amounts. Balance outstanding 0.00.",
+      "payment_terms": null,
+      "due_date": null,
+      "corrects": null,
+      "corrected_by": null,
+      "duplicate_of": null,
+      "duplicated_by": null,
+      "voids": null,
+      "voided_by": null,
+      "credit_against": null,
+      "refers_to_document_number": null,
+      "attachment_mentioned": false,
+      "flags": ["STMT"],
+      "key_facts": {
+        "customer_number": "20917",
+        "opening_balance_2026-09-01": 142.80,
+        "payment_received": {"date": "2026-09-03", "amount": 142.80, "reference": "EO-55120"},
+        "balance_outstanding_2026-09-24": 0.00,
+        "supplier_statement": "No action required. This statement is generated automatically."
+      },
+      "notes": [
+        "Nothing is owed to Evergreen according to this statement. The GBP 142.80 payment it mentions on 2026-09-03 (reference EO-55120) is a bank feed matter.",
+        "Policy 1: statements are not invoices."
+      ],
+      "evidence": [
+        "Statement of account for Harbourline Studio Ltd (customer 20917)",
+        "Opening balance 1 September 2026: £142.80",
+        "3 September 2026: payment received, thank you: -£142.80 (EO-55120)",
+        "Balance outstanding at 24 September 2026: £0.00",
+        "No action required. This statement is generated automatically."
+      ]
+    },
+    {
+      "rec_id": "R11",
+      "message_no": 11,
+      "received": "2026-09-26 17:52",
+      "doc_type": "BANK_CHANGE_REQUEST",
+      "supplier": "Northfield Print Ltd",
+      "sup": "northfield",
+      "sender_name": "Northfield Print Accounts",
+      "sender_address": "accounts@northfield-print.co",
+      "sender_domain": "northfield-print.co",
+      "subject": "URGENT: updated bank details for payments",
+      "document_number": null,
+      "document_date": null,
+      "version_date": null,
+      "po_ref": null,
+      "description": "Request to pay Northfield Print Ltd into a new account before the next payment run",
+      "currency": null,
+      "net": null,
+      "vat": null,
+      "gross": null,
+      "vat_note": "No amounts.",
+      "payment_terms": null,
+      "due_date": null,
+      "corrects": null,
+      "corrected_by": null,
+      "duplicate_of": null,
+      "duplicated_by": null,
+      "voids": null,
+      "voided_by": null,
+      "credit_against": null,
+      "refers_to_document_number": null,
+      "attachment_mentioned": false,
+      "flags": ["BANKCHG", "LOOKALIKE"],
+      "key_facts": {
+        "requested_account_name": "Northfield Print Ltd",
+        "requested_sort_code": "04-00-75",
+        "requested_account_number": "88214561",
+        "claimed_reason": "the supplier says it has moved its business banking",
+        "pressure": [
+          "subject marked URGENT",
+          "says payments sent to the old account after 30 September will bounce and incur a re-issue fee",
+          "asks us to confirm by reply once updated"
+        ],
+        "signed": "D. Kaur, Northfield Print Accounts",
+        "sent_weekday": "Saturday (computed from 2026-09-26)",
+        "principal_answer": {
+          "id": "human-02",
+          "re": "extractor-01",
+          "val": "CALLBACK",
+          "tail": "REJECT. Do not update the details. Pay Northfield to the details on file. I will call them on the number on file; treat the .co email as suspected fraud.",
+          "effect": "appr=NO for the bank-detail change; Northfield is paid to the details on file; the principal makes the call-back; agents make no supplier contact"
+        },
+        "lookalike_evidence": {
+          "sender_domain_here": "northfield-print.co",
+          "sender_domain_on_five_other_northfield_messages": "northfield-print.co.uk",
+          "messages_from_usual_domain": [1, 2, 3, 7, 8],
+          "display_name_here": "Northfield Print Accounts",
+          "display_name_usual": "Northfield Print Ltd",
+          "signature_here": "D. Kaur",
+          "signature_usual": "Dee Kaur, Accounts, Northfield Print Ltd",
+          "earlier_statement_on_bank_details": "Message 1 (2026-09-02, usual domain): Bank details are unchanged from previous invoices.",
+          "comparison_basis": "other messages in this inbox only; the supplier master was not read by the extractor"
+        }
+      },
+      "notes": [
+        "Policy 8: an email is never sufficient; details on file stay in use until the principal approves a change after a call-back on the number on file. Policy 9: agents do not email or phone suppliers. The email asks for a reply; none has been sent.",
+        "Raised with the principal by the extractor as AQ extractor-01 (options NOCHANGE or CALLBACK). Answered as AN human-02, see key_facts.principal_answer: the change is declined and the details on file stay in use. Agents make no supplier contact."
+      ],
+      "evidence": [
+        "We have moved our business banking. Please update our details before your next payment run so payments are not delayed:",
+        "Account name: Northfield Print Ltd",
+        "Sort code: 04-00-75",
+        "Account number: 88214561",
+        "Payments sent to the old account after 30 September will bounce and incur a re-issue fee. Kindly confirm by reply once updated."
+      ]
+    }
+  ],
+  "not_supplier_documents": [
+    {
+      "message_no": 12,
+      "received": "2026-09-28 07:30",
+      "sender_name": "Evergreen Office Supplies",
+      "sender_address": "news@evergreen-office.co.uk",
+      "subject": "Autumn catalogue: 15% off desk essentials until 31 October",
+      "classification": "marketing email",
+      "flags": ["NOISE"],
+      "notes": [
+        "Catalogue promotion (15% off until 31 October, code AUTUMN15) with an unsubscribe link. No invoice, no amount owed, no payment request. Policy 1: marketing emails are not invoices."
+      ],
+      "evidence": [
+        "Save 15% on desk essentials, paper and toner until 31 October with code AUTUMN15."
+      ]
+    }
+  ],
+  "not_checked_by_extractor": [
+    {
+      "source": "bank_feed",
+      "what": "Whether the CN-012 refund arrived (supplier says GBP 300.00 by bank transfer on 2026-09-09, reference CN-012). Whether any of INV-000482, INV-000491, MD-2026-057 or 7731 was already paid. Whether MD-2026-049 was paid on 2026-08-28. The Evergreen payment of GBP 142.80 on 2026-09-03 (EO-55120) that the statement mentions."
+    },
+    {
+      "source": "po_list",
+      "what": "PO-1041 (INV-000482 net 1240.00; voided INV-000488 also cites it). PO-1044 (INV-000491 latest net 315.50, superseded net 310.50). PO-1039 (MD-2026-057 net 4500.00). PO-1046 (7731, USD 960.00; currency of the PO not known to the extractor). POs are recorded net of VAT."
+    },
+    {
+      "source": "supplier_bank",
+      "what": "Sender domains and details on file for each supplier. Whether Kestrel has a USD account on file. The requested new Northfield account (sort code 04-00-75, account number 88214561) against the details on file."
+    }
+  ],
+  "raised_by_extractor": [
+    {
+      "id": "extractor-01",
+      "to": "human",
+      "item": "sup:northfield",
+      "matter": "bank-detail change request from a lookalike domain (policies 8, 9, 10)",
+      "opts": ["NOCHANGE", "CALLBACK"],
+      "by": "2026-10-01",
+      "status": "answered",
+      "answer": {"id": "human-02", "val": "CALLBACK", "tail": "REJECT. Do not update the details. Pay Northfield to the details on file. I will call them on the number on file; treat the .co email as suspected fraud."},
+      "note": "Closed. Do not raise again. Details on file stay in use; the principal makes the call-back."
+    }
+  ],
+  "not_raised_by_extractor": [
+    {"item": "inv:MD-2026-057", "matter": "gross 5400.00 is above the 2000.00 approval threshold (policy 3); approval is needed before it is scheduled"},
+    {"item": "inv:7731", "matter": "invoice is in USD and the run is in GBP (policy 2)"}
+  ]
+}

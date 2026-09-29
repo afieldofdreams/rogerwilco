@@ -1,0 +1,85 @@
+{
+  "run": "2026-09",
+  "payment_date": "2026-10-02",
+  "lines": [
+    {
+      "invoice": "INV-000491",
+      "supplier": "Northfield Print Ltd",
+      "po": "PO-1044",
+      "currency": "GBP",
+      "amount": "378.60",
+      "status": "PAY",
+      "approved_by": null,
+      "bank_sort_code": "20-45-67",
+      "bank_account": "31776234",
+      "note": "Corrected invoice of 2026-09-17 supersedes the 2026-09-16 version (policy 5). Gross 378.60 is under 2000.00, so no approval needed (policy 3). Variance accepted (policy 4): net 315.50 against PO-1044 net 300.00, +15.50, within 50.00. Reason: the corrected invoice prices letterhead at 165.50 (2,000 sheets at 82.75 per 1,000) plus business cards 150.00; the PO holds one net figure for both. Not in bank feed (2026-09-01 to 2026-09-29). Pay to details on file (master, verified 2025-11-04); the bank-change request of 2026-09-26 was declined by the principal (human-04), policy 8."
+    },
+    {
+      "invoice": "MD-2026-057",
+      "supplier": "Marlow Design Partners LLP",
+      "po": "PO-1039",
+      "currency": "GBP",
+      "amount": "5400.00",
+      "status": "PAY",
+      "approved_by": "principal",
+      "bank_sort_code": "40-12-88",
+      "bank_account": "61102938",
+      "note": "Principal approved this payment (human-02, answering reconciler-02; released by reconciler delta reconciler-15). Gross 5400.00 is above 2000.00, so approval was needed before scheduling (policy 3). Matches PO-1039 net 4500.00, no variance. Resend of 2026-09-22 is the same invoice, paid once (policy 5). CN-012 not offset, already refunded per bank feed 2026-09-10 (policy 7). Pay to details on file (master, verified 2026-02-11). Not in bank feed."
+    },
+    {
+      "invoice": "7731",
+      "supplier": "Kestrel Cloud Inc",
+      "po": "PO-1046",
+      "currency": "USD",
+      "amount": "960.00",
+      "status": "HOLD",
+      "approved_by": null,
+      "bank_sort_code": "021000021",
+      "bank_account": "4839201",
+      "note": "HOLD: not paid in this run. USD invoice in a GBP run; the policy is silent (policies 2, 10). Principal decided HOLD (human-03, answering reconciler-03): it goes in the FX run on 2026-10-07; no release in this run. Routing and account are the USD details on file. PO-1046 net 960.00, no variance; reverse charge, no VAT. Not in total_gbp. Not in bank feed."
+    }
+  ],
+  "excluded": [
+    {
+      "invoice": "INV-000482",
+      "reason": "PAID",
+      "note": "Northfield, PO-1041. Bank feed DR 1488.00 on 2026-09-18 equals the gross 1488.00 (policy 6)."
+    },
+    {
+      "invoice": "INV-000488",
+      "reason": "VOID",
+      "note": "Northfield, gross 114.00. Voided by the supplier on 2026-09-08 as raised in error (void notice from the genuine domain); nothing due."
+    },
+    {
+      "invoice": "CN-012",
+      "reason": "CREDIT",
+      "note": "Marlow credit note, 300.00 gross. Already refunded: bank feed CR 300.00 on 2026-09-10. Nothing offset against MD-2026-057 (policy 7)."
+    },
+    {
+      "invoice": "INV-000491",
+      "reason": "DUPLICATE",
+      "note": "Earlier Northfield version of 2026-09-16 (gross 372.60, net 310.50), superseded by the corrected 2026-09-17 version, which is the PAY line (policy 5)."
+    },
+    {
+      "invoice": "MD-2026-057",
+      "reason": "DUPLICATE",
+      "note": "Identical resend of 2026-09-22. Same invoice number, paid at most once; the PAY line carries it (policy 5)."
+    },
+    {
+      "invoice": "EVERGREEN-STATEMENT",
+      "reason": "STATEMENT",
+      "note": "Evergreen statement of account, closing balance 0.00; not an invoice (policy 1). PO-1047 (180.00 net) has no invoice, nothing to pay."
+    },
+    {
+      "invoice": "EVERGREEN-MARKETING",
+      "reason": "OTHER",
+      "note": "Evergreen marketing email; not a supplier invoice (policy 1)."
+    },
+    {
+      "invoice": "NORTHFIELD-BANKCHG",
+      "reason": "OTHER",
+      "note": "Not a payable document. Northfield bank-change request of 2026-09-26 from lookalike domain northfield-print.co (master has northfield-print.co.uk). Declined by the principal (human-04, answering reconciler-04): master unchanged, Northfield paid to the details on file (policy 8). Treated as suspected fraud; its details are not used. The principal phones the number on file; no supplier contact by agents (policy 9)."
+    }
+  ],
+  "total_gbp": "5778.60"
+}
