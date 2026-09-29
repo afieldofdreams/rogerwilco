@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>rogerwilco Research</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column; each study is a block with its question, its numbers and a link. Same system as the results pages. */
+:root{
+  --paper:#F6F7F9; --ink:#171A1F; --muted:#5B6470; --accent:#1E5A6E; --warn:#9A5B12;
+  --rule:#D6DAE0; --well:#ECEFF3; --good:#2F6B3A;
+  --serif:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono:"IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#14171B; --ink:#E6E8EB; --muted:#9AA3AE; --accent:#63B3C7; --warn:#D9A054;
+    --rule:#2B3138; --well:#1D2126; --good:#7CC48A; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#14171B; --ink:#E6E8EB; --muted:#9AA3AE; --accent:#63B3C7; --warn:#D9A054;
+  --rule:#2B3138; --well:#1D2126; --good:#7CC48A; color-scheme:dark;
+}
+body{background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.55;padding-inline:16px;padding-block:32px 80px;margin:0}
+main{max-width:70ch;margin-inline:auto}
+.rw-nav{font-family:var(--mono);font-size:0.8rem;letter-spacing:0.04em;text-transform:uppercase;max-width:70ch;margin:0 auto 1.4rem}
+.rw-nav a{color:inherit;text-decoration:none;opacity:0.7}.rw-nav a:hover{opacity:1;text-decoration:underline}
+.rw-nav span{opacity:0.4;margin:0 0.3rem}
+h1,h2{font-weight:600;line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:2.1rem;letter-spacing:-0.01em}
+h2{font-size:1.25rem}
+p{margin:0.9rem 0}
+.mast{font-family:var(--mono);font-size:0.78rem;color:var(--muted);letter-spacing:0.04em;text-transform:uppercase;display:flex;flex-wrap:wrap;gap:0.4rem 1.4rem;margin-bottom:1.2rem}
+.lede{font-size:1.12rem}
+.study{border-top:1px solid var(--rule);padding-top:1.2rem;margin-top:2rem}
+.study .q{font-style:italic;color:var(--muted);margin:0.4rem 0 0.8rem}
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.8rem;margin:0.8rem 0 1rem}
+.num{background:var(--well);padding:0.7rem 0.9rem;min-width:0}
+.num b{display:block;font-family:var(--mono);font-size:1.25rem;font-weight:500;font-variant-numeric:tabular-nums}
+.num span{font-size:0.85rem;color:var(--muted)}
+a.go{font-family:var(--mono);font-size:0.85rem;color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)}
+a.go:hover{border-bottom-width:2px}
+a.go:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.foot{font-family:var(--mono);font-size:0.76rem;color:var(--muted);margin-top:3rem;border-top:1px solid var(--rule);padding-top:0.8rem}
+@media (max-width:520px){ body{font-size:16px} h1{font-size:1.7rem} }
+</style>
+</head>
+<body>
+<nav class="rw-nav" aria-label="Site"><a href="/">rogerwilco</a> <span aria-hidden="true">/</span> research</nav>
+<main>
+<div class="mast"><span>Three studies</span><span>September 2026</span><span>Croxio Ltd</span></div>
+<h1>The evidence behind rogerwilco, including the part that went against it</h1>
+<p class="lede">Three studies, run in sequence over four days, each answering the question the previous one raised. Every corpus is synthetic, every harness and log is in the repository, and the third study includes the control that overturned the first write-up's headline.</p>
+
+<section class="study">
+<h2>1. Wire study</h2>
+<p class="q">Does a closed-vocabulary line beat English, JSON, glyphs or a positional form on tokens, round trip and decision parity?</p>
+<div class="nums">
+  <div class="num"><b>240</b><span>synthetic handoffs, five formats, two models</span></div>
+  <div class="num"><b>29% to 60%</b><span>fewer tokens than English for the same facts</span></div>
+  <div class="num"><b>240/240</b><span>round trip exact; parity 100% on Sonnet</span></div>
+</div>
+<p>Keyed form won over positional because a small model miscounted positional columns in one run of two; three-letter codes won over glyphs because glyph savings were tokenizer-dependent and the legend cost more.</p>
+<a class="go" href="/research/wire-study">Read the wire study</a>
+</section>
+
+<section class="study">
+<h2>2. Readback pilot</h2>
+<p class="q">Does a comprehension readback catch a misread brief before the work is done, and at what cost in tokens and false alarms?</p>
+<div class="nums">
+  <div class="num"><b>36</b><span>trials with planted faults, blind grading</span></div>
+  <div class="num"><b>4/4</b><span>handoff misreads caught by readback, typed or prose</span></div>
+  <div class="num"><b>0</b><span>false alarms from the typed readback on Sonnet</span></div>
+</div>
+<p>Readback verifies understanding, not execution: an agent stated the constraint it then failed. Comprehension readback costs about twice the tokens of a bare handoff with the legend in the prompt, and five times with the full skill file.</p>
+<a class="go" href="/research/pilot">Read the pilot</a>
+</section>
+
+<section class="study">
+<h2>3. Month-end close</h2>
+<p class="q">When four agents prepare a payment run under a policy that reserves decisions for a human, where does the saving actually come from?</p>
+<div class="nums">
+  <div class="num"><b>25</b><span>runs, seven regimes, two scenarios, two models</span></div>
+  <div class="num"><b>33%</b><span>of free-prose traffic under the seven rules, in plain English</span></div>
+  <div class="num"><b>18</b><span>malformed or invented lines refused by the validator in two Haiku runs</span></div>
+</div>
+<p>The saving is the discipline, not the notation: disciplined prose matched the lines on the human's reading and beat them on the agents' traffic and compute. The notation buys verification, which the strong model did not need and the weak model did, and even then not enough. Includes an adversarial scenario with an injected instruction and a wrong answer from the principal.</p>
+<a class="go" href="/research/month-end">Read the month-end study</a>
+</section>
+
+<div class="foot">Corpora, harnesses, raw logs and grades: the research/ folder of the rogerwilco repository. The naming changed from formcore (prefix FC1) to rogerwilco (RW1) on 29 September 2026; raw logs keep what the agents saw.</div>
+</main>
+</body>
+</html>

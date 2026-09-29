@@ -62,6 +62,22 @@ def index():
                         headers={"Cache-Control": "no-cache"})
 
 
+RESEARCH_DIR = svc.APP_DIR / "static" / "research"
+RESEARCH_PAGES = {"wire-study", "pilot", "month-end"}
+
+
+@router.get("/research", include_in_schema=False)
+def research_index():
+    return FileResponse(RESEARCH_DIR / "index.html", media_type="text/html", headers={"Cache-Control": "no-cache"})
+
+
+@router.get("/research/{slug}", include_in_schema=False)
+def research_page(slug: str):
+    if slug not in RESEARCH_PAGES:
+        raise HTTPException(status_code=404, detail="no such study")
+    return FileResponse(RESEARCH_DIR / f"{slug}.html", media_type="text/html", headers={"Cache-Control": "no-cache"})
+
+
 @router.get("/healthz", summary="Liveness, protocol version and build")
 def healthz():
     return svc.health()
