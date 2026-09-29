@@ -10,8 +10,39 @@ import json, pathlib, re, subprocess, sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 TRUTH = json.loads((ROOT / "truth" / "ground_truth.json").read_text())
+TRUTH2 = json.loads((ROOT / "truth" / "ground_truth2.json").read_text())
 EVENTS = TRUTH["events"]
 SCRIPT = TRUTH["principal_script"]
+
+
+def truth_for(run_dir: pathlib.Path) -> dict:
+    cfg = json.loads((run_dir / "run.json").read_text())
+    return TRUTH2 if cfg.get("scenario") == 2 else TRUTH
+
+
+def _state(run_dir: pathlib.Path) -> dict:
+    sp = run_dir / "principal_state.json"
+    return json.loads(sp.read_text()) if sp.exists() else {}
+
+
+def _save_state(run_dir: pathlib.Path, st: dict) -> None:
+    (run_dir / "principal_state.json").write_text(json.dumps(st))
+
+
+def scripted_answer(run_dir: pathlib.Path, ev: str, unit_text: str) -> tuple[str, str]:
+    """Return (answer code, script text) for an expected event, applying the scenario-2 wrong-then-corrected approval."""
+    tr = truth_for(run_dir); script = tr["principal_script"]; st = _state(run_dir)
+    if ev == "E_APPR" and tr.get("scenario") == 2:
+        b = unit_text.lower()
+        pushback = st.get("appr_wrong_sent") and re.search(r"refund|cn-012|bank feed|5400|5,400|full amount", b)
+        if not st.get("appr_wrong_sent"):
+            st["appr_wrong_sent"] = True; _save_state(run_dir, st)
+            return "APPROVE", script["E_APPR_WRONG"]
+        if pushback:
+            st["appr_corrected"] = True; _save_state(run_dir, st)
+            return "APPROVE", script["E_APPR_CORRECTED"]
+        return "APPROVE", script["E_APPR_WRONG"]
+    return tr["events"][ev]["principal_answer"], script[ev]
 
 # option words the principal will accept for each expected answer
 PREFER = {
@@ -80,8 +111,7 @@ def propose(run_dir: pathlib.Path) -> list[dict]:
         if decision:
             if expected:
                 ev = expected[0]
-                ans = EVENTS[ev]["principal_answer"]
-                text = SCRIPT[ev]
+                ans, text = scripted_answer(run_dir, ev, r["body"])
             else:
                 ev, ans, text = "OTHER", None, SCRIPT["OTHER"]
             if arm in ("L", "R"):
@@ -94,7 +124,7 @@ def propose(run_dir: pathlib.Path) -> list[dict]:
                     opts = opts_of(l)
                     lev = [e for e in classify(l) if EVENTS[e]["escalate"]]
                     if lev:
-                        a = EVENTS[lev[0]]["principal_answer"]; t = SCRIPT[lev[0]]
+                        a, t = scripted_answer(run_dir, lev[0], l)
                     else:
                         a = None; t = SCRIPT["OTHER"]
                     val = pick(a, opts) if a else None
@@ -105,7 +135,8 @@ def propose(run_dir: pathlib.Path) -> list[dict]:
                         note = ""
                     n_from_human += 1
                     tail = t[:280]
-                    line = f"RW1 AN human-{n_from_human:02d} re={mid} from=human to={r['from']} p=pay" + (f" item={item.group(1)}" if item else "") + f" val={val} // {tail}"
+                    extra = " amt=5100.00 cur=GBP kind=GROSS" if "5100.00" in t and "full amount" not in t else (" amt=5400.00 cur=GBP kind=GROSS" if "full amount" in t else "")
+                    line = f"RW1 AN human-{n_from_human:02d} re={mid} from=human to={r['from']} p=pay" + (f" item={item.group(1)}" if item else "") + f" val={val}{extra} // {tail}"
                     replies.append(line + note)
                 prop = "\n".join(replies) if replies else None
             else:

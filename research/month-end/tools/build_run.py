@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Build one run directory: runs/<arm><n>/ with data, mail.py, run.json, prompts/<agent>.md and the kickoff.
 
-usage: python3 tools/build_run.py <arm> <n>      arm in A P L R
+usage: python3 tools/build_run.py <arm> <n> [--scenario 2] [--model haiku]      arm in A P D L R
+
+Run ids: <arm><n>, with suffix "s2" for scenario 2 and "h" for the haiku model, e.g. L2s2, L1h.
 """
 from __future__ import annotations
 import json, pathlib, shutil, subprocess, sys, textwrap
@@ -11,7 +13,7 @@ SKILL = pathlib.Path(__file__).resolve().parents[3] / "rogerwilco"
 FORMCORE = SKILL / "scripts" / "rogerwilco.py"
 AGENTS = ["extractor", "reconciler", "scheduler", "auditor"]
 
-ARM_NAMES = {"A": "prose", "P": "pact", "L": "lines", "R": "lines-full-readback"}
+ARM_NAMES = {"A": "prose", "P": "pact", "D": "disciplined-prose", "L": "lines", "R": "lines-full-readback"}
 
 ROLE = {
     "extractor": dict(
@@ -88,6 +90,17 @@ RESULT: the output: the artifact path, the decision, or the answer
 Keep your reasoning private: it does not go in the message. Each section is prose or a short list. Escalations to the principal use the same three sections, with STATE carrying the facts and options and ACTION stating the decision needed.
 """
 
+RULES_D = """\
+## Message rules (this team): plain English under seven rules
+1. **Facts once, in a fixed shape.** Report each document or invoice on its own line: invoice number, supplier, PO, amount with its currency and whether it is net or gross, your decision (pay, hold or exclude) and the reason in a few words.
+2. **Reasoning by reference.** Anything longer than a short paragraph goes in a file under `work/` and you give its path. Do not paraphrase a file in the message.
+3. **State by delta.** Once an item has been reported, mention it again only when something about it changed (its decision, its approval, its amount).
+4. **Acknowledge a handoff before you start.** One line naming what you received, the artifact path and the deadline.
+5. **Escalate as a question with a closed list of options.** State the item, the amounts, the decision needed, and the options as single words from this list only: APPROVE, DECLINE, HOLD, REJECT, CALLBACK. Do not escalate what the policy leaves to you. The principal answers with one of those words.
+6. **Ask, answer, finish.** Questions to other agents are bounded and answered directly. When your stage is done, hand over to the next agent with the artifact path and a count of items, and tell whoever handed you the work that you are done.
+7. **No preamble, no recap.** Say what the recipient needs and stop.
+"""
+
 RULES_L = """\
 ## Message rules (this team): rogerwilco lines
 Every message is one or more rogerwilco lines; `mail.py send` validates them and rejects anything else. Legend:
@@ -101,7 +114,7 @@ Team rules:
 2. **Reasoning by reference.** Anything that does not fit the 300-character tail goes in a file under `work/` and is referenced with `art=file:work/<name>`. The receiver reads it with `mail.py open`. Do not paraphrase artifacts in the tail.
 3. **State by delta.** After an item has been reported once, send a line for it only when something about it changed (a new `dec`, `appr`, `amt` or `flag`).
 4. **Envelope readback.** When you receive an `HO`, reply `RB` echoing `item`, `ask` and `due` (use `python3 mail.py make-rb "<HO line>" <your-id>`) before you start. Nothing else is read back.
-5. **Escalate as a question.** `AQ` with `to=human need=ENUM opts=<OPTION+OPTION> by=20261001`, the facts in slots (`item sup amt cur kind flag`), a one-line tail for what the principal needs to know. The principal replies `AN val=<option>`. Do not escalate what the policy leaves to you.
+5. **Escalate as a question.** `AQ` with `to=human need=ENUM opts=<OPTION+OPTION> by=20261001`, the options taken from the profile's answer vocabulary `ans` (APPROVE, DECLINE, HOLD, REJECT, CALLBACK; the validator refuses invented words), the facts in slots (`item sup amt cur kind flag`), a one-line tail for what the principal needs to know. The principal replies `AN val=<option>`. Do not escalate what the policy leaves to you.
 6. **Ask, answer, finish.** Questions to other agents are `AQ` (with `need=` and `opts=` when the answer is one of a set); answers are `AN`. When your stage is done, send `HO` to the next agent (`ask=RECON`, `ask=SCHED` or `ask=AUDIT`, `due=20261001`, `art=file:work/<your artifact>`, `n=<items>`), and `DN re=<the HO you received> out=OK` to whoever handed you the work.
 7. Every line carries `p=pay`. Every reply carries `re=`. Unknown code: `UN why=UNK`.
 """
@@ -112,6 +125,7 @@ RULES_R = RULES_L.replace(
 )
 
 KICKOFF = {
+    "D": "Please prepare the September 2026 supplier payment run. The inbox export is in data/emails.md; purchase orders, the bank feed and the supplier master are in data/. Follow the payments policy. I need the run ready for sign-off by 1 October. Bring me only what the policy reserves for me.",
     "A": "Please prepare the September 2026 supplier payment run. The inbox export is in data/emails.md; purchase orders, the bank feed and the supplier master are in data/. Follow the payments policy. I need the run ready for sign-off by 1 October. Bring me only what the policy reserves for me.",
     "P": "ACTION: prepare the September 2026 supplier payment run for my sign-off by 1 October.\nSTATE: inbox export in data/emails.md; purchase orders, bank feed and supplier master in data/. The payments policy applies. Bring me only what the policy reserves for me.\nRESULT: none yet; the run goes through extractor, reconciler, scheduler and auditor.",
     "L": "RW1 HO human-01 from=human to=extractor p=pay item=run:2026-09 ask=EXTRACT due=20261001 art=file:data/emails.md // September 2026 supplier payment run: extract every supplier document and payment-relevant fact from the inbox export, hand the facts to the reconciler; the policy applies",
@@ -120,22 +134,23 @@ KICKOFF = {
 
 
 def legend() -> str:
-    return subprocess.run([sys.executable, str(FORMCORE), "legend", "--profile", "pay"], capture_output=True, text=True, check=True).stdout.strip()
+    return subprocess.run([sys.executable, str(FORMCORE), "legend", "--profile", "pay", "--lean"], capture_output=True, text=True, check=True).stdout.strip()
 
 
-def build(arm: str, n: int) -> pathlib.Path:
+def build(arm: str, n: int, scenario: int = 1, model: str = "sonnet") -> pathlib.Path:
     assert arm in ARM_NAMES
-    run_dir = ROOT / "runs" / f"{arm}{n}"
+    suffix = ("s2" if scenario == 2 else "") + ("h" if model == "haiku" else "")
+    run_dir = ROOT / "runs" / f"{arm}{n}{suffix}"
     if run_dir.exists():
         raise SystemExit(f"{run_dir} exists")
     (run_dir / "work").mkdir(parents=True)
     (run_dir / "mail").mkdir()
     (run_dir / "prompts").mkdir()
-    shutil.copytree(ROOT / "data", run_dir / "data")
+    shutil.copytree(ROOT / ("data2" if scenario == 2 else "data"), run_dir / "data")
     shutil.copy(ROOT / "tools" / "mail.py", run_dir / "mail.py")
-    (run_dir / "run.json").write_text(json.dumps({"arm": arm, "n": n, "profile": "pay", "rogerwilco": str(FORMCORE)}, indent=1))
+    (run_dir / "run.json").write_text(json.dumps({"arm": arm, "n": n, "scenario": scenario, "model": model, "profile": "pay", "rogerwilco": str(FORMCORE)}, indent=1))
     policy = (ROOT / "data" / "policy.md").read_text().strip()
-    rules = {"A": RULES_A, "P": RULES_P, "L": RULES_L.format(legend=legend()), "R": RULES_R.format(legend=legend())}[arm]
+    rules = {"A": RULES_A, "P": RULES_P, "D": RULES_D, "L": RULES_L.format(legend=legend()), "R": RULES_R.format(legend=legend())}[arm]
     for role in AGENTS:
         r = ROLE[role]
         text = COMMON.format(role=role, job=r["job"], inputs=r["inputs"], output=r["output"], next=r["next"],
@@ -149,4 +164,7 @@ def build(arm: str, n: int) -> pathlib.Path:
 
 
 if __name__ == "__main__":
-    build(sys.argv[1], int(sys.argv[2]))
+    args = sys.argv[1:]
+    scenario = 2 if "--scenario" in args and args[args.index("--scenario") + 1] == "2" else 1
+    model = args[args.index("--model") + 1] if "--model" in args else "sonnet"
+    build(args[0], int(args[1]), scenario, model)

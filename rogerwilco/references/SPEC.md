@@ -24,7 +24,7 @@ Tokens are separated by single spaces. The first three are positional; everythin
 |---|---|
 | `RW1` | Protocol version token. Required, always first. |
 | `TYPE` | One of the eight message types in section 3. Uppercase. |
-| `id` | Message id. Any token matching `[A-Za-z0-9._-]+`, unique within the conversation. Recommended shape `<agent>-<n>`, e.g. `writer-07`. |
+| `id` | Message id: `<from>-<n>`, the sending agent's name, a hyphen and a number, e.g. `writer-07`, unique within the conversation. The validator refuses any other shape, so a receiver can tell who a message came from and which of theirs it is from the id alone. |
 | `key=value` | Keys are lowercase `[a-z][a-z0-9_]*`. Values contain no spaces. Lists join with `+`. Dates are `YYYYMMDD`. Booleans are `Y` or `N`. |
 | `// tail` | Free text after ` // `. At most 300 characters. Anything longer becomes an artifact and is referenced with `art=`. |
 
@@ -106,7 +106,7 @@ Profiles may extend any of these lists. They may not redefine a core code.
 
 ## 5. Rules
 
-1. **No handover without readback.** An HO transfers ownership only when the receiver sends an RB that passes the sender's check (section 5.1). Until then the sender owns the item. An RB that does not pass is void; the sender re-issues the HO with `re=` pointing at the void RB. The owner of an item is the `to` of the most recent HO that received a passing RB. No RB within the sender's deadline: the sender re-issues the same HO with `re=` pointing at the original; a receiver that already read it back replies `UN why=DUP`, so a retry cannot create two owners.
+1. **No handover without readback.** An HO transfers ownership only when the receiver sends an RB that passes the sender's check (section 5.1). Until then the sender owns the item. The sender sets the level per handoff with `rb=`: the default envelope echo (`item`, `ask`, `due`) where a misread is cheap to catch later; `rb=all` where the receiver's next act is irreversible (a payment release, a payee change, anything external), and in that regime every `ST` or `AN` the receiver will act on is echoed back before it acts; `rb=acc` where the instruction lives in a brief. The month-end study measured full readback at 1.6x the traffic of envelope echo with nothing caught in twelve clean runs, which is why the level belongs to the handoff and not to the team. An RB that does not pass is void; the sender re-issues the HO with `re=` pointing at the void RB. The owner of an item is the `to` of the most recent HO that received a passing RB. No RB within the sender's deadline: the sender re-issues the same HO with `re=` pointing at the original; a receiver that already read it back replies `UN why=DUP`, so a retry cannot create two owners.
 2. **Never guess.** A receiver that meets an unknown version token, type, or enum value replies `UN why=UNK` (or `why=VER`) naming the offending code in the tail. It does not infer a meaning, and it does not substitute a nearby reason such as `NOCAP` or `SCOPE`: those describe the receiver, `UNK` describes the message. An AQ is answered with an AN or refused with UN; it is never left unanswered because the receiver is busy.
 3. **Every reply carries `re=`.** RB, AN, DN, UN and FL always do. Threads are reconstructed from ids.
 4. **Facts in slots, reasoning in the tail.** A fact that has a slot goes in the slot, never only in the tail. The tail is at most 300 characters; longer content is an artifact referenced by `art=`.
@@ -185,7 +185,11 @@ A profile is a JSON file that extends the core for a domain. It may add enum val
 
 A message using a profile carries `p=<profile>` as a keyed slot, e.g. `p=pform`. Without `p=`, only core vocabulary is valid.
 
-The legend a model needs is generated from the core plus the profile (`scripts/rogerwilco.py legend --profile pform`).
+A profile may also close the answer vocabulary. If it defines an enum `ans`, every `AQ need=ENUM` must draw its `opts` from `ans` and every `AN val` (other than `tail`, `Y`, `N`, a number or a date) must be one of them. Without it, agents invent option words (`OFFRUN`, `KEEPFILE`, `PAY-USD`) and the human, or a policy engine, has to decode each one; the month-end study saw seven different spellings of the same three answers in twelve runs. The pay profile's vocabulary is `APPROVE DECLINE HOLD REJECT CALLBACK`. A profile may list `asks_used`, the core asks its domain needs, so the lean legend omits the rest.
+
+Slots a profile adds may carry `desc`, which the legend prints.
+
+The legend a model needs is generated from the core plus the profile (`scripts/rogerwilco.py legend --profile pay`). `--lean` drops the comprehension-readback keys and the unused core asks for teams that use envelope echo only: about 1,000 tokens with the pay profile against 1,360 for the full legend.
 
 ## 8. Exchanges
 
