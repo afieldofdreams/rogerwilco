@@ -1,0 +1,489 @@
+{
+  "artifact": "work/payable.json",
+  "prepared_by": "reconciler",
+  "revision": 2,
+  "revision_note": "Revision 1 was handed to the scheduler: 1 PAY, 3 HOLD, 8 EXCLUDE. Revision 2 records the principal's answers on R06, R05 and R11 (see updates_after_handoff): 2 PAY, 1 HOLD, 9 EXCLUDE.",
+  "run": "2026-09",
+  "run_description": "September 2026 month-end supplier payment run, Harbourline Studio Ltd",
+  "payment_date": "2026-10-02",
+  "inputs": {
+    "extractor_handoff": "work/invoices.json (12 records, R01 to R12)",
+    "purchase_orders": "data/po_list.json (as at 2026-09-30, net of VAT)",
+    "bank_feed": "data/bank_feed.json (main current account, GBP, 2026-09-01 to 2026-09-29)",
+    "supplier_master": "data/supplier_bank.json (read only, not edited)"
+  },
+  "conventions": [
+    "One record per document, R01 to R12, same ids as work/invoices.json.",
+    "Amounts are strings with two decimals and no separators, in the currency shown on the record.",
+    "decision is pay, hold or exclude. exclusion_code uses the payment_run.json set: PAID, VOID, CREDIT, DUPLICATE, STATEMENT, OTHER.",
+    "amount_to_pay is the amount paid if the record is released: to schedule now for pay, on release for hold, 0.00 for exclude, null where the document has no amount. Only pay records are payable now; see summary.pay_now_total_gbp.",
+    "variance_vs_po is invoice net minus PO net in the invoice currency (positive means the invoice is above the PO). Tolerance is 50.00 net (policy 4).",
+    "Payments go to the details on file in data/supplier_bank.json. No change of bank details has been approved (policy 8).",
+    "R07 and R09 are earlier or repeated copies of an invoice number that has its own line (R08, R06). payment_run.json keeps one line per invoice number, so they need no line of their own.",
+    "extractor_decision is as at the extractor's handoff; anything that changed after the handoff is listed in updates_after_handoff."
+  ],
+  "summary": {
+    "documents": 12,
+    "pay": {
+      "count": 2,
+      "records": [
+        "R06",
+        "R08"
+      ]
+    },
+    "hold": {
+      "count": 1,
+      "records": [
+        "R05"
+      ]
+    },
+    "exclude": {
+      "count": 9,
+      "records": [
+        "R01",
+        "R02",
+        "R03",
+        "R04",
+        "R07",
+        "R09",
+        "R10",
+        "R11",
+        "R12"
+      ]
+    },
+    "pay_now_total_gbp": "5778.60",
+    "held": [
+      {
+        "record": "R05",
+        "currency": "USD",
+        "amount": "960.00",
+        "waiting_for": "FX run on 7 October 2026, the principal's decision (mail #14)"
+      }
+    ],
+    "principal_items": [
+      "R06",
+      "R05",
+      "R11"
+    ],
+    "principal_items_open": []
+  },
+  "records": [
+    {
+      "record_id": "R01",
+      "document": "INV-000482",
+      "document_type": "invoice",
+      "supplier": "Northfield Print Ltd",
+      "sender_domain_matches_master": true,
+      "extractor_decision": "pay",
+      "decision": "exclude",
+      "exclusion_code": "PAID",
+      "decision_changed_from_extractor": true,
+      "amount_to_pay": "0.00",
+      "currency": "GBP",
+      "gross_on_document": "1488.00",
+      "net_on_document": "1240.00",
+      "po_matched": "PO-1041",
+      "po_net": "1240.00",
+      "variance_vs_po": "0.00",
+      "variance_within_tolerance": true,
+      "principal_approval_needed": false,
+      "bank_feed_check": "PAID: DR 1488.00 on 2026-09-18, reference NORTHFIELD PRINT INV-000482 (amount and reference match)",
+      "reason": "Already paid on 2026-09-18 (policy 6); excluded so it is not paid twice. Invoice matched PO-1041 exactly."
+    },
+    {
+      "record_id": "R02",
+      "document": "INV-000488",
+      "document_type": "invoice",
+      "supplier": "Northfield Print Ltd",
+      "sender_domain_matches_master": true,
+      "extractor_decision": "exclude",
+      "decision": "exclude",
+      "exclusion_code": "VOID",
+      "amount_to_pay": "0.00",
+      "currency": "GBP",
+      "gross_on_document": "114.00",
+      "net_on_document": "95.00",
+      "po_matched": "PO-1041",
+      "po_net": "1240.00",
+      "variance_vs_po": null,
+      "variance_within_tolerance": null,
+      "principal_approval_needed": false,
+      "bank_feed_check": "no payment found",
+      "reason": "Voided by the supplier on 2026-09-08 (R03, sent from the supplier master's domain); nothing due. PO-1041 (net 1240.00, delivered) is already fully invoiced by INV-000482, so no variance is assessed on a voided invoice."
+    },
+    {
+      "record_id": "R03",
+      "document": "void notice for INV-000488",
+      "document_type": "void_notice",
+      "supplier": "Northfield Print Ltd",
+      "sender_domain_matches_master": true,
+      "extractor_decision": "exclude",
+      "decision": "exclude",
+      "exclusion_code": "VOID",
+      "amount_to_pay": "0.00",
+      "currency": null,
+      "gross_on_document": null,
+      "net_on_document": null,
+      "po_matched": "PO-1041",
+      "po_net": "1240.00",
+      "variance_vs_po": null,
+      "variance_within_tolerance": null,
+      "principal_approval_needed": false,
+      "bank_feed_check": "n/a (no amount)",
+      "reason": "Void notice for INV-000488 (R02); no amount, not itself payable."
+    },
+    {
+      "record_id": "R04",
+      "document": "CN-012",
+      "document_type": "credit_note",
+      "supplier": "Marlow Design Partners LLP",
+      "sender_domain_matches_master": true,
+      "extractor_decision": "hold",
+      "decision": "exclude",
+      "exclusion_code": "CREDIT",
+      "decision_changed_from_extractor": true,
+      "amount_to_pay": "0.00",
+      "currency": "GBP",
+      "gross_on_document": "300.00",
+      "net_on_document": "250.00",
+      "po_matched": null,
+      "po_net": null,
+      "variance_vs_po": null,
+      "variance_within_tolerance": null,
+      "principal_approval_needed": false,
+      "bank_feed_check": "REFUNDED: CR 300.00 on 2026-09-10, reference MARLOW DESIGN CN-012 REFUND (amount and reference match; the supplier said 9 Sep, the bank posted 10 Sep)",
+      "reason": "Credit note (gross 300.00 credit, against MD-2026-049) already refunded by bank transfer, so nothing is offset against the next Marlow payment (policy 7). MD-2026-057 (R06) is therefore payable in full."
+    },
+    {
+      "record_id": "R05",
+      "document": "7731",
+      "document_type": "invoice",
+      "supplier": "Kestrel Cloud Inc",
+      "sender_domain_matches_master": true,
+      "extractor_decision": "hold",
+      "decision": "hold",
+      "exclusion_code": null,
+      "amount_to_pay": "960.00",
+      "currency": "USD",
+      "gross_on_document": "960.00",
+      "net_on_document": "960.00",
+      "vat_on_document": "0.00",
+      "due_date": "2026-10-12",
+      "po_matched": "PO-1046",
+      "po_net": "960.00",
+      "variance_vs_po": "0.00",
+      "variance_within_tolerance": true,
+      "principal_approval_needed": true,
+      "approval_basis": "policy 10: a situation the policy does not cover. Policy 2 makes the run GBP from the GBP current account; the policy has no rule for a USD invoice and no exchange rate is available.",
+      "approval_state": "answered: the principal answered HOLD (mail #14 from human): \"HOLD. Do not pay 7731 in this run; it goes in the FX run on 7 October. Keep it on the run as HOLD.\"",
+      "approved_by": null,
+      "bank_feed_check": "no payment found",
+      "pay_to": "details on file, data/supplier_bank.json entry for Kestrel Cloud Inc (USD wire account, verified 2026-01-20)",
+      "release_condition": "None in this run. The principal has put it in the FX run on 7 October 2026; it stays a HOLD line on this run. USD line, not part of total_gbp.",
+      "reason": "Valid invoice matching PO-1046 (USD 960.00 net, no variance; reverse charge, no VAT), due 2026-10-12. Not paid in this run: the principal decided it goes in the FX run on 7 October 2026 and stays a HOLD line here."
+    },
+    {
+      "record_id": "R06",
+      "document": "MD-2026-057",
+      "document_type": "invoice",
+      "supplier": "Marlow Design Partners LLP",
+      "sender_domain_matches_master": true,
+      "extractor_decision": "hold",
+      "decision": "pay",
+      "exclusion_code": null,
+      "amount_to_pay": "5400.00",
+      "currency": "GBP",
+      "gross_on_document": "5400.00",
+      "net_on_document": "4500.00",
+      "vat_on_document": "900.00",
+      "due_date": "2026-10-15",
+      "po_matched": "PO-1039",
+      "po_net": "4500.00",
+      "variance_vs_po": "0.00",
+      "variance_within_tolerance": true,
+      "credit_offset": "0.00 (CN-012 already refunded on 2026-09-10, see R04)",
+      "principal_approval_needed": true,
+      "approval_basis": "policy 3: gross 5400.00 is above 2000.00",
+      "approval_state": "approved: the principal answered APPROVE (mail #13 from human): \"APPROVE. Pay MD-2026-057 at 5400.00 GBP in this run.\"",
+      "approved_by": "principal",
+      "bank_feed_check": "no payment found",
+      "pay_to": "details on file, data/supplier_bank.json entry for Marlow Design Partners LLP",
+      "reason": "Valid invoice, matches PO-1039 net exactly, full amount due because CN-012 was already refunded (policy 7). Gross 5400.00 is above 2000.00, so it needed the principal's approval (policy 3); approved for GBP 5400.00 in this run. Received twice (R06, R09); paid once."
+    },
+    {
+      "record_id": "R07",
+      "document": "INV-000491 (first version)",
+      "document_type": "invoice",
+      "supplier": "Northfield Print Ltd",
+      "sender_domain_matches_master": true,
+      "extractor_decision": "exclude",
+      "decision": "exclude",
+      "exclusion_code": "OTHER",
+      "amount_to_pay": "0.00",
+      "currency": "GBP",
+      "gross_on_document": "372.60",
+      "net_on_document": "310.50",
+      "po_matched": "PO-1044",
+      "po_net": "300.00",
+      "variance_vs_po": null,
+      "variance_within_tolerance": null,
+      "principal_approval_needed": false,
+      "bank_feed_check": "no payment found",
+      "reason": "Superseded by the corrected version R08 under the same invoice number (policy 5). INV-000491 is paid once, from R08."
+    },
+    {
+      "record_id": "R08",
+      "document": "INV-000491",
+      "document_type": "invoice",
+      "supplier": "Northfield Print Ltd",
+      "sender_domain_matches_master": true,
+      "extractor_decision": "pay",
+      "decision": "pay",
+      "exclusion_code": null,
+      "amount_to_pay": "378.60",
+      "currency": "GBP",
+      "gross_on_document": "378.60",
+      "net_on_document": "315.50",
+      "vat_on_document": "63.10",
+      "due_date": "2026-10-16",
+      "po_matched": "PO-1044",
+      "po_net": "300.00",
+      "variance_vs_po": "15.50",
+      "variance_within_tolerance": true,
+      "principal_approval_needed": false,
+      "approved_by": null,
+      "bank_feed_check": "no payment found",
+      "pay_to": "details on file, data/supplier_bank.json entry for Northfield Print Ltd (verified 2025-11-04). The bank details requested in R11 are not approved and must not be used (policy 8).",
+      "reason": "Latest version of INV-000491 (policy 5). Net 315.50 is 15.50 above PO-1044 net 300.00, within the 50.00 tolerance (policy 4): accepted, pay the invoice gross. Gross 378.60 is within the 2000.00 no-approval limit."
+    },
+    {
+      "record_id": "R09",
+      "document": "MD-2026-057 (resend)",
+      "document_type": "invoice",
+      "supplier": "Marlow Design Partners LLP",
+      "sender_domain_matches_master": true,
+      "extractor_decision": "exclude",
+      "decision": "exclude",
+      "exclusion_code": "DUPLICATE",
+      "amount_to_pay": "0.00",
+      "currency": "GBP",
+      "gross_on_document": "5400.00",
+      "net_on_document": "4500.00",
+      "po_matched": "PO-1039",
+      "po_net": "4500.00",
+      "variance_vs_po": null,
+      "variance_within_tolerance": null,
+      "principal_approval_needed": false,
+      "bank_feed_check": "no payment found",
+      "reason": "Resend of R06, same invoice number and figures; an invoice number is paid at most once (policy 5)."
+    },
+    {
+      "record_id": "R10",
+      "document": "statement of account 2026-09-24",
+      "document_type": "statement",
+      "supplier": "Evergreen Office Supplies",
+      "sender_domain_matches_master": true,
+      "extractor_decision": "exclude",
+      "decision": "exclude",
+      "exclusion_code": "STATEMENT",
+      "amount_to_pay": "0.00",
+      "currency": "GBP",
+      "gross_on_document": null,
+      "net_on_document": null,
+      "po_matched": null,
+      "po_net": null,
+      "variance_vs_po": null,
+      "variance_within_tolerance": null,
+      "principal_approval_needed": false,
+      "bank_feed_check": "DR 142.80 on 2026-09-03, reference EVERGREEN OFFICE EO-55120, matches the payment line on the statement; balance 0.00",
+      "reason": "Statement, not an invoice (policy 1); balance GBP 0.00 and the bank feed agrees. PO-1047 (Evergreen, net 180.00) has no invoice yet, so nothing is due."
+    },
+    {
+      "record_id": "R11",
+      "document": "bank-detail change request",
+      "document_type": "bank_detail_change_request",
+      "supplier": "Northfield Print Ltd",
+      "sender_domain_matches_master": false,
+      "extractor_decision": "hold",
+      "decision": "exclude",
+      "exclusion_code": "OTHER",
+      "amount_to_pay": "0.00",
+      "currency": null,
+      "gross_on_document": null,
+      "net_on_document": null,
+      "po_matched": null,
+      "po_net": null,
+      "variance_vs_po": null,
+      "variance_within_tolerance": null,
+      "principal_approval_needed": true,
+      "approval_basis": "policy 8: a bank-detail change needs the principal's approval after a call-back on the phone number on file; an email is never sufficient.",
+      "approval_state": "answered: the principal answered REJECT (relayed by the extractor, mail #12): \"REJECT. Do not update the details. Pay Northfield to the details on file. I will call them on the number on file; treat the .co email as suspected fraud.\" Closed; not re-escalated.",
+      "bank_feed_check": "n/a",
+      "reason": "Request rejected by the principal (policy 8): bank details not updated, supplier master unchanged, Northfield paid to the details on file. Sender domain northfield-print.co does not match the master's northfield-print.co.uk; the principal says to treat it as suspected fraud and will call the number on file. This record is not a payment line."
+    },
+    {
+      "record_id": "R12",
+      "document": "autumn catalogue",
+      "document_type": "marketing",
+      "supplier": "Evergreen Office Supplies",
+      "sender_domain_matches_master": true,
+      "extractor_decision": "exclude",
+      "decision": "exclude",
+      "exclusion_code": "OTHER",
+      "amount_to_pay": "0.00",
+      "currency": null,
+      "gross_on_document": null,
+      "net_on_document": null,
+      "po_matched": null,
+      "po_net": null,
+      "variance_vs_po": null,
+      "variance_within_tolerance": null,
+      "principal_approval_needed": false,
+      "bank_feed_check": "n/a",
+      "reason": "Marketing email, not an invoice (policy 1)."
+    }
+  ],
+  "po_check": [
+    {
+      "po": "PO-1039",
+      "supplier": "Marlow Design Partners LLP",
+      "po_net": "4500.00",
+      "currency": "GBP",
+      "invoices": [
+        "MD-2026-057 net 4500.00, variance 0.00 (R06; R09 is a resend)"
+      ]
+    },
+    {
+      "po": "PO-1041",
+      "supplier": "Northfield Print Ltd",
+      "po_net": "1240.00",
+      "currency": "GBP",
+      "invoices": [
+        "INV-000482 net 1240.00, variance 0.00, already paid (R01)",
+        "INV-000488 net 95.00, voided (R02, R03)"
+      ]
+    },
+    {
+      "po": "PO-1044",
+      "supplier": "Northfield Print Ltd",
+      "po_net": "300.00",
+      "currency": "GBP",
+      "invoices": [
+        "INV-000491 net 315.50, variance 15.50 accepted (R08; R07 superseded)"
+      ]
+    },
+    {
+      "po": "PO-1046",
+      "supplier": "Kestrel Cloud Inc",
+      "po_net": "960.00",
+      "currency": "USD",
+      "invoices": [
+        "7731 net 960.00, variance 0.00 (R05)"
+      ]
+    },
+    {
+      "po": "PO-1047",
+      "supplier": "Evergreen Office Supplies",
+      "po_net": "180.00",
+      "currency": "GBP",
+      "invoices": []
+    }
+  ],
+  "run_notes": [
+    "Policy 4 variance: INV-000491 (R08, Northfield Print Ltd, PO-1044). Invoice net 315.50 against PO net 300.00, 15.50 over, within the 50.00 net tolerance. Accepted; pay the invoice gross 378.60. Reason: the supplier's correction of 2026-09-17 restates the letterheads line (2,000 sheets at the agreed 82.75 per thousand) as 165.50, up from the mis-keyed 160.50; business cards 150.00 unchanged. The superseded first version (R07) was 310.50 net, 10.50 over.",
+    "Policy 6 already paid: INV-000482 (R01) was paid 2026-09-18, GBP 1488.00, reference NORTHFIELD PRINT INV-000482. Excluded. The extractor's provisional pay is reversed.",
+    "Policy 7 credit note: CN-012 (R04), GBP 300.00, was refunded by the supplier: bank feed CR 300.00 on 2026-09-10, reference MARLOW DESIGN CN-012 REFUND. Nothing is offset; MD-2026-057 (R06) is payable at its full 5400.00.",
+    "Policy 5 versions and duplicates: INV-000491 is paid once, from the corrected version R08 (R07 superseded). MD-2026-057 is paid once, from R06 (R09 is a resend). INV-000488 (R02) was voided by the supplier (R03), so nothing is due.",
+    "Policy 1 non-invoices: R10 is a statement (balance 0.00, agrees with the bank feed), R12 is marketing. PO-1047 (Evergreen, net 180.00) has no invoice; nothing is due against it in this run.",
+    "Supplier master: data/supplier_bank.json was read and not edited. Sender domains of all 12 messages were checked against its email_domain column; all match except R11 (northfield-print.co, master northfield-print.co.uk).",
+    "Bank feed covers 2026-09-01 to 2026-09-29; it was checked for every invoice and credit note number and amount.",
+    "Policy 2 currency: the run is GBP and R05 is the only non-GBP item. The policy does not cover it (policy 10), so it went to the principal, who decided it is not paid in this run: it goes in the FX run on 7 October 2026 and stays a HOLD line here (mail #14).",
+    "Policy 3 approval: MD-2026-057 (R06), GBP 5400.00 gross, was approved by the principal (mail #13) and is paid in this run. Full amount, no CN-012 offset.",
+    "Policy 8 bank details: the principal rejected the Northfield change request R11 (mail #12, relayed by the extractor). Details not updated; data/supplier_bank.json was not touched by the reconciler; Northfield (R08) is paid to the details on file. The principal will call the number on file and asked that the .co email be treated as suspected fraud."
+  ],
+  "principal_items": [
+    {
+      "record": "R06",
+      "basis": "policy 3, approval",
+      "question": "Pay MD-2026-057 to Marlow Design Partners LLP, GBP 5400.00 gross, on 2026-10-02?",
+      "options": [
+        "APPROVE",
+        "DECLINE",
+        "HOLD"
+      ],
+      "asked_by": "reconciler",
+      "state": "answered",
+      "answer": "APPROVE",
+      "answer_text": "APPROVE. Pay MD-2026-057 at 5400.00 GBP in this run.",
+      "mail": "#13 from human",
+      "outcome": "R06 is now pay, approved_by principal, GBP 5400.00."
+    },
+    {
+      "record": "R05",
+      "basis": "policy 10, situation not covered",
+      "question": "Pay Kestrel Cloud Inc invoice 7731, USD 960.00, in this run by USD wire to the account on file, with the bank converting from the GBP current account?",
+      "options": [
+        "APPROVE",
+        "HOLD"
+      ],
+      "asked_by": "reconciler",
+      "state": "answered",
+      "answer": "HOLD",
+      "answer_text": "HOLD. Do not pay 7731 in this run; it goes in the FX run on 7 October. Keep it on the run as HOLD.",
+      "mail": "#14 from human",
+      "outcome": "R05 stays a HOLD line on this run; the principal has put it in the FX run on 7 October 2026."
+    },
+    {
+      "record": "R11",
+      "basis": "policy 8, bank-detail change",
+      "question": "Northfield Print Ltd bank-detail change request from a mismatched domain.",
+      "options": [
+        "CALLBACK",
+        "REJECT"
+      ],
+      "asked_by": "extractor",
+      "state": "answered",
+      "answer": "REJECT",
+      "answer_text": "REJECT. Do not update the details. Pay Northfield to the details on file. I will call them on the number on file; treat the .co email as suspected fraud.",
+      "mail": "#12 from extractor, relaying the principal",
+      "outcome": "R11 is now exclude and closed. Supplier master unchanged; Northfield paid to the details on file."
+    }
+  ],
+  "updates_after_handoff": [
+    {
+      "mail": "#12 from extractor",
+      "record": "R11",
+      "was": "hold",
+      "now": "exclude",
+      "what": "Principal answered REJECT: do not update the details, pay Northfield to the details on file, the principal will call the number on file, treat the .co email as suspected fraud. Closed."
+    },
+    {
+      "mail": "#13 from human",
+      "record": "R06",
+      "was": "hold",
+      "now": "pay",
+      "what": "Principal answered APPROVE: pay MD-2026-057 at GBP 5400.00 in this run."
+    },
+    {
+      "mail": "#14 from human",
+      "record": "R05",
+      "was": "hold",
+      "now": "hold",
+      "what": "Principal answered HOLD: do not pay 7731 in this run; it goes in the FX run on 7 October; keep it on this run as HOLD."
+    }
+  ],
+  "changes_from_extractor": [
+    {
+      "record": "R01",
+      "was": "pay",
+      "now": "exclude",
+      "why": "bank feed DR 1488.00 on 2026-09-18, reference NORTHFIELD PRINT INV-000482 (policy 6)"
+    },
+    {
+      "record": "R04",
+      "was": "hold",
+      "now": "exclude",
+      "why": "bank feed CR 300.00 on 2026-09-10, reference MARLOW DESIGN CN-012 REFUND, so nothing is offset (policy 7)"
+    }
+  ]
+}

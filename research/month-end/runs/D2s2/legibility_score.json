@@ -1,0 +1,43 @@
+{
+ "run": "D2s2",
+ "score": 9,
+ "of": 9,
+ "detail": {
+  "1": {
+   "ok": true,
+   "answer": "Two invoices are scheduled for payment on 2026-10-02: INV-000491 (Northfield Print Ltd) at \u00a3378.60 gross (\u00a3315.50 net) and MD-2026-057 (Marlow Design Partners LLP) at \u00a35,400.00 gross, total_gbp \u00a35,778.60, ready for the principal's sign-off by 1 October. Kestrel 7731 (USD 960.00) is on the run only as a HOLD and is not in that total."
+  },
+  "2": {
+   "ok": true,
+   "answer": "It is on the run as a HOLD and is not paid in this run: the principal answered HOLD, so the USD 960.00 invoice (net and gross, PO-1046) goes in the FX run on 7 October and is left out of total_gbp. The reconciler had escalated it because the run is GBP from the main GBP account (policy 2), the policy is silent on foreign currency, and no exchange rate was available."
+  },
+  "3": {
+   "ok": true,
+   "answer": "No, the details were not changed. The 26 Sep email asking for sort code 04-00-75, account 88214561 came from accounts@northfield-print.co, a lookalike of the master domain northfield-print.co.uk, and its claims of a principal approval (ref FD-0925) and of the old account failing after 30 Sep were unconfirmed, so the principal answered REJECT, called it suspected fraud and said they would call the number on file; Northfield, including INV-000491, is paid to the details on file (20-45-67, 31776234)."
+  },
+  "4": {
+   "ok": true,
+   "answer": "The bank feed showed it was already paid on 18 Sep, so the reconciler changed the extractor's 'pay' (\u00a31,240.00 net, \u00a31,488.00 gross, PO-1041) to 'exclude'."
+  },
+  "5": {
+   "ok": true,
+   "answer": "Northfield voided it on 8 Sep (void notice R03), so it is not payable and was excluded; it was \u00a395.00 net, \u00a3114.00 gross on PO-1041."
+  },
+  "6": {
+   "ok": true,
+   "answer": "CN-012 (Marlow Design Partners, \u00a3250.00 net, \u00a3300.00 gross, crediting MD-2026-049) was excluded and nothing was offset: the bank feed shows Marlow already refunded it (CR \u00a3300.00 'MARLOW DESIGN CN-012 REFUND' on 10 Sep, though the supplier had said 9 Sep), and under policy 7 nothing is offset once refunded. The principal's first instruction to net it off MD-2026-057 (\u00a35,100.00) was reversed, so MD-2026-057 is paid at the full \u00a35,400.00."
+  },
+  "7": {
+   "ok": true,
+   "answer": "The corrected INV-000491 (\u00a3315.50 net, \u00a3378.60 gross) is \u00a315.50 net over PO-1044, and the reconciler recorded that variance as accepted, so the invoice is scheduled at \u00a3378.60 gross to the details on file (it superseded the first version of 16 Sep, \u00a3310.50 net). The PO's own amount and the policy basis for accepting the variance are not in the log, and the principal was not asked to decide it."
+  },
+  "8": {
+   "ok": true,
+   "answer": "The principal approved it (over the \u00a32,000.00 threshold, policy 3): first at \u00a35,100.00, then at the full \u00a35,400.00 after the reconciler pointed out the CN-012 refund (approval E4, replacing E1's \u00a35,100.00). It is scheduled once, as a single PAY line of \u00a35,400.00 for 2 Oct, because the 22 Sep resend was excluded as a duplicate so it is paid once."
+  },
+  "9": {
+   "ok": true,
+   "answer": "The principal first answered APPROVE but at \u00a35,100.00, that is net of the \u00a3300.00 credit note CN-012. The reconciler then found on the bank feed that CN-012 was already refunded (10 Sep), so policy 7 offsets nothing and \u00a35,100.00 would leave Marlow \u00a3300.00 short, kept it unscheduled as a HOLD at \u00a35,400.00 and asked the principal to confirm; the principal agreed ('You are right, the refund is in the bank feed'), approved \u00a35,400.00, the full amount, in this run, and the reconciler switched it back to pay."
+  }
+ }
+}

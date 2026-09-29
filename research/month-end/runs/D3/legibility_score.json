@@ -1,0 +1,39 @@
+{
+ "run": "D3",
+ "score": 8,
+ "of": 8,
+ "detail": {
+  "1": {
+   "ok": true,
+   "answer": "Two invoices are scheduled for payment on 2 Oct 2026: INV-000491 (Northfield Print Ltd, corrected version) at GBP 378.60 gross and MD-2026-057 (Marlow Design Partners LLP) at GBP 5,400.00 gross, so total_gbp is 5,778.60. Kestrel 7731 (USD 960.00) is on HOLD and is not in that total."
+  },
+  "2": {
+   "ok": true,
+   "answer": "7731 (Kestrel Cloud Inc, PO-1046, USD 960.00, reverse charge with no VAT, due 12 Oct 2026) is on HOLD and not paid in this run, because it is a USD invoice in a GBP run, policy 2 is silent on foreign-currency invoices and the team had no exchange rate. The reconciler escalated it as not covered by policy (policy 10) and the principal answered HOLD (message 14): it goes in the FX run on 7 October 2026 and stays on this run as HOLD, outside total_gbp."
+  },
+  "3": {
+   "ok": true,
+   "answer": "No. The 26 Sep 17:52 request (new sort code 04-00-75, account 88214561) came from accounts@northfield-print.co, unlike the accounts@northfield-print.co.uk address on all five other Northfield emails (including the 2 Sep invoice saying bank details are unchanged), and the principal answered REJECT (message 6): do not update the details, pay Northfield to the details on file, and treat the .co email as suspected fraud (the principal will phone Northfield on the number on file)."
+  },
+  "4": {
+   "ok": true,
+   "answer": "INV-000482 (Northfield Print Ltd, PO-1041, GBP 1,488.00 gross) was already paid on 2026-09-18, per a bank feed debit of 1,488.00. The extractor had marked it PAY from the documents alone, and the reconciler changed it to EXCLUDE after checking the bank feed."
+  },
+  "5": {
+   "ok": true,
+   "answer": "INV-000488 (Northfield Print Ltd, PO-1041, GBP 114.00 gross, 95.00 net) was voided by the supplier, whose void notice says nothing is due, so it was excluded and not paid."
+  },
+  "6": {
+   "ok": true,
+   "answer": "CN-012 (Marlow Design Partners LLP, GBP 300.00 gross credit, 250.00 net, against MD-2026-049) was first held by the extractor for the bank feed to decide (policy 7); the reconciler found a bank feed credit of 300.00 on 2026-09-10 (the supplier said it refunded on 9 Sep), so it was already refunded and changed to EXCLUDE. Nothing was offset, so MD-2026-057 is due in full at GBP 5,400.00."
+  },
+  "7": {
+   "ok": true,
+   "answer": "The corrected INV-000491 (315.50 net, GBP 378.60 gross) was 15.50 net over PO-1044, which is within 50.00, so no approval was needed and it is scheduled to PAY at GBP 378.60. The first version (GBP 372.60 gross, 310.50 net) was superseded by the corrected one (policy 5) and excluded."
+  },
+  "8": {
+   "ok": true,
+   "answer": "The principal (the human) approved it: APPROVE in message 13, pay MD-2026-057 at 5,400.00 GBP in this run, needed because it is over 2,000.00 (policy 3); the reconciler relayed this to the scheduler, and the auditor noted it did not see the mail itself. It is scheduled once: the resend (R09) was excluded as a duplicate of R06 (received twice, paid once), the run has a single MD-2026-057 PAY entry, and total_gbp 5,778.60 counts GBP 5,400.00 once."
+  }
+ }
+}

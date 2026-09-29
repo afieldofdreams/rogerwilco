@@ -7,6 +7,20 @@ description: Typed one-line messages for handing work between agents, reading a 
 
 Roger: received. Wilco: understood and will comply. Agents hand work to each other in one typed line instead of a paragraph, and the receiver proves both before it owns the work. Facts go in slots, reasoning goes in the tail, and the receiver reads the line back before it owns the work. Full spec: `references/SPEC.md`.
 
+## The discipline comes first
+
+Seven rules carry most of the value, and a team can adopt them in plain English before it adopts the syntax. In a 23-run study, prose written under these rules cut inter-agent traffic to a third of free prose and the principal's reading to 40%; the line syntax matched that and added verification.
+
+1. **Facts once, in a fixed shape.** Each item on its own line with its identifiers, amounts and your decision.
+2. **Reasoning by reference.** Anything longer than a short paragraph goes in a file; the message carries the path, not a paraphrase.
+3. **State by delta.** Once an item has been reported, mention it again only when something about it changed.
+4. **Acknowledge a handoff before you start.** Say what you received and the deadline.
+5. **Escalate as a question with a closed list of options.** The item, the amounts, the decision needed, and the answers the human may give. Do not escalate what the policy leaves to you.
+6. **Ask, answer, finish.** Bounded questions, direct answers, an explicit done.
+7. **No preamble, no recap.**
+
+The lines below are those rules made checkable by code: a validator refuses a malformed message, a closed vocabulary refuses an invented option, a digest proves a handoff arrived intact. Use them wherever a smaller or mixed set of models is doing the work, before an irreversible step, and wherever the log will be read by someone who has to trust it.
+
 ## When to use
 
 - You are delegating work to another agent, subagent or role.

@@ -1,0 +1,39 @@
+{
+ "run": "L2h",
+ "score": 7,
+ "of": 8,
+ "detail": {
+  "1": {
+   "ok": true,
+   "answer": "Two invoices: Northfield INV-000491 at GBP 378.60 gross and Marlow MD-2026-057 at GBP 5400.00 gross, totalling GBP 5778.60 (2 payments). The auditor passed the run as ready for release on 2026-10-02."
+  },
+  "2": {
+   "ok": true,
+   "answer": "It was put on HOLD and not paid in this run: the principal decided it goes in the FX run on 7 October and stays on the run as HOLD (human-04, human-07). The reason is that it is a USD 960.00 net reverse-charge invoice (PO-1046, flagged FX) while the policy run is made in GBP."
+  },
+  "3": {
+   "ok": true,
+   "answer": "No: the principal rejected the change (human-02 DECLINE, human-05 and human-08 REJECT), treating the email from the lookalike domain accounts@northfield-print.co as suspected fraud, so Northfield is paid to the details on file (sort 20-45-67, account 31776234) instead of the requested sort 04-00-75, account 88214561. The principal said they would phone the number on file (that outcome is not in the log), and reconciler-15 is coded appr=OK although its tail says the change was rejected."
+  },
+  "4": {
+   "ok": true,
+   "answer": "The reconciler excluded it (dec=EXCL, flag=PAID), meaning it had already been paid per the bank feed (Northfield, PO-1041, GBP 1488.00 gross), even though the extractor had first listed it as dec=PAY. The log gives no payment date or bank reference."
+  },
+  "5": {
+   "ok": true,
+   "answer": "It is a Northfield courier delivery invoice (PO-1041) that the supplier voided (flag=VOID), so the reconciler excluded it from the run (dec=EXCL). The log gives no amount for it."
+  },
+  "6": {
+   "ok": true,
+   "answer": "It is a GBP 300.00 gross Marlow credit note flagged REFUNDED (the credit had already been refunded), so the reconciler excluded it from the run (dec=EXCL). It was not netted against the Marlow payment, which stays at the full 5400.00."
+  },
+  "7": {
+   "ok": false,
+   "answer": "The variance was GBP 5.00 (var=5.00) on INV-000491, a corrected Northfield invoice of GBP 378.60 gross against PO-1044. The reconciler still marked it dec=PAY with appr=NA (no approval needed) and no flag, so it went into the run as one of the two payments; the log does not give the PO-1044 amount or the tolerance rule."
+  },
+  "8": {
+   "ok": true,
+   "answer": "The principal (human) approved it, twice in fact: human-03 to the reconciler and human-06 to the scheduler, both val=APPROVE to pay 5400.00 GBP in this run, because both agents asked. It was scheduled once: the run has 2 payments totalling 5778.60 (5400.00 Marlow plus 378.60 Northfield), and the invoice received twice (2026-09-15, superseded by the 2026-09-22 version) is paid once per policy."
+  }
+ }
+}
