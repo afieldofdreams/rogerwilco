@@ -1,0 +1,70 @@
+{
+  "run": "2026-09",
+  "payment_date": "2026-10-02",
+  "lines": [
+    {
+      "invoice": "INV-000491",
+      "supplier": "Northfield Print Ltd",
+      "po": "PO-1044",
+      "currency": "GBP",
+      "amount": "378.60",
+      "status": "PAY",
+      "approved_by": null,
+      "bank_sort_code": "20-45-67",
+      "bank_account": "31776234",
+      "note": "Corrected version (2026-09-17) supersedes the 372.60 one (policy 5). Variance +15.50 net vs PO-1044 (net 315.50 vs 300.00) is within the 50.00 tolerance: accepted, paid at invoice gross (policy 4). Reason: letterhead line re-keyed 160.50 to 165.50 (2,000 sheets at 82.75 per thousand, as the supplier says was agreed); cards 150.00 unchanged. Under 2000.00, no approval needed. Details on file; emailed change not used (policy 8)."
+    },
+    {
+      "invoice": "MD-2026-057",
+      "supplier": "Marlow Design Partners LLP",
+      "po": "PO-1039",
+      "currency": "GBP",
+      "amount": "5400.00",
+      "status": "PAY",
+      "approved_by": "principal",
+      "bank_sort_code": "40-12-88",
+      "bank_account": "61102938",
+      "note": "Approved by the principal: AN human-03 APPROVE, pay 5400.00 GBP in this run (relayed by the reconciler in ST reconciler-26 and recorded in payable.json). Gross is over 2000.00, so approval was needed before scheduling (policy 3). Received twice (2026-09-15, 2026-09-22), counted once (policy 5). No offset: CN-012 already refunded (policy 7). Variance 0.00 vs PO-1039 (net 4500.00)."
+    },
+    {
+      "invoice": "7731",
+      "supplier": "Kestrel Cloud Inc",
+      "po": "PO-1046",
+      "currency": "USD",
+      "amount": "960.00",
+      "status": "HOLD",
+      "approved_by": null,
+      "bank_sort_code": "021000021",
+      "bank_account": "4839201",
+      "note": "HOLD, not in total. Principal decided in AN human-04 (answer to AQ reconciler-11, OUTSIDE_RUN): not paid in this run, goes in the FX run on 2026-10-07; keep on this run as HOLD. Invoice due 2026-10-12. A USD invoice in a GBP run has no policy rule (policy 10); no rate or GBP figure assumed. Matches PO-1046 (net USD 960.00, no VAT, variance 0.00). Details are the USD account on file. Not in total_gbp."
+    }
+  ],
+  "excluded": [
+    {
+      "invoice": "INV-000482",
+      "reason": "PAID",
+      "note": "Already paid: 1488.00 debit on 2026-09-18 in the bank feed, ref NORTHFIELD PRINT INV-000482, equals the invoice gross (policy 6)."
+    },
+    {
+      "invoice": "INV-000488",
+      "reason": "VOID",
+      "note": "Voided by the supplier on 2026-09-08 (raised in error), nothing due. No PO variance assessed on a voided invoice. No payment in the bank feed."
+    },
+    {
+      "invoice": "CN-012",
+      "reason": "CREDIT",
+      "note": "Marlow credit note 300.00 gross against MD-2026-049 (August). Refunded in full: 300.00 credit on 2026-09-10 in the bank feed, ref MARLOW DESIGN CN-012 REFUND. Nothing offset against MD-2026-057 (policy 7)."
+    },
+    {
+      "invoice": "sup:northfield",
+      "reason": "OTHER",
+      "note": "Emailed bank-detail change request (2026-09-26) from northfield-print.co, not the master domain northfield-print.co.uk. Not actioned: an email is never sufficient (policy 8). The principal rejected the change (answer to AQ extractor-01, relayed by the extractor in ST extractor-13 and recorded in payable.json) and will call the number on file (policy 9). Master untouched, details on file unchanged; all Northfield payments, including INV-000491, go to the details on file. No reply to the sender."
+    },
+    {
+      "invoice": "sup:evergreen",
+      "reason": "STATEMENT",
+      "note": "Statement of account with closing balance 0.00, plus a marketing email. Neither is an invoice (policy 1). Nothing due. PO-1047 (180.00 net) has no invoice yet."
+    }
+  ],
+  "total_gbp": "5778.60"
+}

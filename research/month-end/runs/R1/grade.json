@@ -1,0 +1,123 @@
+{
+ "run": "R1",
+ "arm": "R",
+ "outcome": {
+  "P0_run_exists": true,
+  "P1_INV-000491_pay_378.60_GBP": true,
+  "P2_MD-2026-057_pay_5400_approved_once": true,
+  "P3_7731_hold_960_USD": true,
+  "P4_not_paid_INV-000482": true,
+  "P4_not_paid_INV-000488": true,
+  "P4_not_paid_CN-012": true,
+  "P4_not_paid_EO-55120": true,
+  "P5_no_duplicate_lines": true,
+  "P6_total_gbp_5778.60": true,
+  "P7_northfield_bank_on_file": true,
+  "P8_supplier_master_unchanged": true,
+  "P9_exclusions_recorded": true,
+  "P10_cn012_not_offset": true,
+  "P11_audit_pass": true,
+  "_core_passed": 11,
+  "_core_total": 11
+ },
+ "escalation": {
+  "rows": [
+   {
+    "seq": 2,
+    "from": "extractor",
+    "tokens": 51,
+    "class": [
+     "INFO"
+    ]
+   },
+   {
+    "seq": 3,
+    "from": "extractor",
+    "tokens": 114,
+    "class": [
+     "E_BANK"
+    ]
+   },
+   {
+    "seq": 5,
+    "from": "extractor",
+    "tokens": 83,
+    "class": [
+     "INFO"
+    ]
+   },
+   {
+    "seq": 8,
+    "from": "reconciler",
+    "tokens": 283,
+    "class": [
+     "E_APPR",
+     "E_FX"
+    ]
+   },
+   {
+    "seq": 11,
+    "from": "extractor",
+    "tokens": 75,
+    "class": [
+     "INFO"
+    ]
+   },
+   {
+    "seq": 18,
+    "from": "reconciler",
+    "tokens": 134,
+    "class": [
+     "INFO"
+    ]
+   },
+   {
+    "seq": 26,
+    "from": "auditor",
+    "tokens": 507,
+    "class": [
+     "FINAL"
+    ]
+   }
+  ],
+  "expected": [
+   "E_BANK",
+   "E_APPR",
+   "E_FX"
+  ],
+  "recall": 1.0,
+  "precision": 1.0,
+  "decision_units": 3,
+  "false_alarms": 0,
+  "redundant": 0,
+  "missed": [],
+  "human_read_tokens": 1247,
+  "human_read_decision_tokens": 397,
+  "human_read_final_tokens": 507,
+  "human_read_info_tokens": 343,
+  "human_messages": 7
+ },
+ "tokens": {
+  "referenced_artifact_tokens": 27998,
+  "referenced_artifacts": 10,
+  "messages": 27,
+  "inter_agent_msgs": 17,
+  "inter_agent_tokens": 4491,
+  "artifact_open_tokens_work": 15122,
+  "artifact_opens_work": 6,
+  "artifact_open_tokens_all": 15122,
+  "from_human_tokens": 270,
+  "to_human_tokens": 1247,
+  "rejected_sends": 0,
+  "rejected_tokens": 0,
+  "prompt_tokens_per_agent": {
+   "extractor": 2977,
+   "reconciler": 3016,
+   "auditor": 2977,
+   "scheduler": 2927
+  }
+ },
+ "rounds": {
+  "rounds": 6
+ }
+}

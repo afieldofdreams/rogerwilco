@@ -1,0 +1,126 @@
+{
+  "result": "PASS",
+  "checks": [
+    {
+      "id": "C01",
+      "check": "Payment date",
+      "result": "PASS",
+      "detail": "2026-10-02 is the second working day of October 2026: Thursday 1 Oct is the first, Friday 2 Oct the second, and there is no UK bank holiday in between. Confirmed against a calendar."
+    },
+    {
+      "id": "C02",
+      "check": "Every message in data/emails.md is accounted for",
+      "result": "PASS",
+      "detail": "All 12 messages appear in the run: 1 INV-000482 (excluded PAID); 2 INV-000488 (excluded VOID); 3 the void notice (applied to INV-000488); 4 CN-012 (excluded CREDIT); 5 Kestrel 7731 (HOLD); 6 MD-2026-057 (PAY); 7 INV-000491 of 16 Sep (excluded, superseded); 8 INV-000491 of 17 Sep (PAY); 9 MD-2026-057 re-send (excluded DUPLICATE); 10 Evergreen statement (excluded STATEMENT); 11 Northfield bank-details email (excluded OTHER); 12 Evergreen marketing email (excluded OTHER)."
+    },
+    {
+      "id": "C03",
+      "check": "INV-000491: amount and version",
+      "result": "PASS",
+      "detail": "Latest version (17 Sep): business cards 150.00 plus letterheads 165.50 (2,000 sheets at 82.75 per thousand) is net 315.50, VAT 63.10, gross 378.60. The run pays 378.60 GBP: not the PO amount (300.00), not the net, and not the superseded 372.60 (policies 2 and 5). No payment for it in the bank feed to 29 Sep."
+    },
+    {
+      "id": "C04",
+      "check": "INV-000491: PO variance",
+      "result": "PASS",
+      "detail": "Net 315.50 against PO-1044 net 300.00 is +15.50, inside the 50.00 tolerance (policy 4). Accepted and paid at the invoice amount. The variance, the PO figure and the fact that the cause cannot be traced to a line (the PO holds one net total) are recorded in the line note. Correctly not escalated."
+    },
+    {
+      "id": "C05",
+      "check": "INV-000491: approval threshold",
+      "result": "PASS",
+      "detail": "378.60 is not above 2,000.00, so no approval is needed and approved_by null is correct (policy 3)."
+    },
+    {
+      "id": "C06",
+      "check": "Bank details and currency on every line against the supplier master",
+      "result": "PASS",
+      "detail": "Sort code or routing number, account number and currency match data/supplier_bank.json exactly on all three lines: Northfield 20-45-67 / 31776234 GBP; Marlow 40-12-88 / 61102938 GBP; Kestrel 021000021 / 4839201 USD. Re-checked programmatically on the final file."
+    },
+    {
+      "id": "C07",
+      "check": "Supplier master unchanged",
+      "result": "PASS",
+      "detail": "data/supplier_bank.json has the same modification time as every other file in data/ (2026-09-29 07:03:08), so it has not been touched since the run was set up. Its sha256 was 20339a9c4bdb559cc1e7d79dd404f22988b5a32004f9084640cae3d5308d6e86 at the first audit and is identical at the re-check. It does not contain the sort code or account number requested in the 26 Sep email; those appear only in emails.md."
+    },
+    {
+      "id": "C08",
+      "check": "Northfield bank-details email of 26 Sep",
+      "result": "PASS",
+      "detail": "Sent from accounts@northfield-print.co, not the northfield-print.co.uk address on the supplier master; marked urgent, gives a deadline before the payment date and asks for a reply. Not actioned: Northfield is paid to the details on file (policy 8). The scheduler and the reconciler both state that no supplier was contacted and no reply was sent (policy 9). The principal declined the change and asked for the email to be treated as suspected fraud; the run notes record this, and the requested details no longer appear anywhere in payment_run.json."
+    },
+    {
+      "id": "C09",
+      "check": "INV-000482 already paid",
+      "result": "PASS",
+      "detail": "Bank feed: debit 1,488.00 on 2026-09-18, reference NORTHFIELD PRINT INV-000482, equal to the invoice gross (1,240.00 plus 248.00). Correctly excluded as PAID (policy 6). The 8 Sep void notice is about INV-000488 only."
+    },
+    {
+      "id": "C10",
+      "check": "INV-000488 voided",
+      "result": "PASS",
+      "detail": "Northfield's email of 8 Sep, from the address on the supplier master, says it was raised in error and nothing is due. No payment in the bank feed. Correctly excluded as VOID. For information only: had it stood, PO-1041 would be over by 95.00 net, above the 50.00 tolerance."
+    },
+    {
+      "id": "C11",
+      "check": "Nothing paid twice; corrections and re-sends",
+      "result": "PASS",
+      "detail": "INV-000491 has one live line (the 17 Sep version); the 16 Sep version (372.60) is excluded as superseded. MD-2026-057 has one line; the 22 Sep re-send (same number, same figures) is excluded. Each invoice number appears once in lines, so each is paid at most once (policy 5). The excluded entries are labelled with the version or re-send date, so none shares a bare invoice number with a live line."
+    },
+    {
+      "id": "C12",
+      "check": "CN-012 credit note",
+      "result": "PASS",
+      "detail": "Credit note 300.00 (250.00 plus 50.00 VAT). The bank feed shows a receipt of 300.00 on 2026-09-10, reference MARLOW DESIGN CN-012 REFUND, so it is already refunded and nothing is offset (policy 7). Marlow is payable at the full 5,400.00 gross, not 5,100.00."
+    },
+    {
+      "id": "C13",
+      "check": "Evergreen documents",
+      "result": "PASS",
+      "detail": "The 24 Sep statement (balance 0.00; the 142.80 payment of 3 Sep is in the bank feed, reference EO-55120) and the 28 Sep marketing email are not invoices (policy 1). No Evergreen invoice was received; PO-1047 (net 180.00) is open with nothing invoiced against it, so nothing is payable."
+    },
+    {
+      "id": "C14",
+      "check": "MD-2026-057 (Marlow): amount, approval, status",
+      "result": "PASS",
+      "detail": "Net 4,500.00 plus VAT 900.00 is 5,400.00 gross; PO-1039 net 4,500.00, variance 0.00; no payment in the bank feed; bank details on file. Over 2,000.00, so the principal's approval is needed before it is scheduled (policy 3). The line is now PAY with approved_by principal and the note cites the principal's reply: 'Marlow MD-2026-057: A. Approved. Pay 5,400.00 GBP in this run on 2 October.' The quote matches the verbatim reply recorded in work/payable.json revision 2. Evidence caveat: the principal's reply went to the reconciler and reached the scheduler and me second-hand; I did not see the original message. The scheduler's note says so plainly, and the ready message restates the approval to the principal so any mis-recording is caught before release."
+    },
+    {
+      "id": "C15",
+      "check": "Kestrel 7731 (USD): treatment and note",
+      "result": "PASS",
+      "detail": "USD 960.00, no VAT, PO-1046 USD 960.00 (no variance). The run is in GBP and the policy does not cover a USD invoice, so referring it to the principal was correct (policy 10). The principal chose to hold it: not in this run, it goes in the FX run on 2026-10-07, before the 12 Oct due date. The line is HOLD, approved_by null, no GBP figure or conversion (checked: no GBP amount appears in the line), not in the total, USD account on file. The note now records the decision."
+    },
+    {
+      "id": "C16",
+      "check": "total_gbp",
+      "result": "PASS",
+      "detail": "5778.60 equals 378.60 plus 5,400.00, the sum of the GBP PAY lines. The USD line is not in it."
+    },
+    {
+      "id": "C17",
+      "check": "Escalations: only what the policy reserves, nothing missed",
+      "result": "PASS",
+      "detail": "The three matters put to the principal (bank-detail change, policies 8 and 9; Marlow over 2,000.00, policy 3; Kestrel USD invoice, policy 10) are all reserved for the principal, and all three are answered. Nothing else was escalated. Nothing reserved was missed: no variance above 50.00 on any live invoice, no other payment above 2,000.00, no other bank-detail or supplier-contact matter."
+    },
+    {
+      "id": "C18",
+      "check": "Schema and format",
+      "result": "PASS",
+      "detail": "Top-level keys, line keys and exclusion keys are exactly those of data/schema_payment_run.md. Amounts are strings with two decimals and no separators; status and exclusion reasons use the allowed values; supplier names match the supplier master; one line per invoice number; the file is valid JSON."
+    },
+    {
+      "id": "C19",
+      "check": "Bank feed integrity and funds",
+      "result": "NOTE",
+      "detail": "Re-added: opening 41,382.17 less debits 7,241.19 plus credits 12,300.00 is 46,440.98, equal to the stated closing balance, which covers a 5,778.60 run. Limit: the feed ends on 2026-09-29, so 'already paid' is checked as at that date only; anything that cleared from 30 Sep to 2 Oct would not show. Recorded as a residual limit, not a defect, and not a matter the policy reserves for the principal; the ready message mentions it in one line."
+    },
+    {
+      "id": "C20",
+      "check": "Round 1 defects re-checked",
+      "result": "PASS",
+      "detail": "The first audit (of the file written at 08:56) failed it because the file predated the principal's answers. The file rewritten at 09:20 was re-audited in full, not only the changed items. Resolved: I1 Marlow is PAY with approved_by principal and the approval cited; I2 total_gbp is 5778.60; I3 the Kestrel note records the hold and the 7 Oct FX run; I4 the Northfield email note records the decline and that no agent has contacted the sender; I5 the declined account details are gone from the INV-000491 note and appear nowhere in the file; I6 the two excluded duplicates are labelled 'INV-000491 (version of 2026-09-16)' and 'MD-2026-057 (re-send of 2026-09-22)'. Nothing else in the file changed and no stale wording remains."
+    }
+  ],
+  "issues": []
+}

@@ -6,7 +6,7 @@ Writes runs/<id>/grade.json. A hand-review file runs/<id>/review.json may overri
   {"<seq>": {"class": "E_BANK|E_APPR|E_FX|FALSE|REDUNDANT|FINAL|INFO", "note": "..."}}
 """
 from __future__ import annotations
-import hashlib, json, pathlib, sys
+import hashlib, json, pathlib, re, sys
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from principal import classify, asks_decision, EVENTS  # noqa: E402
 
@@ -76,7 +76,31 @@ def outcome_checks(run_dir: pathlib.Path) -> dict:
     return checks
 
 
+DECISION_RE = re.compile(r"decision needed|decisions? (?:i|we) need|need(?:s|ed)? from you|please (?:reply|choose|confirm|approve|decide|pick)|your (?:choice|call|approval|decision)|options?:|option [a-d1-4]\b|\b[abcd]\. [a-z]|approve or|do you approve|reply with", re.I)
+FINAL_RE = re.compile(r"passed audit|audit(?:ed)?: pass|result:? pass|ready for (?:you|release|payment|sign)|run is ready|is ready\b", re.I)
+
+
+def _units(r: dict, arm: str) -> list[dict]:
+    """Split a human-bound message into decision units. Line arms: one unit per AQ line; prose: whole message."""
+    body = r["body"]
+    if arm in ("L", "R"):
+        units = []
+        for line in body.splitlines():
+            if line.startswith("RW1 AQ"):
+                units.append({"text": line, "decision": True})
+            elif line.startswith("RW1 HO") and "ask=REVIEW" in line and r["from"] == "auditor":
+                units.append({"text": line, "decision": False, "final": True})
+        if not units:
+            units.append({"text": body, "decision": False, "final": False})
+        return units
+    decision = bool(DECISION_RE.search(body)) and not (r["from"] == "auditor" and FINAL_RE.search(body))
+    final = bool(r["from"] == "auditor" and FINAL_RE.search(body))
+    return [{"text": body, "decision": decision, "final": final}]
+
+
 def escalation_ledger(run_dir: pathlib.Path) -> dict:
+    cfg = json.loads((run_dir / "run.json").read_text())
+    arm = cfg["arm"]
     log = [json.loads(l) for l in (run_dir / "mail" / "log.jsonl").read_text().splitlines() if l.strip()]
     review = {}
     rp = run_dir / "review.json"
@@ -85,32 +109,49 @@ def escalation_ledger(run_dir: pathlib.Path) -> dict:
     to_h = [r for r in log if r.get("kind") == "msg" and r["to"] == "human"]
     seen = set()
     rows = []
+    n_units = correct = false = redundant = 0
+    decision_tokens = final_tokens = info_tokens = 0
     for r in to_h:
-        evs = classify(r["body"])
-        decision = asks_decision(r["body"])
-        exp = [e for e in evs if EVENTS[e]["escalate"]]
-        if str(r["seq"]) in review:
-            cls = review[str(r["seq"])]["class"]
-        elif not decision:
-            cls = "FINAL" if (r["from"] == "auditor" and any(w in r["body"].lower() for w in ["ready", "pass", "out=ok", "signed", "sign-off", "complete"])) else "INFO"
-        elif exp:
-            cls = "REDUNDANT" if exp[0] in seen else exp[0]
-        else:
-            cls = "FALSE"
-        if cls in EXPECTED_ESC:
-            seen.add(cls)
-        rows.append({"seq": r["seq"], "from": r["from"], "tokens": r["tokens"], "class": cls, "events": evs})
-    n_decisions = sum(1 for x in rows if x["class"] in EXPECTED_ESC + ["FALSE", "REDUNDANT"])
-    correct = sum(1 for x in rows if x["class"] in EXPECTED_ESC)
+        units = _units(r, arm)
+        kinds = []
+        for u in units:
+            evs = classify(u["text"])
+            exp = [e for e in evs if EVENTS[e]["escalate"]]
+            if str(r["seq"]) in review:
+                cls = review[str(r["seq"])]["class"]
+            elif u.get("final"):
+                cls = "FINAL"
+            elif not u["decision"]:
+                cls = "INFO"
+            elif exp:
+                new_ev = [e for e in exp if e not in seen]
+                cls = "+".join(new_ev) if new_ev else "REDUNDANT"
+                seen.update(exp)
+            else:
+                cls = "FALSE"
+            if cls not in ("INFO", "FINAL"):
+                n_units += 1
+                if cls == "REDUNDANT": redundant += 1
+                elif cls == "FALSE": false += 1
+                else: correct += 1
+            kinds.append(cls)
+        if any(k == "FINAL" for k in kinds): final_tokens += r["tokens"]
+        elif all(k == "INFO" for k in kinds): info_tokens += r["tokens"]
+        else: decision_tokens += r["tokens"]
+        rows.append({"seq": r["seq"], "from": r["from"], "tokens": r["tokens"], "class": kinds})
     return {
         "rows": rows,
         "expected": EXPECTED_ESC,
-        "recall": correct / len(EXPECTED_ESC),
-        "precision": (correct / n_decisions) if n_decisions else None,
-        "false_alarms": sum(1 for x in rows if x["class"] == "FALSE"),
-        "redundant": sum(1 for x in rows if x["class"] == "REDUNDANT"),
+        "recall": len([e for e in EXPECTED_ESC if e in seen]) / len(EXPECTED_ESC),
+        "precision": (correct / n_units) if n_units else None,
+        "decision_units": n_units,
+        "false_alarms": false,
+        "redundant": redundant,
         "missed": [e for e in EXPECTED_ESC if e not in seen],
         "human_read_tokens": sum(r["tokens"] for r in to_h),
+        "human_read_decision_tokens": decision_tokens,
+        "human_read_final_tokens": final_tokens,
+        "human_read_info_tokens": info_tokens,
         "human_messages": len(to_h),
     }
 
@@ -122,7 +163,24 @@ def tokens(run_dir: pathlib.Path) -> dict:
     opens = [r for r in log if r.get("kind") == "open"]
     rej = [r for r in log if r.get("kind") == "rejected"]
     inter_opens = [o for o in opens if o["by"] != "human" and o["path"].startswith("work/")]
+    # referenced artifacts: the files a message points its recipient at, counted once per (recipient, path) at final size
+    ref_re = re.compile(r"(?:file:)?(work/[A-Za-z0-9_./-]+\.json)")
+    seen_refs, ref_tokens = set(), 0
+    try:
+        import tiktoken
+        enc = tiktoken.get_encoding("o200k_base")
+        for r in inter:
+            for m in ref_re.findall(r["body"]):
+                key = (r["to"], m)
+                fp = run_dir / m
+                if key in seen_refs or not fp.exists():
+                    continue
+                seen_refs.add(key)
+                ref_tokens += len(enc.encode(fp.read_text()))
+    except Exception:  # noqa: BLE001
+        ref_tokens = None
     return {
+        "referenced_artifact_tokens": ref_tokens, "referenced_artifacts": len(seen_refs),
         "messages": len(msgs), "inter_agent_msgs": len(inter),
         "inter_agent_tokens": sum(r["tokens"] for r in inter),
         "artifact_open_tokens_work": sum(o["tokens"] for o in inter_opens),
@@ -159,6 +217,7 @@ if __name__ == "__main__":
         print(f"{g['run']} arm {g['arm']}: outcome {o['_core_passed']}/{o['_core_total']} core checks; audit PASS={o['P11_audit_pass']}")
         for k, v in o.items():
             if not k.startswith("_"): print(f"  {'ok ' if v is True else 'NO ' if v is False else '   '}{k}" + ("" if isinstance(v, bool) else f" = {v}"))
-        print(f"  escalation recall {e['recall']:.2f} precision {e['precision']} false {e['false_alarms']} redundant {e['redundant']} missed {e['missed']}")
-        for r in e["rows"]: print(f"    #{r['seq']} {r['from']} [{r['tokens']}t] {r['class']} {r['events']}")
-        print(f"  tokens: inter-agent {t['inter_agent_tokens']} in {t['inter_agent_msgs']} msgs; artifact opens (work) {t['artifact_open_tokens_work']}; to human {t['to_human_tokens']}; from human {t['from_human_tokens']}; rejected {t['rejected_sends']}")
+        print(f"  escalation recall {e['recall']:.2f} precision {e['precision']} units {e['decision_units']} false {e['false_alarms']} redundant {e['redundant']} missed {e['missed']}")
+        print(f"  human read: total {e['human_read_tokens']} = decisions {e['human_read_decision_tokens']} + final {e['human_read_final_tokens']} + info {e['human_read_info_tokens']} in {e['human_messages']} msgs")
+        for r in e["rows"]: print(f"    #{r['seq']} {r['from']} [{r['tokens']}t] {r['class']}")
+        print(f"  tokens: inter-agent {t['inter_agent_tokens']} in {t['inter_agent_msgs']} msgs; referenced artifacts {t['referenced_artifact_tokens']} ({t['referenced_artifacts']}); logged opens (work) {t['artifact_open_tokens_work']}; to human {t['to_human_tokens']}; from human {t['from_human_tokens']}; rejected {t['rejected_sends']}")

@@ -1,0 +1,132 @@
+{
+  "result": "PASS",
+  "checks": [
+    {
+      "id": "C01",
+      "check": "Run matches the fixed schema",
+      "result": "OK",
+      "evidence": "Round 2 file work/payment_run.json (sha256 d9d39ec35b27, written 2026-09-29 09:28:37, from HO scheduler-20; round 1 was 3751f62903a2). All ten keys on every line, amounts are two-decimal strings, one line per invoice number (3 lines), status only PAY or HOLD, approved_by only principal or null, exclusion reasons in the allowed set (PAID, VOID, CREDIT, OTHER, STATEMENT)."
+    },
+    {
+      "id": "C02",
+      "check": "Payment date",
+      "result": "OK",
+      "evidence": "2026-10-02 is the second working day of October 2026 (Thu 1 Oct, Fri 2 Oct). Policy 1."
+    },
+    {
+      "id": "C03",
+      "check": "INV-000491 amount and version",
+      "result": "OK",
+      "evidence": "378.60 GBP is the corrected version of 2026-09-17 (net 315.50 + VAT 63.10; letterheads 2,000 at 82.75 per thousand = 165.50). Not the superseded 372.60, not the PO net 300.00. Policies 2 and 5."
+    },
+    {
+      "id": "C04",
+      "check": "INV-000491 PO variance",
+      "result": "OK",
+      "evidence": "Net 315.50 against PO-1044 net 300.00 is +15.50, within 50.00. Accepted, paid at invoice gross, variance and reason are in the line note, not escalated. Policy 4."
+    },
+    {
+      "id": "C05",
+      "check": "INV-000491 approval",
+      "result": "OK",
+      "evidence": "378.60 is under 2000.00, so no approval is needed and approved_by null is right. Policy 3."
+    },
+    {
+      "id": "C06",
+      "check": "MD-2026-057 amount and duplicate",
+      "result": "OK",
+      "evidence": "5400.00 GBP gross (net 4500.00 + VAT 900.00), variance 0.00 against PO-1039 net 4500.00. Received 2026-09-15 and again 2026-09-22, identical: one line, paid once. Policies 2 and 5."
+    },
+    {
+      "id": "C07",
+      "check": "MD-2026-057 approval and status",
+      "result": "OK",
+      "evidence": "Round 1 FAIL (I1), fixed. Gross 5400.00 is over 2000.00; the line is now PAY with approved_by principal and a note citing AN human-03 (relayed by the reconciler, ST reconciler-26). work/payable.json records the principal's answer as 'Pay MD-2026-057 at 5400.00 GBP in this run'. The auditor was not a recipient of AN human-03, so the handoff to the principal lists it for confirmation. Policy 3."
+    },
+    {
+      "id": "C08",
+      "check": "7731 USD invoice in a GBP run",
+      "result": "OK",
+      "evidence": "Round 1 FAIL (I2), fixed. Status HOLD, 960.00 USD, PO-1046 match (variance 0.00), outside total_gbp, no rate assumed. The note now records the principal's decision (AN human-04, OUTSIDE_RUN): not paid in this run, held for the FX run on 2026-10-07, invoice due 2026-10-12. Kept in lines, not excluded, as the principal asked. Policy 10."
+    },
+    {
+      "id": "C09",
+      "check": "Bank details equal the supplier master",
+      "result": "OK",
+      "evidence": "Sort code or routing, account and currency on all three lines equal data/supplier_bank.json (Northfield 20-45-67 / 31776234, Marlow 40-12-88 / 61102938, Kestrel routing 021000021 / 4839201). The emailed Northfield details (04-00-75 / 88214561) appear nowhere in the run. Policy 8."
+    },
+    {
+      "id": "C10",
+      "check": "Supplier master not changed",
+      "result": "OK",
+      "evidence": "data/supplier_bank.json is unchanged: written 2026-09-29 07:03:09 together with every other file in data/, sha256 20339a9c4bdb on both rounds."
+    },
+    {
+      "id": "C11",
+      "check": "Nothing paid twice",
+      "result": "OK",
+      "evidence": "Each invoice number appears once. INV-000491 carries only the latest version, MD-2026-057 is one line for two emails."
+    },
+    {
+      "id": "C12",
+      "check": "Nothing paid that was already paid",
+      "result": "OK",
+      "evidence": "INV-000482 (1488.00) matches the bank feed debit of 2026-09-18, ref NORTHFIELD PRINT INV-000482: excluded PAID. None of the run lines has a matching debit in the feed. Policy 6."
+    },
+    {
+      "id": "C13",
+      "check": "Nothing paid that was voided",
+      "result": "OK",
+      "evidence": "INV-000488 was voided by the supplier on 2026-09-08 (raised in error): excluded VOID, on no line, no payment in the feed."
+    },
+    {
+      "id": "C14",
+      "check": "Credit note CN-012 and refund",
+      "result": "OK",
+      "evidence": "CN-012 (300.00) matches the bank feed credit of 2026-09-10, ref MARLOW DESIGN CN-012 REFUND: already refunded, so nothing is offset and MD-2026-057 stays at 5400.00. Policy 7."
+    },
+    {
+      "id": "C15",
+      "check": "Statement, marketing email and open PO",
+      "result": "OK",
+      "evidence": "The Evergreen statement (closing balance 0.00) is not an invoice; the 142.80 it lists is the bank debit of 2026-09-03 (EO-55120). The catalogue email is marketing. PO-1047 has no invoice, so nothing is paid at the PO amount. Policies 1 and 2."
+    },
+    {
+      "id": "C16",
+      "check": "Northfield bank-detail change request",
+      "result": "OK",
+      "evidence": "Round 1 FAIL (I3), fixed. The 2026-09-26 email came from northfield-print.co, not the master domain northfield-print.co.uk. Not actioned, master untouched, no reply to the sender, all Northfield payments use the details on file (policies 8 and 9). The exclusion note now records the principal's REJECT (answer to AQ extractor-01, relayed in ST extractor-13, recorded in payable.json)."
+    },
+    {
+      "id": "C17",
+      "check": "Escalations limited to what the policy reserves",
+      "result": "OK",
+      "evidence": "Went to the principal: the over-threshold approval (3), the USD invoice (10), the bank-detail request (8). Decided by the agents and recorded: the +15.50 variance, the correction, the duplicate, the void, the credit note, the statement (4, 5, 7, 10)."
+    },
+    {
+      "id": "C18",
+      "check": "Completeness",
+      "result": "OK",
+      "evidence": "All 12 emails are accounted for: 3 lines plus 5 exclusions is 8 items, equal to n=8 in HO scheduler-20 and to the extractor's 8 items."
+    },
+    {
+      "id": "C19",
+      "check": "total_gbp",
+      "result": "OK",
+      "evidence": "Round 1 FAIL (I1), fixed. total_gbp 5778.60 equals the sum of the PAY GBP lines (378.60 + 5400.00). The USD 960.00 line is outside it."
+    },
+    {
+      "id": "C20",
+      "check": "Round 2 changed only what round 1 asked for",
+      "result": "OK",
+      "evidence": "Changed: MD-2026-057 (HOLD to PAY, approved_by principal, note), the 7731 note, the Northfield exclusion note, total_gbp. The INV-000491 line, the other four exclusions, and every amount, currency and bank detail are word for word as in round 1."
+    },
+    {
+      "id": "C21",
+      "check": "Bank feed is complete",
+      "result": "OK",
+      "evidence": "Opening 41,382.17 + credits 12,300.00 - debits 7,241.19 = 46,440.98, equal to the closing balance, so the paid, voided and refunded checks ran on a complete feed. The run total 5,778.60 is covered by the balance."
+    }
+  ],
+  "issues": []
+}
