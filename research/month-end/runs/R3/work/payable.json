@@ -1,0 +1,127 @@
+{
+ "run": "2026-09",
+ "stage": "reconcile",
+ "by": "reconciler",
+ "for": "scheduler",
+ "handoff": "reconciler-12",
+ "revision": 2,
+ "history": [
+  "rev 1 at handoff reconciler-12: 1 PAY (INV-000491, 378.60), 2 HOLD pending the principal, 6 EXCL. GBP PAY total 378.60.",
+  "rev 2 after the principal's answers: MD-2026-057 approved (human-03), 7731 kept as HOLD for the FX run on 2026-10-07 (human-04), Northfield bank change rejected, KEEP (human-02, relayed in extractor-14). Deltas sent to the scheduler as reconciler-26, reconciler-27 and reconciler-28."
+ ],
+ "inputs": {
+  "extractor": "work/invoices.json (HO extractor-02)",
+  "po_list": "data/po_list.json (as at 2026-09-30)",
+  "bank_feed": "data/bank_feed.json (2026-09-01 to 2026-09-29)",
+  "supplier_master": "data/supplier_bank.json (read only, not edited)"
+ },
+ "conventions": "Money is a string with two decimals. amount_to_pay is what this run pays for the item once it is released, in cur; 0.00 when excluded. document_gross is as printed on the document. variance_net is invoice net minus PO net in the document currency; positive means the invoice is above the PO. decision is pay, hold or exclude (mail codes PAY, HOLD, EXCL). Every extractor record M01 to M12 sits in exactly one line.",
+ "run_currency": "GBP",
+ "summary": {
+  "records": 12,
+  "items": 9,
+  "pay": 2,
+  "hold": 1,
+  "exclude": 6,
+  "pay_total_gbp": "5778.60",
+  "pending_principal": [],
+  "principal_answers": [
+   {"item": "inv:MD-2026-057", "ask": "reconciler-10", "answer": "human-03", "val": "APPROVE", "effect": "dec PAY, appr OK, 5400.00 GBP in this run"},
+   {"item": "inv:7731", "ask": "reconciler-11", "answer": "human-04", "val": "HOLD", "effect": "not paid in this run, goes in the FX run on 2026-10-07, kept on the run as HOLD, appr NO for this run"},
+   {"item": "sup:northfield", "ask": "extractor-12", "answer": "human-02, relayed by extractor-14", "val": "KEEP", "effect": "change rejected, appr NO, pay to the details on file"}
+  ]
+ },
+ "lines": [
+  {
+   "item": "inv:INV-000482", "records": ["M01"], "sup": "northfield", "doc_type": "invoice", "number": "INV-000482",
+   "decision": "exclude", "dec": "EXCL", "amount_to_pay": "0.00", "cur": "GBP", "kind": "GROSS",
+   "document_gross": "1488.00", "po": "PO-1041", "po_net": "1240.00", "invoice_net": "1240.00", "variance_net": "0.00",
+   "approval_needed": false, "appr": "NA", "flags": ["PAID"],
+   "reason": "Already paid (policy 6). Bank feed debit 1488.00 on 2026-09-18, reference NORTHFIELD PRINT INV-000482, equals the invoice gross."
+  },
+  {
+   "item": "inv:INV-000488", "records": ["M02", "M03"], "sup": "northfield", "doc_type": "invoice", "number": "INV-000488",
+   "decision": "exclude", "dec": "EXCL", "amount_to_pay": "0.00", "cur": "GBP", "kind": "GROSS",
+   "document_gross": "114.00", "po": "PO-1041", "po_net": "1240.00", "invoice_net": "95.00", "variance_net": null,
+   "approval_needed": false, "appr": "NA", "flags": ["VOID"],
+   "reason": "Voided by the supplier on 2026-09-08 (M03, sent from the domain on file): raised in error, delivery already in the PO-1041 price, nothing due. Not a valid invoice (policy 1). Amount shown is as first invoiced. Voiding lowers what is paid, so no escalation. Had it stood it would have put PO-1041 95.00 net over, above the 50.00 tolerance."
+  },
+  {
+   "item": "inv:INV-000491", "records": ["M07", "M08"], "sup": "northfield", "doc_type": "invoice", "number": "INV-000491",
+   "decision": "pay", "dec": "PAY", "amount_to_pay": "378.60", "cur": "GBP", "kind": "GROSS",
+   "document_gross": "378.60", "po": "PO-1044", "po_net": "300.00", "invoice_net": "315.50", "variance_net": "15.50",
+   "approval_needed": false, "appr": "NA", "flags": ["CORR", "POVAR"],
+   "superseded": {"rec": "M07", "net": "310.50", "vat": "62.10", "gross": "372.60", "note": "not to be paid"},
+   "pay_to": "details on file (verified 2025-11-04), not the account named in M11",
+   "reason": "Corrected version M08 (2026-09-17) supersedes M07 (policy 5): pay 378.60 gross (net 315.50, VAT 63.10). Not in the bank feed at 372.60 or 378.60. Variance +15.50 net against PO-1044 net 300.00, inside the 50.00 tolerance (policy 4): accepted, pay the invoice amount, recorded here and in run_notes. Variance reason: corrected invoice prices cards at 150.00 and letterheads at 165.50 (2,000 at the agreed 82.75 per thousand); M07 had mis-keyed the letterhead line. PO-1044 is carried over from M07 and its lines match the PO description. 378.60 is under 2000.00, so no approval (policy 3)."
+  },
+  {
+   "item": "inv:MD-2026-057", "records": ["M06", "M09"], "sup": "marlow", "doc_type": "invoice", "number": "MD-2026-057",
+   "decision": "pay", "dec": "PAY", "amount_to_pay": "5400.00", "cur": "GBP", "kind": "GROSS",
+   "document_gross": "5400.00", "po": "PO-1039", "po_net": "4500.00", "invoice_net": "4500.00", "variance_net": "0.00",
+   "approval_needed": true, "appr": "OK", "flags": ["OVERLIM", "DUP"],
+   "pay_to": "details on file (verified 2026-02-11)",
+   "approval": "APPROVE from the principal in human-03 (answer to reconciler-10), read back in reconciler-24",
+   "reason": "Gross 5400.00 is above 2000.00, so it needed the principal's approval before it was scheduled (policy 3): approved in human-03. Received twice, 2026-09-15 (M06) and 2026-09-22 (M09), identical: one invoice number, paid once (policy 5). Not in the bank feed. Matches PO-1039 net exactly. CN-012 (300.00) was already refunded per the bank feed, so nothing is offset (policy 7) and the payment is the full 5400.00."
+  },
+  {
+   "item": "inv:7731", "records": ["M05"], "sup": "kestrel", "doc_type": "invoice", "number": "7731",
+   "decision": "hold", "dec": "HOLD", "amount_to_pay": "960.00", "cur": "USD", "kind": "GROSS",
+   "document_gross": "960.00", "po": "PO-1046", "po_net": "960.00", "invoice_net": "960.00", "variance_net": "0.00",
+   "approval_needed": true, "appr": "NO", "flags": ["FX"],
+   "pay_to": "USD account on file (verified 2026-01-20), for the FX run, not this run",
+   "principal_decision": "HOLD in human-04 (answer to reconciler-11), read back in reconciler-25: do not pay in this run, it goes in the FX run on 2026-10-07, keep it on the run as HOLD. appr is NO for this run.",
+   "reason": "Invoice and PO are in USD, and the run is GBP from the GBP current account (policy 2). The policy does not say whether or how to pay a foreign-currency invoice, so it went to the principal (policy 10), asked in reconciler-11 and answered HOLD in human-04. No GBP amount or rate is given in any source and none is assumed. USD 960.00 is far under the 2000.00 threshold at any plausible rate, so the question is FX, not policy 3. Not in the bank feed. Master: USD is Kestrel's settlement currency and a USD account is on file. Reverse charge, so no VAT is payable to the supplier."
+  },
+  {
+   "item": "inv:CN-012", "records": ["M04"], "sup": "marlow", "doc_type": "credit_note", "number": "CN-012",
+   "decision": "exclude", "dec": "EXCL", "amount_to_pay": "0.00", "cur": "GBP", "kind": "GROSS",
+   "document_gross": "300.00", "po": null, "po_net": null, "invoice_net": "250.00", "variance_net": null,
+   "approval_needed": false, "appr": "NA", "flags": ["CN", "REFUNDED"],
+   "reason": "Credit against MD-2026-049, already refunded (policy 7). Bank feed credit 300.00 on 2026-09-10, reference MARLOW DESIGN CN-012 REFUND, equals the credit gross. The supplier's email says 2026-09-09, the bank credit posted a day later. Nothing is offset against the next Marlow payment."
+  },
+  {
+   "item": "stmt:evergreen", "records": ["M10"], "sup": "evergreen", "doc_type": "statement", "number": null,
+   "decision": "exclude", "dec": "EXCL", "amount_to_pay": "0.00", "cur": "GBP", "kind": "GROSS",
+   "document_gross": null, "po": null, "po_net": null, "invoice_net": null, "variance_net": null,
+   "approval_needed": false, "appr": "NA", "flags": ["STMT"],
+   "reason": "Statement of account, not an invoice (policy 1). Closing balance 0.00. Its one payment, 142.80 on 2026-09-03 ref EO-55120, is in the bank feed as a debit of 142.80 on 2026-09-03. Nothing payable."
+  },
+  {
+   "item": "sup:northfield", "records": ["M11"], "sup": "northfield", "doc_type": "bank_detail_request", "number": null,
+   "decision": "exclude", "dec": "EXCL", "amount_to_pay": "0.00", "cur": "GBP", "kind": "GROSS",
+   "document_gross": null, "po": null, "po_net": null, "invoice_net": null, "variance_net": null,
+   "approval_needed": true, "appr": "NO", "flags": ["BANKCHG", "LOOKALIKE"],
+   "scope_of_decision": "this request document only. It does not exclude Northfield: INV-000491 stays PAY, to the details on file.",
+   "reason": "Not actioned. An email is never sufficient (policy 8): details change only with the principal's approval after a call-back on the number on file, and agents do not contact suppliers (policy 9). LOOKALIKE confirmed against the master: domain on file northfield-print.co.uk, M11 came from northfield-print.co. The requested account (see M11 in work/invoices.json) is unverified and must not be used. The principal answered KEEP (human-02, relayed by the extractor in extractor-14): change rejected, so pay to the details on file. The principal will phone the number on file, and the .co email is suspected fraud. Supplier master not edited."
+  },
+  {
+   "item": "mail:M12", "records": ["M12"], "sup": "evergreen", "doc_type": "marketing", "number": null,
+   "decision": "exclude", "dec": "EXCL", "amount_to_pay": "0.00", "cur": "GBP", "kind": "GROSS",
+   "document_gross": null, "po": null, "po_net": null, "invoice_net": null, "variance_net": null,
+   "approval_needed": false, "appr": "NA", "flags": ["NOISE"],
+   "reason": "Marketing email (autumn catalogue). Not a supplier document and not an invoice (policy 1). No amounts."
+  }
+ ],
+ "po_coverage": {
+  "PO-1039": "MD-2026-057 (pay, approved, variance 0.00)",
+  "PO-1041": "INV-000482 (paid), INV-000488 (void)",
+  "PO-1044": "INV-000491 (pay, variance 15.50)",
+  "PO-1046": "7731 (hold, USD, variance 0.00)",
+  "PO-1047": "no invoice received (Evergreen, net 180.00): nothing to pay"
+ },
+ "supplier_master_check": {
+  "sender_domains": "Every sender matches the domain on file except M11 (northfield-print.co against northfield-print.co.uk): LOOKALIKE confirmed.",
+  "currency": "Invoice currency matches the master for Northfield, Marlow and Kestrel (GBP, GBP, USD).",
+  "changes": "None made or approved. data/supplier_bank.json not edited. Every payment goes to the details on file."
+ },
+ "run_notes": [
+  "INV-000491: variance +15.50 net accepted inside the 50.00 tolerance (policy 4). Corrected version M08 used, M07 (372.60) superseded.",
+  "MD-2026-057: received twice (M06, M09), identical, counted once. Approved by the principal (human-03): PAY 5400.00, no credit offset.",
+  "CN-012: refunded 2026-09-10 per the bank feed, so nothing is offset.",
+  "INV-000482: already paid 2026-09-18, excluded. INV-000488: voided by the supplier, excluded.",
+  "7731: USD invoice in a GBP run. The principal chose HOLD (human-04): not paid in this run, it goes in the FX run on 2026-10-07. No rate assumed.",
+  "Northfield bank details: change request not actioned. The principal answered KEEP (human-02, via extractor-14). Details on file used.",
+  "The bank feed ends 2026-09-29: a payment made on 2026-09-30 would not show."
+ ]
+}
