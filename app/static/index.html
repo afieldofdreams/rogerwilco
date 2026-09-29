@@ -87,7 +87,9 @@ header { display: grid; gap: 12px; }
 .wilco { color: var(--accent); }
 .ver { padding: 3px 6px; border: 1px solid var(--rule); border-radius: 4px; color: var(--ink-soft); font: 600 0.72rem/1 var(--mono); letter-spacing: 0.06em; }
 nav { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 0.95rem; }
-.lede { margin: 0; max-width: 65ch; font-size: 1.05rem; text-wrap: pretty; }
+.lede { margin: 0; max-width: 65ch; font-size: 1.15rem; text-wrap: pretty; }
+.explain { max-width: 65ch; margin-top: 0.8rem; }
+.explain p { margin: 0.6rem 0; }
 
 .bar { display: grid; grid-template-columns: minmax(10rem, 16rem) 1fr; gap: 6px 16px; align-items: end; }
 .bar p { margin: 0; color: var(--ink-soft); font-size: 0.9rem; min-width: 0; }
@@ -193,7 +195,16 @@ noscript p { margin: 0; padding: 10px 12px; color: var(--warn); background: var(
         <a href="/docs">API</a>
       </nav>
     </div>
-    <p class="lede">Agents hand work to each other in one typed line instead of a paragraph, with the facts in slots and the reasoning in a short tail. The receiver reads the line back before it owns the work, and the sender checks that readback in code. Roger means received and wilco means understood and will comply, and the receiver has to prove both before the sender lets go.</p>
+    <p class="lede">A way for AI agents to pass jobs to each other without anything getting lost.</p>
+    <div class="explain">
+      <p>Imagine a team of AI helpers doing a job together, like paying a company's bills. One reads the emails, one checks the numbers, one sets up the payments, one double-checks everything. They have to tell each other what they found.</p>
+      <p>Today they do that in paragraphs, like people chatting. Paragraphs are long, the important numbers are buried in the words, and nobody can check that the next helper understood them correctly. If one of them misreads an amount, nobody notices until the money has gone.</p>
+      <p>rogerwilco fixes that with two ideas borrowed from pilots and air traffic control.</p>
+      <p><strong>One line, fixed spaces.</strong> Every message is a single line where each fact has its own labelled slot: what the job is, which invoice, how much, in what currency, when it is due. A program can read it, check it and refuse it if something is missing or made up. <code>RW1 HO lead-1 from=lead to=writer item=inv:491 ask=EXTRACT due=20261001</code> means "lead hands writer the job of extracting invoice 491, due 1 October". Anything that does not fit goes in a file, and the line points at the file.</p>
+      <p><strong>Read it back.</strong> When a pilot is told "descend to 5,000 feet", they say "descending to 5,000" back, and the controller checks it. rogerwilco makes the receiving agent do the same: it repeats the job back in its own line, and the sender's code compares the two before letting go of the work. <em>Roger</em> means "I received it". <em>Wilco</em> means "I understood it and I will do it". The receiver has to prove both.</p>
+      <p>When a decision belongs to a human, the agents ask a question with a short list of allowed answers (approve, decline, hold) instead of writing an essay. The person gets three buttons, not a page.</p>
+      <p>Below you can type a line and see whether a program accepts it, or paste a message and its readback and see whether the readback passes. The <a href="/research">research</a> page has the experiments, including the one that showed most of the saving comes from the rules and only some from the format.</p>
+    </div>
   </header>
 
   <noscript><p>The playground needs JavaScript. The JSON API works without it: see <a href="/docs">/docs</a>.</p></noscript>
@@ -203,13 +214,13 @@ noscript p { margin: 0; padding: 10px 12px; color: var(--warn); background: var(
       <label class="label" for="profile">Profile</label>
       <select id="profile"><option value="core">core</option><option value="pform">pform</option><option value="pay">pay</option></select>
     </div>
-    <p id="profile-note">Both panels use it.</p>
+    <p id="profile-note">A profile is the word list for one kind of work. core is the basics, pform is for a knowledge graph, pay is for paying bills. Both panels use the one you pick.</p>
   </div>
 
   <section class="panel" id="line-panel" aria-labelledby="h-line">
     <div>
       <h2 id="h-line">Try a line</h2>
-      <p class="hint">One message on one line. Pick an example or write your own, and the codec says what it understood.</p>
+      <p class="hint">Pick an example message or write your own. Press Validate and the program tells you whether it is a proper rogerwilco line, what it understood, and what is wrong if anything. JSON shows the same message as data. Make readback writes the reply the receiving agent should send. Digest gives the short fingerprint that proves a message arrived unchanged.</p>
     </div>
     <div class="field">
       <label class="label" for="example">Example</label>
@@ -240,7 +251,7 @@ noscript p { margin: 0; padding: 10px 12px; color: var(--warn); background: var(
   <section class="panel" id="check-panel" aria-labelledby="h-check">
     <div>
       <h2 id="h-check">Check a readback</h2>
-      <p class="hint">The sender's check. Paste the HO you sent and the RB that came back. Four tiers run, receipt and integrity (roger), then echo and comprehension (wilco). The receiver owns the item only if all of them pass.</p>
+      <p class="hint">This is what the sender's code does before it lets go of a job. Paste the handoff (HO) you sent and the readback (RB) that came back. It checks four things in order: the reply is to the right message from the right agent, the message arrived unchanged, the facts were repeated back correctly, and, if you asked for it, the receiver understood the brief the same way you did. The first two are roger, the last two are wilco. The job changes hands only if every check passes.</p>
     </div>
     <div class="field">
       <label class="label" for="pairs">Example</label>
@@ -528,7 +539,8 @@ noscript p { margin: 0; padding: 10px 12px; color: var(--warn); background: var(
   function updateProfileNote() {
     const name = $("profile").value;
     const found = profiles.find((p) => p.name === name);
-    $("profile-note").textContent = (found && found.description ? found.description + " " : "") + "Both panels use it.";
+    var plain = {core: "core is the basic word list every agent understands.", pform: "pform adds the words for a knowledge-graph workflow.", pay: "pay adds the words for paying bills: amounts, currencies, approvals."};
+    $("profile-note").textContent = (plain[name] || (found && found.description ? found.description : "")) + " Both panels use the one you pick.";
     $("legend-link").setAttribute("href", "/legend?profile=" + encodeURIComponent(name));
   }
 
