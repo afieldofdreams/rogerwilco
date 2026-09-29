@@ -1,0 +1,24 @@
+{
+ "first": {
+  "rb": "FC1 RB extractor-01 re=lead-01 from=extractor to=lead item=fin:aug-2026-invoices ask=EXTRACT due=20261002 acc=fmt:json+scope:gbp-invoices-only+must:every-supplier-invoice+no:voided-cancelled-credit-notes-statements do=json-array",
+  "passed": false,
+  "problems": [
+   "tier4 comprehension: gap, receiver did not derive must:gross-amounts",
+   "tier4 comprehension: gap, receiver did not derive must:iso-dates"
+  ],
+  "notes": [
+   "loose match: sender must:exact-invoice-numbers taken as receiver must:every-supplier-invoice"
+  ],
+  "rb_file": "rb.txt",
+  "correction": "FC1 HO lead-02 re=extractor-01 from=lead to=extractor item=fin:aug-2026-invoices ask=EXTRACT due=20261002 rb=acc keys=fmt+scope+must+no art=file:brief.md // readback mismatch: must:gross-amounts is required per the brief; must:iso-dates is required per the brief"
+ },
+ "second": {
+  "rb": "FC1 RB extractor-02 re=lead-02 from=extractor to=lead item=fin:aug-2026-invoices ask=EXTRACT due=20261002 acc=fmt:json+scope:gbp-invoices-only+must:every-supplier-invoice+must:gross-amounts+must:iso-dates+no:voided-cancelled-credit-notes-statements do=json-array",
+  "passed": true,
+  "problems": [],
+  "notes": [
+   "loose match: sender must:exact-invoice-numbers taken as receiver must:every-supplier-invoice"
+  ],
+  "rb_file": "rb2.txt"
+ }
+}

@@ -1,0 +1,79 @@
+You are a receiving agent in a multi-agent system. Other agents send you handoff messages about nodes in a knowledge graph. For each message, decide what to do by applying the policy below exactly. Today is 27 September 2026.
+
+Do not run code, write scripts, or use any tools. Read each message yourself and decide. This tests reading comprehension.
+
+Receiver policy. Apply rules in order; the first rule that matches decides.
+1. WAIT if the node is blocked by any other node.
+2. BOUNCE if confidence is low AND the ask is DECIDE (make a decision) or BUILD (build it).
+3. EXPEDITE if there is a due date earlier than 4 October 2026 (20261004).
+4. ESCALATE if it has been stalled 14 days or more AND importance is 7 or higher.
+5. CLOSE if the pipeline stage is done.
+6. ACCEPT otherwise.
+Stall days or importance that are not stated do not satisfy rule 4.
+
+Message format reference:
+Messages are JSON handoff objects.
+
+Messages:
+m01: {"type":"handoff","from":"Copywriter","to":"Architect","node":3828,"stage":"action","confidence":"high","ask":"run 4-axis scoring","opstatus":"none","importance":7,"heat":"hot","stall_days":9,"due":"20261015","keep_assigned":["Market Researcher"],"source_view":119}
+m02: {"type":"handoff","from":"Market Researcher","to":"Triage","node":1300,"stage":"options","confidence":"low","ask":"build it","opstatus":"none","importance":9,"stall_days":15,"due":"20261003","keep_assigned":["Ideator"]}
+m03: {"type":"handoff","from":"QA Reviewer","to":"Builder","node":3025,"stage":"done","confidence":"low","ask":"draft public copy","opstatus":"none","importance":2,"stall_days":9,"keep_assigned":["Adam","Gardener"],"source_view":120,"note":"Related thread in Claude Questions."}
+m04: {"type":"handoff","from":"Ideator","to":"Triage","node":3049,"stage":"done","confidence":"high","ask":"run 4-axis scoring","importance":4}
+m05: {"type":"handoff","from":"QA Reviewer","to":"Market Researcher","node":4935,"stage":"diagnose","confidence":"low","ask":"review against criteria","importance":5,"heat":"cold","stall_days":7,"note":"Description field is thin."}
+m06: {"type":"handoff","from":"Data Analyst","to":"Scout","node":3244,"stage":"diagnose","confidence":"low","ask":"validate the pain point","opstatus":"none","stall_days":28,"blocked_by":[3776,4488],"note":"Adam mentioned this on the call, no decision yet."}
+m07: {"type":"handoff","from":"Scout","to":"Architect","node":2121,"stage":"action","confidence":"high","ask":"validate the pain point","opstatus":"now","importance":8,"stall_days":40,"keep_assigned":["Adam","Scout"],"source_view":97,"note":"Came in via the Inbox Queue last week."}
+m08: {"type":"handoff","from":"Builder","to":"Strategist","node":1862,"stage":"diagnose","confidence":"medium","ask":"draft public copy","importance":7,"heat":"hot","stall_days":21,"source_view":97}
+m09: {"type":"handoff","from":"Ideator","to":"Scout","node":1705,"stage":"diagnose","confidence":"medium","ask":"draft public copy","opstatus":"none","importance":9,"stall_days":19,"keep_assigned":["Data Analyst"],"note":"Description field is thin."}
+m10: {"type":"handoff","from":"Ideator","to":"Builder","node":1346,"stage":"action","confidence":"high","ask":"build it","importance":10,"heat":"warm","keep_assigned":["Scout","Strategist"],"source_view":74}
+m11: {"type":"handoff","from":"Data Analyst","to":"Market Researcher","node":3089,"stage":"done","confidence":"low","ask":"run 4-axis scoring","importance":6,"stall_days":2,"note":"Last touched during the Q3 review."}
+m12: {"type":"handoff","from":"Data Analyst","to":"Scout","node":4427,"stage":"options","confidence":"medium","ask":"review against criteria","opstatus":"now","importance":9,"due":"20261011","blocked_by":[2740,3568],"note":"Last touched during the Q3 review."}
+m13: {"type":"handoff","from":"Triage","to":"Copywriter","node":4312,"stage":"diagnose","confidence":"high","ask":"validate the pain point","opstatus":"waiting","importance":7,"stall_days":28,"keep_assigned":["Data Analyst","Architect"],"source_view":121}
+m14: {"type":"handoff","from":"Ideator","to":"Gardener","node":3464,"stage":"review","confidence":"medium","ask":"fill missing fields","importance":5,"heat":"hot","source_view":120}
+m15: {"type":"handoff","from":"Market Researcher","to":"Scout","node":4534,"stage":"done","confidence":"low","ask":"build it","importance":10,"heat":"warm","keep_assigned":["Triage","Strategist"],"note":"Description field is thin."}
+m16: {"type":"handoff","from":"Strategist","to":"Data Analyst","node":4227,"stage":"done","confidence":"high","ask":"write implementation spec","importance":7,"keep_assigned":["Adam","QA Reviewer"],"source_view":121}
+m17: {"type":"handoff","from":"Market Researcher","to":"Data Analyst","node":3300,"stage":"diagnose","confidence":"low","ask":"validate the pain point","opstatus":"waiting","importance":8,"keep_assigned":["Builder","Data Analyst"],"note":"Two stale edges to archived nodes."}
+m18: {"type":"handoff","from":"Scout","to":"Gardener","node":1390,"stage":"decide","confidence":"low","ask":"build it","heat":"hot","stall_days":13,"keep_assigned":["Triage"],"source_view":74}
+m19: {"type":"handoff","from":"QA Reviewer","to":"Market Researcher","node":2038,"stage":"options","confidence":"high","ask":"retire or merge node","importance":4,"heat":"hot","stall_days":14,"source_view":120,"note":"Last touched during the Q3 review."}
+m20: {"type":"handoff","from":"QA Reviewer","to":"Triage","node":1992,"stage":"options","confidence":"low","ask":"review against criteria","opstatus":"none","heat":"warm","stall_days":9,"due":"20261016","keep_assigned":["Builder"],"source_view":119,"blocked_by":[3481]}
+m21: {"type":"handoff","from":"Scout","to":"Gardener","node":3607,"stage":"action","confidence":"high","ask":"make a decision","importance":8,"heat":"warm","stall_days":14,"keep_assigned":["QA Reviewer"],"source_view":97,"note":"Came in via the Inbox Queue last week."}
+m22: {"type":"handoff","from":"QA Reviewer","to":"Strategist","node":3131,"stage":"diagnose","confidence":"medium","ask":"review against criteria","importance":5,"heat":"cold","stall_days":21,"blocked_by":[2802],"note":"Related thread in Claude Questions."}
+m23: {"type":"handoff","from":"Builder","to":"QA Reviewer","node":3713,"stage":"options","confidence":"low","ask":"build it","opstatus":"none","importance":5,"heat":"hot","due":"20261003","keep_assigned":["Data Analyst"],"source_view":120}
+m24: {"type":"handoff","from":"QA Reviewer","to":"Copywriter","node":1672,"stage":"review","confidence":"low","ask":"validate the pain point","importance":5,"stall_days":21,"due":"20261003","keep_assigned":["Gardener","Architect"],"source_view":94}
+m25: {"type":"handoff","from":"Gardener","to":"Ideator","node":1801,"stage":"options","confidence":"high","ask":"draft public copy","importance":7,"stall_days":14,"due":"20261017"}
+m26: {"type":"handoff","from":"Ideator","to":"Triage","node":4207,"stage":"decide","confidence":"high","ask":"run 4-axis scoring","opstatus":"now","importance":6,"stall_days":7,"blocked_by":[3819],"note":"Linked to the partner pipeline."}
+m27: {"type":"handoff","from":"Gardener","to":"Ideator","node":2695,"stage":"done","confidence":"high","ask":"review against criteria","opstatus":"scheduled","importance":8,"heat":"warm","stall_days":19,"blocked_by":[2575],"note":"Two stale edges to archived nodes."}
+m28: {"type":"handoff","from":"Architect","to":"Strategist","node":2801,"stage":"decide","confidence":"medium","ask":"build it","opstatus":"now","importance":4,"heat":"cold","due":"20261025","keep_assigned":["Triage"],"source_view":74,"blocked_by":[1416],"note":"Came in via the Inbox Queue last week."}
+m29: {"type":"handoff","from":"Strategist","to":"QA Reviewer","node":2680,"stage":"decide","confidence":"low","ask":"build it","opstatus":"none","importance":6,"heat":"hot"}
+m30: {"type":"handoff","from":"Strategist","to":"Gardener","node":2810,"stage":"options","confidence":"low","ask":"review against criteria","opstatus":"waiting","importance":2,"stall_days":40,"keep_assigned":["Strategist"]}
+m31: {"type":"handoff","from":"Triage","to":"Scout","node":1960,"stage":"review","confidence":"high","ask":"run 4-axis scoring","opstatus":"waiting","importance":2,"stall_days":13,"due":"20261003","note":"Related thread in Claude Questions."}
+m32: {"type":"handoff","from":"QA Reviewer","to":"Copywriter","node":4939,"stage":"options","confidence":"high","ask":"retire or merge node","opstatus":"scheduled","importance":3,"heat":"warm","stall_days":12,"keep_assigned":["Adam","Triage"],"source_view":119,"blocked_by":[2613],"note":"Adam mentioned this on the call, no decision yet."}
+m33: {"type":"handoff","from":"Market Researcher","to":"Strategist","node":4025,"stage":"done","confidence":"medium","ask":"fill missing fields","importance":3,"heat":"cold","stall_days":19,"keep_assigned":["Strategist","Copywriter"]}
+m34: {"type":"handoff","from":"Strategist","to":"Scout","node":4594,"stage":"review","confidence":"low","ask":"validate the pain point","opstatus":"none","importance":10,"stall_days":15,"due":"20261023","note":"Two stale edges to archived nodes."}
+m35: {"type":"handoff","from":"Data Analyst","to":"Architect","node":1446,"stage":"diagnose","confidence":"low","ask":"fill missing fields","opstatus":"none","heat":"cold","stall_days":12,"keep_assigned":["Ideator"],"source_view":121,"note":"Adam mentioned this on the call, no decision yet."}
+m36: {"type":"handoff","from":"QA Reviewer","to":"Ideator","node":2454,"stage":"decide","confidence":"medium","ask":"retire or merge node","opstatus":"scheduled","heat":"cold","stall_days":5,"due":"20261023","keep_assigned":["Scout","Triage"],"blocked_by":[3233,3351],"note":"Adam mentioned this on the call, no decision yet."}
+m37: {"type":"handoff","from":"Gardener","to":"QA Reviewer","node":4476,"stage":"diagnose","confidence":"low","ask":"run 4-axis scoring","opstatus":"none","heat":"cold","stall_days":19,"source_view":119,"note":"Linked to the partner pipeline."}
+m38: {"type":"handoff","from":"Ideator","to":"Triage","node":3200,"stage":"done","confidence":"low","ask":"validate the pain point","importance":6,"heat":"warm","keep_assigned":["Strategist","Architect"],"source_view":94,"note":"Related thread in Claude Questions."}
+m39: {"type":"handoff","from":"Triage","to":"Gardener","node":1468,"stage":"action","confidence":"low","ask":"build it","opstatus":"waiting","heat":"warm","source_view":120}
+m40: {"type":"handoff","from":"Builder","to":"Copywriter","node":3405,"stage":"review","confidence":"medium","ask":"run 4-axis scoring","opstatus":"scheduled","importance":8,"heat":"cold","stall_days":14,"keep_assigned":["Market Researcher"],"note":"Came in via the Inbox Queue last week."}
+m41: {"type":"handoff","from":"Market Researcher","to":"Scout","node":3025,"stage":"done","confidence":"medium","ask":"write implementation spec","opstatus":"waiting","importance":2,"heat":"cold","stall_days":12,"due":"20261003","keep_assigned":["Gardener"],"source_view":95}
+m42: {"type":"handoff","from":"Builder","to":"Scout","node":2860,"stage":"diagnose","confidence":"high","ask":"review against criteria","importance":1,"keep_assigned":["Adam"],"blocked_by":[1779,3122]}
+m43: {"type":"handoff","from":"Copywriter","to":"Gardener","node":1755,"stage":"done","confidence":"medium","ask":"retire or merge node","opstatus":"waiting","importance":6,"stall_days":2,"due":"20261102","source_view":94}
+m44: {"type":"handoff","from":"Market Researcher","to":"Data Analyst","node":1391,"stage":"done","confidence":"high","ask":"write implementation spec","importance":8,"heat":"cold","stall_days":5,"source_view":74,"note":"Linked to the partner pipeline."}
+m45: {"type":"handoff","from":"Triage","to":"Ideator","node":1170,"stage":"review","confidence":"high","ask":"run 4-axis scoring","importance":2,"due":"20260928","note":"Related thread in Claude Questions."}
+m46: {"type":"handoff","from":"Scout","to":"Data Analyst","node":4894,"stage":"options","confidence":"low","ask":"make a decision","importance":1,"heat":"warm","stall_days":2,"source_view":74,"note":"Description field is thin."}
+m47: {"type":"handoff","from":"Ideator","to":"Scout","node":4967,"stage":"review","confidence":"high","ask":"validate the pain point","opstatus":"now","importance":1,"heat":"hot","due":"20261001","source_view":121,"note":"Related thread in Claude Questions."}
+m48: {"type":"handoff","from":"Gardener","to":"Architect","node":2498,"stage":"diagnose","confidence":"low","ask":"validate the pain point","importance":9,"heat":"hot","stall_days":14,"keep_assigned":["Data Analyst","Scout"],"source_view":74}
+m49: {"type":"handoff","from":"Gardener","to":"Data Analyst","node":1666,"stage":"done","confidence":"low","ask":"build it","heat":"warm","stall_days":13,"due":"20261001","keep_assigned":["Gardener"]}
+m50: {"type":"handoff","from":"QA Reviewer","to":"Scout","node":3822,"stage":"done","confidence":"high","ask":"build it","opstatus":"none","heat":"cold","stall_days":21,"due":"20260928","note":"Adam mentioned this on the call, no decision yet."}
+m51: {"type":"handoff","from":"Builder","to":"Triage","node":4620,"stage":"action","confidence":"high","ask":"run 4-axis scoring","importance":7,"stall_days":28,"source_view":120}
+m52: {"type":"handoff","from":"Strategist","to":"Builder","node":3050,"stage":"decide","confidence":"high","ask":"review against criteria","opstatus":"scheduled","heat":"cold","stall_days":9,"due":"20261018","keep_assigned":["QA Reviewer"],"source_view":95,"note":"Came in via the Inbox Queue last week."}
+m53: {"type":"handoff","from":"Builder","to":"Data Analyst","node":3190,"stage":"review","confidence":"low","ask":"review against criteria","opstatus":"none","importance":6,"stall_days":28,"due":"20261003","keep_assigned":["Adam","Ideator"]}
+m54: {"type":"handoff","from":"Triage","to":"Market Researcher","node":2108,"stage":"decide","confidence":"low","ask":"write implementation spec","opstatus":"now","importance":9,"due":"20261003","keep_assigned":["Data Analyst"],"note":"Came in via the Inbox Queue last week."}
+m55: {"type":"handoff","from":"Data Analyst","to":"Gardener","node":3247,"stage":"diagnose","confidence":"low","ask":"validate the pain point","opstatus":"waiting","importance":7,"heat":"hot","stall_days":5,"due":"20261003","keep_assigned":["Ideator"]}
+m56: {"type":"handoff","from":"Data Analyst","to":"Copywriter","node":4764,"stage":"decide","confidence":"low","ask":"build it","stall_days":19,"keep_assigned":["Strategist"],"source_view":94,"note":"Two stale edges to archived nodes."}
+m57: {"type":"handoff","from":"QA Reviewer","to":"Strategist","node":4907,"stage":"done","confidence":"medium","ask":"validate the pain point","opstatus":"waiting","importance":2,"heat":"cold","stall_days":12,"due":"20261003","keep_assigned":["Ideator","Architect"],"source_view":74}
+m58: {"type":"handoff","from":"Copywriter","to":"Gardener","node":3129,"stage":"diagnose","confidence":"low","ask":"make a decision","importance":1,"heat":"hot","stall_days":5,"keep_assigned":["Market Researcher","Copywriter"],"source_view":120}
+m59: {"type":"handoff","from":"Copywriter","to":"Architect","node":2617,"stage":"done","confidence":"low","ask":"write implementation spec","importance":10,"heat":"hot","stall_days":5,"keep_assigned":["Data Analyst"],"source_view":74}
+m60: {"type":"handoff","from":"Gardener","to":"Data Analyst","node":1329,"stage":"done","confidence":"high","ask":"validate the pain point","opstatus":"now","importance":1,"heat":"hot","keep_assigned":["Builder"]}
+
+Reply with only a JSON object mapping each message id to one of WAIT, BOUNCE, EXPEDITE, ESCALATE, CLOSE, ACCEPT. Example: {"m01": "ACCEPT", "m02": "WAIT"}. Include all 60 ids. No other text.

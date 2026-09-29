@@ -1,0 +1,65 @@
+You are a strict judge. For each item, an agent has stated its understanding of a task before starting. You are given the hidden acceptance criteria the sender holds. Decide, per item, whether the stated understanding CONTRADICTS any criterion (states a different value) or OMITS a criterion that a competent worker would need to state to show they understood the brief. Ignore criteria that are generic hygiene (e.g. 'parses as JSON array', 'H1 headline') unless the understanding contradicts them.
+Reply with only a JSON array of objects: {"id": ..., "pass": true|false, "contradictions": [..], "omissions": [..]} where pass is false if there is at least one contradiction or one material omission.
+
+### extract-clean-D1-hk
+UNDERSTANDING: The task requires extracting supplier invoices from an August 2026 email thread into a JSON array with specific fields: supplier, invoice_number (exactly as written), date (ISO 8601), amount (net, excluding VAT), currency, vat, and due_date. Only GBP invoices are included. Exclusions: voided/cancelled invoices, credit notes, and statements. The output must be a single JSON array without prose or code fences. Three valid invoices meet criteria: INV-000482 and INV-000491 from Northfield Supplies (with corrected amounts applied), and MD-2026-057 from Marlow Design. All others are excluded due to being voided, foreign currency, credit notes, or statements.
+CRITERIA:
+- parses as a JSON array
+- exactly the expected invoice numbers, as written
+- net amounts correct, corrected figure used for INV-000491
+- dates ISO and correct
+- currency codes correct
+- voided invoice and credit note absent
+
+### extract-artifact_only-D1-hk
+UNDERSTANDING: The task requires extracting GBP-denominated supplier invoices from an August 2026 email thread. Inclusion criteria: valid invoices with net amounts, ISO 8601 dates, and invoice numbers exactly as written. Exclusions: voided or cancelled invoices, credit notes, statements, and non-GBP currencies. Where a corrected invoice appears in a later email, apply the corrected figures and add a "corrected": true flag. Deliverable: a single JSON array with fields for supplier, invoice_number, date, amount (net only), currency, vat, and due_date (ISO 8601 or null).
+CRITERIA:
+- parses as a JSON array
+- exactly the expected invoice numbers, as written
+- net amounts correct, corrected figure used for INV-000491
+- dates ISO and correct
+- currency codes correct
+- voided invoice and credit note absent
+- corrected:true on the corrected invoice
+
+### extract-near_miss-D1-hk
+UNDERSTANDING: The task requires extracting supplier invoices from an email thread into a JSON array with specific fields: supplier name, invoice number (as written), ISO 8601 date, gross amount including VAT, ISO 4217 currency code, VAT amount, and due date. Only GBP invoices are included; USD invoices are excluded. Voided invoices, credit notes, and statements are excluded. Invoice numbers must preserve exact formatting including leading zeros and prefixes. Amounts in the JSON should be the gross total including VAT. Due dates are calculated from payment terms or set to null if not specified. The output is a single JSON array with no additional prose or code fences. The correction email updates INV-000491 figures and supersedes the original amounts.
+CRITERIA:
+- parses as a JSON array
+- exactly the expected invoice numbers, as written
+- gross amounts correct, corrected figure used for INV-000491
+- dates ISO and correct
+- currency codes correct
+- voided invoice and credit note absent
+
+### extract-contradiction-D1-hk
+UNDERSTANDING: The task requires extracting supplier invoices from an August 2026 email thread into a structured JSON array. Key requirements: (1) include all invoices from all suppliers across all currencies, with each currency recorded in ISO 4217 format; (2) report net amounts (excluding VAT) in the amount field; (3) include VAT as a separate number field, or null if not applicable; (4) use ISO 8601 date format (YYYY-MM-DD) for both invoice date and due date; (5) preserve invoice numbers exactly as written, including prefixes and leading zeros; (6) exclude voided/cancelled invoices, credit notes, and account statements; (7) output as a single JSON array with no prose or code fences. Acceptance criteria: accurate data extraction, correct date parsing, proper VAT separation, and complete exclusion of non-invoice documents.
+CRITERIA:
+- parses as a JSON array
+- exactly the expected invoice numbers, as written
+- net amounts correct, corrected figure used for INV-000491
+- dates ISO and correct
+- currency codes correct
+- voided invoice and credit note absent
+
+### extract-buried-D1-hk
+UNDERSTANDING: This task requires extracting August 2026 supplier invoices from an email thread into a JSON array for month-end close. Key requirements: include only GBP invoices with net amounts as strings (two decimals); exclude voided invoices, credit notes, and statements; use exact invoice numbers, ISO dates, and supplier names; report net amount excluding VAT; include VAT as string if present. Apply the corrected figure for INV-000491. Output is a single JSON array with no prose or code fences, suitable for ledger import.
+CRITERIA:
+- parses as a JSON array
+- exactly the expected invoice numbers, as written
+- net amounts correct, corrected figure used for INV-000491
+- dates ISO and correct
+- currency codes correct
+- voided invoice and credit note absent
+- amount and vat are strings with two decimals (rule stated mid-brief)
+
+### extract-categorical-D1-hk
+UNDERSTANDING: I understand the task to extract GBP-denominated supplier invoices from the email thread into a JSON array. Key requirements: report net amounts (excluding VAT), preserve invoice numbers exactly, use ISO 8601 dates, include VAT as a separate field, compute due_date when payment terms are stated (otherwise null), exclude voided invoices (INV-000488), credit notes (CN-012), statements, and non-GBP invoices (USD invoice 7731). The output must be a single valid JSON array with no prose or code fences. Acceptance criteria: three valid invoices extracted (Northfield INV-000482, corrected INV-000491, and Marlow MD-2026-057) with correct net amounts, VAT values, and calculated due dates based on payment terms.
+CRITERIA:
+- parses as a JSON array
+- exactly the expected invoice numbers, as written
+- net amounts correct, corrected figure used for INV-000491
+- dates ISO and correct
+- currency codes correct
+- voided invoice and credit note absent
+- due dates computed from terms (30 days, 14 days) where stated

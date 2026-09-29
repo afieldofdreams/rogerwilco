@@ -1,0 +1,129 @@
+<title>rogerwilco Pilot Results</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#F6F7F9; --ink:#171A1F; --muted:#5B6470; --accent:#1E5A6E; --warn:#9A5B12;
+  --rule:#D6DAE0; --well:#ECEFF3; --good:#2F6B3A;
+  --serif:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono:"IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#14171B; --ink:#E6E8EB; --muted:#9AA3AE; --accent:#63B3C7; --warn:#D9A054;
+    --rule:#2B3138; --well:#1D2126; --good:#7CC48A; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#14171B; --ink:#E6E8EB; --muted:#9AA3AE; --accent:#63B3C7; --warn:#D9A054;
+  --rule:#2B3138; --well:#1D2126; --good:#7CC48A; color-scheme:dark;
+}
+body{background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.55;padding-inline:16px;padding-block:32px 80px;margin:0}
+main{max-width:70ch;margin-inline:auto}
+.wide{max-width:900px;margin-inline:auto}
+h1,h2,h3{font-weight:600;line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:2.1rem;letter-spacing:-0.01em}
+h2{font-size:1.35rem;margin-top:2.6rem;padding-top:1.2rem;border-top:1px solid var(--rule)}
+h3{font-size:1.05rem;margin-top:1.6rem}
+p{margin:0.9rem 0}
+.mast{font-family:var(--mono);font-size:0.78rem;color:var(--muted);letter-spacing:0.04em;text-transform:uppercase;display:flex;flex-wrap:wrap;gap:0.4rem 1.4rem;margin-bottom:1.2rem}
+.lede{font-size:1.12rem}
+.decision{background:var(--well);border-left:3px solid var(--accent);padding:0.9rem 1.1rem;margin:1.4rem 0}
+.decision p{margin:0.45rem 0}
+.decision strong{color:var(--accent)}
+code,pre{font-family:var(--mono);font-size:0.84rem}
+pre{background:var(--well);padding:0.8rem 1rem;overflow-x:auto;margin:0.8rem 0;line-height:1.5}
+table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:0.82rem;margin:0.8rem 0;font-variant-numeric:tabular-nums}
+th,td{padding:0.45rem 0.6rem;border-bottom:1px solid var(--rule);text-align:right;vertical-align:top}
+th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}
+th{color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:0.05em;font-size:0.72rem}
+.tw{overflow-x:auto}
+caption{caption-side:bottom;text-align:left;font-family:var(--serif);font-size:0.9rem;color:var(--muted);padding-top:0.5rem}
+.bad{color:var(--warn);font-weight:500}
+.ok{color:var(--good)}
+ol.findings{padding-left:1.4rem;margin:0.6rem 0}
+ol.findings li{margin:0.7rem 0}
+ul{padding-left:1.3rem}
+li{margin:0.35rem 0}
+.foot{font-family:var(--mono);font-size:0.76rem;color:var(--muted);margin-top:3rem;border-top:1px solid var(--rule);padding-top:0.8rem}
+@media (max-width:520px){ body{font-size:16px} h1{font-size:1.7rem} }
+</style>
+
+<main>
+<div class="mast"><span>Pilot v0.1</span><span>28 Sep 2026</span><span>Croxio Ltd · Lumos</span><span>108 handoffs · 3 arms · 2 models</span></div>
+<h1>Does a verified readback make agent handoffs better?</h1>
+<p class="lede">A controlled pilot of rogerwilco against prose handoffs, with planted faults, blind grading and one correction cycle. Effect confirmed where misreads occur; the typed form's edge over a prose readback is real but narrow; the check's precision on small models needs a design change.</p>
+
+<div class="decision">
+<p><strong>Result in one line.</strong> Both readback mechanisms caught every handoff misunderstanding that reached an output (4 of 4) and drove handoff defects to zero after one correction; the no-readback baseline kept all of its 4. The typed form (C) was the only arm with zero handoff defects <em>before</em> any check, because deriving a typed <code>len:</code> value made receivers read the brief where prose let them rationalise the tail. Its check ran with zero false alarms on Sonnet and ten of eleven on Haiku, whose readbacks are terse.</p>
+<p><strong>Decision.</strong> Continue to v0.2 with three changes: split flag severity (contradiction voids, missing set value asks to confirm), add a done-time acceptance check against the same criteria, and ship the 400-token legend rather than the skill file as the receiver prompt. Then replay on real Heartbeat handoffs and add a non-Claude receiver.</p>
+</div>
+
+<h2>1. Design</h2>
+<p>Two domains: landing-page copy and supplier-invoice extraction. Six variants each: a clean brief and five planted faults (a constraint only in the artifact, a near-miss number, a tail-versus-artifact contradiction, a rule buried mid-brief, a categorical rule). Hidden acceptance criteria per variant, part code-checkable, part semantic. The artifact is authoritative where it disagrees with the handoff tail.</p>
+<p>Three arms on the same briefs. <strong>A</strong>: prose handoff, no readback. <strong>C</strong>: rogerwilco HO with <code>rb=acc keys=…</code>; receiver emits a readback first; the sender's withheld criteria are compared in code; one correction cycle by re-issued HO. <strong>D</strong>: prose handoff plus a prose "state what you understand" paragraph; a blind model judge compares it with the criteria; one prose correction cycle. D is the control that separates the typed format from the readback ritual.</p>
+<p>Receivers: fresh Sonnet agents, two runs per cell (72 handoffs), and fresh Haiku agents, one run per cell (36). Each receiver saw only the brief, the handoff and, in C, the skill file. Grading: code for word counts, formats, sets, amounts, dates and forbidden strings; Opus, blind to arm, for semantic criteria (first sentence names the Monday problem, regulated-industry proof, voice). Corrections were sent to the same agent after its first output, so correction cycles are measured post-work; the pre-work saving is modelled, not measured.</p>
+
+<h2>2. Results</h2>
+<div class="tw wide">
+<table>
+<caption>Table 1. Handoff defects are outputs failing a criterion tied to a planted fault (the misread the arm was meant to prevent). Execution defects are outputs failing a criterion the receiver had correctly stated, mostly Haiku not putting the Monday problem in the first sentence. Detected counts a flag that named the failing dimension. False alarms are flags on handoffs whose output had no handoff defect.</caption>
+<thead><tr><th>Model</th><th>Arm</th><th>n</th><th>Handoff defects before check</th><th>After one correction</th><th>Execution defects</th><th>Detected</th><th>False alarms</th></tr></thead>
+<tbody>
+<tr><td>Sonnet</td><td>A prose</td><td>24</td><td class="bad">2</td><td class="bad">2</td><td>0</td><td>–</td><td>–</td></tr>
+<tr><td>Sonnet</td><td>C rogerwilco</td><td>24</td><td class="ok">0</td><td class="ok">0</td><td>0</td><td>0/0</td><td class="ok">0/24</td></tr>
+<tr><td>Sonnet</td><td>D prose readback</td><td>24</td><td class="bad">2</td><td class="ok">0</td><td>0</td><td>2/2</td><td>1/22</td></tr>
+<tr><td>Haiku</td><td>A prose</td><td>12</td><td class="bad">2</td><td class="bad">2</td><td>4</td><td>–</td><td>–</td></tr>
+<tr><td>Haiku</td><td>C rogerwilco</td><td>12</td><td>1</td><td class="ok">0</td><td>5</td><td>1/1</td><td class="bad">10/11</td></tr>
+<tr><td>Haiku</td><td>D prose readback</td><td>12</td><td>1</td><td class="ok">0</td><td>3</td><td>1/1</td><td>2/11</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>Where the handoff defects came from: the copy near-miss (tail says 120 words, brief says 150) and, for Haiku, the extraction contradiction (tail says GBP only, brief says all currencies). Every A-arm receiver on the near-miss wrote 120. Every C-arm Sonnet receiver wrote 150 and carried <code>len:150w</code> in its readback, several adding <code>asm=len-from-brief-not-tail</code>. Every D-arm receiver wrote 120 and said so in its paragraph ("the brief caps at 150, lead says 120, 120 fits"), which the judge flagged. On the extraction contradiction, the Haiku A receiver excluded the USD invoice per the tail; both readback arms included it.</p>
+
+<div class="tw wide">
+<table>
+<caption>Table 2. Tokens per handoff, o200k proxy: prompt, receiver outputs including readbacks, and correction traffic. The legend-only figure replaces the 1,800-token skill file with the 400-token legend.</caption>
+<thead><tr><th>Model</th><th>Arm</th><th>Prompt</th><th>Outputs</th><th>Correction</th><th>Total</th><th>Total, legend only</th></tr></thead>
+<tbody>
+<tr><td>Sonnet</td><td>A</td><td>591</td><td>206</td><td>0</td><td>796</td><td>796</td></tr>
+<tr><td>Sonnet</td><td>C</td><td>3,355</td><td>416</td><td>0</td><td>3,771</td><td>1,599</td></tr>
+<tr><td>Sonnet</td><td>D</td><td>685</td><td>347</td><td>0</td><td>1,032</td><td>1,032</td></tr>
+<tr><td>Haiku</td><td>A</td><td>593</td><td>183</td><td>0</td><td>776</td><td>776</td></tr>
+<tr><td>Haiku</td><td>C</td><td>3,363</td><td>569</td><td>78</td><td>4,010</td><td>1,838</td></tr>
+<tr><td>Haiku</td><td>D</td><td>691</td><td>330</td><td>0</td><td>1,021</td><td>1,021</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2>3. Findings</h2>
+<ol class="findings">
+<li><strong>Readbacks work, in either form.</strong> Four handoff misunderstandings reached an output across the readback arms; all four were flagged and all four were fixed by one correction. The baseline had no mechanism and kept its four. Rate of handoff defects: A 4 of 36, D 3 of 36 before correction and 0 after, C 1 of 36 before and 0 after.</li>
+<li><strong>The typed form changes behaviour at derivation, not only at the check.</strong> On Sonnet, C had nothing to catch: forcing a number into <code>len:</code> made receivers take the brief's number. The prose readback let the same model articulate the conflict and still choose the tail's number. This is the clearest evidence that the format itself, not just the ritual, matters. It rests on one fault type and two runs, so treat it as a strong hypothesis for v0.2 to test on more faults.</li>
+<li><strong>Code checks beat model judges on precision, for capable receivers.</strong> C's checker ran 24 Sonnet readbacks with zero false alarms. D's judge produced one false alarm on Sonnet (it demanded a nuance the brief did not require) and misread the criteria once on Haiku. A model judge is also a second model call per handoff; the code check is free.</li>
+<li><strong>The check's precision collapses on terse readbacks.</strong> Haiku's readbacks list a few criteria and stop. Ten of eleven flags on Haiku were gaps on set values the receiver went on to honour. The one true flag was a contradiction (<code>len</code> 120 versus 150). Design change: a contradiction or a missing <em>key</em> voids the readback; a missing set value triggers a one-line confirm, not a re-issue. Applied retrospectively, Haiku's false alarms fall from ten to zero and the true detection stays.</li>
+<li><strong>A readback verifies understanding, not execution.</strong> Haiku stated <code>must:monday-problem</code> in five readbacks and then failed to put it in the first sentence. No pre-work check can catch that. The same typed criteria make a done-time check mechanical for the code-checkable ones and a targeted judge call for the rest. v0.2 should add it to DN.</li>
+<li><strong>The comprehension readback is a cost, not a saving.</strong> With the legend instead of the skill file, C costs about twice A per handoff; with the skill file, five times. It pays back only when it prevents rework. On a 120-word paragraph the rework is cheap; on a spec, a build or a scheduled fire it is not. The token savings measured earlier live in state and logs, which this pilot did not exercise.</li>
+<li><strong>Two harness bugs were found and fixed during the run</strong> and are reported rather than hidden: plural matching (<code>amounts</code> versus <code>amount</code>) caused two false alarms on Sonnet before the fix; the second readback was initially compared against the original HO instead of the re-issued one.</li>
+</ol>
+
+<h2>4. Limits</h2>
+<ul>
+<li>36 handoffs per arm and one Haiku run per cell. The near-miss and contradiction cells carry the whole signal; the other cells are flat because both models read these briefs correctly in every arm.</li>
+<li>The near-miss brief said "150 words, no more", which a receiver can defensibly satisfy with 120. The behavioural divergence and its visibility are real; the defect label depends on sender intent. v0.2 uses "between 140 and 150".</li>
+<li>Claude receivers only, two domains, criteria written by the experimenter. Same-model pairs share their misreads.</li>
+<li>Corrections ran after the work was done. The pre-work catch is what a runtime gives you; here it is inferred from flag timing.</li>
+</ul>
+
+<h2>5. v0.2 changes and next gate</h2>
+<ul>
+<li>Severity split in <code>check-rb</code>: void on contradiction or missing key; confirm on missing set value.</li>
+<li>Done-time acceptance: DN carries <code>acc=</code> self-attestation; <code>check-dn</code> runs code checks against the sender's criteria and routes semantic ones to a judge.</li>
+<li>Receiver prompt is the generated legend, not SKILL.md; the skill stays on the sender side.</li>
+<li>Corpus v2: unambiguous near-miss, three more fault types (stale artifact version, conflicting artifacts, a constraint stated as an example), two more domains (code review, ops runbook).</li>
+<li>Replay 50 historical Strategist-to-Architect handoffs from the Heartbeat log with sender-written criteria; add a GPT and a Gemini receiver reading the legend cold.</li>
+<li>Pass criteria for adoption in the Heartbeat: handoff defects after correction at zero, false alarms under 10 percent on the weakest receiver in use, and net tokens per fire below the prose baseline once state lines replace narration.</li>
+</ul>
+
+<p class="foot">rogerwilco-eval pilot · corpus, harness, all 108 trials with prompts, readbacks, outputs, checks and grades in the attached archive · grader Claude Opus, receivers Claude Sonnet and Claude Haiku 4.5 · tiktoken o200k_base token proxy.</p>
+</main>

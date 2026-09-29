@@ -1,0 +1,3 @@
+# What is standing between your AI feature and production?
+
+It is Monday morning, and the AI feature that worked in the demo has stalled in the rollout, because the compliance review keeps sending it back. We have been in that room, and we know the fix is rarely another demo. At Crox, we have shipped AI in regulated industries, including health and financial services, where a feature has to pass review and keep working once real people depend on it. We work alongside your team, build for review from the start, and test the behaviour of the system under real conditions, so compliance questions have clear answers and the rollout matches the demo. If your feature is stuck, tell us where, and we will give you a straight answer.

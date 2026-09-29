@@ -1,0 +1,3 @@
+# We get AI features through compliance review and into production
+
+It is Monday morning, and your AI feature, which worked so well in the demo, is stuck behind a compliance review that keeps bouncing it, so nobody will commit to a rollout date and the team is running out of ways to explain the delay, and we have seen this often enough to know that the hard part was never making it work. At Crox, we have shipped AI in regulated industries, including health and financial services, which taught us to plan for the compliance review and the production rollout from the first day, to build reliability in as we go rather than after the fact, and to make sure the feature you showed in the demo reaches your customers.

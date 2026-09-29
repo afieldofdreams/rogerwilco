@@ -1,0 +1,3 @@
+# Your AI demo worked. The rollout did not.
+
+It is Monday morning, and the compliance review has bounced your AI feature again. Someone has started a Slack thread asking when it ships, and you still do not have a date. If you are a founder or product lead at a Series A to C company, that will sound familiar. We are Crox, a small consultancy, and we help teams get AI features through compliance and into production. We have shipped AI in regulated industries, including health and financial services. We work directly with product and engineering leads, peer to peer, not through procurement, and most engagements run three to six months. If your feature is stuck, tell us where, and we will say plainly whether we can help.

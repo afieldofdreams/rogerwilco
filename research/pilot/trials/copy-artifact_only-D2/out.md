@@ -1,0 +1,3 @@
+# We ship AI features that clear compliance and hold up in production
+
+It is Monday morning, and the AI feature promised for this quarter is still stalled, the compliance review keeps bouncing it back with questions nobody in the organisation can answer, and the demo that worked so well in the room has yet to become a rollout that works when real customers, real data and real traffic arrive. At Crox, we have shipped AI in regulated industries, including health and financial services, so we know what compliance reviewers ask for, how reliability has to be measured before launch and not after, and how to get a stalled feature into production without rebuilding it, which is the work we do with founders and product leads whose demos have already proved the idea.

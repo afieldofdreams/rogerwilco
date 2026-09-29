@@ -1,0 +1,106 @@
+You are a receiving agent in a multi-agent system. Other agents send you handoff messages about nodes in a knowledge graph. For each message, decide what to do by applying the policy below exactly. Today is 27 September 2026.
+
+Do not run code, write scripts, or use any tools. Read each message yourself and decide. This tests reading comprehension.
+
+Receiver policy. Apply rules in order; the first rule that matches decides.
+1. WAIT if the node is blocked by any other node.
+2. BOUNCE if confidence is low AND the ask is DECIDE (make a decision) or BUILD (build it).
+3. EXPEDITE if there is a due date earlier than 4 October 2026 (20261004).
+4. ESCALATE if it has been stalled 14 days or more AND importance is 7 or higher.
+5. CLOSE if the pipeline stage is done.
+6. ACCEPT otherwise.
+Stall days or importance that are not stated do not satisfy rule 4.
+
+Message format reference:
+P-Form v0.1 codebook
+Message HO = handoff. Format: HO|FROM>TO|P<node>|key=value|...|note=text
+  route: from (enum:stance, required)
+  route: to (enum:stance, required)
+  P: node (int, required)
+  stg: stage (enum:stage, required)
+  os: opstatus (enum:opstatus, optional)
+  imp: importance (int[1-10], optional)
+  heat: heat (enum:heat, optional)
+  stall: stall_days (days, optional)
+  conf: confidence (enum:conf, required)
+  ask: ask (enum:ask, required)
+  keep: keep_assigned (list:stance, optional)
+  due: due (date, optional)
+  src: source_view (int, optional)
+  blk: blocked_by (list:int, optional)
+  note: note (text, optional)
+Enum stance: TRI=Triage, STR=Strategist, ARC=Architect, BLD=Builder, QAR=QA Reviewer, CPY=Copywriter, GRD=Gardener, DAT=Data Analyst, MKT=Market Researcher, SCT=Scout, IDE=Ideator, ADAM=Adam
+Enum stage: DIA=diagnose, REV=review, OPT=options, DEC=decide, ACT=action, DONE=done
+Enum opstatus: NOW=now, WAIT=waiting, SCH=scheduled, DONE=done, NONE=none
+Enum conf: L=low, M=medium, H=high
+Enum heat: COLD=cold, WARM=warm, HOT=hot
+Enum ask: SCORE4=run 4-axis scoring, SPEC=write implementation spec, BUILD=build it, REVIEW=review against criteria, ENRICH=fill missing fields, PRUNE=retire or merge node, DECIDE=make a decision, RESEARCH=validate the pain point, DRAFT=draft public copy
+Lists join with '+'. Dates YYYYMMDD. Durations like 19d.
+
+Glyph form. Segments separated by spaces. First glyph is message type, then FROM→TO, then ◉node. Each other segment is a key glyph followed by its value.
+Key glyphs: ⇄=HO, ◉=P, ▲=stg, ◐=os, ★=imp, ♨=heat, ⧗=stall, ✓=conf, ➤=ask, ⚓=keep, ⌛=due, ⌖=src, ⛔=blk, ✎=note
+Value glyphs (map to the codebook codes): ⚕=TRI, ♟=STR, ⌂=ARC, ⚒=BLD, ⚖=QAR, ✒=CPY, ❀=GRD, ∑=DAT, ⚲=MKT, ⚑=SCT, ✦=IDE, ☺=ADAM, α=DIA, β=REV, γ=OPT, δ=DEC, ε=ACT, ω=DONE, ●=NOW, ○=WAIT, ◷=SCH, ∅=NONE, ▁=L, ▄=M, █=H, ❄=COLD, ☼=WARM, 🔥=HOT, ④=SCORE4, §=SPEC, ⚙=BUILD, ⌕=REVIEW, ✚=ENRICH, ✂=PRUNE, ⚡=DECIDE, ⚗=RESEARCH, ✍=DRAFT
+
+Messages:
+m01: ⇄ ✒→⌂ ◉3828 ▲ε ◐∅ ★7 ♨🔥 ⧗9d ✓█ ➤④ ⚓⚲ ⌛20261015 ⌖119
+m02: ⇄ ⚲→⚕ ◉1300 ▲γ ◐∅ ★9 ⧗15d ✓▁ ➤⚙ ⚓✦ ⌛20261003
+m03: ⇄ ⚖→⚒ ◉3025 ▲ω ◐∅ ★2 ⧗9d ✓▁ ➤✍ ⚓☺+❀ ⌖120 ✎Related thread in Claude Questions.
+m04: ⇄ ✦→⚕ ◉3049 ▲ω ★4 ✓█ ➤④
+m05: ⇄ ⚖→⚲ ◉4935 ▲α ★5 ♨❄ ⧗7d ✓▁ ➤⌕ ✎Description field is thin.
+m06: ⇄ ∑→⚑ ◉3244 ▲α ◐∅ ⧗28d ✓▁ ➤⚗ ⛔3776+4488 ✎Adam mentioned this on the call, no decision yet.
+m07: ⇄ ⚑→⌂ ◉2121 ▲ε ◐● ★8 ⧗40d ✓█ ➤⚗ ⚓☺+⚑ ⌖97 ✎Came in via the Inbox Queue last week.
+m08: ⇄ ⚒→♟ ◉1862 ▲α ★7 ♨🔥 ⧗21d ✓▄ ➤✍ ⌖97
+m09: ⇄ ✦→⚑ ◉1705 ▲α ◐∅ ★9 ⧗19d ✓▄ ➤✍ ⚓∑ ✎Description field is thin.
+m10: ⇄ ✦→⚒ ◉1346 ▲ε ★10 ♨☼ ✓█ ➤⚙ ⚓⚑+♟ ⌖74
+m11: ⇄ ∑→⚲ ◉3089 ▲ω ★6 ⧗2d ✓▁ ➤④ ✎Last touched during the Q3 review.
+m12: ⇄ ∑→⚑ ◉4427 ▲γ ◐● ★9 ✓▄ ➤⌕ ⌛20261011 ⛔2740+3568 ✎Last touched during the Q3 review.
+m13: ⇄ ⚕→✒ ◉4312 ▲α ◐○ ★7 ⧗28d ✓█ ➤⚗ ⚓∑+⌂ ⌖121
+m14: ⇄ ✦→❀ ◉3464 ▲β ★5 ♨🔥 ✓▄ ➤✚ ⌖120
+m15: ⇄ ⚲→⚑ ◉4534 ▲ω ★10 ♨☼ ✓▁ ➤⚙ ⚓⚕+♟ ✎Description field is thin.
+m16: ⇄ ♟→∑ ◉4227 ▲ω ★7 ✓█ ➤§ ⚓☺+⚖ ⌖121
+m17: ⇄ ⚲→∑ ◉3300 ▲α ◐○ ★8 ✓▁ ➤⚗ ⚓⚒+∑ ✎Two stale edges to archived nodes.
+m18: ⇄ ⚑→❀ ◉1390 ▲δ ♨🔥 ⧗13d ✓▁ ➤⚙ ⚓⚕ ⌖74
+m19: ⇄ ⚖→⚲ ◉2038 ▲γ ★4 ♨🔥 ⧗14d ✓█ ➤✂ ⌖120 ✎Last touched during the Q3 review.
+m20: ⇄ ⚖→⚕ ◉1992 ▲γ ◐∅ ♨☼ ⧗9d ✓▁ ➤⌕ ⚓⚒ ⌛20261016 ⌖119 ⛔3481
+m21: ⇄ ⚑→❀ ◉3607 ▲ε ★8 ♨☼ ⧗14d ✓█ ➤⚡ ⚓⚖ ⌖97 ✎Came in via the Inbox Queue last week.
+m22: ⇄ ⚖→♟ ◉3131 ▲α ★5 ♨❄ ⧗21d ✓▄ ➤⌕ ⛔2802 ✎Related thread in Claude Questions.
+m23: ⇄ ⚒→⚖ ◉3713 ▲γ ◐∅ ★5 ♨🔥 ✓▁ ➤⚙ ⚓∑ ⌛20261003 ⌖120
+m24: ⇄ ⚖→✒ ◉1672 ▲β ★5 ⧗21d ✓▁ ➤⚗ ⚓❀+⌂ ⌛20261003 ⌖94
+m25: ⇄ ❀→✦ ◉1801 ▲γ ★7 ⧗14d ✓█ ➤✍ ⌛20261017
+m26: ⇄ ✦→⚕ ◉4207 ▲δ ◐● ★6 ⧗7d ✓█ ➤④ ⛔3819 ✎Linked to the partner pipeline.
+m27: ⇄ ❀→✦ ◉2695 ▲ω ◐◷ ★8 ♨☼ ⧗19d ✓█ ➤⌕ ⛔2575 ✎Two stale edges to archived nodes.
+m28: ⇄ ⌂→♟ ◉2801 ▲δ ◐● ★4 ♨❄ ✓▄ ➤⚙ ⚓⚕ ⌛20261025 ⌖74 ⛔1416 ✎Came in via the Inbox Queue last week.
+m29: ⇄ ♟→⚖ ◉2680 ▲δ ◐∅ ★6 ♨🔥 ✓▁ ➤⚙
+m30: ⇄ ♟→❀ ◉2810 ▲γ ◐○ ★2 ⧗40d ✓▁ ➤⌕ ⚓♟
+m31: ⇄ ⚕→⚑ ◉1960 ▲β ◐○ ★2 ⧗13d ✓█ ➤④ ⌛20261003 ✎Related thread in Claude Questions.
+m32: ⇄ ⚖→✒ ◉4939 ▲γ ◐◷ ★3 ♨☼ ⧗12d ✓█ ➤✂ ⚓☺+⚕ ⌖119 ⛔2613 ✎Adam mentioned this on the call, no decision yet.
+m33: ⇄ ⚲→♟ ◉4025 ▲ω ★3 ♨❄ ⧗19d ✓▄ ➤✚ ⚓♟+✒
+m34: ⇄ ♟→⚑ ◉4594 ▲β ◐∅ ★10 ⧗15d ✓▁ ➤⚗ ⌛20261023 ✎Two stale edges to archived nodes.
+m35: ⇄ ∑→⌂ ◉1446 ▲α ◐∅ ♨❄ ⧗12d ✓▁ ➤✚ ⚓✦ ⌖121 ✎Adam mentioned this on the call, no decision yet.
+m36: ⇄ ⚖→✦ ◉2454 ▲δ ◐◷ ♨❄ ⧗5d ✓▄ ➤✂ ⚓⚑+⚕ ⌛20261023 ⛔3233+3351 ✎Adam mentioned this on the call, no decision yet.
+m37: ⇄ ❀→⚖ ◉4476 ▲α ◐∅ ♨❄ ⧗19d ✓▁ ➤④ ⌖119 ✎Linked to the partner pipeline.
+m38: ⇄ ✦→⚕ ◉3200 ▲ω ★6 ♨☼ ✓▁ ➤⚗ ⚓♟+⌂ ⌖94 ✎Related thread in Claude Questions.
+m39: ⇄ ⚕→❀ ◉1468 ▲ε ◐○ ♨☼ ✓▁ ➤⚙ ⌖120
+m40: ⇄ ⚒→✒ ◉3405 ▲β ◐◷ ★8 ♨❄ ⧗14d ✓▄ ➤④ ⚓⚲ ✎Came in via the Inbox Queue last week.
+m41: ⇄ ⚲→⚑ ◉3025 ▲ω ◐○ ★2 ♨❄ ⧗12d ✓▄ ➤§ ⚓❀ ⌛20261003 ⌖95
+m42: ⇄ ⚒→⚑ ◉2860 ▲α ★1 ✓█ ➤⌕ ⚓☺ ⛔1779+3122
+m43: ⇄ ✒→❀ ◉1755 ▲ω ◐○ ★6 ⧗2d ✓▄ ➤✂ ⌛20261102 ⌖94
+m44: ⇄ ⚲→∑ ◉1391 ▲ω ★8 ♨❄ ⧗5d ✓█ ➤§ ⌖74 ✎Linked to the partner pipeline.
+m45: ⇄ ⚕→✦ ◉1170 ▲β ★2 ✓█ ➤④ ⌛20260928 ✎Related thread in Claude Questions.
+m46: ⇄ ⚑→∑ ◉4894 ▲γ ★1 ♨☼ ⧗2d ✓▁ ➤⚡ ⌖74 ✎Description field is thin.
+m47: ⇄ ✦→⚑ ◉4967 ▲β ◐● ★1 ♨🔥 ✓█ ➤⚗ ⌛20261001 ⌖121 ✎Related thread in Claude Questions.
+m48: ⇄ ❀→⌂ ◉2498 ▲α ★9 ♨🔥 ⧗14d ✓▁ ➤⚗ ⚓∑+⚑ ⌖74
+m49: ⇄ ❀→∑ ◉1666 ▲ω ♨☼ ⧗13d ✓▁ ➤⚙ ⚓❀ ⌛20261001
+m50: ⇄ ⚖→⚑ ◉3822 ▲ω ◐∅ ♨❄ ⧗21d ✓█ ➤⚙ ⌛20260928 ✎Adam mentioned this on the call, no decision yet.
+m51: ⇄ ⚒→⚕ ◉4620 ▲ε ★7 ⧗28d ✓█ ➤④ ⌖120
+m52: ⇄ ♟→⚒ ◉3050 ▲δ ◐◷ ♨❄ ⧗9d ✓█ ➤⌕ ⚓⚖ ⌛20261018 ⌖95 ✎Came in via the Inbox Queue last week.
+m53: ⇄ ⚒→∑ ◉3190 ▲β ◐∅ ★6 ⧗28d ✓▁ ➤⌕ ⚓☺+✦ ⌛20261003
+m54: ⇄ ⚕→⚲ ◉2108 ▲δ ◐● ★9 ✓▁ ➤§ ⚓∑ ⌛20261003 ✎Came in via the Inbox Queue last week.
+m55: ⇄ ∑→❀ ◉3247 ▲α ◐○ ★7 ♨🔥 ⧗5d ✓▁ ➤⚗ ⚓✦ ⌛20261003
+m56: ⇄ ∑→✒ ◉4764 ▲δ ⧗19d ✓▁ ➤⚙ ⚓♟ ⌖94 ✎Two stale edges to archived nodes.
+m57: ⇄ ⚖→♟ ◉4907 ▲ω ◐○ ★2 ♨❄ ⧗12d ✓▄ ➤⚗ ⚓✦+⌂ ⌛20261003 ⌖74
+m58: ⇄ ✒→❀ ◉3129 ▲α ★1 ♨🔥 ⧗5d ✓▁ ➤⚡ ⚓⚲+✒ ⌖120
+m59: ⇄ ✒→⌂ ◉2617 ▲ω ★10 ♨🔥 ⧗5d ✓▁ ➤§ ⚓∑ ⌖74
+m60: ⇄ ❀→∑ ◉1329 ▲ω ◐● ★1 ♨🔥 ✓█ ➤⚗ ⚓⚒
+
+Reply with only a JSON object mapping each message id to one of WAIT, BOUNCE, EXPEDITE, ESCALATE, CLOSE, ACCEPT. Example: {"m01": "ACCEPT", "m02": "WAIT"}. Include all 60 ids. No other text.

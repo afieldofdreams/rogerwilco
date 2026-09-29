@@ -1,0 +1,3 @@
+# We help you get AI features through compliance review and into production
+
+It is Monday morning, and the AI feature that worked so well in the demo is still stuck behind a compliance review that keeps sending it back. Or it went live and now breaks in ways the demo never showed. We know both problems well, and neither means the idea was wrong. At Crox, we have shipped AI in regulated industries, including health and financial services, where reviews are strict and mistakes matter. That work taught us what reviewers need to see and what reliability in production takes. We bring that experience to your team, so the feature gets through review and stays up once it is live, and Monday can go back to being about what you build next.

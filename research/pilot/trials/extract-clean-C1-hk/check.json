@@ -1,0 +1,27 @@
+{
+ "first": {
+  "rb": "FC1 RB extractor-01 re=lead-01 from=extractor to=lead item=fin:aug-2026-invoices ask=EXTRACT due=20261002 acc=fmt:json+scope:GBP-only+must:exact-invoice-numbers+net-amounts+ISO-8601-dates+no:voided-cancelled-invoices+credit-notes+statements do=json-array // Extract GBP invoices with exact invoice numbers, net amounts, ISO dates; exclude voided/cancelled, credit notes, statements",
+  "passed": false,
+  "problems": [
+   "tier4 comprehension: gap, receiver did not derive must:net-amounts",
+   "tier4 comprehension: gap, receiver did not derive must:iso-dates",
+   "tier4 comprehension: gap, receiver did not derive no:credit-notes",
+   "tier4 comprehension: gap, receiver did not derive no:statements"
+  ],
+  "notes": [
+   "key net-amounts is not in the closed constraint set; not compared (use one of aud, by, fmt, lang, len, must, no, out, scope, src, tone, voice)",
+   "key iso-8601-dates is not in the closed constraint set; not compared (use one of aud, by, fmt, lang, len, must, no, out, scope, src, tone, voice)",
+   "key credit-notes is not in the closed constraint set; not compared (use one of aud, by, fmt, lang, len, must, no, out, scope, src, tone, voice)",
+   "key statements is not in the closed constraint set; not compared (use one of aud, by, fmt, lang, len, must, no, out, scope, src, tone, voice)"
+  ],
+  "rb_file": "rb.txt",
+  "correction": "FC1 HO lead-02 re=extractor-01 from=lead to=extractor item=fin:aug-2026-invoices ask=EXTRACT due=20261002 rb=acc keys=fmt+scope+must+no art=file:brief.md // readback mismatch: must:net-amounts is required per the brief; must:iso-dates is required per the brief; no:credit-notes is required per the brief; no:statements is required per the brief"
+ },
+ "second": {
+  "rb": "FC1 RB extractor-02 re=lead-02 from=extractor to=lead item=fin:aug-2026-invoices ask=EXTRACT due=20261002 acc=fmt:json+scope:GBP-only+must:exact-invoice-numbers+must:net-amounts+must:iso-dates+no:voided-cancelled-invoices+no:credit-notes+no:statements do=json-array // Extract GBP invoices with exact invoice numbers, net amounts, ISO dates; exclude voided/cancelled invoices, credit notes, statements",
+  "passed": true,
+  "problems": [],
+  "notes": [],
+  "rb_file": "rb2.txt"
+ }
+}

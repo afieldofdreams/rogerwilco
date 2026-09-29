@@ -1,0 +1,3 @@
+# Your AI demo worked. The rollout didn't.
+
+On Monday morning, your AI feature is still stuck behind a compliance review that keeps bouncing it. The open question is whether it will pass review, hold up with real users and still behave the same way next quarter. We are Crox, a small consultancy. We help product teams get AI features through compliance review and into production, and keep them reliable once they are live. We have shipped AI in regulated industries, including health and financial services. We work with your product and engineering leads as peers, not as a vendor, and most engagements run three to six months. If you are a founder or product lead and you recognise that Monday, tell us where the feature has stalled.

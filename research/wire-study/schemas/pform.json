@@ -1,0 +1,35 @@
+{
+  "name": "P-Form",
+  "version": "0.1",
+  "description": "Pensive graph handoffs between stances. First instance of the formcore technique.",
+  "enums": {
+    "stance": {"TRI": "Triage", "STR": "Strategist", "ARC": "Architect", "BLD": "Builder", "QAR": "QA Reviewer", "CPY": "Copywriter", "GRD": "Gardener", "DAT": "Data Analyst", "MKT": "Market Researcher", "SCT": "Scout", "IDE": "Ideator", "ADAM": "Adam"},
+    "stage": {"DIA": "diagnose", "REV": "review", "OPT": "options", "DEC": "decide", "ACT": "action", "DONE": "done"},
+    "opstatus": {"NOW": "now", "WAIT": "waiting", "SCH": "scheduled", "DONE": "done", "NONE": "none"},
+    "conf": {"L": "low", "M": "medium", "H": "high"},
+    "heat": {"COLD": "cold", "WARM": "warm", "HOT": "hot"},
+    "ask": {"SCORE4": "run 4-axis scoring", "SPEC": "write implementation spec", "BUILD": "build it", "REVIEW": "review against criteria", "ENRICH": "fill missing fields", "PRUNE": "retire or merge node", "DECIDE": "make a decision", "RESEARCH": "validate the pain point", "DRAFT": "draft public copy"}
+  },
+  "messages": {
+    "HO": {
+      "name": "handoff",
+      "slots": [
+        {"key": "route", "field": "from", "type": "enum:stance", "required": true, "positional": 1},
+        {"key": "route", "field": "to", "type": "enum:stance", "required": true, "positional": 1},
+        {"key": "P", "field": "node", "type": "int", "required": true, "positional": 2},
+        {"key": "stg", "field": "stage", "type": "enum:stage", "required": true},
+        {"key": "os", "field": "opstatus", "type": "enum:opstatus", "required": false},
+        {"key": "imp", "field": "importance", "type": "int[1-10]", "required": false},
+        {"key": "heat", "field": "heat", "type": "enum:heat", "required": false},
+        {"key": "stall", "field": "stall_days", "type": "days", "required": false},
+        {"key": "conf", "field": "confidence", "type": "enum:conf", "required": true},
+        {"key": "ask", "field": "ask", "type": "enum:ask", "required": true},
+        {"key": "keep", "field": "keep_assigned", "type": "list:stance", "required": false},
+        {"key": "due", "field": "due", "type": "date", "required": false},
+        {"key": "src", "field": "source_view", "type": "int", "required": false},
+        {"key": "blk", "field": "blocked_by", "type": "list:int", "required": false},
+        {"key": "note", "field": "note", "type": "text", "required": false}
+      ]
+    }
+  }
+}

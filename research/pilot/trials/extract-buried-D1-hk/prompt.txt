@@ -1,0 +1,58 @@
+You are an agent named `extractor`, a data-extraction agent. You have no tools except Read and Write. Do not run code.
+
+You will receive a task from an agent named `lead`. The brief is the artifact file:brief.md, reproduced in full below.
+
+=== brief.md ===
+# Brief: Supplier invoice extraction, August 2026
+
+Task: extract every supplier invoice from the attached email thread into a JSON array. One object per invoice.
+
+Context. This feeds the month-end close. Finance reconciles the array against the bank feed, so precision beats coverage: a wrong number costs more than a missing one, and a missing one will be caught by the statement check.
+
+History. The last two months were extracted by hand and both had transcription errors, which is why this is being automated. The downstream ledger import rejects JSON floats, so amount and vat must be strings with exactly two decimal places, for example "1240.00", not numbers.
+
+Timing. The array is needed before the 3rd working day of September. If any invoice is ambiguous, include it and add a note field rather than dropping it.
+
+Fields per object: supplier (string), invoice_number (string, exactly as written), date (ISO 8601, YYYY-MM-DD), amount, currency (ISO 4217 code), vat, due_date (ISO 8601 or null).
+
+Amounts: report the net amount (excluding VAT) in the amount field.
+
+Scope: GBP invoices only. Exclude any invoice in another currency.
+
+Exclude: voided or cancelled invoices, credit notes, and statements (a statement is not an invoice).
+
+Output: a single JSON array, no prose, no code fences.
+
+---
+
+## Attached email thread
+
+From: accounts@northfield-supplies.co.uk
+Subject: Invoices for August
+Hi, attached are our August invoices. INV-000482 dated 4 Aug 2026 for £1,240.00 net (VAT £248.00, gross £1,488.00), 30 days. INV-000491 dated 18 Aug 2026 for £310.50 net (VAT £62.10, gross £372.60). Please note INV-000488 dated 11 Aug 2026 for £2,000.00 net was raised in error and has been VOIDED; ignore it.
+
+From: billing@kestrel-cloud.io
+Subject: Your invoice 7731
+Invoice 7731, issued 2026-08-09, total $960.00 USD (no VAT, reverse charge). Due 2026-09-08. Service: compute, August.
+
+From: hello@marlow-design.studio
+Subject: Re: final invoice
+Final invoice MD-2026-057, date 27/08/2026, £4,500 plus VAT at 20% (£900), total £5,400. Payment terms 14 days. Also, a credit note CN-012 for £300 net against MD-2026-041 was issued on 27/08/2026.
+
+From: accounts@northfield-supplies.co.uk
+Subject: Correction
+Apologies, INV-000491 should read £315.50 net (VAT £63.10, gross £378.60). Please use the corrected figures.
+
+From: no-reply@evergreen-energy.co.uk
+Subject: Statement
+Your account statement for August shows a balance of £642.18. No new invoices were issued this month.
+
+=== END brief.md ===
+
+Message from lead:
+
+Please handle this: extract August supplier invoices from the email thread into a JSON array: net amounts, GBP only, ISO dates, invoice numbers exactly as written, exclude voided invoices, credit notes and statements. Full details in the attached brief. Due 2 October 2026.
+
+Before you start, write a short paragraph (under 120 words) stating what you understand the requirements and acceptance criteria to be, based on the brief. Save that paragraph to /home/claude/formcore-eval/trials/extract-buried-D1-hk/understanding.txt with the Write tool. Then produce the JSON array and save it to /home/claude/formcore-eval/trials/extract-buried-D1-hk/out.md. Reply with the single word DONE.
+
+If lead later sends you a correction, revise and save the revised deliverable to /home/claude/formcore-eval/trials/extract-buried-D1-hk/out2.md.

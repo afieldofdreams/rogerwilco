@@ -1,0 +1,3 @@
+# Your demo works. The rollout doesn't.
+
+Your compliance review keeps bouncing back your AI feature, your demo works perfectly but the rollout hits unexpected regulatory walls, or you're stuck between shipping fast and requirements that multiply every single quarter, eating into your engineering timeline. We've shipped AI systems in healthcare and financial services without naming the specific clients we've worked with, and we know exactly what compliance challenges you're facing right now, which reliability questions regulators will definitely ask, what testing frameworks they'll demand you build, what documentation they'll require before production, and most importantly, how to solve all of this without slowing down your engineering team or jeopardising your roadmap.

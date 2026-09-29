@@ -1,0 +1,64 @@
+# rogerwilco
+
+One-line, typed, closed-vocabulary messages for handing work between AI agents, with a readback the sender can verify.
+
+```
+RW1 HO research-01 from=research to=writer item=gh:crox/site#42 ask=DRAFT due=20261002 pri=2 // hero copy, 120 words
+RW1 RB writer-01 re=research-01 from=writer to=research item=gh:crox/site#42 ask=DRAFT due=20261002 h=f209197fa615
+RW1 DN writer-03 re=research-01 from=writer to=research item=gh:crox/site#42 out=OK art=sha256:9f3e1c // v1, 118 words
+```
+
+Agents hand work to each other in prose today. Prose hides state, can't be validated, and gets misread silently. rogerwilco puts the facts in slots, keeps reasoning in a bounded tail, and makes the receiver read the handoff back before it owns the work. The sender checks the readback in code across four tiers: receipt, integrity, echo, and comprehension, where the receiver derives the acceptance criteria from the brief and the sender compares them with the ones it kept to itself. ATC phraseology for the envelope, teach-back for the instruction.
+
+The name is the radio call. *Roger*: received. *Wilco*: understood, and will comply. Those are two different claims, and the protocol makes the receiver prove both before the sender lets go of the work: the receipt tier is roger, the comprehension tier is wilco. A handoff whose readback passes is said to be wilco.
+
+It is content, not transport. It rides inside an MCP tool result, an A2A message part, a chat turn, a queue message or a log line. The receiving agent needs nothing installed: a 400-token legend in its prompt is enough to read and reply.
+
+## Use it with Claude
+
+This repo is an [Agent Skill](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview). Install it and Claude will use rogerwilco whenever it delegates to a subagent or receives a line that starts with `RW1`.
+
+- **Claude Code**: copy the `rogerwilco/` folder into `.claude/skills/` in your project (or `~/.claude/skills/` for all projects).
+- **Claude.ai and the Claude apps**: zip the `rogerwilco/` folder and upload it under Settings, Capabilities, Skills.
+- **Any other agent**: put the output of `python3 scripts/rogerwilco.py legend` in its system prompt.
+
+## What's in the folder
+
+| Path | What |
+|---|---|
+| `SKILL.md` | The instructions Claude follows. Short by design. |
+| `references/SPEC.md` | The protocol, version RW1 v0.1: grammar, eight message types, slots, codes, five rules, the four-tier readback, JSON form, profiles. |
+| `scripts/rogerwilco.py` | Reference codec, standard library only: validate, encode, JSON twin, `make-rb`, `check-rb`, digest, legend, lint. |
+| `profiles/core.json` | The core vocabulary. |
+| `profiles/pform.json` | An example domain profile (a knowledge-graph workflow). Copy it to make your own. |
+| `tests/conformance.jsonl` | 53 codec cases plus 6 agent-behaviour cases. |
+| `tests/test_conformance.py` | Runner. An implementation is conformant when it passes. |
+
+## The eight types
+
+`HO` handoff · `RB` readback · `AQ` ask · `AN` answer · `ST` status · `DN` done · `UN` unable · `FL` fail
+
+## The five rules
+
+1. No handover without readback.
+2. Never guess: unknown code, reply `UN why=UNK`.
+3. Every reply carries `re=`.
+4. Facts in slots, reasoning in the tail.
+5. The line and its JSON form are the same message.
+
+## Why these choices
+
+They come from a 240-message study of five wire formats and from reading real agent logs (September 2026). Keyed form beat positional because a small model miscounted positional columns in one run of two. Three-letter codes beat glyphs because glyph savings were tokenizer-dependent and the legend cost 1.7x more. Readback exists because every error observed was a misread of a neighbouring field, which an echo catches at the boundary. The tail is bounded because real agent logs were 50% process narration and 26% narrated field changes. Details in `references/SPEC.md` section 10.
+
+## Conformance
+
+```
+python3 tests/test_conformance.py
+python3 tests/test_conformance.py --agent replies.jsonl   # score an agent's replies to the five agent cases
+```
+
+## Status
+
+v0.1, draft. The core vocabulary is small on purpose; extend it through a profile, not by editing the core. Issues and profiles welcome.
+
+MIT licence. Adam Field, Croxio Ltd. Lineage: M-Form (medical-record compression, 2025) to P-Form (knowledge-graph handoffs, April 2026) to rogerwilco (September 2026).

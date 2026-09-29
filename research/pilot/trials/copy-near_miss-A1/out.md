@@ -1,0 +1,3 @@
+# We ship AI features that get through compliance review and stay reliable
+
+You start Monday morning with a demo that worked, a rollout that did not, and a compliance review that has bounced your AI feature again. The gap between a demo and a live product is rarely the idea. It is evidence, controls and reliability. At Crox, we have shipped AI in regulated industries, including health and financial services. We know what reviewers ask for, from audit trails to tested behaviour, and what breaks when real users arrive. We work alongside your team to find why the feature keeps bouncing, fix the cause, and get it live in a form that stands up to scrutiny and stays dependable. If that Monday sounds familiar, tell us where your AI feature is stuck.
