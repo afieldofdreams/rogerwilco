@@ -435,3 +435,15 @@ def test_missing_codec_stops_startup_with_a_clear_message():
     code = _package_source(APP_DIR) + "import app.service\n"
     out = _python(code, {**os.environ, "RW_SKILL_DIR": "/nonexistent/skill"})
     assert out.returncode != 0 and "RW_SKILL_DIR" in out.stderr
+
+
+def test_research_index_and_pages(client):
+    r = client.get("/research")
+    assert r.status_code == 200 and "text/html" in r.headers["content-type"]
+    assert "Month-end close" in r.text and "/research/month-end" in r.text
+    for slug in ("wire-study", "pilot", "month-end"):
+        page = client.get(f"/research/{slug}")
+        assert page.status_code == 200, slug
+        assert page.text.lstrip().startswith("<!doctype html>"), slug
+        assert '<meta charset="utf-8">' in page.text and "<main>" in page.text, slug
+    assert client.get("/research/nope").status_code == 404
