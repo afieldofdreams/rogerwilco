@@ -149,7 +149,7 @@ def test_check_rb_mismatch(client):
 
 @pytest.mark.parametrize("rb, tier", [
     (RB.replace("re=research-01", "re=research-09"), "tier1 receipt"),
-    (RB.replace("from=writer to=research", "from=someone to=research"), "tier1 receipt"),
+    (RB.replace("RB writer-01 re=research-01 from=writer to=research", "RB someone-01 re=research-01 from=someone to=research"), "tier1 receipt"),
     (RB.replace("h=c40bba4360dc", "h=000000000000"), "tier2 integrity"),
     (RB.replace(" due=20261002", ""), "tier3 echo"),
 ])

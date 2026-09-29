@@ -2,13 +2,51 @@
   "profile": "pay",
   "version": "0.1",
   "extends": "RW1",
-  "description": "Accounts-payable runs: invoice extraction, reconciliation against POs and the bank feed, payment scheduling, audit, and escalation to the principal.",
+  "description": "Accounts-payable runs: invoice extraction, reconciliation against POs and the bank feed, payment scheduling, audit, and escalation to the principal. Escalations use the closed answer vocabulary ans: AQ opts and AN val come from it.",
   "enums": {
-    "cur": {"GBP": "pounds sterling", "USD": "US dollars", "EUR": "euros"},
-    "kind": {"NET": "net of VAT", "GROSS": "including VAT"},
-    "dec": {"PAY": "schedule for payment this run", "HOLD": "keep on the run but do not pay yet", "EXCL": "exclude from the run"},
-    "flag": {"OVERLIM": "above the approval threshold", "FX": "not in the run currency", "BANKCHG": "supplier asks to change bank details", "LOOKALIKE": "sender domain does not match the supplier on file", "DUP": "same invoice received more than once", "CORR": "supplier issued a corrected version", "VOID": "voided by supplier", "PAID": "already paid per bank feed", "CN": "credit note", "REFUNDED": "credit already refunded per bank feed", "POVAR": "differs from the PO", "NOPO": "no purchase order found", "STMT": "statement, not an invoice", "NOISE": "not a supplier document"},
-    "appr": {"REQ": "approval required", "OK": "approved by the principal", "NO": "declined by the principal", "NA": "no approval needed"}
+    "cur": {
+      "GBP": "pounds sterling",
+      "USD": "US dollars",
+      "EUR": "euros"
+    },
+    "kind": {
+      "NET": "net of VAT",
+      "GROSS": "including VAT"
+    },
+    "dec": {
+      "PAY": "schedule for payment this run",
+      "HOLD": "keep on the run but do not pay yet",
+      "EXCL": "exclude from the run"
+    },
+    "flag": {
+      "OVERLIM": "above approval threshold",
+      "FX": "not in run currency",
+      "BANKCHG": "bank-detail change requested",
+      "LOOKALIKE": "sender domain differs from master",
+      "DUP": "same invoice received twice",
+      "CORR": "corrected version issued",
+      "VOID": "voided by supplier",
+      "PAID": "already paid per bank feed",
+      "CN": "credit note",
+      "REFUNDED": "credit already refunded",
+      "POVAR": "differs from PO",
+      "NOPO": "no PO found",
+      "STMT": "statement, not an invoice",
+      "NOISE": "not a supplier document"
+    },
+    "appr": {
+      "REQ": "approval required",
+      "OK": "approved by the principal",
+      "NO": "declined by the principal",
+      "NA": "no approval needed"
+    },
+    "ans": {
+      "APPROVE": "yes, proceed as asked",
+      "DECLINE": "no, do not proceed",
+      "HOLD": "keep it on the run, do not pay in this run",
+      "REJECT": "refuse the request; nothing changes",
+      "CALLBACK": "verify with the supplier by phone on the number on file before anything changes"
+    }
   },
   "asks": {
     "RECON": "match extracted invoices to POs and the bank feed; decide pay, hold or exclude per policy",
@@ -16,19 +54,175 @@
     "AUDIT": "check the payment run against policy and sources; sign off or send back"
   },
   "slots": [
-    {"key": "sup", "type": "token", "desc": "supplier short name, lowercase, no spaces", "on": ["HO", "RB", "ST", "AQ", "AN", "DN", "UN", "FL"], "required": false},
-    {"key": "po", "type": "token", "desc": "purchase order id", "on": ["HO", "RB", "ST", "AQ", "AN"], "required": false},
-    {"key": "amt", "type": "money", "desc": "amount, two decimals, no thousands separator", "on": ["HO", "RB", "ST", "AQ", "AN", "DN"], "required": false},
-    {"key": "cur", "type": "enum:cur", "desc": "currency of amt", "on": ["HO", "RB", "ST", "AQ", "AN", "DN"], "required": false},
-    {"key": "kind", "type": "enum:kind", "desc": "whether amt is NET or GROSS", "on": ["HO", "RB", "ST", "AQ", "AN", "DN"], "required": false},
-    {"key": "dec", "type": "enum:dec", "desc": "decision for the item", "on": ["HO", "RB", "ST", "AQ", "AN", "DN"], "required": false},
-    {"key": "flag", "type": "list:enum:flag", "desc": "why the item needs attention; several allowed", "on": ["HO", "RB", "ST", "AQ", "AN", "DN", "UN"], "required": false},
-    {"key": "appr", "type": "enum:appr", "desc": "approval state", "on": ["HO", "RB", "ST", "AQ", "AN", "DN"], "required": false},
-    {"key": "var", "type": "money", "desc": "variance against the PO, net, signed", "on": ["HO", "RB", "ST", "AQ", "AN"], "required": false},
-    {"key": "n", "type": "int:0-9999", "desc": "count of items", "on": ["HO", "RB", "ST", "DN"], "required": false},
-    {"key": "tot", "type": "money", "desc": "total of PAY lines in the run currency", "on": ["ST", "DN"], "required": false}
+    {
+      "key": "sup",
+      "type": "token",
+      "desc": "supplier short name, lowercase, no spaces",
+      "on": [
+        "HO",
+        "RB",
+        "ST",
+        "AQ",
+        "AN",
+        "DN",
+        "UN",
+        "FL"
+      ],
+      "required": false
+    },
+    {
+      "key": "po",
+      "type": "token",
+      "desc": "purchase order id",
+      "on": [
+        "HO",
+        "RB",
+        "ST",
+        "AQ",
+        "AN"
+      ],
+      "required": false
+    },
+    {
+      "key": "amt",
+      "type": "money",
+      "desc": "amount, two decimals, no thousands separator",
+      "on": [
+        "HO",
+        "RB",
+        "ST",
+        "AQ",
+        "AN",
+        "DN"
+      ],
+      "required": false
+    },
+    {
+      "key": "cur",
+      "type": "enum:cur",
+      "desc": "currency of amt",
+      "on": [
+        "HO",
+        "RB",
+        "ST",
+        "AQ",
+        "AN",
+        "DN"
+      ],
+      "required": false
+    },
+    {
+      "key": "kind",
+      "type": "enum:kind",
+      "desc": "whether amt is NET or GROSS",
+      "on": [
+        "HO",
+        "RB",
+        "ST",
+        "AQ",
+        "AN",
+        "DN"
+      ],
+      "required": false
+    },
+    {
+      "key": "dec",
+      "type": "enum:dec",
+      "desc": "decision for the item",
+      "on": [
+        "HO",
+        "RB",
+        "ST",
+        "AQ",
+        "AN",
+        "DN"
+      ],
+      "required": false
+    },
+    {
+      "key": "flag",
+      "type": "list:enum:flag",
+      "desc": "why the item needs attention; several allowed",
+      "on": [
+        "HO",
+        "RB",
+        "ST",
+        "AQ",
+        "AN",
+        "DN",
+        "UN"
+      ],
+      "required": false
+    },
+    {
+      "key": "appr",
+      "type": "enum:appr",
+      "desc": "approval state",
+      "on": [
+        "HO",
+        "RB",
+        "ST",
+        "AQ",
+        "AN",
+        "DN"
+      ],
+      "required": false
+    },
+    {
+      "key": "var",
+      "type": "money",
+      "desc": "variance against the PO, net, signed",
+      "on": [
+        "HO",
+        "RB",
+        "ST",
+        "AQ",
+        "AN"
+      ],
+      "required": false
+    },
+    {
+      "key": "n",
+      "type": "int:0-9999",
+      "desc": "count of items",
+      "on": [
+        "HO",
+        "RB",
+        "ST",
+        "DN"
+      ],
+      "required": false
+    },
+    {
+      "key": "tot",
+      "type": "money",
+      "desc": "total of PAY lines in the run currency",
+      "on": [
+        "ST",
+        "DN"
+      ],
+      "required": false
+    }
   ],
-  "agents": ["extractor", "reconciler", "scheduler", "auditor"],
+  "agents": [
+    "extractor",
+    "reconciler",
+    "scheduler",
+    "auditor"
+  ],
   "item_namespace": "inv",
-  "item_examples": ["inv:INV-000491", "inv:7731", "sup:northfield", "run:2026-09"]
+  "item_examples": [
+    "inv:INV-000491",
+    "inv:7731",
+    "sup:northfield",
+    "run:2026-09"
+  ],
+  "asks_used": [
+    "EXTRACT",
+    "REVIEW",
+    "FIX",
+    "RECON",
+    "SCHED",
+    "AUDIT"
+  ]
 }

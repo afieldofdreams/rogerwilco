@@ -86,6 +86,8 @@ def load_profile(name: str | None) -> dict:
         spec["agents"] = set(p["agents"]) | {"human"}
     if p.get("item_examples"):
         spec["item_examples"] = list(p["item_examples"])
+    if p.get("asks_used"):
+        spec["asks_used"] = list(p["asks_used"])
     return spec
 
 
@@ -227,6 +229,18 @@ def parse(line: str, profile: str | None = None, spec: dict | None = None) -> tu
         errors.append("AN with val=tail needs a tail")
     if msg["from"] and msg["to"] and msg["from"] == msg["to"]:
         warnings.append("from and to are the same agent")
+    if msg["from"] and not re.fullmatch(re.escape(msg["from"]) + r"-\d+", msg["id"]):
+        errors.append(f"id {msg['id']!r} must be <from>-<n>: {msg['from']}-1, {msg['from']}-2, ... unique in the conversation")
+    # closed answer vocabulary: a profile may define enum ans; then AQ opts and AN val must come from it
+    ans = spec["enums"].get("ans")
+    if ans:
+        if msg["type"] == "AQ" and seen.get("need") == "ENUM":
+            for o in str(seen.get("opts", "")).split("+"):
+                if o and o not in ans:
+                    errors.append(f"opts={o}: not in the profile's answer vocabulary {'/'.join(ans)} (do not invent options)")
+        if msg["type"] == "AN" and seen.get("val") not in (None, "tail", "Y", "N") and not re.fullmatch(r"-?\d+(\.\d+)?|\d{8}", str(seen.get("val"))):
+            if seen["val"] not in ans:
+                errors.append(f"val={seen['val']}: not in the profile's answer vocabulary {'/'.join(ans)}")
     if tail is not None and len(tail) > spec["tail_max"]:
         errors.append(f"tail is {len(tail)} characters; limit is {spec['tail_max']} (rule 4: move it to an artifact and reference with art=)")
     return msg, errors, warnings
@@ -508,25 +522,44 @@ def make_rb(ho_line: str, rb_id: str, profile: str | None = None, with_hash: boo
 
 # ---------------------------------------------------------------- legend
 
-def legend(profile: str | None = None) -> str:
+def legend(profile: str | None = None, lean: bool = False) -> str:
+    """The legend another agent needs in its prompt. lean=True drops the comprehension-readback constraint keys,
+    for teams that use envelope echo only."""
     spec = load_profile(profile)
     out = [f"rogerwilco {VERSION}. One line per message: RW1 <TYPE> <id> [re=<id>] from=<agent> to=<agent> [item=<ref>] key=value ... [// tail]. "
            "No spaces in values; lists join with +; dates YYYYMMDD; tail is free text, 300 chars max."]
+    prof_slots = set(spec.get("slot_desc", {}))
+    acc_slots = {"acc", "keys", "do", "not", "asm"}
     for t, d in spec["types"].items():
-        opt = " ".join(d["optional"])
+        optional = [k for k in d["optional"] if not (lean and (k in prof_slots or k in acc_slots))]
+        opt = " ".join(optional)
         out.append(f"{t} {d['name']}: requires {' '.join(d['required'])}" + (f"; optional {opt}" if opt else ""))
-    out.append("RB must echo the HO's item, ask and due as decoded (plus any slots the HO names in rb=; rb=all means every slot). "
-               "If the HO says rb=acc or rb=plan, the RB must also carry acc=<criteria you derived from the brief, as key:value tokens joined by +>, "
-               "and for rb=plan do=<what you will produce>; optional not=<what you exclude> asm=<assumptions>; tail = the task in your own words. "
-               "Code-side receivers add h=<digest of the HO>. Unknown code: reply UN why=UNK. Every reply carries re=.")
+    if lean and prof_slots:
+        out.append("Profile slots may appear on any type where they carry a fact.")
+    if lean:
+        out.append("RB echoes the HO's item, ask and due as decoded, plus any slots the HO names in rb= (rb=all: every slot). "
+                   "Code-side receivers add h=<digest of the HO>. Unknown code: reply UN why=UNK. Every reply carries re=.")
+    else:
+        out.append("RB must echo the HO's item, ask and due as decoded (plus any slots the HO names in rb=; rb=all means every slot). "
+                   "If the HO says rb=acc or rb=plan, the RB must also carry acc=<criteria you derived from the brief, as key:value tokens joined by +>, "
+                   "and for rb=plan do=<what you will produce>; optional not=<what you exclude> asm=<assumptions>; tail = the task in your own words. "
+                   "Code-side receivers add h=<digest of the HO>. Unknown code: reply UN why=UNK. Every reply carries re=.")
+    hide_asks = set()
+    if lean and spec.get("asks_used"):
+        hide_asks = set(load_core()["enums"]["ask"]) - set(spec["asks_used"])
     for ename, vals in spec["enums"].items():
-        out.append(f"{ename}: " + ", ".join(f"{k}={v}" for k, v in vals.items()))
+        shown = {k: v for k, v in vals.items() if not (ename == "ask" and k in hide_asks)}
+        out.append(f"{ename}: " + ", ".join(f"{k}={v}" for k, v in shown.items()))
     core = load_core()
-    out.append("acc= constraint keys (closed set): " + "; ".join(f"{k}={v}" for k, v in core["constraint_keys"].items()) + ". Values: no spaces, lowercase, e.g. len:120w lang:uk must:monday-problem no:em-dash.")
+    if not lean:
+        out.append("acc= constraint keys (closed set): " + "; ".join(f"{k}={v}" for k, v in core["constraint_keys"].items()) + ". Values: no spaces, lowercase, e.g. len:120w lang:uk must:monday-problem no:em-dash.")
+    out.append("Message ids are <yourname>-<n>, unique in the conversation. Readback level is set per handoff by the sender: rb=all before an irreversible act (a payment release, a payee change, anything external); the default envelope echo otherwise.")
     if spec.get("profile"):
         line = f"Profile {spec['profile']}: messages carry p={spec['profile']}."
         if spec.get("agents"):
             line += f" Agents: {', '.join(sorted(spec['agents']))}."
+        if spec["enums"].get("ans"):
+            line += " AQ opts and AN val must come from ans; do not invent options."
         if spec.get("slot_desc"):
             line += " Profile slots: " + "; ".join(f"{k}={v} ({spec['slots'][k]})" for k, v in spec["slot_desc"].items()) + "."
         if any(t == "money" for t in spec["slots"].values()):
@@ -577,6 +610,8 @@ def _main(argv: list[str]) -> int:
         if cmd == "from-json":
             print(from_json(rest[0], profile)); return 0
         if cmd == "legend":
+            if "--lean" in rest:
+                print(legend(profile, lean=True)); return 0
             print(legend(profile)); return 0
         if cmd == "lint":
             bad = 0

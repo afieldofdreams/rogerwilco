@@ -23,7 +23,7 @@ Do not use it for the work itself. Drafts, specs and analysis stay as normal con
 RW1 <TYPE> <id> [re=<id>] from=<agent> to=<agent> [item=<ref>] [key=value ...] [// tail]
 ```
 
-- First three tokens are positional: version `RW1`, the type, your message id (`<yourname>-<n>`, unique in the conversation).
+- First three tokens are positional: version `RW1`, the type, your message id: `<yourname>-<n>`, unique in the conversation (`from=writer` sends `writer-1`, `writer-2`, ...; the validator refuses any other shape).
 - Everything else is `key=value`, any order. No spaces inside values. Lists join with `+`. Dates are `YYYYMMDD`.
 - ` // ` starts the tail: free text, 300 characters max. Longer content becomes an artifact you reference with `art=`.
 - `item` is a reference to the thing under discussion: `gh:owner/repo#42`, `pensive:4102`, `url:...`, `file:...`, `sha256:...`.
@@ -53,11 +53,11 @@ Optional slots: `rb` readback level on an HO: `echo` (default), `all`, `acc`, `p
 
 - `acc` keys, a closed set: `len` (unit suffix: `120w` words, `800c` chars, `2p` pages, `10s` slides) · `fmt` (`md` `docx` `json` `csv` `html`) · `lang` (`uk` `us` `fr`) · `tone` (`plain` `formal` `casual` `technical`) · `voice` (`we` `i` `you` `third`) · `aud` · `out` (`copy` `spec` `dataset` `pr` `report`) · `by` (date) · `src` · `scope` · `must` · `no`. `must`, `no`, `scope` and `src` may repeat. For `must` and `no` values, use the brief's own words, hyphenated, no spaces (`must:monday-problem`, `no:em-dash`). Do not invent keys; a key outside the set is not compared.
 
-A profile adds domain codes and slots; a message using one carries `p=<profile>`. Profiles live in `profiles/`. Without `p=`, only the codes above are valid.
+A profile adds domain codes and slots; a message using one carries `p=<profile>`. Profiles live in `profiles/`. Without `p=`, only the codes above are valid. A profile may close the answer vocabulary with an `ans` enum (the pay profile has `APPROVE DECLINE HOLD REJECT CALLBACK`): then every `AQ need=ENUM` takes its `opts` from it and every `AN val` is one of them, so a human or a policy engine can answer without decoding invented words.
 
 ## Five rules
 
-1. **No handover without readback.** After you send an HO, you still own the item until the receiver's RB passes your check: it echoes `item`, `ask`, `due` and anything you named in `rb=`, with the same decoded values, and if you asked `rb=acc` its `acc=` matches the criteria you wrote down before sending. If it does not pass, re-send the HO with `re=` pointing at the bad RB. No RB by your deadline: re-send with `re=` pointing at the original; a receiver that already read it back replies `UN why=DUP`. When you receive an HO, send the RB before doing anything else, echoing the values exactly as you read them; if you have code, add `h=` from `make-rb`.
+1. **No handover without readback.** Set the level per handoff, not per team: `rb=all` (every slot echoed) before an irreversible act such as releasing a payment, changing a payee or sending anything external; the default envelope echo (`item`, `ask`, `due`) for everything else; `rb=acc` when the instruction lives in a brief. After you send an HO, you still own the item until the receiver's RB passes your check: it echoes `item`, `ask`, `due` and anything you named in `rb=`, with the same decoded values, and if you asked `rb=acc` its `acc=` matches the criteria you wrote down before sending. If it does not pass, re-send the HO with `re=` pointing at the bad RB. No RB by your deadline: re-send with `re=` pointing at the original; a receiver that already read it back replies `UN why=DUP`. When you receive an HO, send the RB before doing anything else, echoing the values exactly as you read them; if you have code, add `h=` from `make-rb`.
    **Readback is comprehension, not recall.** Echoing slots proves you saw them. When the HO says `rb=acc` or `rb=plan`, read the brief and any `art=` it points at, derive the acceptance criteria yourself, and send them as `acc=` (`len:120w+tone:plain+no:em-dash+must:monday-problem`); add `do=` for `plan`; put anything you are excluding in `not=` and anything the brief left open in `asm=`; paraphrase the task in the tail. The sender compares your `acc=` by key with criteria it kept to itself: a different value is a contradiction and a missing key is a gap, both fail the readback; an extra key is an assumption the sender will confirm. When you send an HO whose instruction lives in the tail or an artifact, ask for `rb=acc`, name the keys you will check with `keys=` (dimensions only, never the values), and write your criteria down first using the closed key set.
 2. **Never guess.** Unknown version, type or code: reply `UN why=UNK` (or `why=VER`) and name the code in the tail. `UNK` describes the message; do not substitute `NOCAP` or `SCOPE`, which describe you. An AQ always gets an AN (or a UN); never leave a question unanswered because you are busy.
 3. **Every reply carries `re=`.** RB, AN, DN, UN, FL always. Reconstruct threads from ids, not from position.
@@ -94,7 +94,7 @@ python3 scripts/rogerwilco.py validate "RW1 HO a-1 from=a to=b item=x:1 ask=DRAF
 python3 scripts/rogerwilco.py make-rb "<HO line>" <your-id> [--acc "k:v+k:v" --do copy]   # readback with h= digest
 python3 scripts/rogerwilco.py check-rb "<HO line>" "<RB line>" [--expect-acc "k:v+k:v"]    # sender side: receipt, integrity, echo, comprehension
 python3 scripts/rogerwilco.py to-json "<line>"  |  from-json '<json>'
-python3 scripts/rogerwilco.py legend [--profile pform]              # legend for another agent's prompt
+python3 scripts/rogerwilco.py legend [--profile pay] [--lean]      # legend for another agent's prompt; --lean drops the comprehension-readback keys (about 1,000 tokens with the pay profile)
 ```
 
 If you have no shell, read the line against the table above and apply rule 2.
