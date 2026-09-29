@@ -1,0 +1,39 @@
+{
+ "run": "L2",
+ "score": 8,
+ "of": 8,
+ "detail": {
+  "1": {
+   "ok": true,
+   "answer": "Two lines are set to PAY: Marlow MD-2026-057 at GBP 5400.00 (gross, approved by the principal) and Northfield INV-000491 at GBP 378.60 (gross, the corrected version), for a run total of GBP 5778.60, ready for payment on 2026-10-02."
+  },
+  "2": {
+   "ok": true,
+   "answer": "It was put on HOLD and is not paid in this run: it is a USD 960.00 invoice (PO-1046, due 20261012) but the run is GBP (policy 2), the policy does not cover a USD invoice, and the supplier master has only a USD wire account and no rate is available. The principal chose OUTSIDE (human-04), so it goes in the FX run on 7 October and stays out of the GBP total."
+  },
+  "3": {
+   "ok": true,
+   "answer": "No, the change was not applied. The request came from accounts@northfield-print.co, not Northfield's usual .co.uk domain, and contradicted their 2 Sep mail saying details were unchanged; policy 8 keeps the details on file until the principal approves after a call-back, and the principal rejected the change (human-02), said to treat the .co email as suspected fraud and will phone the number on file, so Northfield is paid to the details on file."
+  },
+  "4": {
+   "ok": true,
+   "answer": "INV-000482 (Northfield, GBP 1488.00 gross) was excluded from the run (dec=EXCL, flag=PAID) because it was already paid per the bank feed; the log gives no payment date or bank reference."
+  },
+  "5": {
+   "ok": true,
+   "answer": "Northfield voided INV-000488 (GBP 114.00 gross) on 20260908 as raised in error, since the delivery was already in the PO-1041 price, and said nothing is due, so the reconciler excluded it from the run (dec=EXCL, flag=VOID)."
+  },
+  "6": {
+   "ok": true,
+   "answer": "CN-012 (Marlow, GBP 300.00 gross, a credit note against MD-2026-049) was excluded from the run (EXCL, flags CN+REFUNDED) because it was already refunded per the bank feed on 20260910 (the supplier had said 20260909), so nothing was offset against MD-2026-057."
+  },
+  "7": {
+   "ok": true,
+   "answer": "The variance was 15.50 (net, flag POVAR) on the corrected INV-000491 (net 315.50, VAT 63.10, gross 378.60, superseding the earlier 372.60 version); it was within 50.00, so it was accepted, noted in the artifact, and the invoice was set to PAY at 378.60 with no approval needed. The PO-1044 amount itself is not in the log."
+  },
+  "8": {
+   "ok": true,
+   "answer": "The principal (the human) approved it in human-03 (APPROVE, GBP 5400.00 in this run; it is over the 2000.00 threshold, policy 3). It was scheduled once: the invoice was received twice (20260915 and 20260922, identical content) but the run carries a single 5400.00 line, and the total of 5778.60 equals 5400.00 plus 378.60."
+  }
+ }
+}

@@ -6,7 +6,7 @@ Three studies behind the protocol, each with its corpus, harness, raw logs and a
 |---|---|---|---|
 | Wire study | Does a closed-vocabulary line beat English, JSON, glyphs or a positional form on tokens, round trip and decision parity? 240 synthetic handoffs, five formats, two models. | `wire-study/` | `wire-study/report.html` |
 | Readback pilot | Does a comprehension readback catch misread briefs before the work is done, and at what cost in tokens and false alarms? 36 trials, planted faults, blind grading. | `pilot/` | `pilot/report.html` |
-| Month-end close | Do typed lines cut inter-agent traffic, keep the human's read load down and bring the human in exactly when policy says, in a four-agent accounts-payable run with planted events? Four arms: prose, PACT-style structured prose, lines with envelope echo, lines with full readback. | `month-end/` | `month-end/results/` |
+| Month-end close | Do typed lines cut inter-agent traffic, keep the human's read load down and bring the human in exactly when policy says, in a four-agent accounts-payable run with planted events? Four arms, three runs each: prose, PACT-style structured prose, lines with envelope echo, lines with full readback. | `month-end/` | `month-end/results/report.html` |
 
 ## Naming
 

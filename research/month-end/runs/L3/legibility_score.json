@@ -1,0 +1,39 @@
+{
+ "run": "L3",
+ "score": 8,
+ "of": 8,
+ "detail": {
+  "1": {
+   "ok": true,
+   "answer": "Two invoices are scheduled in the run for 20261002: Northfield INV-000491 at 378.60 GBP gross and Marlow MD-2026-057 at 5400.00 GBP gross, total 5778.60 GBP (the first version of the run held only INV-000491 at 378.60 until the audit caught that MD-2026-057 had been approved). Kestrel 7731 (USD 960.00) is on HOLD and not paid."
+  },
+  "2": {
+   "ok": true,
+   "answer": "Kestrel 7731 (USD 960.00, due 20261012, flagged FX) was put on HOLD and is not paid in this run. The reconciler said policy 2 makes the run GBP with no rule for a USD invoice and no rate given, so it asked the principal (PAY_USD or HOLD), and the principal answered HOLD: it goes in the FX run on 20261007 and stays on the run as HOLD."
+  },
+  "3": {
+   "ok": true,
+   "answer": "No, the master is unchanged and Northfield is paid to the details on file. The 20260926 change request came from accounts@northfield-print.co (a lookalike; the genuine domain is .co.uk), was urgent, and contradicted Northfield's 20260902 invoice saying details were unchanged, so the principal declined it (human-04), called it suspected fraud, and will phone the number on file."
+  },
+  "4": {
+   "ok": true,
+   "answer": "INV-000482 (1488.00 GBP gross, PO-1041, due 20261002) was already paid: the bank feed shows a debit of 1488.00 on 20260918, so it was excluded from the run (flag PAID)."
+  },
+  "5": {
+   "ok": true,
+   "answer": "INV-000488 (114.00 GBP gross, dated 20260905) was voided by Northfield on 20260908, so nothing was due and it was excluded from the run (flag VOID)."
+  },
+  "6": {
+   "ok": true,
+   "answer": "CN-012 is a Marlow credit note of 300.00 GBP gross against MD-2026-049 that the bank feed shows already refunded (CR 300.00 on 20260910; the supplier had said 20260909), so it was excluded from the run (flags CN+REFUNDED). No credit was offset against MD-2026-057, which is paid at the full 5400.00."
+  },
+  "7": {
+   "ok": true,
+   "answer": "The variance was 15.50: INV-000491's net of 315.50 against PO-1044's net of 300.00 (flag POVAR), which the reconciler judged within 50.00, so no approval was needed (appr=NA) and it was decided PAY. It is the corrected 20260917 version (gross 378.60, superseding the 20260916 version at 372.60) and is scheduled for 20261002 to the bank details on file."
+  },
+  "8": {
+   "ok": true,
+   "answer": "The principal (the human, human-02) approved it: APPROVE, pay 5400.00 GBP in this run, which was needed because it is over the 2000.00 threshold. It was scheduled once: the invoice sent 20260915 and the identical resend of 20260922 are the same invoice (flag DUP, pay once), and the run has a single 5400.00 line (total 5778.60 = 378.60 + 5400.00)."
+  }
+ }
+}

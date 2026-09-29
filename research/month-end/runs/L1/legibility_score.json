@@ -1,0 +1,39 @@
+{
+ "run": "L1",
+ "score": 8,
+ "of": 8,
+ "detail": {
+  "1": {
+   "ok": true,
+   "answer": "Two invoices are scheduled: INV-000491 (Northfield) at 378.60 GBP gross and MD-2026-057 (Marlow) at 5400.00 GBP gross, totalling 5778.60 GBP for payment on 20261002 (2 Oct 2026), both to the bank details on file. Kestrel 7731 is on HOLD and is not in that total."
+  },
+  "2": {
+   "ok": true,
+   "answer": "It was kept on the run as HOLD and not paid in this run: it is a USD 960.00 invoice (no VAT, reverse charge, due 20261012, matching PO-1046) in a GBP run where the policy is silent on USD. The reconciler asked the principal, who chose OFFRUN (human-04), so it goes in the FX run on 7 October and sits outside the GBP total of 5778.60."
+  },
+  "3": {
+   "ok": true,
+   "answer": "No. The 26 Sep email asking to switch to sort 04-00-75 acct 88214561 came from accounts@northfield-print.co, a lookalike domain (all other Northfield mail is .co.uk), and the principal declined it (human-02), treating it as suspected fraud and planning to phone the number on file. The supplier master was not edited and Northfield is paid to the details on file (policy 8)."
+  },
+  "4": {
+   "ok": true,
+   "answer": "It had already been paid on 20260918 (18 Sep 2026), per the bank feed debit of 1488.00 with ref INV-000482, so it was excluded (EXCL, flag PAID). That is also why Northfield's payable is only 378.60 rather than the extractor's 1866.60 figure, which had counted it."
+  },
+  "5": {
+   "ok": true,
+   "answer": "The supplier voided it on 20260908 (8 Sep 2026), saying it was raised in error, so nothing was due and it was excluded (EXCL, flag VOID). It was 114.00 GBP gross against PO-1041."
+  },
+  "6": {
+   "ok": true,
+   "answer": "It was excluded from the run (EXCL, flags CN+REFUNDED) with nothing offset, because the 300.00 GBP credit (against MD-2026-049) had already been refunded by bank transfer: the supplier said 20260909, and the bank feed shows CR 300.00 ref CN-012 REFUND on 20260910. As a result MD-2026-057 is paid in full at 5400.00 with no credit netted off."
+  },
+  "7": {
+   "ok": true,
+   "answer": "The corrected INV-000491 has a net of 315.50 against a PO-1044 net of 300.00, so the variance is 15.50 over (var=15.50). Since that is within 50.00 it was accepted with no approval needed (appr=NA), and INV-000491 was scheduled to PAY at 378.60 GBP gross, the corrected version of 20260917 superseding the earlier 372.60."
+  },
+  "8": {
+   "ok": true,
+   "answer": "The principal (the human) approved it in human-03 (APPROVE, pay 5400.00 GBP in this run), as it was flagged OVERLIM and needed approval. It was scheduled once: the supplier sent the invoice twice (20260915 and 20260922) but it was counted once, so 5400.00 appears once in the 5778.60 run total, for payment on 20261002."
+  }
+ }
+}
