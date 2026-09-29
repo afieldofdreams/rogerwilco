@@ -90,7 +90,7 @@ def outcome_checks(run_dir: pathlib.Path) -> dict:
 
 
 DECISION_RE = re.compile(r"decision needed|decisions? (?:i|we) need|need(?:s|ed)? from you|please (?:reply|choose|confirm|approve|decide|pick)|your (?:choice|call|approval|decision)|options?:|option [a-d1-4]\b|\b[abcd]\. [a-z]|approve or|do you approve|reply with|which do you want|do you want|one check|before i pass it on|held .{0,40} until i hear|say so and", re.I)
-FINAL_RE = re.compile(r"passed audit|audit(?:ed)?: pass|audit pass|result:? pass|ready for (?:you|release|payment|sign)|run is ready|run ready|is ready\b|no decision open|no open decisions", re.I)
+FINAL_RE = re.compile(r"passed audit|audit(?:ed)?: pass|audit pass|audit complete: pass|ready for execution|result:? pass|ready for (?:you|release|payment|sign)|run is ready|run ready|is ready\b|no decision open|no open decisions", re.I)
 
 
 def _units(r: dict, arm: str) -> list[dict]:

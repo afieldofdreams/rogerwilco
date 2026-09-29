@@ -74,7 +74,7 @@ def classify(body: str) -> list[str]:
 
 def asks_decision(body: str, sender: str = "") -> bool:
     b = body.lower()
-    if sender == "auditor" and re.search(r"passed audit|audit result: pass|audit pass|result:? pass|no decision is needed|no decision open|no open decisions|nothing is needed from you|needs? nothing from you|ready for sign-off|run ready|is ready", b):
+    if sender == "auditor" and re.search(r"passed audit|audit result: pass|audit pass|audit complete: pass|result:? pass|ready for execution|no decision is needed|no decision open|no open decisions|nothing is needed from you|needs? nothing from you|ready for sign-off|run ready|is ready", b):
         return False
     if b.startswith("rw1 aq") or "\nrw1 aq" in b:
         return True
