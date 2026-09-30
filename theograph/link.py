@@ -155,7 +155,7 @@ class Event:
         s = source(a, role); self.sources.append(s)
         valued = [x for x in self.sources if x["role"] in ("states", "corrects", "starts", "changes", "fulfils") and any(k != "when" for k in x["slots"])]
         if valued:
-            best = max(valued, key=lambda x: (x["role"] == "corrects", "res" in x["slots"], x["weight"], x["doc_date"] or ""))
+            best = max(valued, key=lambda x: (x["role"] == "corrects", "res" in x["slots"], sum(1 for k in x["slots"] if k not in ("when", "chg")), x["weight"], x["doc_date"] or ""))
             self.value = {k: v for k, v in best["slots"].items() if k not in ("when",)}
         if not anchor or a.get("t_prec") not in DATED:
             return
