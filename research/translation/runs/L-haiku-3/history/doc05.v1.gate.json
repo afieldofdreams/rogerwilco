@@ -1,0 +1,741 @@
+{
+ "file": "/home/claude/rogerwilco/research/translation/runs/L-haiku-3/doc05.rw",
+ "arm": "L",
+ "doc": 5,
+ "ok": false,
+ "errors": [
+  "row 9: the quote is not found verbatim in doc:5#l14: 'On arrival temperature 38.6'",
+  "row 19: the quote is not found verbatim in doc:5#l18-19: 'Urinary legionella antigen negative'",
+  "row 20: the quote is not found verbatim in doc:5#l18-19: 'pneumococcal antigen negative'",
+  "row 21: the quote is not found verbatim in doc:5#l23: 'CRP 210 on admission'",
+  "row 22: the quote is not found verbatim in doc:5#l23: 'CRP 45 on discharge'",
+  "row 23: the quote is not found verbatim in doc:5#l24: 'WCC 16.2 on admission'",
+  "row 24: the quote is not found verbatim in doc:5#l24: 'WCC 9.8 on discharge'",
+  "row 25: the quote is not found verbatim in doc:5#l25: 'Hb 132 on admission'",
+  "row 26: the quote is not found verbatim in doc:5#l25: 'Hb 129 on discharge'",
+  "row 27: the quote is not found verbatim in doc:5#l26: 'Sodium 131 on admission'",
+  "row 28: the quote is not found verbatim in doc:5#l26: 'Sodium 136 on discharge'",
+  "row 29: the quote is not found verbatim in doc:5#l27: 'Creatinine 88 on admission'",
+  "row 30: the quote is not found verbatim in doc:5#l27: 'Creatinine 82 on discharge'",
+  "row 33: route=nasal-cannulae: not a known route code (rule 2: reply UN why=UNK, do not guess)",
+  "row 39: item='adv:fever-or-breathlessness': item is <kind>:<concept> with kind one of sym dx med proc meas alg ref soc func fu"
+ ],
+ "counts": {
+  "st": 38,
+  "dn": 1
+ },
+ "tokens": 2509,
+ "chars": 7297,
+ "accepted": [],
+ "parsed": [
+  {
+   "id": "extractor-1",
+   "item": "dx:community-acquired-pneumonia",
+   "re": null,
+   "src": "doc:5#l9",
+   "quote": "community-acquired pneumonia, right lower lobe",
+   "act": "ASSESS",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "CUR",
+   "slots": {
+    "site": "right-lower-lobe"
+   },
+   "lines": [
+    9
+   ]
+  },
+  {
+   "id": "extractor-2",
+   "item": "meas:curb-65-score",
+   "re": null,
+   "src": "doc:5#l9",
+   "quote": "CURB-65 score 2",
+   "act": "OBS",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "CUR",
+   "slots": {
+    "res": "2"
+   },
+   "lines": [
+    9
+   ]
+  },
+  {
+   "id": "extractor-3",
+   "item": "dx:hypertension",
+   "re": null,
+   "src": "doc:5#l10",
+   "quote": "hypertension (long-standing)",
+   "act": "ASSESS",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {},
+   "lines": [
+    10
+   ]
+  },
+  {
+   "id": "extractor-4",
+   "item": "dx:hyponatraemia",
+   "re": null,
+   "src": "doc:5#l10",
+   "quote": "mild hyponatraemia on admission",
+   "act": "ASSESS",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {
+    "when": "admission"
+   },
+   "lines": [
+    10
+   ]
+  },
+  {
+   "id": "extractor-5",
+   "item": "dx:hyponatraemia",
+   "re": "extractor-4",
+   "src": "doc:5#l10",
+   "quote": "resolved",
+   "act": "ASSESS",
+   "pol": "NEG",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "CUR",
+   "slots": {},
+   "lines": [
+    10
+   ]
+  },
+  {
+   "id": "extractor-6",
+   "item": "sym:fever",
+   "re": null,
+   "src": "doc:5#l13",
+   "quote": "three days of fever",
+   "act": "RPT",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {
+    "when": "3d"
+   },
+   "lines": [
+    13
+   ]
+  },
+  {
+   "id": "extractor-7",
+   "item": "sym:productive-cough",
+   "re": null,
+   "src": "doc:5#l13",
+   "quote": "productive cough",
+   "act": "RPT",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {
+    "when": "3d"
+   },
+   "lines": [
+    13
+   ]
+  },
+  {
+   "id": "extractor-8",
+   "item": "sym:pleuritic-chest-pain",
+   "re": null,
+   "src": "doc:5#l13",
+   "quote": "right-sided pleuritic chest pain",
+   "act": "RPT",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {
+    "site": "right-sided",
+    "when": "3d"
+   },
+   "lines": [
+    13
+   ]
+  },
+  {
+   "id": "extractor-9",
+   "item": "meas:temperature",
+   "re": null,
+   "src": "doc:5#l14",
+   "quote": "On arrival temperature 38.6",
+   "act": "OBS",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {
+    "res": "38.6",
+    "unit": "C",
+    "when": "admission"
+   },
+   "lines": [
+    14
+   ]
+  },
+  {
+   "id": "extractor-10",
+   "item": "meas:respiratory-rate",
+   "re": null,
+   "src": "doc:5#l14",
+   "quote": "respiratory rate 26",
+   "act": "OBS",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {
+    "res": "26",
+    "when": "admission"
+   },
+   "lines": [
+    14
+   ]
+  },
+  {
+   "id": "extractor-11",
+   "item": "meas:oxygen-saturations",
+   "re": null,
+   "src": "doc:5#l14",
+   "quote": "saturations 91% on air",
+   "act": "OBS",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {
+    "res": "91",
+    "unit": "%",
+    "when": "admission"
+   },
+   "lines": [
+    14
+   ]
+  },
+  {
+   "id": "extractor-12",
+   "item": "meas:blood-pressure",
+   "re": null,
+   "src": "doc:5#l14",
+   "quote": "BP 118/70",
+   "act": "OBS",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {
+    "res": "118/70",
+    "unit": "mmHg",
+    "when": "admission"
+   },
+   "lines": [
+    14
+   ]
+  },
+  {
+   "id": "extractor-13",
+   "item": "meas:heart-rate",
+   "re": null,
+   "src": "doc:5#l14-15",
+   "quote": "heart rate 104",
+   "act": "OBS",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {
+    "res": "104",
+    "when": "admission"
+   },
+   "lines": [
+    14,
+    15
+   ]
+  },
+  {
+   "id": "extractor-14",
+   "item": "sym:confusion",
+   "re": null,
+   "src": "doc:5#l15",
+   "quote": "He was not confused",
+   "act": "OBS",
+   "pol": "NEG",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {
+    "when": "admission"
+   },
+   "lines": [
+    15
+   ]
+  },
+  {
+   "id": "extractor-15",
+   "item": "proc:chest-xray",
+   "re": null,
+   "src": "doc:5#l17",
+   "quote": "chest X-ray on 3 September",
+   "act": "DONE",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {
+    "when": "20260903"
+   },
+   "lines": [
+    17
+   ]
+  },
+  {
+   "id": "extractor-16",
+   "item": "sym:right-lower-lobe-consolidation",
+   "re": null,
+   "src": "doc:5#l17",
+   "quote": "right lower lobe consolidation",
+   "act": "OBS",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {
+    "site": "right-lower-lobe",
+    "when": "20260903"
+   },
+   "lines": [
+    17
+   ]
+  },
+  {
+   "id": "extractor-17",
+   "item": "sym:effusion",
+   "re": null,
+   "src": "doc:5#l17-18",
+   "quote": "no effusion",
+   "act": "OBS",
+   "pol": "NEG",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {
+    "site": "right-lower-lobe",
+    "when": "20260903"
+   },
+   "lines": [
+    17,
+    18
+   ]
+  },
+  {
+   "id": "extractor-18",
+   "item": "proc:blood-cultures",
+   "re": null,
+   "src": "doc:5#l18",
+   "quote": "Blood cultures were negative",
+   "act": "DONE",
+   "pol": "NEG",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {},
+   "lines": [
+    18
+   ]
+  },
+  {
+   "id": "extractor-19",
+   "item": "proc:urinary-legionella-antigen",
+   "re": null,
+   "src": "doc:5#l18-19",
+   "quote": "Urinary legionella antigen negative",
+   "act": "DONE",
+   "pol": "NEG",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {},
+   "lines": [
+    18,
+    19
+   ]
+  },
+  {
+   "id": "extractor-20",
+   "item": "proc:pneumococcal-antigen",
+   "re": null,
+   "src": "doc:5#l18-19",
+   "quote": "pneumococcal antigen negative",
+   "act": "DONE",
+   "pol": "NEG",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {},
+   "lines": [
+    18,
+    19
+   ]
+  },
+  {
+   "id": "extractor-21",
+   "item": "meas:crp",
+   "re": null,
+   "src": "doc:5#l23",
+   "quote": "CRP 210 on admission",
+   "act": "OBS",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {
+    "res": "210",
+    "when": "admission"
+   },
+   "lines": [
+    23
+   ]
+  },
+  {
+   "id": "extractor-22",
+   "item": "meas:crp",
+   "re": null,
+   "src": "doc:5#l23",
+   "quote": "CRP 45 on discharge",
+   "act": "OBS",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "CUR",
+   "slots": {
+    "res": "45",
+    "when": "discharge"
+   },
+   "lines": [
+    23
+   ]
+  },
+  {
+   "id": "extractor-23",
+   "item": "meas:wcc",
+   "re": null,
+   "src": "doc:5#l24",
+   "quote": "WCC 16.2 on admission",
+   "act": "OBS",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {
+    "res": "16.2",
+    "when": "admission"
+   },
+   "lines": [
+    24
+   ]
+  },
+  {
+   "id": "extractor-24",
+   "item": "meas:wcc",
+   "re": null,
+   "src": "doc:5#l24",
+   "quote": "WCC 9.8 on discharge",
+   "act": "OBS",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "CUR",
+   "slots": {
+    "res": "9.8",
+    "when": "discharge"
+   },
+   "lines": [
+    24
+   ]
+  },
+  {
+   "id": "extractor-25",
+   "item": "meas:hemoglobin",
+   "re": null,
+   "src": "doc:5#l25",
+   "quote": "Hb 132 on admission",
+   "act": "OBS",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {
+    "res": "132",
+    "when": "admission"
+   },
+   "lines": [
+    25
+   ]
+  },
+  {
+   "id": "extractor-26",
+   "item": "meas:hemoglobin",
+   "re": null,
+   "src": "doc:5#l25",
+   "quote": "Hb 129 on discharge",
+   "act": "OBS",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "CUR",
+   "slots": {
+    "res": "129",
+    "when": "discharge"
+   },
+   "lines": [
+    25
+   ]
+  },
+  {
+   "id": "extractor-27",
+   "item": "meas:sodium",
+   "re": null,
+   "src": "doc:5#l26",
+   "quote": "Sodium 131 on admission",
+   "act": "OBS",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {
+    "res": "131",
+    "when": "admission"
+   },
+   "lines": [
+    26
+   ]
+  },
+  {
+   "id": "extractor-28",
+   "item": "meas:sodium",
+   "re": null,
+   "src": "doc:5#l26",
+   "quote": "Sodium 136 on discharge",
+   "act": "OBS",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "CUR",
+   "slots": {
+    "res": "136",
+    "when": "discharge"
+   },
+   "lines": [
+    26
+   ]
+  },
+  {
+   "id": "extractor-29",
+   "item": "meas:creatinine",
+   "re": null,
+   "src": "doc:5#l27",
+   "quote": "Creatinine 88 on admission",
+   "act": "OBS",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {
+    "res": "88",
+    "when": "admission"
+   },
+   "lines": [
+    27
+   ]
+  },
+  {
+   "id": "extractor-30",
+   "item": "meas:creatinine",
+   "re": null,
+   "src": "doc:5#l27",
+   "quote": "Creatinine 82 on discharge",
+   "act": "OBS",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "CUR",
+   "slots": {
+    "res": "82",
+    "when": "discharge"
+   },
+   "lines": [
+    27
+   ]
+  },
+  {
+   "id": "extractor-31",
+   "item": "med:co-amoxiclav",
+   "re": null,
+   "src": "doc:5#l29-30",
+   "quote": "intravenous co-amoxiclav 1.2 g three times daily for 48 hours",
+   "act": "DONE",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {
+    "dose": "1.2g",
+    "route": "IV",
+    "freq": [
+     "TDS"
+    ],
+    "when": "48h"
+   },
+   "lines": [
+    29,
+    30
+   ]
+  },
+  {
+   "id": "extractor-32",
+   "item": "med:co-amoxiclav",
+   "re": null,
+   "src": "doc:5#l29-31",
+   "quote": "oral co-amoxiclav 625 mg three times daily to complete seven days",
+   "act": "DONE",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {
+    "dose": "625mg",
+    "route": "PO",
+    "freq": [
+     "TDS"
+    ],
+    "when": "until-10-September"
+   },
+   "lines": [
+    29,
+    30,
+    31
+   ]
+  },
+  {
+   "id": "extractor-34",
+   "item": "sym:apyrexial",
+   "re": null,
+   "src": "doc:5#l31-32",
+   "quote": "He remained apyrexial from day 2",
+   "act": "OBS",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {
+    "when": "day-2"
+   },
+   "lines": [
+    31,
+    32
+   ]
+  },
+  {
+   "id": "extractor-35",
+   "item": "soc:living-with-wife",
+   "re": null,
+   "src": "doc:5#l41",
+   "quote": "lives with his wife",
+   "act": "OBS",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "CUR",
+   "slots": {},
+   "lines": [
+    41
+   ]
+  },
+  {
+   "id": "extractor-36",
+   "item": "func:independence-adl",
+   "re": null,
+   "src": "doc:5#l41",
+   "quote": "independent with all activities of daily living",
+   "act": "OBS",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "CUR",
+   "slots": {},
+   "lines": [
+    41
+   ]
+  },
+  {
+   "id": "extractor-37",
+   "item": "soc:smoking",
+   "re": null,
+   "src": "doc:5#l41-42",
+   "quote": "Ex-smoker, stopped in 2015",
+   "act": "RPT",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "PAST",
+   "slots": {
+    "when": "2015"
+   },
+   "lines": [
+    41,
+    42
+   ]
+  },
+  {
+   "id": "extractor-38",
+   "item": "proc:chest-xray-repeat",
+   "re": null,
+   "src": "doc:5#l44",
+   "quote": "please repeat the chest X-ray in six weeks to confirm resolution",
+   "act": "ORD",
+   "pol": "POS",
+   "cert": "CERT",
+   "subj": "PT",
+   "time": "FUT",
+   "slots": {
+    "when": "6w"
+   },
+   "lines": [
+    44
+   ]
+  },
+  {
+   "id": "extractor-39",
+   "item": "adv:fever-or-breathlessness",
+   "re": null,
+   "src": "doc:5#l44-45",
+   "quote": "He has been advised to seek help if the fever or breathlessness returns",
+   "act": "ADV",
+   "pol": "POS",
+   "cert": "HYPO",
+   "subj": "PT",
+   "time": "FUT",
+   "slots": {},
+   "lines": [
+    44,
+    45
+   ]
+  }
+ ]
+}
