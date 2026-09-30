@@ -31,7 +31,7 @@ def transcript(run_dir: pathlib.Path) -> str:
 def prompt(run_dir: pathlib.Path) -> pathlib.Path:
     cfg = json.loads((run_dir / "run.json").read_text())
     parts = ["You are auditing a four-agent accounts-payable team after the fact. Below is the complete message log between the agents (extractor, reconciler, scheduler, auditor) and the principal (human) for one payment run. You have no other material: no files, no artifacts, no policy text. Answer from the log only. Do not use any tools.\n"]
-    if cfg["arm"] in ("L", "R"):
+    if cfg["arm"] in ("L", "R", "T"):
         legend = subprocess.run([sys.executable, str(FORMCORE), "legend", "--profile", "pay"], capture_output=True, text=True, check=True).stdout.strip()
         parts.append("The agents wrote in rogerwilco lines. Legend:\n\n```\n" + legend + "\n```\n")
     elif cfg["arm"] == "P":

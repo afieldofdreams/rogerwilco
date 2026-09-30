@@ -111,14 +111,14 @@ def propose(run_dir: pathlib.Path) -> list[dict]:
         expected = [e for e in evs if EVENTS[e]["escalate"]]
         prop = None
         if decision:
-            if arm in ("L", "R"):
+            if arm in ("L", "R", "T"):
                 ev, ans, text = (expected[0] if expected else "OTHER"), None, None   # answered per AQ line below
             elif expected:
                 ev = expected[0]
                 ans, text = scripted_answer(run_dir, ev, r["body"])
             else:
                 ev, ans, text = "OTHER", None, SCRIPT["OTHER"]
-            if arm in ("L", "R"):
+            if arm in ("L", "R", "T"):
                 # answer each AQ line in the message
                 lines = [l for l in r["body"].splitlines() if l.startswith("RW1 AQ")]
                 replies = []

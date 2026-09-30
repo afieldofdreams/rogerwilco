@@ -202,6 +202,46 @@
         "DN"
       ],
       "required": false
+    },
+    {
+      "key": "src",
+      "type": "list:token",
+      "desc": "where the fact came from: email:<n> (message number in the inbox export), bank:<YYYYMMDD>, po:<id>; several allowed",
+      "on": [
+        "HO",
+        "RB",
+        "ST",
+        "AQ",
+        "AN",
+        "DN"
+      ],
+      "required": false
+    },
+    {
+      "key": "net",
+      "type": "money",
+      "desc": "net amount before VAT",
+      "on": [
+        "HO",
+        "RB",
+        "ST",
+        "AQ",
+        "AN"
+      ],
+      "required": false
+    },
+    {
+      "key": "vat",
+      "type": "money",
+      "desc": "VAT amount; net + vat = amt when kind=GROSS",
+      "on": [
+        "HO",
+        "RB",
+        "ST",
+        "AQ",
+        "AN"
+      ],
+      "required": false
     }
   ],
   "agents": [
@@ -224,5 +264,8 @@
     "RECON",
     "SCHED",
     "AUDIT"
-  ]
+  ],
+  "translation": {
+    "note": "When lines are the artefact: every ST about a source document carries src=; an invoice line carries amt cur kind; if net and vat are given with kind=GROSS then net + vat must equal amt (checked in code)."
+  }
 }
