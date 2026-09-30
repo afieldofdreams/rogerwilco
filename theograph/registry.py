@@ -2,9 +2,10 @@
 
 Documents are text or Markdown files in a folder (one patient per folder, or a manifest that says
 which patient each file belongs to). A manifest `docs.csv` with columns file, patient, type, date,
-specialty, author overrides anything parsed from the header. Without one, the type is guessed from
-the first lines, the date is the first labelled date in the header, and the patient is the folder
-name. PDF and Word files are converted on the way in when pdftotext or python-docx is available.
+specialty, author (and optionally corrects, the file stem a correction letter refers to) overrides
+anything parsed from the header. Without one, the type is guessed from the first lines, the date is
+the first labelled date in the header, and the patient is the folder name. PDF and Word files are
+converted on the way in when pdftotext or python-docx is available.
 """
 from __future__ import annotations
 import csv, datetime as dt, pathlib, re, shutil, subprocess
@@ -123,8 +124,26 @@ def build_registry(input_dir: pathlib.Path, out_dir: pathlib.Path, patient: str 
         if not d["date"]:
             print(f"warning: no date found for {path.name}; put one in docs.csv")
         docs.append(d)
+    for d in docs:
+        d["corrects"] = m.get("corrects") if (m := manifest.get(d["file"], {})).get("corrects") else (corrected_document(d, docs) if d["type"] == "correction" else None)
     write_jsonl(out_dir / "registry.jsonl", docs)
     return docs
+
+
+def corrected_document(d: dict, docs: list[dict]) -> str | None:
+    """The id of the document a correction letter corrects: the same patient's document on the date the
+    letter names ("correction to the discharge summary of 22 May 2026"), else the latest earlier discharge
+    summary. Admission and discharge dates in the letter then resolve against that document."""
+    head = "\n".join(d["lines"][:15])
+    mine = [x for x in docs if x["patient"] == d["patient"] and x["id"] != d["id"] and x.get("date")]
+    for m in re.finditer(r"(?:summary|letter|note|report)\s+(?:of|dated|from)\s+([^\n.;,]+)", head, re.I):
+        date = parse_date(m.group(1))
+        if date:
+            hits = [x for x in mine if x["date"] == date]
+            if hits:
+                return max(hits, key=lambda x: x["type"] == "discharge summary")["id"]
+    earlier = [x for x in mine if x["type"] == "discharge summary" and d.get("date") and x["date"] <= d["date"]]
+    return max(earlier, key=lambda x: x["date"])["id"] if earlier else None
 
 
 def load_registry(out_dir: pathlib.Path) -> list[dict]:

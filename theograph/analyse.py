@@ -17,7 +17,7 @@ def fmt_value(v: dict) -> str:
     parts = []
     if "res" in v:
         parts.append(v["res"] + (" " + v["unit"] if v.get("unit") else ""))
-    for k in ("dose", "route", "freq", "chg", "site", "who"):
+    for k in ("dose", "route", "freq", "chg", "site"):
         if k in v:
             x = v[k]
             parts.append("+".join(x) if isinstance(x, list) else str(x))
@@ -48,6 +48,7 @@ def analyse(out_dir: pathlib.Path) -> dict:
     conflicts = [e for e in events if any(f.startswith("conflict") for f in e["flags"])]
     corrected = [e for e in events if any("corrected" in f for f in e["flags"])]
     planned = [e for e in events if "planned" in e["flags"]]
+    met = [e for e in events if any(f.startswith(("fulfilled", "evidenced")) for f in e["flags"])]
     hedged = [e for e in events if e["cert"] in ("POSS", "COND", "HYPO") and e["pol"] == "POS"]
     unanchored = [e for e in events if not e["start"] and not e["end"]]
     meds = sorted([e for e in events if e["kind"] == "med"], key=lambda e: (e["concept"], e["start"] or e["first_seen"] or ""))
@@ -62,7 +63,7 @@ def analyse(out_dir: pathlib.Path) -> dict:
         "events_multi_doc": sum(1 for e in events if e["n_docs"] > 1),
         "restated_sources": restated, "restatement_by_doc_type": {t: f"{restated_by_type[t]}/{total_by_type[t]}" for t in total_by_type},
         "events_by_kind": dict(by_kind), "assertions_by_kind": dict(a_by_kind), "anchoring": dict(prec),
-        "conflicts": len(conflicts), "corrected": len(corrected), "plans_without_evidence": len(planned), "hedged_only": len(hedged), "unanchored_events": len(unanchored),
+        "conflicts": len(conflicts), "corrected": len(corrected), "plans_without_evidence": len(planned), "plans_with_evidence": len(met), "hedged_only": len(hedged), "unanchored_events": len(unanchored),
         "extraction": {"documents": len(log), "ok": sum(1 for l in log if l["status"] == "ok"), "attempts_mean": round(sum(l["attempts"] for l in log) / len(log), 2) if log else None,
                        "tokens_in": sum((u.get("in") or 0) for l in log for u in l["usage"]), "tokens_out": sum((u.get("out") or 0) for l in log for u in l["usage"])},
     }
@@ -96,12 +97,16 @@ def analyse(out_dir: pathlib.Path) -> dict:
     if planned:
         L.append(f"\nPlanned or ordered with no evidence of completion in the record ({len(planned)}):")
         for e in planned:
-            L.append(f"- {e['canon']} planned {e['start'] or e['first_seen']} ({e['sources'][0]['doc']})")
+            L.append(f"- {e['display']} planned {e['start'] or e['first_seen']} ({e['sources'][0]['doc']})")
+    if met:
+        L.append(f"\nPlanned or ordered, and then evidenced ({len(met)}):")
+        for e in met:
+            L.append(f"- {e['display']} planned {e['sources'][0]['t_start'] or e['sources'][0]['doc_date']} ({e['sources'][0]['doc']}): " + "; ".join(f for f in e["flags"] if f.startswith(("fulfilled", "evidenced"))))
     if hedged:
         L.append(f"\nStated only with hedging ({len(hedged)}):")
         for e in hedged:
             L.append(f"- {e['canon']} ({e['cert']}, {e['sources'][0]['doc']})")
-    flagged = [e for e in events if any("dose differs" in f or "start unknown" in f or "no earlier course" in f for f in e["flags"])]
+    flagged = [e for e in events if any("dose differs" in f or "start unknown" in f or "no earlier course" in f or "no course recorded" in f for f in e["flags"])]
     if flagged:
         L.append(f"\nMedicine courses to check ({len(flagged)}):")
         for e in flagged:
@@ -115,7 +120,8 @@ def analyse(out_dir: pathlib.Path) -> dict:
     L.append("| medicine | regimen | from | to | sources | notes |")
     L.append("|---|---|---|---|---|---|")
     for e in meds:
-        L.append(f"| {e['concept']}{' (not given)' if e['pol']=='NEG' else ''} | {fmt_value({k: v for k, v in e['value'].items() if k != 'chg'})} | {e['start'] or ('by ' + (e['first_seen'] or '?'))} | {'ongoing' if e['open'] else (e['end'] or '')} | {e['n_sources']} | {'; '.join(e['flags'])} |")
+        to = ("ongoing" + (f", stop planned {e['planned_end']}" if e.get("planned_end") else "")) if e["open"] else (e["end"] or "")
+        L.append(f"| {e['concept']}{' (not given)' if e['pol']=='NEG' else ''} | {fmt_value({k: v for k, v in e['value'].items() if k != 'chg'})} | {e['start'] or ('by ' + (e['first_seen'] or '?'))} | {to} | {e['n_sources']} | {'; '.join(f for f in e['flags'] if not f.startswith('stop planned'))} |")
     L.append("\n## Results over time\n")
     for name, es in sorted(results.items()):
         es = sorted(es, key=lambda e: e["start"] or e["first_seen"] or "")

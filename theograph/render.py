@@ -54,7 +54,12 @@ for (const e of EV) for (const k of ['start','end','first_seen','last_seen']) if
 for (const e of EPS) for (const k of ['start','end']) if (e[k]) allDates.push(p(e[k]));
 const today = new Date(); today.setUTCHours(0,0,0,0);
 let t0 = new Date(Math.min(...allDates.map(d => +d)) - 45*day), t1 = new Date(Math.max(...allDates.map(d => +d), +today) + 45*day);
-const state = {zoom: 1, lanes: new Set(LANES.map(l => l[0])), neg: true, minAuth: 0, q: '', pinned: null};
+// the documents' own period fills the view at first; older history sits to the left, reached by scrolling or zooming out
+const docDates = DOCS.map(d => p(d.date)).filter(Boolean);
+const f0 = docDates.length ? new Date(Math.min(...docDates.map(d => +d)) - 60*day) : t0;
+const f1 = new Date(Math.max(...allDates.filter(d => +d >= +f0).map(d => +d), +today) + 30*day);
+const fitZoom = Math.min(8, Math.max(1, Math.round(((t1 - t0) / (f1 - f0)) * 2) / 2));
+const state = {zoom: fitZoom, lanes: new Set(LANES.map(l => l[0])), neg: true, minAuth: 0, q: '', pinned: null};
 const $ = s => document.querySelector(s);
 function pxPerDay(){ const w = Math.max(700, $('.chart').clientWidth - PAD_L - PAD_R); return state.zoom * w / ((t1 - t0)/day); }
 function x(d){ return PAD_L + (d - t0)/day * pxPerDay(); }
@@ -136,19 +141,20 @@ function show(e){
   ${e.flags.length ? `<div class="flag">${e.flags.map(esc).join('<br>')}</div>` : ''}
   ${e.relations.length ? `<div class="meta">${e.relations.map(r => esc(r.rel) + ' ' + esc(r.event)).join(', ')}</div>` : ''}
   <div class="meta">${srcs.length} source${srcs.length === 1 ? '' : 's'}</div>
-  ${srcs.map(s => `<div class="src"><div class="who">${esc(s.doc_date)} · ${esc(s.doc_type)} · ${esc(s.doc)} · ${esc(s.src)} · ${esc(s.act)} ${esc(s.cert)}${s.role !== 'states' ? ' · ' + esc(s.role) : ''} · w ${s.weight}</div><q>${esc(s.quote)}</q>${fmtVal(s.slots) ? `<div class="who">${esc(fmtVal(s.slots))}${s.slots.when ? ' when=' + esc(s.slots.when) : ''}</div>` : ''}</div>`).join('')}`;
+  ${srcs.map(s => `<div class="src"><div class="who">${esc(s.doc_date)} · ${esc(s.doc_type)} · ${esc(s.doc)} · ${esc(s.src || 'the document itself')} · ${esc(s.act)} ${esc(s.cert)}${s.role !== 'states' ? ' · ' + esc(s.role) : ''} · w ${s.weight}</div><q>${esc(s.quote || 'a document from this specialty on this date, no quote')}</q>${fmtVal(s.slots) ? `<div class="who">${esc(fmtVal(s.slots))}${s.slots.when ? ' when=' + esc(s.slots.when) : ''}</div>` : ''}</div>`).join('')}`;
   P.classList.add('open');
 }
 document.addEventListener('click', ev => { const m = ev.target.closest('[data-ev]'); if (m){ show(EV.find(e => e.id === m.dataset.ev)); } });
 function bind(){
   $('#zoom').oninput = e => { state.zoom = +e.target.value; draw(); };
+  $('#zoom').value = state.zoom;
   $('#neg').onchange = e => { state.neg = e.target.checked; draw(); };
   $('#auth').oninput = e => { state.minAuth = +e.target.value; $('#authv').textContent = e.target.value; draw(); };
   $('#q').oninput = e => { state.q = e.target.value.trim().toLowerCase(); draw(); };
   for (const cb of document.querySelectorAll('[data-lane]')) cb.onchange = e => { e.target.checked ? state.lanes.add(e.target.dataset.lane) : state.lanes.delete(e.target.dataset.lane); draw(); };
   window.addEventListener('resize', draw);
 }
-bind(); draw();
+bind(); draw(); $('.chart').scrollLeft = Math.max(0, x(f0) - PAD_L);
 """
 
 
@@ -159,6 +165,7 @@ def render(out_dir: pathlib.Path, title: str | None = None) -> pathlib.Path:
     patients = sorted({e["patient"] for e in events}) or sorted({d.get("patient") for d in load_registry(out_dir)})
     title = title or f"Theograph: {', '.join(patients)}"
     data = {"lanes": LANES, "events": events, "episodes": eps, "docs": docs}
+    data_js = json.dumps(data, ensure_ascii=False).replace("</", "<\\/")
     lane_boxes = " ".join(f'<label><input type="checkbox" data-lane="{lid}" checked> {html.escape(label)}</label>' for lid, label, _ in LANES)
     page = f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{html.escape(title)}</title>
@@ -174,7 +181,7 @@ def render(out_dir: pathlib.Path, title: str | None = None) -> pathlib.Path:
 <div class="wrap"><div class="labels"></div><div class="chart"></div></div>
 <div class="legend">bar: a state or course, arrow: ongoing, dotted lead-in: start unknown · circle: a dated event · diamond: planned, no evidence of completion · hollow: negated · dashed: hedged · faint: low-authority source · white ticks: each document that states it · click a mark for its evidence</div>
 <div id="panel"></div>
-<script>window.__theograph = {json.dumps(data, ensure_ascii=False).replace("</", "<\\/")};</script>
+<script>window.__theograph = {data_js};</script>
 <script>{JS}</script>
 </body></html>"""
     out = out_dir / "theograph.html"
