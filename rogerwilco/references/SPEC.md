@@ -175,6 +175,8 @@ Encoding rules: integers are JSON numbers; lists are JSON arrays; `Y`/`N` are JS
 
 A profile is a JSON file that extends the core for a domain. It may add enum values to `ask` and `why`, add new enums, add slots (with the types they apply to and whether required), and name agents. It may not remove or redefine anything in the core.
 
+Slot types: `token` (no spaces), `ref` (an item reference), `enum:<name>`, `list:<type>` (joined with `+`), `int:<lo>-<hi>`, `date` (YYYYMMDD), `days`, `bool` (Y or N), `money` (two decimals, no separators), `num` (a number as written, or two numbers with a slash such as a blood pressure, units in their own slot), `msgid`, `agent`.
+
 ```json
 {"profile":"pform","version":"0.1","extends":"RW1",
  "enums":{"stage":{"DIA":"diagnose","REV":"review","OPT":"options","DEC":"decide","ACT":"action","DONE":"done"}},

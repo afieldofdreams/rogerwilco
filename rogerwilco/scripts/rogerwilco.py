@@ -86,6 +86,8 @@ def load_profile(name: str | None) -> dict:
         spec["agents"] = set(p["agents"]) | {"human"}
     if p.get("item_examples"):
         spec["item_examples"] = list(p["item_examples"])
+    if p.get("item_kinds"):
+        spec["item_kinds"] = dict(p["item_kinds"])
     if p.get("asks_used"):
         spec["asks_used"] = list(p["asks_used"])
     return spec
@@ -126,6 +128,10 @@ def _check_value(spec: dict, key: str, typ: str, raw: str, errors: list):
     if typ == "money":
         if not re.fullmatch(r"-?\d+\.\d{2}", raw):
             errors.append(f"{key}={raw}: money is digits with exactly two decimals, no separators, e.g. 5400.00")
+        return raw
+    if typ == "num":
+        if not re.fullmatch(r"-?\d+(\.\d+)?(/\d+(\.\d+)?)?", raw):
+            errors.append(f"{key}={raw}: num is a number as written (7.2, 148/88), no units, no separators")
         return raw
     if typ == "bool":
         if raw not in ("Y", "N"):
@@ -564,6 +570,10 @@ def legend(profile: str | None = None, lean: bool = False) -> str:
             line += " Profile slots: " + "; ".join(f"{k}={v} ({spec['slots'][k]})" for k, v in spec["slot_desc"].items()) + "."
         if any(t == "money" for t in spec["slots"].values()):
             line += " money = digits with two decimals, no separators (5400.00)."
+        if any(t == "num" for t in spec["slots"].values()):
+            line += " num = a number as written, or two numbers with a slash (7.2, 148/88); units go in their own slot."
+        if spec.get("item_kinds"):
+            line += " item is <kind>:<concept>; kinds: " + ", ".join(f"{k}={v}" for k, v in spec["item_kinds"].items()) + "."
         if spec.get("item_examples"):
             line += " item examples: " + ", ".join(spec["item_examples"]) + "."
         out.append(line)
