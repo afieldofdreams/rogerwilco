@@ -16,6 +16,7 @@ PAGES = {
     "wire-study": ROOT / "research" / "wire-study" / "report.html",
     "pilot": ROOT / "research" / "pilot" / "report.html",
     "month-end": ROOT / "research" / "month-end" / "results" / "report.html",
+    "translation": ROOT / "research" / "translation" / "report.html",
 }
 NAV = ('<nav class="rw-nav" aria-label="Site"><a href="/">rogerwilco</a> <span aria-hidden="true">/</span> '
        '<a href="/research">research</a></nav>')

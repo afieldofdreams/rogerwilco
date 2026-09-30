@@ -193,6 +193,8 @@ Slots a profile adds may carry `desc`, which the legend prints.
 
 A profile may make the lines the record. The pay profile adds `src` (`list:token`: `email:7`, `bank:20260918`, `po:PO-1044`), `net` and `vat`, and a `translation` note that a channel enforces: every `ST` about a source document carries `src=`, an invoice line carries `amt cur kind`, and net plus VAT must equal the amount when all three are given. Under that rule the agent at the edge translates each source document once into one line, every fact in a slot and a pointer back to the evidence, and no agent writes a working file to restate what the lines already carry. In the month-end study this cut the files the agents pointed each other at from 22k tokens a run to under 2k, with the extractor's lines carrying every checked fact and the outcome unchanged.
 
+The `clin` profile applies the same rule to clinical documents: one `ST` line per statement, `item=<kind>:<concept>`, `act pol cert subj time` required, values in typed slots, one `src=doc:<id>#l<n>` and the verbatim quote as the tail, checked against the document by the channel. The translation study (research/translation) measures it: a strong model found 99.7% of the gold assertions with 99% citing the exact words; the record costs about 60 tokens an assertion, of which the per-line envelope is 28%, so a record form that states the envelope once per block is the next revision.
+
 The legend a model needs is generated from the core plus the profile (`scripts/rogerwilco.py legend --profile pay`). `--lean` drops the comprehension-readback keys and the unused core asks for teams that use envelope echo only: about 1,000 tokens with the pay profile against 1,360 for the full legend.
 
 ## 8. Exchanges

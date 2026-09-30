@@ -7,6 +7,7 @@ Three studies behind the protocol, each with its corpus, harness, raw logs and a
 | Wire study | Does a closed-vocabulary line beat English, JSON, glyphs or a positional form on tokens, round trip and decision parity? 240 synthetic handoffs, five formats, two models. | `wire-study/` | `wire-study/report.html` |
 | Readback pilot | Does a comprehension readback catch misread briefs before the work is done, and at what cost in tokens and false alarms? 36 trials, planted faults, blind grading. | `pilot/` | `pilot/report.html` |
 | Month-end close | Do typed lines cut inter-agent traffic, keep the human's read load down and bring the human in exactly when policy says, in a four-agent accounts-payable run with planted events? 28 runs: prose, PACT-style prose, disciplined prose (the same rules without the syntax), lines, lines with full readback, lines as the record (no working files, one line per source document with a `src=` pointer), lines and disciplined prose on Haiku, and an adversarial scenario with an injected instruction and a wrong answer from the principal. | `month-end/` | `month-end/results/report.html` |
+| Translation | Can a clinical document become one assertion line per statement (kind, act, polarity, certainty, subject, time, values, one source pointer, the verbatim quote), completely, accurately and repeatably? 144 translations of twelve synthetic documents against 422 gold assertions: lines and JSON, Sonnet and Haiku, three runs each, every output gated on provenance. | `translation/` | `translation/report.html` |
 
 ## Naming
 

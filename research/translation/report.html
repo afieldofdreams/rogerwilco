@@ -1,0 +1,195 @@
+<title>Translation Study Results</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: single reading column for the argument, a wider well for tables and the two bar charts; same system as the other results pages. */
+:root{
+  --paper:#F6F7F9; --ink:#171A1F; --muted:#5B6470; --accent:#1E5A6E; --warn:#9A5B12;
+  --rule:#D6DAE0; --well:#ECEFF3; --good:#2F6B3A; --bar:#1E5A6E; --barbase:#B9C3CC; --bar2:#7FA8B5;
+  --serif:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono:"IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#14171B; --ink:#E6E8EB; --muted:#9AA3AE; --accent:#63B3C7; --warn:#D9A054;
+    --rule:#2B3138; --well:#1D2126; --good:#7CC48A; --bar:#63B3C7; --barbase:#3A434D; --bar2:#3E7A8A; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#14171B; --ink:#E6E8EB; --muted:#9AA3AE; --accent:#63B3C7; --warn:#D9A054;
+  --rule:#2B3138; --well:#1D2126; --good:#7CC48A; --bar:#63B3C7; --barbase:#3A434D; --bar2:#3E7A8A; color-scheme:dark;
+}
+body{background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.55;padding-inline:16px;padding-block:32px 80px;margin:0}
+main{max-width:70ch;margin-inline:auto}
+.wide{max-width:960px;margin-inline:auto}
+h1,h2,h3{font-weight:600;line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:2.1rem;letter-spacing:-0.01em}
+h2{font-size:1.35rem;margin-top:2.6rem;padding-top:1.2rem;border-top:1px solid var(--rule)}
+h3{font-size:1.05rem;margin-top:1.6rem}
+p{margin:0.9rem 0}
+.mast{font-family:var(--mono);font-size:0.78rem;color:var(--muted);letter-spacing:0.04em;text-transform:uppercase;display:flex;flex-wrap:wrap;gap:0.4rem 1.4rem;margin-bottom:1.2rem}
+.lede{font-size:1.12rem}
+.decision{background:var(--well);border-left:3px solid var(--accent);padding:0.9rem 1.1rem;margin:1.4rem 0}
+.decision p{margin:0.45rem 0}
+.decision strong{color:var(--accent)}
+code,pre{font-family:var(--mono);font-size:0.84rem}
+pre{background:var(--well);padding:0.8rem 1rem;overflow-x:auto;margin:0.8rem 0;line-height:1.5}
+table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:0.8rem;margin:0.8rem 0;font-variant-numeric:tabular-nums}
+th,td{padding:0.45rem 0.55rem;border-bottom:1px solid var(--rule);text-align:right;vertical-align:top}
+th:first-child,td:first-child{text-align:left}
+td{white-space:nowrap}
+th{color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:0.05em;font-size:0.7rem}
+.tw{overflow-x:auto}
+caption{caption-side:bottom;text-align:left;font-family:var(--serif);font-size:0.9rem;color:var(--muted);padding-top:0.5rem}
+.ok{color:var(--good)}
+.bad{color:var(--warn);font-weight:500}
+ol.findings{padding-left:1.4rem;margin:0.6rem 0}
+ol.findings li{margin:0.7rem 0}
+ul{padding-left:1.3rem}
+li{margin:0.35rem 0}
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.2rem;margin:1rem 0}
+.chart{min-width:0}
+.chart h3{margin-top:0.4rem;font-size:0.95rem}
+.chart svg{width:100%;height:auto;display:block;font-family:var(--mono);font-size:12px}
+.chart .lab{fill:var(--ink)} .chart .axis{fill:var(--muted)} .chart .bar{fill:var(--bar)} .chart .base{fill:var(--barbase)} .chart .alt{fill:var(--bar2)}
+.foot{font-family:var(--mono);font-size:0.76rem;color:var(--muted);margin-top:3rem;border-top:1px solid var(--rule);padding-top:0.8rem}
+@media (max-width:520px){ body{font-size:16px} h1{font-size:1.7rem} }
+</style>
+
+<main>
+<div class="mast"><span>Study 4 of 4</span><span>30 Sep 2026</span><span>Croxio Ltd</span><span>144 translations · 12 documents · 2 forms · 2 models · 3 runs</span></div>
+<h1>Translation: can a clinical document become lines that are complete, accurate, traceable and the same every time?</h1>
+<p class="lede">The month-end study ended with the lines replacing the working files: every fact once, in a slot, with a pointer to its source. This study asks whether that holds where extraction is hard. Twelve synthetic clinical documents, 422 hand-annotated assertions with the hard cases built in (negation, hedging, conditionals, family history, history against the present, tables, abbreviations, a correction, a planted instruction), translated twelve times each: as rogerwilco lines and as JSON objects with the same vocabulary, by Sonnet and by Haiku, three runs of each. A gate refuses any line whose quote is not in the document at the place it cites.</p>
+
+<div class="decision">
+<p><strong>Result.</strong> With Sonnet the lines are the record. 99.7% of the gold assertions were found (four misses in 36 document translations), 98.7% of the lines were gold assertions, 88% of the matched lines were exact on every attribute and value, and 99% of them cited the exact words. Nothing was invented: the gate makes a line without words behind it impossible, so the 16 extras across 36 translations are restatements and out-of-scope sentences, not facts. The correction in document 4 came back linked to the line it replaces with <code>re=</code> in every run, and the instruction planted in document 5 was ignored in every run. Across three runs, 401 of 404 assertions were found every time, 92% with the same attributes and 89% identical to the value.</p>
+<p><strong>What the gate did.</strong> Sonnet needed it for nothing: 72 first attempts, zero refusals. Haiku needed it for everything: 72 first attempts, 70 refused, five to six problems per document, paraphrased quotes above all (250 of the 424 refusals), then invented kinds, units in <code>res=</code>, free text in typed fields. Two rounds with the gate's own error list got every document through. What the gate cannot see is judgement: after it, Haiku still marked patient-reported symptoms as observed 59 times, read the present as the past 104 times, found 93% of the assertions, rendered 66% exactly, and reproduced only 48% identically across runs. It followed the planted instruction in three of six runs. The strong model gets there on the rules; the weak one is made whole in form and left wrong in meaning, as in the month-end study.</p>
+<p><strong>What it costs.</strong> The record is not smaller than the note. Sixty tokens per assertion where the prose spends twelve: 5.6 times the source. Of every line, 28% is the message envelope (<code>RW1 ST extractor-12 from=extractor to=record p=clin</code>), 60% the assertion, 14% the quote. JSON with the same fields costs the same per assertion (63.6 against 60.5) and came out the same; the keyed body is 22% terser than the object and the envelope spends the difference. On Haiku the JSON form invited free text into typed fields (68 refusals for <code>when</code> with spaces, frequencies like <code>2-3 per week</code>); the line form did not (none).</p>
+<p><strong>Decision.</strong> The assertion line becomes the profile's second form, for the edge where documents enter a system, with the envelope stated once per block rather than on every line (a 28% saving, and a line back at 44 tokens). Concept names are the least repeatable part (80% identical across runs against 92% for the attributes), so the next version binds <code>item</code> to a terminology instead of a hyphenated phrase. And the claim to make is structure and provenance, not compression: a reader that selects by kind, item or time reads less than the note; one that needs the whole note should read the note.</p>
+</div>
+
+<h2>1. The design</h2>
+<p><strong>The assertion line.</strong> One <code>ST</code> line per statement a document makes about the patient: <code>item=&lt;kind&gt;:&lt;concept&gt;</code> with ten kinds (symptom or finding, diagnosis, medicine, procedure, measurement, allergy, referral, social, functional, follow-up); five attributes on every line, <code>act</code> (observed, reported, assessed, ordered, done, prescribed, planned, advised), <code>pol</code> (affirmed or negated), <code>cert</code> (certain, possible, conditional, hypothetical), <code>subj</code> (patient, family member, other), <code>time</code> (past, current, future); the values the statement carries (<code>res unit dose route freq chg site who when</code>); exactly one <code>src=doc:N#l&lt;a&gt;[-&lt;b&gt;]</code> naming the numbered line or lines the words are on; and the tail is the shortest verbatim quote from those lines that supports the statement, nothing else. The attribute set is the one clinical NLP has annotated for fifteen years (the i2b2 assertion classes, temporal relation to document time); the profile does not invent it, it makes it a closed vocabulary a validator can check. Never merge two statements into one line; a statement made twice gets one line; a statement that corrects an earlier one carries <code>re=</code>.</p>
+<p><strong>The gate.</strong> Every row must be a valid line under profile <code>clin</code> (the codec refuses an unknown code, a missing attribute, a value of the wrong type), the kind must be one of the ten, there must be exactly one <code>src</code> naming lines that exist, and the quote must be found in those lines, verbatim up to whitespace and case. A refused document goes back to the same model with the gate's error list and the instruction to write the whole file again.</p>
+<p><strong>The corpus.</strong> Twelve documents from a fictional hospital and practice: four clinic letters, three discharge summaries, two GP notes, a ward round, an ED clerking, a telephone review; 417 lines, 5,081 tokens in all. Every hard case was written in on purpose: negated findings (88 assertions), hedged diagnoses (10), conditionals (18), family history (8), historical against current (25), tables of results with admission and discharge columns (26), abbreviations (53), medicine changes (17), patient-reported against clinician-observed (8), a correction note that changes a dose (2), and a paragraph in document 5 telling "automated coding and extraction systems" to omit the allergy status and the medication section. The gold is 422 assertions (402 scored, 20 marked soft, which count when found and not against recall), each with its attributes, values, verbatim quote, line numbers, synonyms and case tags, every quote verified against the document by the compiler.</p>
+<p><strong>The arms.</strong> L: rogerwilco lines. J: one JSON object per assertion with the same keys and the same closed vocabulary, the control for the notation. Each arm on Sonnet and on Haiku, three runs each, twelve documents in each run, grouped three to an agent with a different grouping in every run. The scorer matches each line to a gold assertion by place in the document and by concept (synonyms allowed) or shared words, then checks every attribute and value; an unmatched line is redundant if the gold has the statement elsewhere, tolerated if it is a known out-of-scope sentence, and otherwise an extra. Repeatability is measured per gold assertion across the three runs of a cell.</p>
+
+<h2>2. Results</h2>
+<div class="wide">
+<div class="charts">
+<div class="chart"><h3>Gold assertions rendered identically in all three runs (of 404)</h3>
+<svg viewBox="0 0 460 150" role="img" aria-label="Bar chart of assertions rendered identically across three runs by cell">
+  <g class="axis"><line x1="120" y1="126" x2="420" y2="126" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="120" y="142" text-anchor="middle">0</text><text x="270" y="142" text-anchor="middle">50%</text><text x="420" y="142" text-anchor="middle">100%</text></g>
+  <g>
+    <text class="lab" x="110" y="26" text-anchor="end">lines, Sonnet</text><rect class="bar" x="120" y="14" width="265.8" height="18"/><text class="lab" x="391" y="28">89%</text>
+    <text class="lab" x="110" y="54" text-anchor="end">JSON, Sonnet</text><rect class="alt" x="120" y="42" width="259.2" height="18"/><text class="lab" x="384" y="56">86%</text>
+    <text class="lab" x="110" y="82" text-anchor="end">lines, Haiku</text><rect class="bar" x="120" y="70" width="144.9" height="18"/><text class="lab" x="270" y="84">48%</text>
+    <text class="lab" x="110" y="110" text-anchor="end">JSON, Haiku</text><rect class="alt" x="120" y="98" width="145.5" height="18"/><text class="lab" x="271" y="112">49%</text>
+  </g>
+</svg></div>
+<div class="chart"><h3>Gate refusals per document on the first attempt</h3>
+<svg viewBox="0 0 460 150" role="img" aria-label="Bar chart of first-attempt gate refusals per document by cell">
+  <g class="axis"><line x1="120" y1="126" x2="420" y2="126" stroke="currentColor" stroke-opacity="0.3"/>
+  <text x="120" y="142" text-anchor="middle">0</text><text x="270" y="142" text-anchor="middle">4</text><text x="420" y="142" text-anchor="middle">8</text></g>
+  <g>
+    <text class="lab" x="110" y="26" text-anchor="end">lines, Sonnet</text><rect class="bar" x="120" y="14" width="0" height="18"/><text class="lab" x="126" y="28">0</text>
+    <text class="lab" x="110" y="54" text-anchor="end">JSON, Sonnet</text><rect class="alt" x="120" y="42" width="0" height="18"/><text class="lab" x="126" y="56">0</text>
+    <text class="lab" x="110" y="82" text-anchor="end">lines, Haiku</text><rect class="bar" x="120" y="70" width="207.3" height="18"/><text class="lab" x="333" y="84">5.5</text>
+    <text class="lab" x="110" y="110" text-anchor="end">JSON, Haiku</text><rect class="alt" x="120" y="98" width="234.4" height="18"/><text class="lab" x="360" y="112">6.3</text>
+  </g>
+</svg></div>
+</div>
+<div class="tw">
+<table>
+<caption>Table 1. Per cell, 36 document translations each. Recall is scored gold assertions found; precision is lines that are gold assertions, after setting aside restatements and known out-of-scope sentences (the strict figure counts every line). Attribute columns are accuracy on matched lines. Values is the share of gold values present and right. Exact is matched lines right on every attribute and value. Quote and line are provenance: the quote covers the gold's words, and the cited lines are the gold's lines. Tokens are o200k counts of the output. First pass is documents the gate accepted at the first attempt. Identical is gold assertions rendered the same in all three runs, down to the values.</caption>
+<thead><tr><th>Cell</th><th>Recall</th><th>Precision (strict)</th><th>Kind</th><th>Act</th><th>Pol</th><th>Cert</th><th>Subj</th><th>Time</th><th>Values</th><th>Exact</th><th>Quote</th><th>Line</th><th>Tokens / doc</th><th>Per assertion</th><th>× source</th><th>First pass</th><th>Identical</th></tr></thead>
+<tbody>
+<tr><td>lines, Sonnet</td><td class="ok">0.997</td><td>0.987 (0.913)</td><td>0.990</td><td>0.956</td><td>0.991</td><td>0.995</td><td>0.999</td><td>0.949</td><td>0.966</td><td>0.884</td><td>0.993</td><td>0.987</td><td>2,376</td><td>62.4</td><td>5.6</td><td class="ok">36/36</td><td>0.886</td></tr>
+<tr><td>JSON, Sonnet</td><td class="ok">0.996</td><td>0.979 (0.901)</td><td>0.990</td><td>0.954</td><td>0.990</td><td>0.995</td><td>1.000</td><td>0.942</td><td>0.949</td><td>0.862</td><td>0.996</td><td>0.990</td><td>2,454</td><td>63.5</td><td>5.8</td><td class="ok">36/36</td><td>0.864</td></tr>
+<tr><td>lines, Haiku</td><td class="bad">0.927</td><td>0.991 (0.946)</td><td>0.953</td><td class="bad">0.872</td><td>0.972</td><td>0.984</td><td>0.995</td><td class="bad">0.861</td><td>0.887</td><td class="bad">0.657</td><td>0.995</td><td>0.918</td><td>2,131</td><td>62.6</td><td>5.0</td><td class="bad">0/36</td><td class="bad">0.483</td></tr>
+<tr><td>JSON, Haiku</td><td class="bad">0.939</td><td>0.990 (0.951)</td><td>0.939</td><td class="bad">0.881</td><td>0.972</td><td>0.989</td><td>0.996</td><td class="bad">0.859</td><td>0.913</td><td class="bad">0.662</td><td>0.992</td><td>0.863</td><td>2,195</td><td>63.9</td><td>5.2</td><td class="bad">2/36</td><td class="bad">0.485</td></tr>
+</tbody>
+</table>
+</div>
+<div class="tw">
+<table>
+<caption>Table 2. The hard cases: gold assertions carrying each tag, found and rendered exactly, summed over the three runs of a cell (found / exact, out of the count in brackets).</caption>
+<thead><tr><th>Cell</th><th>Negated (258)</th><th>Hedged (30)</th><th>Conditional (54)</th><th>Family (24)</th><th>History (75)</th><th>Table (78)</th><th>Abbreviation (159)</th><th>Medicine change (51)</th><th>Reported by whom (24)</th><th>Allergy (9)</th><th>Correction (6)</th><th>Planted instruction (6)</th></tr></thead>
+<tbody>
+<tr><td>lines, Sonnet</td><td>257 / 223</td><td>30 / 24</td><td>54 / 43</td><td>24 / 24</td><td>74 / 55</td><td>78 / 78</td><td>158 / 142</td><td>51 / 47</td><td>24 / 18</td><td>9 / 9</td><td>6 / 6</td><td>6 / 6</td></tr>
+<tr><td>JSON, Sonnet</td><td>258 / 219</td><td>30 / 26</td><td>54 / 40</td><td>24 / 24</td><td>75 / 54</td><td>77 / 76</td><td>159 / 140</td><td>51 / 47</td><td>24 / 19</td><td>9 / 9</td><td>6 / 6</td><td>6 / 6</td></tr>
+<tr><td>lines, Haiku</td><td>243 / 157</td><td>25 / 24</td><td>44 / 21</td><td>24 / 11</td><td>72 / 33</td><td>72 / 67</td><td>147 / 113</td><td>50 / 28</td><td>21 / 11</td><td>6 / 2</td><td>6 / 4</td><td class="bad">2 / 1</td></tr>
+<tr><td>JSON, Haiku</td><td>247 / 166</td><td>30 / 24</td><td>43 / 20</td><td>24 / 4</td><td>70 / 32</td><td>74 / 66</td><td>153 / 113</td><td>50 / 27</td><td>20 / 8</td><td>9 / 1</td><td>6 / 4</td><td class="bad">5 / 2</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<h3>What the lines look like</h3>
+<p>Document 4, the correction note. The original prescription and the correction, from Sonnet's first run; the correction carries <code>re=</code> to the line it replaces and the record keeps both:</p>
+<pre>RW1 ST extractor-20 from=extractor to=record p=clin item=med:omeprazole act=RX
+  pol=POS cert=CERT subj=PT time=CUR dose=20mg freq=OD chg=START when=7d
+  src=doc:4#l22 // for seven days: omeprazole 20 mg once daily
+RW1 ST extractor-32 re=extractor-20 from=extractor to=record p=clin
+  item=med:omeprazole act=RX pol=POS cert=CERT subj=PT time=CUR dose=20mg
+  freq=BD chg=START when=7d src=doc:4#l36-37 // the omeprazole dose in the
+  paragraph above should read 20 mg twice daily for the seven days</pre>
+<p>Document 1, family history and a negated prescription, same run:</p>
+<pre>RW1 ST extractor-17 from=extractor to=record p=clin item=dx:myocardial-infarction
+  act=RPT pol=POS cert=CERT subj=FAM time=PAST when=age-58 src=doc:1#l21
+  // His father had a myocardial infarction at the age of 58
+RW1 ST extractor-18 from=extractor to=record p=clin item=dx:sudden-cardiac-death
+  act=RPT pol=NEG cert=CERT subj=FAM time=PAST src=doc:1#l21-22
+  // no family history of sudden cardiac death
+RW1 ST extractor-36 from=extractor to=record p=clin item=med:antiarrhythmic
+  act=RX pol=NEG cert=CERT subj=PT time=CUR chg=START src=doc:1#l32
+  // I have not started an antiarrhythmic</pre>
+<p>Document 7, a medicine withheld and a conditional plan to start it, two statements in one sentence, two lines:</p>
+<pre>RW1 ST extractor-28 from=extractor to=record p=clin item=med:spironolactone
+  act=RX pol=POS cert=CERT subj=PT time=CUR chg=HOLD src=doc:7#l31
+  // spironolactone withheld until the potassium is rechecked
+RW1 ST extractor-29 from=extractor to=record p=clin item=med:spironolactone
+  act=PLAN pol=POS cert=COND subj=PT time=FUT dose=25mg freq=OD chg=START
+  src=doc:7#l31-32 // if potassium is 5.0 or below at that check, start
+  spironolactone 25 mg once daily</pre>
+<p>And what the gate refused on Haiku's first attempt at document 5, verbatim from its error list:</p>
+<pre>row 21: the quote is not found verbatim in doc:5#l23: 'CRP 210 on admission'
+row 30: the quote is not found verbatim in doc:5#l29-31: 'oral co-amoxiclav 625 mg
+  three times daily to complete seven days, finishing 10 '
+row 40: ST requires act
+row 35: item='adv:empagliflozin-risks': item is &lt;kind&gt;:&lt;concept&gt; with kind one
+  of sym dx med proc meas alg ref soc func fu</pre>
+
+<h2>3. Findings</h2>
+<ol class="findings">
+<li><strong>With a strong model the lines are complete and accurate, and nothing is invented.</strong> 99.7% recall and 98.7% precision over 36 translations, four misses in 1,206 scored assertions (a spirometry-done line twice, a chest X-ray date, "no previous similar episodes"), 88% of lines exact on every attribute and value. The gate is what makes "nothing invented" a statement rather than a hope: a line cannot pass without its words being in the document at the place it cites, so an extra can be a restatement, a finer split, or an out-of-scope sentence ("the pharmacy has been informed"), but not a fact. The 16 extras in 36 translations are all of those kinds.</li>
+<li><strong>Provenance holds, and it is cheap.</strong> 99% of Sonnet's lines cite the gold's exact lines and quote its words; the quote costs 8 tokens a line because the shortest supporting span is short. The correction in document 4 was linked to the line it replaces in all twelve Sonnet and Haiku runs. The paragraph in document 5 addressed to automated systems was ignored by Sonnet in all six runs (allergy and medication lines present, nothing citing the paragraph) and followed by Haiku in three of six.</li>
+<li><strong>Repeatable in structure, less so in names.</strong> Three Sonnet runs found 401 of 404 assertions every time and rendered 358 identically down to the values (89%); pairwise overlap of the found sets was 0.995. The attributes agreed in 92% of assertions. The concept name agreed in 80%: <code>sym:exertional-chest-pain</code> against <code>sym:chest-pain</code>, <code>proc:ambulatory-ecg-monitor</code> against <code>proc:holter-monitor</code>. The scorer's synonym lists absorb this; a record should not have to. The free-text concept is the least stable part of the line and the part a terminology (SNOMED CT, dm+d, LOINC) already exists to fix.</li>
+<li><strong>Where Sonnet and the gold disagree, it is convention, not reading.</strong> The 5% of attribute disagreements concentrate on two axes: <code>act</code>, where a finding written "he reports no chest pain" is RPT to the gold and OBS to the model 13 times, a chest X-ray "showed" is DONE or OBS, "treated with nitrofurantoin" is RX or DONE; and <code>time</code>, where results "from last week" and values "on admission" are CUR or PAST (49 disagreements each way). Clinical annotation has always had this problem, and the fix is the same: guidelines with worked examples, not a smarter model. The rules in the prompt were 12 sentences; the disagreements map onto the sentences that were missing.</li>
+<li><strong>The weak model is made whole in form and left wrong in meaning.</strong> Haiku failed the gate on 70 of 72 first attempts, with 5.5 to 6.3 problems per document: 250 paraphrased or misplaced quotes ("CRP 210 on admission" for a table cell; a sentence that wraps cited on one line), 53 invented kinds (<code>adv:</code>, <code>ADV:</code>, <code>PLAN:</code>), 36 values in <code>res</code> that were words (<code>res=stable</code>, <code>res=rash</code>), and in JSON 68 dates with spaces. Two rounds with the gate's list fixed all of it. What remained is what a validator cannot see: in the line runs, patient-reported symptoms marked as observed (59 times), the present marked as the past (104), a plan marked as an order (22); recall 93%, exact lines 66%, identical across runs 48%, and the planted instruction obeyed half the time. The month-end study found the same shape: the notation keeps a weak model's output whole; it does not make it right.</li>
+<li><strong>Lines and JSON came out the same and cost the same.</strong> Recall, precision, attributes, exactness and repeatability are within noise between the two forms on both models. Per assertion the line costs 60.5 tokens and the object 63.6. The line's body (concept, attributes, values, source) is 36 tokens against 46 for the object's fields, 22% terser, and the envelope (<code>RW1 ST extractor-12 from=extractor to=record p=clin</code>, 17 tokens, the same on every line of a block) spends the saving. The one difference in behaviour was on Haiku: the JSON form invited free text into typed fields, 68 refusals for a <code>when</code> with spaces (<code>"when":"13 September 2026"</code>) and codes like <code>"freq":["2-3 per week"]</code>, where the line form, in which a space ends a value, produced no refusal of that kind.</li>
+<li><strong>The record is bigger than the note.</strong> 2,376 tokens of lines for a 423-token document, 5.6 times the source, 60 tokens per assertion where the prose spends 12. The month-end inbox shrank to 57 to 79% of its size as lines because emails are mostly boilerplate; clinical prose is not. What the lines buy is not compression but structure and provenance: a reader that wants the medicines, or everything current, or every negated finding, reads a few hundred tokens instead of the note; a reader that needs the whole note reads it cheaper as prose. The envelope is the one avoidable cost: stated once per block it takes a line from 60 tokens to 44.</li>
+<li><strong>A harness finding that matters in production.</strong> Asked to write a hundred near-identical lines in one call, Sonnet fell into a repetition loop and hit the 64,000-token output ceiling in 17 of 54 calls (31%), in both forms; Haiku never did. One document per write avoided it. Any pipeline that emits assertion lines at scale should chunk by document.</li>
+</ol>
+
+<h2>4. What this does not show</h2>
+<ul>
+<li><strong>One annotator, one set of conventions.</strong> The gold was written by the same author as the rules, and finding 4 shows where its conventions are contestable. A second annotator and an agreement figure are the next step before any accuracy number here is quoted as a property of the method rather than of this gold.</li>
+<li><strong>Twelve synthetic documents.</strong> Written to contain the hard cases, but clean: typed, spelled, with the figures in the body, no scans, no attachments, no letters that contradict each other. Real records will be worse, and nothing from a real record is in this repository or will be.</li>
+<li><strong>The scorer is heuristic.</strong> Matching by place and concept similarity with synonym lists; a different similarity threshold moves the precision figure by a point or two. The per-document match tables are in the run folders for anyone who wants to disagree with a match.</li>
+<li><strong>Two models from one vendor.</strong> Sonnet and Haiku only, three runs each. The Haiku fix rounds were driven by the gate's own error text, but the second round in a few cases named the right line numbers, which is more help than a production gate would give; the first-attempt figures are the clean ones.</li>
+<li><strong>The harness changed mid-study.</strong> Sonnet's output loop forced a switch from one file per group of three documents to one file per document; four Sonnet groups had already completed in the first form. The quote check was made case-insensitive after the first Haiku results and applied to every output. Both are recorded in the tools and the histories.</li>
+<li><strong>Compute was not the question.</strong> Each three-document call cost the agent 130k to 180k tokens on Sonnet and 70k to 100k on Haiku, most of it the harness re-reading its own context; the extraction itself is a few thousand tokens in and out.</li>
+</ul>
+
+<h2>5. Next</h2>
+<ul>
+<li>A record form for the profile: the envelope once per block, the assertion lines beneath it, the same validator. Measure the 28%.</li>
+<li>Bind <code>item</code> to a terminology and measure repeatability of the code instead of the name; the 80% is the number to beat.</li>
+<li>Write the conventions the disagreements exposed into the profile's translation note with worked examples, then re-run Sonnet and see whether the 5% closes.</li>
+<li>The economic test the framing needs: a set of questions asked of the notes and asked of the lines (which medicines is this patient on, what is current, what is negated, what changed at this encounter), scored for accuracy and tokens read. That is where "cheaper inference over the top" is either true or not.</li>
+<li>A second annotator on the same twelve documents.</li>
+</ul>
+
+<div class="foot">Corpus, gold, prompts, every raw output and gate verdict, scores: research/translation in the rogerwilco repository. Profile: rogerwilco/profiles/clin.json. Summary in results/summary.json. Everything is synthetic; no real person, organisation or record is represented.</div>
+</main>
