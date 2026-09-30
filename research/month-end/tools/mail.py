@@ -6,7 +6,7 @@ Agent commands (run from the run directory):
   python3 mail.py send --from <agent> --to <agent> -m "<text>"     send a message
   python3 mail.py send --from <agent> --to <agent> --file <path>   send a message read from a file
   python3 mail.py open --me <agent> <path>                 print an artifact (counts as reading it)
-  python3 mail.py check-echo "<original line>" "<echo line>"       (arms L/R) verify an echo/readback
+  python3 mail.py check-echo "<original line>" "<echo line>"       (arms L/R/T) verify an echo/readback
   python3 mail.py validate "<line>"                        (arms L/R) check a line before sending
   python3 mail.py make-rb "<HO line>" <your-id>            (arms L/R) build a readback with h= digest
 
@@ -24,6 +24,7 @@ RUN = pathlib.Path(__file__).resolve().parent
 LOG = RUN / "mail" / "log.jsonl"
 CFG = json.loads((RUN / "run.json").read_text())
 AGENTS = {"extractor", "reconciler", "scheduler", "auditor", "human"}
+LINE_ARMS = ("L", "R", "T")   # arms whose messages are rogerwilco lines and are validated on send
 FORMCORE = pathlib.Path(CFG.get("rogerwilco") or (RUN.parents[3] / "rogerwilco" / "scripts" / "rogerwilco.py"))
 
 try:
@@ -59,7 +60,7 @@ def _fc(*args: str) -> tuple[int, str]:
 
 
 def _validate_lines(body: str, frm: str, to: str) -> tuple[list[dict], list[str]]:
-    """Arms L/R: every non-empty line must be a valid RW1 line from `frm` to `to` carrying p=<profile>."""
+    """Arms L/R/T: every non-empty line must be a valid RW1 line from `frm` to `to` carrying p=<profile>."""
     profile = CFG.get("profile", "pay")
     msgs, errors = [], []
     lines = [l for l in body.splitlines() if l.strip()]
@@ -85,6 +86,22 @@ def _validate_lines(body: str, frm: str, to: str) -> tuple[list[dict], list[str]
         if msg["slots"].get("p") != profile:
             errors.append(f"line {i}: missing p={profile}")
         msgs.append(msg)
+    # translation gate (lines are the artefact): every ST about a source document carries src=;
+    # an invoice line carries amt cur kind; net + vat = amt when all three are present and kind=GROSS
+    if CFG.get("translate"):
+        from decimal import Decimal
+        for i, m in enumerate(msgs, 1):
+            sl = m["slots"]
+            if m["type"] == "ST" and (m.get("item") or "").startswith(("inv:", "sup:", "doc:")) and m["from"] == "extractor":
+                if not sl.get("src"):
+                    errors.append(f"line {i}: a line that states a source document carries src=email:<n> (the message number in the inbox export)")
+            if m["type"] == "ST" and (m.get("item") or "").startswith("inv:") and not ({"VOID", "STMT", "NOISE"} & set(sl.get("flag") or [])):
+                for k in ("amt", "cur", "kind"):
+                    if k not in sl:
+                        errors.append(f"line {i}: an invoice line needs {k}=")
+            if all(k in sl for k in ("net", "vat", "amt")) and sl.get("kind") == "GROSS":
+                if Decimal(sl["net"]) + Decimal(sl["vat"]) != Decimal(sl["amt"]):
+                    errors.append(f"line {i}: net {sl['net']} + vat {sl['vat']} is not amt {sl['amt']}")
     # ids unique in the conversation: across this batch and the log
     used = {mid for r in _records() if r.get("kind") == "msg" for mid in r.get("ids", [])}
     seen_ids = set()
@@ -109,7 +126,7 @@ def cmd_send(a: argparse.Namespace) -> int:
         print("REJECTED: empty message"); return 2
     rec = {"kind": "msg", "seq": _next_seq(), "from": frm, "to": to, "body": body, "tokens": ntok(body),
            "chars": len(body), "read": False}
-    if CFG["arm"] in ("L", "R"):
+    if CFG["arm"] in LINE_ARMS:
         msgs, errors = _validate_lines(body, frm, to)
         if errors:
             rec.update({"kind": "rejected", "errors": errors})

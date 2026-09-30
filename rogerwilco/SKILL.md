@@ -9,17 +9,17 @@ Roger: received. Wilco: understood and will comply. Agents hand work to each oth
 
 ## The discipline comes first
 
-Seven rules carry most of the value, and a team can adopt them in plain English before it adopts the syntax. In a 23-run study, prose written under these rules cut inter-agent traffic to a third of free prose and the principal's reading to 40%; the line syntax matched that and added verification.
+Seven rules carry most of the value, and a team can adopt them in plain English before it adopts the syntax. In a 28-run study, prose written under these rules cut inter-agent traffic to a third of free prose and the principal's reading to 40%; the line syntax matched that and added verification, and when the lines replaced the working files it cut the files the agents pass around from 22k tokens a run to under 2k.
 
 1. **Facts once, in a fixed shape.** Each item on its own line with its identifiers, amounts and your decision.
-2. **Reasoning by reference.** Anything longer than a short paragraph goes in a file; the message carries the path, not a paraphrase.
+2. **Reasoning by reference, facts by translation.** Anything longer than a short paragraph goes in a file; the message carries the path, not a paraphrase. A source document (an email, an invoice, a ticket) is translated once, at the edge, into one line that carries every fact in a slot and points back at the source (`src=email:7`); when the lines carry the facts, nobody writes a working file to restate them.
 3. **State by delta.** Once an item has been reported, mention it again only when something about it changed.
 4. **Acknowledge a handoff before you start.** Say what you received and the deadline.
 5. **Escalate as a question with a closed list of options.** The item, the amounts, the decision needed, and the answers the human may give. Do not escalate what the policy leaves to you.
 6. **Ask, answer, finish.** Bounded questions, direct answers, an explicit done.
 7. **No preamble, no recap.**
 
-The lines below are those rules made checkable by code: a validator refuses a malformed message, a closed vocabulary refuses an invented option, a digest proves a handoff arrived intact. Use them wherever a smaller or mixed set of models is doing the work, before an irreversible step, and wherever the log will be read by someone who has to trust it.
+The lines below are those rules made checkable by code: a validator refuses a malformed message, a closed vocabulary refuses an invented option, a digest proves a handoff arrived intact. Use them wherever a smaller or mixed set of models is doing the work, before an irreversible step, wherever the log will be read by someone who has to trust it, and at the edge where source documents enter the system.
 
 ## When to use
 

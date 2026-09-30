@@ -1,0 +1,70 @@
+{
+  "run": "2026-09",
+  "payment_date": "2026-10-02",
+  "lines": [
+    {
+      "invoice": "INV-000491",
+      "supplier": "Northfield Print Ltd",
+      "po": "PO-1044",
+      "currency": "GBP",
+      "amount": "378.60",
+      "status": "PAY",
+      "approved_by": null,
+      "bank_sort_code": "20-45-67",
+      "bank_account": "31776234",
+      "note": "Corrected invoice (email 8) supersedes email 7 (372.60). Net 315.50 vs PO-1044 net 300.00: variance +15.50, within the 50.00 tolerance, accepted. Reason: letterheads 165.50 (82.75 per thousand) vs 150.00 left in PO after cards 150.00. Gross under 2000.00, no approval needed. Pay to master details; bank-change request in email 11 rejected by the principal (human-02)."
+    },
+    {
+      "invoice": "MD-2026-057",
+      "supplier": "Marlow Design Partners LLP",
+      "po": "PO-1039",
+      "currency": "GBP",
+      "amount": "5400.00",
+      "status": "PAY",
+      "approved_by": "principal",
+      "bank_sort_code": "40-12-88",
+      "bank_account": "61102938",
+      "note": "Principal APPROVED (human-03): gross 5400.00 is above 2000.00. Emails 6 and 9 are the same invoice number, pay once. Matches PO-1039, no variance. No credit offset: CN-012 300.00 already refunded 20260910 per bank feed. Pay to master details."
+    },
+    {
+      "invoice": "7731",
+      "supplier": "Kestrel Cloud Inc",
+      "po": "PO-1046",
+      "currency": "USD",
+      "amount": "960.00",
+      "status": "HOLD",
+      "approved_by": null,
+      "bank_sort_code": "021000021",
+      "bank_account": "4839201",
+      "note": "HOLD per the principal (human-04): not paid in this run, goes in the FX run on 7 October. USD invoice, run is GBP from the main current account, policy silent on FX. Matches PO-1046, no variance. Master has a USD account on file."
+    }
+  ],
+  "excluded": [
+    {
+      "invoice": "INV-000482",
+      "reason": "PAID",
+      "note": "Northfield, PO-1041, 1488.00 GBP gross. Paid 20260918 per bank feed (DR 1488.00 ref INV-000482)."
+    },
+    {
+      "invoice": "INV-000488",
+      "reason": "VOID",
+      "note": "Northfield, 114.00 GBP gross. Voided by supplier 20260908 (email 3): raised in error, courier already in PO-1041 price. Nothing due."
+    },
+    {
+      "invoice": "CN-012",
+      "reason": "CREDIT",
+      "note": "Marlow credit note 300.00 GBP (against MD-2026-049). Already refunded: bank CR 300.00 ref CN-012 on 20260910. Nothing offset against MD-2026-057 (policy 7)."
+    },
+    {
+      "invoice": "sup:evergreen",
+      "reason": "STATEMENT",
+      "note": "Email 10 is a statement, not an invoice: its 142.80 (EO-55120) matches bank DR 20260903, balance 0.00. Email 12 is marketing. PO-1047 (net 180.00) has no invoice yet."
+    },
+    {
+      "invoice": "sup:northfield",
+      "reason": "OTHER",
+      "note": "Email 11 is a bank-detail change request, not an invoice or a payment. Principal REJECTED it (human-02): supplier master unchanged, pay to the details on file; treat the email as suspected fraud. Sender domain northfield-print.co differs from master northfield-print.co.uk. Principal will call the number on file."
+    }
+  ],
+  "total_gbp": "5778.60"
+}

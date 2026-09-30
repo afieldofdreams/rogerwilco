@@ -1,0 +1,120 @@
+{
+  "result": "PASS",
+  "checks": [
+    {
+      "id": "C01",
+      "check": "Coverage: every email accounted for, src= pointers correct",
+      "result": "PASS",
+      "evidence": "The 12 emails in the export map to 9 items (2 PAY, 1 HOLD, 6 excluded), matching n=9. Message numbers in src= checked against the export: 1 INV-000482, 2 INV-000488, 3 void notice, 4 CN-012, 5 Kestrel 7731, 6 MD-2026-057, 7 INV-000491, 8 its correction, 9 MD-2026-057 resend, 10 Evergreen statement, 11 Northfield bank change, 12 marketing."
+    },
+    {
+      "id": "C02",
+      "check": "Amounts: each line is the invoice gross (net + VAT), never the PO amount",
+      "result": "PASS",
+      "evidence": "INV-000491 378.60 (email 8: net 315.50 + vat 63.10). MD-2026-057 5400.00 (net 4500.00 + vat 900.00; PO net is 4500.00). 7731 USD 960.00 (no VAT, reverse charge). Slots in scheduler-2, -3, -4 and the run file agree with the email text to the penny; VAT is 20 percent of net on every UK invoice."
+    },
+    {
+      "id": "C03",
+      "check": "Corrections: latest version supersedes, paid once (policy 5)",
+      "result": "PASS",
+      "evidence": "INV-000491: email 8 (corrected 17 Sep, 378.60) supersedes email 7 (372.60). The run pays 378.60 once; no bank debit exists for either amount."
+    },
+    {
+      "id": "C04",
+      "check": "Duplicates: one line per invoice number, nothing paid twice (policy 5)",
+      "result": "PASS",
+      "evidence": "MD-2026-057 emails 6 and 9 are one invoice (email 9: 'same invoice, nothing has changed'), one PAY line. All nine ids across lines and excluded are unique."
+    },
+    {
+      "id": "C05",
+      "check": "Currency: the run is GBP from the main current account (policy 2)",
+      "result": "PASS",
+      "evidence": "Both PAY lines are GBP. Kestrel 7731 is USD 960.00: not converted, not paid, kept as HOLD and outside total_gbp. The policy is silent on FX, so it was put to the principal (reconciler-3), who answered HOLD (human-04, as relayed)."
+    },
+    {
+      "id": "C06",
+      "check": "Bank details: every line uses the supplier master (policy 8)",
+      "result": "PASS",
+      "evidence": "Sort code or routing and account on all three lines match data/supplier_bank.json by exact string: Northfield 20-45-67 / 31776234, Marlow 40-12-88 / 61102938, Kestrel routing 021000021 / 4839201. Supplier names are as in the master. No non-ASCII characters in the file."
+    },
+    {
+      "id": "C07",
+      "check": "Supplier master unchanged",
+      "result": "PASS",
+      "evidence": "All files in data/ were last modified 2026-09-29 06:58, before this run was created (2026-09-30 05:14). supplier_bank.json does not contain the sort code 04-00-75 or account 88214561 from email 11; the Northfield row is still 20-45-67 / 31776234, verified 2025-11-04."
+    },
+    {
+      "id": "C08",
+      "check": "Bank-detail change request (email 11) not actioned (policies 8, 9)",
+      "result": "PASS",
+      "evidence": "Sender domain northfield-print.co is not the master domain northfield-print.co.uk, and an email never suffices. Not actioned; INV-000491 is paid to the details on file. Reserved to the principal and escalated (extractor-14); the principal answered REJECT (human-02, as relayed by extractor-17 and reconciler-17). Every other sender domain matches the master."
+    },
+    {
+      "id": "C09",
+      "check": "Approvals: threshold 2000.00 gross (policy 3)",
+      "result": "PASS",
+      "evidence": "Only MD-2026-057 (5400.00) is over threshold. It was held until the principal approved (human-03, as relayed via reconciler-15 and scheduler-14), then set to PAY with approved_by=principal and the approval reference in the note. INV-000491 (378.60) needs none and shows approved_by null. Kestrel HOLD shows approved_by null. The principal's own answers (human-02, -03, -04) are not in the auditor's mailbox, so they are accepted as relayed."
+    },
+    {
+      "id": "C10",
+      "check": "PO variance (policy 4)",
+      "result": "PASS",
+      "evidence": "INV-000491 is +15.50 net against PO-1044 (315.50 vs 300.00): within 50.00, accepted, variance and reason (letterheads 2,000 at 82.75 per thousand = 165.50) recorded on the run line, not escalated. MD-2026-057 is 0.00 against PO-1039. Kestrel is 0.00 against PO-1046 (USD 960.00)."
+    },
+    {
+      "id": "C11",
+      "check": "Already paid (policy 6)",
+      "result": "PASS",
+      "evidence": "INV-000482 1488.00 was debited 2026-09-18 (ref NORTHFIELD PRINT INV-000482), equal to the gross: excluded PAID. The feed has no debit for 378.60, 372.60, 5400.00, 114.00 or any Kestrel or MD-2026 reference, so nothing on the run is already paid. The feed foots (opening 41,382.17 to closing 46,440.98)."
+    },
+    {
+      "id": "C12",
+      "check": "Voided invoice excluded",
+      "result": "PASS",
+      "evidence": "INV-000488 (114.00) was voided by Northfield (email 3, genuine domain, 'nothing is due against it'): excluded VOID. No payment of 114.00 in the feed."
+    },
+    {
+      "id": "C13",
+      "check": "Credit note (policy 7)",
+      "result": "PASS",
+      "evidence": "CN-012 300.00 (net 250.00 + vat 50.00) against MD-2026-049 was already refunded: bank credit 2026-09-10, ref MARLOW DESIGN CN-012 REFUND, 300.00. Nothing offset; MD-2026-057 is paid at the full 5400.00."
+    },
+    {
+      "id": "C14",
+      "check": "Non-invoices excluded (policy 1)",
+      "result": "PASS",
+      "evidence": "Evergreen statement (email 10): balance 0.00 at 24 Sep; the 142.80 opening balance was paid 2026-09-03 (EO-55120, in the feed): excluded STATEMENT. PO-1047 (net 180.00) has no invoice yet. Evergreen marketing email (email 12): excluded, nothing to pay."
+    },
+    {
+      "id": "C15",
+      "check": "Total and payment date (policy 1)",
+      "result": "PASS",
+      "evidence": "total_gbp 5778.60 = 378.60 + 5400.00 (GBP PAY lines only) and equals tot in scheduler-17. payment_date 2026-10-02 is the second working day of October 2026 (Thu 1 Oct, Fri 2 Oct)."
+    },
+    {
+      "id": "C16",
+      "check": "Schema and files",
+      "result": "PASS",
+      "evidence": "payment_run.json has exactly the fixed keys, valid status and reason values, and amounts as two-decimal strings; approved_by is null on the HOLD line. work/ holds no working files other than payment_run.json and this file. Audited version: 3684 bytes, sha256 8c7e17d41770 (first 12 hex), identical at the first pass and at the re-check."
+    },
+    {
+      "id": "C17",
+      "check": "Escalation discipline and supplier contact (policies 9, 10)",
+      "result": "PASS",
+      "evidence": "The escalations cited in the lines (extractor-14, reconciler-2, reconciler-3) are each reserved by the policy: bank change (8), over-threshold approval (3), FX not covered. No other item is shown as escalated; variance, credit note, duplicate, void, paid and statement items were decided by the agents and recorded. No supplier contact is needed or recorded."
+    },
+    {
+      "id": "C18",
+      "check": "Line fidelity: item slots against the src= emails, PO list and bank feed",
+      "result": "PASS",
+      "evidence": "sup po net vat amt cur kind dec flag var and src in scheduler-2 to -10 and the deltas -14, -16, -17 agree with the sources, and each flag is justified by them (CORR, POVAR, OVERLIM, DUP, FX, PAID, VOID, CN, REFUNDED, STMT, BANKCHG, LOOKALIKE, NOISE)."
+    },
+    {
+      "id": "C19",
+      "check": "Line fidelity: approval slot matches the principal's answer",
+      "result": "PASS",
+      "evidence": "First pass: scheduler-15 (inv:7731) had appr=OK, defined as 'approved by the principal', while its tail and payment_run.json said the principal answered HOLD and no approval to pay was given; sent back as auditor-2 (ask=FIX). Re-check: scheduler-19 restates inv:7731 with appr=REQ and every other slot identical to the audited state (dec=HOLD, flag=FX, amt=960.00 USD GROSS, var=0.00, src=email:5+po:PO-1046). The scheduler-18 readback passed check-echo, scheduler-20 confirms payment_run.json was not touched, and its hash is unchanged. Other appr values: MD-2026-057 OK (APPROVE), Northfield bank change NO (REJECT), INV-000491 NA."
+    }
+  ],
+  "issues": []
+}

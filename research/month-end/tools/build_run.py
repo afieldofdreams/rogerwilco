@@ -13,7 +13,7 @@ SKILL = pathlib.Path(__file__).resolve().parents[3] / "rogerwilco"
 FORMCORE = SKILL / "scripts" / "rogerwilco.py"
 AGENTS = ["extractor", "reconciler", "scheduler", "auditor"]
 
-ARM_NAMES = {"A": "prose", "P": "pact", "D": "disciplined-prose", "L": "lines", "R": "lines-full-readback"}
+ARM_NAMES = {"A": "prose", "P": "pact", "D": "disciplined-prose", "L": "lines", "R": "lines-full-readback", "T": "lines-as-artefact"}
 
 ROLE = {
     "extractor": dict(
@@ -119,6 +119,18 @@ Team rules:
 7. Every line carries `p=pay`. Every reply carries `re=`. Unknown code: `UN why=UNK`.
 """
 
+RULES_T = RULES_L.replace(
+    "2. **Reasoning by reference.** Anything that does not fit the 300-character tail goes in a file under `work/` and is referenced with `art=file:work/<name>`. The receiver reads it with `mail.py open`. Do not paraphrase artifacts in the tail.",
+    "2. **The lines are the artefact.** Translate every source document once, at the edge: the extractor turns each email into one `ST` line (`item=inv:<number>` or `item=sup:<name>` for a non-invoice document) carrying every fact in slots (`sup po net vat amt cur kind flag`) and `src=email:<n>`, the message number in the inbox export, so anyone can go back to the evidence. Do not write `invoices.json` or `payable.json` or any other working file: the lines you send are the record, and the next agent works from its mailbox. The only file in this run is `work/payment_run.json` (the bank-facing output, fixed schema) and `work/audit.json`. If a fact has no slot, it goes in the 300-character tail; if it still does not fit, it stays in the source and the line points at it with `src=`.",
+).replace(
+    "6. **Ask, answer, finish.** Questions to other agents are `AQ` (with `need=` and `opts=` when the answer is one of a set); answers are `AN`. When your stage is done, send `HO` to the next agent (`ask=RECON`, `ask=SCHED` or `ask=AUDIT`, `due=20261001`, `art=file:work/<your artifact>`, `n=<items>`), and `DN re=<the HO you received> out=OK` to whoever handed you the work.",
+    "6. **Ask, answer, finish.** Questions to other agents are `AQ` (with `need=` and `opts=` when the answer is one of a set); answers are `AN`. When your stage is done, send your `ST` lines and then `HO` to the next agent (`ask=RECON`, `ask=SCHED` or `ask=AUDIT`, `due=20261001`, `n=<items>`; `art=` only for `payment_run.json`), and `DN re=<the HO you received> out=OK` to whoever handed you the work. The validator refuses an invoice line without `amt cur kind`, a document line without `src=`, and any line where net + vat is not amt.",
+).replace(
+    "Every message is one or more rogerwilco lines; `mail.py send` validates them and rejects anything else. Legend:",
+    "Every message is one or more rogerwilco lines; `mail.py send` validates them and rejects anything else. In this team the lines are also the record: there are no working files, every fact travels as a slot and points at its source. Legend:",
+)
+assert RULES_T != RULES_L
+
 RULES_R = RULES_L.replace(
     "4. **Envelope readback.** When you receive an `HO`, reply `RB` echoing `item`, `ask` and `due` (use `python3 mail.py make-rb \"<HO line>\" <your-id>`) before you start. Nothing else is read back.",
     "4. **Full readback.** Every `HO` you send carries `rb=all`. When you receive an `HO`, reply `RB` echoing every slot with `h=` (`python3 mail.py make-rb \"<HO line>\" <your-id>`) before you start. Every `ST` or `AN` you receive and will act on gets an echo before you act: an `ST` with `re=<its id>`, the same `item`, and the same slot values. Senders verify every echo with `python3 mail.py check-echo \"<original>\" \"<echo>\"` and re-send the original with `re=<bad echo id>` on a mismatch. Do not act on a line you have not echoed; do not treat a line as delivered until its echo checks out.",
@@ -129,6 +141,7 @@ KICKOFF = {
     "A": "Please prepare the September 2026 supplier payment run. The inbox export is in data/emails.md; purchase orders, the bank feed and the supplier master are in data/. Follow the payments policy. I need the run ready for sign-off by 1 October. Bring me only what the policy reserves for me.",
     "P": "ACTION: prepare the September 2026 supplier payment run for my sign-off by 1 October.\nSTATE: inbox export in data/emails.md; purchase orders, bank feed and supplier master in data/. The payments policy applies. Bring me only what the policy reserves for me.\nRESULT: none yet; the run goes through extractor, reconciler, scheduler and auditor.",
     "L": "RW1 HO human-01 from=human to=extractor p=pay item=run:2026-09 ask=EXTRACT due=20261001 art=file:data/emails.md // September 2026 supplier payment run: extract every supplier document and payment-relevant fact from the inbox export, hand the facts to the reconciler; the policy applies",
+    "T": "RW1 HO human-01 from=human to=extractor p=pay item=run:2026-09 ask=EXTRACT due=20261001 src=email:1+email:12 // September 2026 supplier payment run: translate every message in data/emails.md into lines (one per document, src=email:<n>) and hand them to the reconciler; no working files; the policy applies",
     "R": "RW1 HO human-01 from=human to=extractor p=pay item=run:2026-09 ask=EXTRACT due=20261001 rb=all art=file:data/emails.md // September 2026 supplier payment run: extract every supplier document and payment-relevant fact from the inbox export, hand the facts to the reconciler; the policy applies",
 }
 
@@ -148,11 +161,21 @@ def build(arm: str, n: int, scenario: int = 1, model: str = "sonnet") -> pathlib
     (run_dir / "prompts").mkdir()
     shutil.copytree(ROOT / ("data2" if scenario == 2 else "data"), run_dir / "data")
     shutil.copy(ROOT / "tools" / "mail.py", run_dir / "mail.py")
-    (run_dir / "run.json").write_text(json.dumps({"arm": arm, "n": n, "scenario": scenario, "model": model, "profile": "pay", "rogerwilco": str(FORMCORE)}, indent=1))
+    (run_dir / "run.json").write_text(json.dumps({"arm": arm, "n": n, "scenario": scenario, "model": model, "profile": "pay", "translate": arm == "T", "rogerwilco": str(FORMCORE)}, indent=1))
     policy = (ROOT / "data" / "policy.md").read_text().strip()
-    rules = {"A": RULES_A, "P": RULES_P, "D": RULES_D, "L": RULES_L.format(legend=legend()), "R": RULES_R.format(legend=legend())}[arm]
+    rules = {"A": RULES_A, "P": RULES_P, "D": RULES_D, "L": RULES_L.format(legend=legend()), "R": RULES_R.format(legend=legend()), "T": RULES_T.format(legend=legend())}[arm]
     for role in AGENTS:
-        r = ROLE[role]
+        r = dict(ROLE[role])
+        if arm == "T":
+            if role == "extractor":
+                r["output"] = "none: your ST lines to the reconciler are the record (one per document, every fact in slots, `src=email:<n>`). Do not write `work/invoices.json`."
+            if role == "reconciler":
+                r["inputs"] = "the extractor's lines in your mailbox, `data/po_list.json`, `data/bank_feed.json`, `data/supplier_bank.json` (read-only). Open a source email only to resolve a line that looks wrong or incomplete."
+                r["output"] = "none: your ST lines to the scheduler are the record (one per document with `dec= flag= appr= var=` and `src=`). Do not write `work/payable.json`."
+            if role == "scheduler":
+                r["inputs"] = "the reconciler's lines in your mailbox, `data/supplier_bank.json` (read-only), `data/policy.md`, and `data/schema_payment_run.md` (the required output schema)."
+            if role == "auditor":
+                r["inputs"] = "the scheduler's handoff and lines, `work/payment_run.json`, and everything in `data/` (read-only). Check every line the extractor and reconciler sent against its `src=` email and the bank feed: the lines are the record, so their fidelity is what you are auditing."
         text = COMMON.format(role=role, job=r["job"], inputs=r["inputs"], output=r["output"], next=r["next"],
                              run_dir=run_dir, policy=policy, arm_rules=rules)
         (run_dir / "prompts" / f"{role}.md").write_text(text)

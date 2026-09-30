@@ -96,7 +96,7 @@ FINAL_RE = re.compile(r"passed audit|audit(?:ed)?: pass|audit pass|audit complet
 def _units(r: dict, arm: str) -> list[dict]:
     """Split a human-bound message into decision units. Line arms: one unit per AQ line; prose: whole message."""
     body = r["body"]
-    if arm in ("L", "R"):
+    if arm in ("L", "R", "T"):
         units = []
         for line in body.splitlines():
             if line.startswith("RW1 AQ"):
@@ -182,12 +182,22 @@ def tokens(run_dir: pathlib.Path) -> dict:
     inter_opens = [o for o in opens if o["by"] != "human" and o["path"].startswith("work/")]
     # referenced artifacts: the files a message points its recipient at, counted once per (recipient, path) at final size
     ref_re = re.compile(r"(?:file:)?(work/[A-Za-z0-9_./-]+\.json)")
+    art_re = re.compile(r"\bart=(\S+)")   # bare art=payment_run.json (arm T writes it without the work/ prefix)
     seen_refs, ref_tokens = set(), 0
+
+    def refs(body: str) -> list[str]:
+        out = list(ref_re.findall(body))
+        for a in art_re.findall(body):
+            for part in a.split("+"):
+                part = part.removeprefix("file:")
+                if not part.startswith(("work/", "data/")) and (run_dir / "work" / part).exists():
+                    out.append("work/" + part)
+        return out
     try:
         import tiktoken
         enc = tiktoken.get_encoding("o200k_base")
         for r in inter:
-            for m in ref_re.findall(r["body"]):
+            for m in refs(r["body"]):
                 key = (r["to"], m)
                 fp = run_dir / m
                 if key in seen_refs or not fp.exists():
