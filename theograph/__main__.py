@@ -1,7 +1,7 @@
 """theograph command line.
 
   python3 -m theograph ingest   <docs dir> <out dir> [--patient ID]
-  python3 -m theograph extract  <out dir> --provider anthropic|openai|mock [--model M] [--from-files DIR] [--rounds 2] [--form lines|json] [--only DOC ...] [--redo]
+  python3 -m theograph extract  <out dir> --provider anthropic|openai|mock [--model M] [--from-files DIR] [--rounds 2] [--form lines|json] [--only DOC ...] [--redo] [--review]
   python3 -m theograph normalise <out dir> [--synonyms extra.json]
   python3 -m theograph link     <out dir>
   python3 -m theograph analyse  <out dir>
@@ -17,13 +17,13 @@ def main(argv: list[str] | None = None) -> int:
     sub = ap.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("ingest"); s.add_argument("docs"); s.add_argument("out"); s.add_argument("--patient")
     s = sub.add_parser("extract"); s.add_argument("out"); s.add_argument("--provider", default="anthropic", choices=["anthropic", "openai", "mock"]); s.add_argument("--model")
-    s.add_argument("--from-files"); s.add_argument("--rounds", type=int, default=2); s.add_argument("--form", default="lines", choices=["lines", "json"]); s.add_argument("--only", nargs="*"); s.add_argument("--redo", action="store_true")
+    s.add_argument("--from-files"); s.add_argument("--rounds", type=int, default=2); s.add_argument("--form", default="lines", choices=["lines", "json"]); s.add_argument("--only", nargs="*"); s.add_argument("--redo", action="store_true"); s.add_argument("--review", action="store_true")
     s = sub.add_parser("normalise"); s.add_argument("out"); s.add_argument("--synonyms")
     s = sub.add_parser("link"); s.add_argument("out")
     s = sub.add_parser("analyse"); s.add_argument("out")
     s = sub.add_parser("render"); s.add_argument("out"); s.add_argument("--title")
     s = sub.add_parser("run"); s.add_argument("docs"); s.add_argument("out"); s.add_argument("--patient"); s.add_argument("--provider", default="anthropic", choices=["anthropic", "openai", "mock"]); s.add_argument("--model")
-    s.add_argument("--from-files"); s.add_argument("--rounds", type=int, default=2); s.add_argument("--form", default="lines", choices=["lines", "json"]); s.add_argument("--synonyms"); s.add_argument("--title")
+    s.add_argument("--from-files"); s.add_argument("--rounds", type=int, default=2); s.add_argument("--form", default="lines", choices=["lines", "json"]); s.add_argument("--review", action="store_true"); s.add_argument("--synonyms"); s.add_argument("--title")
     a = ap.parse_args(argv)
     out = pathlib.Path(a.out).resolve()
     if a.cmd in ("ingest", "run"):
@@ -34,7 +34,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  {d['num']:>2} {d['id']}: {d['type']}, {d.get('date')}, {d.get('specialty') or ''}, {d['n_lines']} lines")
     if a.cmd in ("extract", "run"):
         from .extract import extract
-        extract(out, a.provider, a.model, a.from_files, a.rounds, a.form, getattr(a, "only", None), getattr(a, "redo", False))
+        extract(out, a.provider, a.model, a.from_files, a.rounds, a.form, getattr(a, "only", None), getattr(a, "redo", False), a.review)
     if a.cmd in ("normalise", "run"):
         from .normalise import normalise
         normalise(out, pathlib.Path(a.synonyms) if a.synonyms else None)

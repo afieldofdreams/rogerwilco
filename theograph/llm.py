@@ -2,7 +2,8 @@
 
 anthropic: ANTHROPIC_API_KEY, model default claude-sonnet-5
 openai:    OPENAI_API_KEY, OPENAI_BASE_URL (default https://api.openai.com/v1; any OpenAI-compatible endpoint), model required
-mock:      replies from files: --from-files <dir> holding <doc id>.txt (used for tests and for assertions extracted elsewhere)
+mock:      replies from files: --from-files <dir> holding <doc id>.txt, <doc id>.fix<k>.txt for fix rounds and <doc id>.review.txt
+           for the completeness review (used for tests and for assertions extracted elsewhere)
 """
 from __future__ import annotations
 import json, os, pathlib, time, urllib.error, urllib.request
@@ -78,8 +79,15 @@ class FromFiles(Provider):
         self.doc_id = None
 
     def chat(self, messages, max_tokens=16000):
-        k = sum(1 for m in messages if m["role"] == "user") - 1
-        p = self.dir / (f"{self.doc_id}.txt" if k == 0 else f"{self.doc_id}.fix{k}.txt")
+        from .prompt import REVIEW_MARK
+        users = [m["content"] for m in messages if m["role"] == "user"]
+        rev = next((i for i, c in enumerate(users) if c.startswith(REVIEW_MARK)), None)
+        if rev is None:
+            k = len(users) - 1
+            p = self.dir / (f"{self.doc_id}.txt" if k == 0 else f"{self.doc_id}.fix{k}.txt")
+        else:
+            k = len(users) - 1 - rev
+            p = self.dir / (f"{self.doc_id}.review.txt" if k == 0 else f"{self.doc_id}.review.fix{k}.txt")
         if not p.exists():
             raise FileNotFoundError(f"no reply file {p}")
         return p.read_text(), {"model": "files", "in": None, "out": None, "stop": "file"}

@@ -47,6 +47,18 @@ def build(doc: dict) -> str:
     return "\n".join(parts)
 
 
+REVIEW_MARK = "Completeness review."
+
+
+def review_message(n_lines: int, next_id: int) -> str:
+    """The second turn: the model reads the document again against its own lines and adds what it missed."""
+    return (f"{REVIEW_MARK} Read the document again, line 1 to line {n_lines}, against the lines you wrote. For every statement about the patient "
+            f"that has no line yet (a finding, a value, a medicine, a plan, a negation, a piece of advice, a second statement inside a sentence you gave "
+            f"one line), write the missing line now, same rules and form, continuing the numbering from extractor-{next_id}. Do not repeat or rewrite "
+            f"lines you already gave. Finish with one DN line to human with n=<number of lines added>; if nothing is missing, reply with only that DN line "
+            f"with n=0. Rows only, no commentary, no code fences.")
+
+
 def fix_message(errors: list[str]) -> str:
     return ("The gate rejected that output. Every row must be a valid line and every quote must be copied word for word from the numbered line(s) named in src=, in the document's order, with no words dropped or added (a sentence that wraps needs src=doc:N#l<a>-<b>). res is only for numbers; a finding without a number has no res. Problems:\n\n"
             + "\n".join("  " + e for e in errors) + "\n\nReply with the whole output again, every row, with every problem fixed and everything that was right kept. Rows only, no commentary, no code fences.")
