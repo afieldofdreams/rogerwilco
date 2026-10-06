@@ -521,6 +521,39 @@ def test_index_page_numbers_match_the_studies():
     assert sonnet[13].startswith("0.99") and "right words 99%" in research     # quote ok
 
 
+def test_study_pages_figures_match_results():
+    """The headline figures on each study page are re-derived from that study's results files."""
+    root = APP_DIR.parent / "research"
+    pages = APP_DIR / "static" / "research"
+    rb = root / "readback" / "results" / "summary.json"
+    if not rb.is_file():
+        pytest.skip("research corpus not checked out")
+    cells = json.loads(rb.read_text(encoding="utf-8"))["cells"]
+    page = (pages / "readback.html").read_text(encoding="utf-8")
+    for cell in ("A-sonnet", "A-haiku", "B-sonnet", "B-haiku", "C-sonnet", "C-haiku"):
+        assert f"{cells[cell]['fault_reached_act']} of 16" in page, cell
+    acts = sum(cells[c]["acts_correct"] for c in ("B-sonnet", "B-haiku", "C-sonnet", "C-haiku"))
+    assert acts == 65 and "65 of 65" in page
+    honest = sum(cells[c]["setback_honest"] for c in ("C-sonnet", "C-haiku"))
+    assert honest == 28 and "28 of 28" in page
+    tr = (root / "translation" / "results" / "summary.md").read_text(encoding="utf-8").splitlines()
+    row = lambda name: [c.strip() for c in [l for l in tr if l.startswith(f"| {name}")][0].strip("|").split("|")]
+    page = (pages / "translation.html").read_text(encoding="utf-8")
+    assert row("L-sonnet")[2].startswith("0.997") and "99.7%" in page
+    refused = round((1 - float(row("L-haiku")[18])) * 36) + round((1 - float(row("J-haiku")[18])) * 36)
+    assert refused == 70 and "70 of 72" in page
+    me = {}
+    for line in (root / "month-end" / "results" / "summary.md").read_text(encoding="utf-8").splitlines():
+        c = [x.strip() for x in line.strip().strip("|").split("|")]
+        if len(c) > 8 and c[1].isdigit():
+            me[c[0]] = (int(re.match(r"\d+", c[5]).group()), int(re.match(r"\d+", c[7]).group()))
+    page = (pages / "month-end.html").read_text(encoding="utf-8")
+    a, d = me["A prose"], me["D disciplined prose"]
+    assert round(d[0] / a[0], 2) == 0.33 and "to a third" in page
+    assert round(d[1] / a[1], 2) == 0.40 and "to 40%" in page
+    assert me["L-haiku lines, Haiku agents"][0] == 1590 and "1,590" in page
+
+
 # ------------------------------------------------------------------ HTTP behaviour
 
 def test_cors_is_open(client):
