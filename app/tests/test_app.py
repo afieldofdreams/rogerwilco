@@ -462,6 +462,13 @@ def test_index_page_numbers_match_the_studies():
     assert cells["D-haiku disciplined prose, Haiku agents"][3].startswith("0.67") and cells["L-haiku lines, Haiku agents"][3].startswith("0.83")
     assert "two of six reserved decisions on disciplined prose and one of six on lines" in html   # 0.67 = 4/6, 0.83 = 5/6
     assert all(cells[k][3] == "1.0 / 1.0" for k in cells if "haiku" not in k) and "3 of 3" in html and "0 of 4 decoys" in html
+    rb = root / "readback" / "results" / "summary.json"
+    if rb.is_file():
+        cells = json.loads(rb.read_text(encoding="utf-8"))["cells"]
+        assert cells["A-sonnet"]["fault_reached_act"] == 9 and cells["A-haiku"]["fault_reached_act"] == 14
+        assert cells["C-sonnet"]["fault_reached_act"] == 0 and cells["C-haiku"]["fault_reached_act"] == 0
+        assert all(cells[k]["false_alarms"] == 0 for k in cells)
+    assert "9 of 16, then 0" in html and "14 of 16 with a small model" in html
     tr = (root / "translation" / "results" / "summary.md").read_text(encoding="utf-8")
     sonnet = [c.strip() for c in [l for l in tr.splitlines() if l.startswith("| L-sonnet")][0].strip("|").split("|")]
     assert sonnet[2].startswith("0.997") and "99.7%" in html                  # recall
@@ -601,7 +608,7 @@ def test_research_index_and_pages(client):
     r = client.get("/research")
     assert r.status_code == 200 and "text/html" in r.headers["content-type"]
     assert "Month-end close" in r.text and "/research/month-end" in r.text
-    for slug in ("wire-study", "pilot", "month-end", "translation"):
+    for slug in ("wire-study", "pilot", "month-end", "translation", "readback"):
         page = client.get(f"/research/{slug}")
         assert page.status_code == 200, slug
         assert page.text.lstrip().startswith("<!doctype html>"), slug
