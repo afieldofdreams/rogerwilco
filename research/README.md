@@ -1,6 +1,6 @@
 # Research
 
-Three studies behind the protocol, each with its corpus, harness, raw logs and a results page. Everything here is synthetic; nothing comes from a client or a private knowledge graph.
+Four studies behind the protocol, each with its corpus, harness, raw logs and a results page. Everything here is synthetic; nothing comes from a client or a private knowledge graph.
 
 | Study | Question | Folder | Results page |
 |---|---|---|---|

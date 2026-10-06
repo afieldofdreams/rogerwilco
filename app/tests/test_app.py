@@ -309,6 +309,172 @@ def test_playground_readback_examples_do_what_they_say(client):
         assert body["ok"] is ex["passes"], ex["label"]
 
 
+# ------------------------------------------------------------------ the gate: lines as the record
+
+# A short synthetic clinical note, numbered from 1 as src=doc:7#l<n> counts them.
+NOTE = """Ridgeway Lane Surgery, Asthma Review
+Date: 14 September 2026
+Patient: Ms Dana FOLEY, DOB 02/04/1988
+
+Ms Foley attended for her asthma review. She reports using her salbutamol inhaler about twice a
+week, mostly after running. No night-time waking. She has never smoked. Her mother has asthma.
+Peak flow today 420 L/min. Continue beclometasone 200 micrograms two puffs twice daily.
+Review in 12 months, sooner if symptoms worsen."""
+
+GOOD = """RW1 ST extractor-1 from=extractor to=record p=clin item=med:salbutamol act=RPT pol=POS cert=CERT subj=PT time=CUR freq=PRN src=doc:7#l5-6 // using her salbutamol inhaler about twice a week
+RW1 ST extractor-2 from=extractor to=record p=clin item=sym:night-time-waking act=RPT pol=NEG cert=CERT subj=PT time=CUR src=doc:7#l6 // No night-time waking
+RW1 ST extractor-3 from=extractor to=record p=clin item=soc:smoking act=RPT pol=NEG cert=CERT subj=PT time=PAST src=doc:7#l6 // never smoked
+RW1 ST extractor-4 from=extractor to=record p=clin item=dx:asthma act=RPT pol=POS cert=CERT subj=FAM time=CUR src=doc:7#l6 // Her mother has asthma
+RW1 ST extractor-5 from=extractor to=record p=clin item=meas:peak-flow act=OBS pol=POS cert=CERT subj=PT time=CUR res=420 unit=L/min src=doc:7#l7 // Peak flow today 420 L/min
+RW1 ST extractor-6 from=extractor to=record p=clin item=med:beclometasone act=RX pol=POS cert=CERT subj=PT time=CUR dose=200micrograms freq=BD chg=CONT src=doc:7#l7 // Continue beclometasone 200 micrograms two puffs twice daily
+RW1 ST extractor-7 from=extractor to=record p=clin item=fu:review act=ORD pol=POS cert=CERT subj=PT time=FUT when=12m src=doc:7#l8 // Review in 12 months"""
+
+
+def test_gate_accepts_a_faithful_translation(client):
+    body = post(client, "/gate", lines=GOOD, profile="clin", document=NOTE, doc_id="7").json()
+    assert body["ok"] is True and body["errors"] == [] and body["notes"] == []
+    assert body["counts"] == {"rows": 7, "st": 7, "ok": 7}
+    assert [m["item"] for m in body["accepted"]][:2] == ["med:salbutamol", "sym:night-time-waking"]
+    assert all(r["ok"] and r["message"]["slots"]["src"].startswith("doc:7#l") for r in body["rows"])
+
+
+@pytest.mark.parametrize("edit, needle", [
+    (("// never smoked", "// has never smoked a cigarette"), "not found verbatim in doc:7#l6"),   # paraphrase
+    (("src=doc:7#l7 // Peak", "src=doc:7#l5 // Peak"), "not found verbatim in doc:7#l5"),          # wrong line
+    (("src=doc:7#l8 // Review", "src=doc:7#l80 // Review"), "the document has lines 1 to 8"),        # beyond the end
+    ((" src=doc:7#l6 // No night", " // No night"), "src= is missing"),                               # no pointer
+    (("item=soc:smoking", "item=habit:smoking"), "kind one of sym dx med proc"),                     # invented kind
+    (("extractor-2 from", "extractor-1 from"), "id extractor-1 already used"),                       # duplicate id
+    (("RW1 ST extractor-4 from", "RW1 ST extractor-4 re=extractor-9 from"), "re=extractor-9 does not name"),
+    (("src=doc:7#l6 // never", "src=doc:9#l6 // never"), "this is document doc:7"),                  # other document
+    (("p=clin item=fu:review", "item=fu:review"), "missing p=clin"),
+    (("act=OBS pol=POS", "act=SEEN pol=POS"), "not a known act code"),                                # the codec's own check
+])
+def test_gate_refuses_a_planted_fault(client, edit, needle):
+    lines = GOOD.replace(*edit)
+    assert lines != GOOD
+    body = post(client, "/gate", lines=lines, profile="clin", document=NOTE, doc_id="7").json()
+    assert body["ok"] is False and any(needle in e for e in body["errors"]), body["errors"]
+    assert sum(1 for r in body["rows"] if not r["ok"]) >= 1
+
+
+def test_gate_without_a_document_checks_shape_only(client):
+    body = post(client, "/gate", lines=GOOD, profile="clin").json()
+    assert body["ok"] is True and body["notes"] == ["no document given: src ranges and quotes were not checked against the source"]
+
+
+INBOX = """# Inbox export, two messages, oldest first.
+
+---
+**From:** Northfield Print Ltd <accounts@northfield-print.co.uk>
+**Subject:** Invoice INV-000491 (PO-1044)
+
+Net 315.50, VAT 63.10, total 378.60 GBP.
+---
+**From:** Marlow Design <billing@marlowdesign.co.uk>
+**Subject:** Invoice MD-2026-057
+
+Net 4500.00, VAT 900.00, total 5400.00 GBP.
+"""
+
+PAY_LINES = """RW1 ST extractor-1 from=extractor to=reconciler p=pay item=inv:INV-000491 sup=northfield po=PO-1044 net=315.50 vat=63.10 amt=378.60 cur=GBP kind=GROSS src=email:1
+RW1 ST extractor-2 from=extractor to=reconciler p=pay item=inv:MD-2026-057 sup=marlow net=4500.00 vat=900.00 amt=5400.00 cur=GBP kind=GROSS src=email:2
+RW1 HO extractor-3 from=extractor to=reconciler p=pay item=run:2026-09 ask=RECON due=20261001"""
+
+
+def test_gate_pay_profile(client):
+    ok = post(client, "/gate", lines=PAY_LINES, profile="pay", document=INBOX).json()
+    assert ok["ok"] is True and ok["counts"] == {"rows": 3, "st": 2, "ok": 3} and len(ok["accepted"]) == 2
+    arithmetic = post(client, "/gate", lines=PAY_LINES.replace("amt=5400.00", "amt=5100.00"), profile="pay").json()
+    assert arithmetic["errors"] == ["row 2: net 4500.00 + vat 900.00 is not amt 5100.00"]
+    no_src = post(client, "/gate", lines=PAY_LINES.replace(" src=email:1", ""), profile="pay").json()
+    assert any("carries src=email:<n>" in e for e in no_src["errors"])
+    missing = post(client, "/gate", lines=PAY_LINES.replace(" cur=GBP kind=GROSS src=email:2", " src=email:2"), profile="pay").json()
+    assert "row 2: an invoice line needs cur=" in missing["errors"] and "row 2: an invoice line needs kind=" in missing["errors"]
+    beyond = post(client, "/gate", lines=PAY_LINES.replace("src=email:2", "src=email:9"), profile="pay", document=INBOX).json()
+    assert beyond["errors"] == ["row 2: src=email:9: the inbox export has messages 1 to 2"]
+
+
+@pytest.mark.parametrize("body, needle", [
+    ({"lines": GOOD, "profile": "core"}, "profile is required"),
+    ({"lines": GOOD, "profile": "pform"}, "has no translation rule"),
+    ({"lines": "   \n", "profile": "clin"}, "lines is empty"),
+    ({"lines": GOOD, "profile": "clin", "document": "x" * (service.MAX_DOCUMENT + 1)}, "the limit is"),
+])
+def test_gate_refuses_bad_requests(client, body, needle):
+    r = client.post("/gate", json=body)
+    assert r.status_code == 400 and needle in r.json()["error"], r.json()
+
+
+def test_gate_via_mcp(client):
+    res = call_tool(client, "gate", {"lines": GOOD, "profile": "clin", "document": NOTE, "doc_id": "7"})
+    assert res["isError"] is False and res["structuredContent"]["ok"] is True
+    res = call_tool(client, "gate", {"lines": GOOD.replace("// never smoked", "// smokes"), "profile": "clin", "document": NOTE})
+    assert res["isError"] is False and res["structuredContent"]["ok"] is False      # a failed gate is a result, not an error
+    assert any("not found verbatim" in e for e in res["structuredContent"]["errors"])
+    res = call_tool(client, "gate", {"lines": GOOD, "profile": "pform"})
+    assert res["isError"] is True and "no translation rule" in res["content"][0]["text"]
+
+
+RESEARCH = APP_DIR.parent / "research" / "translation"
+
+
+@pytest.mark.skipif(not (RESEARCH / "runs").is_dir(), reason="research corpus not checked out")
+def test_gate_matches_the_translation_study(client):
+    """Every line-arm output the study accepted passes the hosted gate too (research/translation/tools/gate.py is
+    the reference; this is the same check served over HTTP)."""
+    files = sorted((RESEARCH / "runs").glob("L-*/doc*.rw"))
+    assert files, "no study outputs found"
+    for path in files:
+        n = int(path.stem[3:])
+        doc = (RESEARCH / "data" / "docs" / f"doc{n:02d}.md").read_text(encoding="utf-8")
+        body = post(client, "/gate", lines=path.read_text(encoding="utf-8"), profile="clin", document=doc, doc_id=str(n)).json()
+        assert body["ok"] is True, (str(path), body["errors"][:3])
+
+
+def test_playground_gate_examples_do_what_they_say(client):
+    for ex in _examples()["gates"]:
+        body = post(client, "/gate", lines=ex["lines"], profile=ex["profile"], document=ex["doc"], doc_id=ex["docid"] or None).json()
+        assert body["ok"] is ex["passes"], (ex["label"], body["errors"][:3])
+
+
+def test_index_page_numbers_match_the_studies():
+    """The figures on the landing page are the studies' own. Re-derived here from the results tables so the page
+    cannot drift from them."""
+    root = APP_DIR.parent / "research"
+    if not (root / "month-end" / "results" / "summary.md").is_file():
+        pytest.skip("research corpus not checked out")
+    html = (APP_DIR / "static" / "index.html").read_text(encoding="utf-8")
+    rows = {}
+    for line in (root / "month-end" / "results" / "summary.md").read_text(encoding="utf-8").splitlines():
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) > 8 and cells[1].isdigit():
+            rows[cells[0]] = (int(re.match(r"\d+", cells[5]).group()), int(re.match(r"\d+", cells[7]).group()))
+    a, d = rows["A prose"], rows["D disciplined prose"]
+    assert round(d[0] / a[0], 2) == 0.33 and "to a third" in html            # traffic between agents
+    assert round(d[1] / a[1], 2) == 0.40 and "reading to 40%" in html         # the person's reading
+    cells = {}
+    for line in (root / "month-end" / "results" / "summary.md").read_text(encoding="utf-8").splitlines():
+        c = [x.strip() for x in line.strip().strip("|").split("|")]
+        if len(c) > 9 and c[1].isdigit():
+            cells[c[0]] = c
+    assert cells["A prose"][8] == "1333" and cells["D disciplined prose"][8] == "520" and "1,333 tokens a run in free prose to 520" in html
+    assert cells["D-haiku disciplined prose, Haiku agents"][3].startswith("0.67") and cells["L-haiku lines, Haiku agents"][3].startswith("0.83")
+    assert "two of six reserved decisions on disciplined prose and one of six on lines" in html   # 0.67 = 4/6, 0.83 = 5/6
+    assert all(cells[k][3] == "1.0 / 1.0" for k in cells if "haiku" not in k) and "3 of 3" in html and "0 of 4 decoys" in html
+    rb = root / "readback" / "results" / "summary.json"
+    if rb.is_file():
+        cells = json.loads(rb.read_text(encoding="utf-8"))["cells"]
+        assert cells["A-sonnet"]["fault_reached_act"] == 9 and cells["A-haiku"]["fault_reached_act"] == 14
+        assert cells["C-sonnet"]["fault_reached_act"] == 0 and cells["C-haiku"]["fault_reached_act"] == 0
+        assert all(cells[k]["false_alarms"] == 0 for k in cells)
+    assert "9 of 16, then 0" in html and "14 of 16 with a small model" in html
+    tr = (root / "translation" / "results" / "summary.md").read_text(encoding="utf-8")
+    sonnet = [c.strip() for c in [l for l in tr.splitlines() if l.startswith("| L-sonnet")][0].strip("|").split("|")]
+    assert sonnet[2].startswith("0.997") and "99.7%" in html                  # recall
+    assert sonnet[13].startswith("0.99") and "right passage 99%" in html       # quote ok
+
+
 # ------------------------------------------------------------------ HTTP behaviour
 
 def test_cors_is_open(client):
@@ -351,12 +517,13 @@ def call_tool(client, name, arguments):
 
 def test_mcp_tools_list(client):
     tools = {t["name"]: t for t in rpc(client, "tools/list")["result"]["tools"]}
-    assert set(tools) == {"validate", "check_rb", "make_rb", "legend", "to_json"}
+    assert set(tools) == {"validate", "gate", "check_rb", "make_rb", "legend", "to_json"}
     for tool in tools.values():
         assert tool["description"] and "\n" not in tool["description"] and tool["inputSchema"]["type"] == "object"
         assert all("description" in p for p in tool["inputSchema"]["properties"].values())
     assert tools["validate"]["inputSchema"]["required"] == ["line"]
     assert tools["check_rb"]["inputSchema"]["required"] == ["ho", "rb"]
+    assert tools["gate"]["inputSchema"]["required"] == ["lines", "profile"]
     assert tools["make_rb"]["inputSchema"]["required"] == ["ho", "id"]
     assert set(tools["make_rb"]["inputSchema"]["properties"]) == {"ho", "id", "profile", "acc", "do", "hash"}
     assert tools["make_rb"]["inputSchema"]["properties"]["hash"]["type"] == "boolean"
@@ -382,7 +549,7 @@ def test_mcp_works_behind_a_real_domain(client):
     # The SDK's default would answer 421 to any Host other than localhost.
     headers = {**MCP_HEADERS, "Host": "rogerwilco.example.com", "Origin": "https://claude.ai"}
     r = client.post("/mcp", json={"jsonrpc": "2.0", "id": 1, "method": "tools/list"}, headers=headers)
-    assert r.status_code == 200 and len(r.json()["result"]["tools"]) == 5
+    assert r.status_code == 200 and len(r.json()["result"]["tools"]) == 6
 
 
 def test_mcp_tools_call(client):
@@ -441,7 +608,7 @@ def test_research_index_and_pages(client):
     r = client.get("/research")
     assert r.status_code == 200 and "text/html" in r.headers["content-type"]
     assert "Month-end close" in r.text and "/research/month-end" in r.text
-    for slug in ("wire-study", "pilot", "month-end", "translation"):
+    for slug in ("wire-study", "pilot", "month-end", "translation", "readback"):
         page = client.get(f"/research/{slug}")
         assert page.status_code == 200, slug
         assert page.text.lstrip().startswith("<!doctype html>"), slug

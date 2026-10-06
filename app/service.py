@@ -167,6 +167,191 @@ def legend(profile=None) -> str:
     return rw.legend(profile_arg(profile))
 
 
+# ------------------------------------------------------------------ the gate: lines as the record
+
+# When lines state facts that came from a document, the gate is what the batch must pass before anyone acts on them
+# or they become the record: every line valid under the profile, every statement pointing at the evidence, and the
+# evidence saying what the line says. The rules come from the profile's own `translation` note (clin, pay); the checks
+# are the ones the research harnesses enforced (research/translation/tools/gate.py, research/month-end/tools/mail.py).
+MAX_DOCUMENT = 200_000   # characters of source document
+MAX_BATCH = 60_000       # characters of lines
+MAX_ROWS = 500
+
+_CONCEPT_RE = re.compile(r"[a-z0-9][a-z0-9./-]*")
+_DOC_SRC_RE = re.compile(r"^doc:([A-Za-z0-9._-]+)#l(\d+)(?:-(\d+))?$")
+_EMAIL_SRC_RE = re.compile(r"^email:(\d+)$")
+
+
+def _norm_words(s: str) -> str:
+    return re.sub(r"\s+", " ", s).strip().lower()
+
+
+def _join_doc_lines(parts: list[str]) -> str:
+    """Consecutive document lines as one string: a line ending in a hyphen continues its word on the next line."""
+    out = ""
+    for seg in parts:
+        seg = seg.strip()
+        if out and out.endswith("-"):
+            out += seg
+        elif out:
+            out += " " + seg
+        else:
+            out = seg
+    return _norm_words(out)
+
+
+def _inbox_messages(document: str) -> int:
+    """How many messages an inbox export holds: segments between lines that are exactly ---, not counting a header
+    segment (one with no From: line). This is the export shape the month-end study used."""
+    segments = re.split(r"(?m)^---\s*$", document)
+    return sum(1 for seg in segments if seg.strip() and re.search(r"(?mi)^\**from:", seg))
+
+
+class _Gate:
+    def __init__(self, profile_name: str, document: str | None, doc_id: str | None):
+        self.profile = profile_name
+        self.spec = rw.load_profile(profile_name)
+        # The codec's merged spec keeps what it validates; the translation note is read from the profile file.
+        try:
+            raw = json.loads((rw.PROFILES / f"{profile_name}.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            raw = {}
+        self.rule = raw.get("translation") if isinstance(raw.get("translation"), dict) else None
+        if self.rule is None:
+            raise FormError(f"profile {profile_name!r} has no translation rule; the gate applies to profiles that "
+                            "make the lines the record (clin, pay)")
+        self.doc_lines = document.splitlines() if document else None
+        self.doc_id = doc_id
+        self.messages = _inbox_messages(document) if document and profile_name == "pay" else None
+        self.errors: list[str] = []
+        self.notes: list[str] = []
+        self.rows: list[dict] = []
+        self.seen: set[str] = set()
+
+    # -- per-row checks -------------------------------------------------------------------------------------------
+    def row(self, i: int, line: str) -> None:
+        errs: list[str] = []
+        if not line.startswith(VERSION + " "):
+            self._finish(i, line, None, [f"does not start with {VERSION} (every row is a rogerwilco line)"])
+            return
+        msg, perrs, _warn = rw.parse(line, spec=self.spec)
+        if perrs:
+            self._finish(i, line, msg, perrs)
+            return
+        if msg["slots"].get("p") != self.profile:
+            errs.append(f"missing p={self.profile}")
+        if msg["id"] in self.seen:
+            errs.append(f"id {msg['id']} already used in this batch")
+        if msg["type"] == "ST":
+            if msg.get("re") and msg["re"] not in self.seen:
+                errs.append(f"re={msg['re']} does not name an earlier line in this batch")
+            check = self._clin if self.profile == "clin" else self._pay
+            check(msg, errs)
+        self.seen.add(msg["id"])
+        self._finish(i, line, msg, errs)
+
+    def _finish(self, i: int, line: str, msg, errs: list[str]) -> None:
+        for e in errs:
+            self.errors.append(f"row {i}: {e}")
+        self.rows.append({"row": i, "line": line, "type": (msg or {}).get("type"), "ok": not errs, "errors": errs,
+                          "message": msg if msg and not errs else None})
+
+    def _clin(self, msg: dict, errs: list[str]) -> None:
+        item = msg.get("item") or ""
+        kinds = self.spec.get("item_kinds") or {}
+        if ":" not in item or item.split(":", 1)[0] not in kinds:
+            errs.append(f"item={item!r}: item is <kind>:<concept> with kind one of {' '.join(kinds)}")
+        elif not _CONCEPT_RE.fullmatch(item.split(":", 1)[1]):
+            errs.append(f"item={item!r}: concept is lowercase words joined by hyphens")
+        src = msg["slots"].get("src")
+        if isinstance(src, list):
+            errs.append(f"exactly one src per line (got {len(src)}); a statement has one place in the document")
+            src = src[0] if src else None
+        quote = msg.get("tail") or ""
+        if not src:
+            errs.append("src= is missing: doc:<id>#l<n> or doc:<id>#l<n>-<m>, the numbered line(s) the words are on")
+            if not quote:
+                errs.append("the quote is missing: the tail is the shortest verbatim quote that supports the statement")
+            return
+        m = _DOC_SRC_RE.match(str(src))
+        if not m:
+            errs.append(f"src={src}: expected doc:<id>#l<n> or doc:<id>#l<n>-<m>")
+            return
+        if self.doc_id is not None and m.group(1) != str(self.doc_id):
+            errs.append(f"src={src}: this is document doc:{self.doc_id}")
+        a, b = int(m.group(2)), int(m.group(3) or m.group(2))
+        if not quote:
+            errs.append(f"the quote is missing: copy the words from line(s) {src} that support the statement")
+        if self.doc_lines is None:
+            return
+        if a < 1 or b > len(self.doc_lines) or b < a:
+            errs.append(f"src={src}: the document has lines 1 to {len(self.doc_lines)}")
+            return
+        if quote and _norm_words(quote) not in _join_doc_lines(self.doc_lines[a - 1:b]):
+            errs.append(f"the quote is not found verbatim in {src}: {quote[:80]!r}")
+
+    def _pay(self, msg: dict, errs: list[str]) -> None:
+        sl = msg["slots"]
+        item = msg.get("item") or ""
+        srcs = sl.get("src")
+        if isinstance(srcs, str):
+            srcs = [srcs]
+        if item.startswith(("inv:", "sup:", "doc:")) and not srcs:
+            errs.append("a line that states a source document carries src=email:<n> (the message number in the "
+                        "inbox export), bank:<YYYYMMDD> or po:<id>")
+        if self.messages is not None:
+            for s in srcs or []:
+                m = _EMAIL_SRC_RE.match(str(s))
+                if m and not 1 <= int(m.group(1)) <= self.messages:
+                    errs.append(f"src={s}: the inbox export has messages 1 to {self.messages}")
+        flags = set(sl.get("flag") or [])
+        if item.startswith("inv:") and not ({"VOID", "STMT", "NOISE"} & flags):
+            for k in ("amt", "cur", "kind"):
+                if k not in sl:
+                    errs.append(f"an invoice line needs {k}=")
+        if all(k in sl for k in ("net", "vat", "amt")) and sl.get("kind") == "GROSS":
+            from decimal import Decimal, InvalidOperation
+            try:
+                if Decimal(str(sl["net"])) + Decimal(str(sl["vat"])) != Decimal(str(sl["amt"])):
+                    errs.append(f"net {sl['net']} + vat {sl['vat']} is not amt {sl['amt']}")
+            except InvalidOperation:
+                errs.append("net, vat and amt must be numbers")
+
+    # -- the batch ------------------------------------------------------------------------------------------------
+    def run(self, lines: str) -> dict:
+        rows = [l.strip() for l in lines.splitlines() if l.strip()]
+        if not rows:
+            raise FormError("lines is empty: paste the translation, one rogerwilco line per row")
+        if len(rows) > MAX_ROWS:
+            raise FormError(f"lines has {len(rows)} rows; the limit is {MAX_ROWS}")
+        for i, line in enumerate(rows, 1):
+            if len(line) > MAX_LINE:
+                self._finish(i, line, None, [f"{len(line)} characters; a line is at most {MAX_LINE}"])
+                continue
+            self.row(i, line)
+        if self.profile == "clin" and self.doc_lines is None:
+            self.notes.append("no document given: src ranges and quotes were not checked against the source")
+        if self.profile == "pay" and self.messages == 0:
+            self.notes.append("the document holds no messages separated by --- lines, so email:<n> pointers were not "
+                              "checked against it")
+        counts = {"rows": len(rows), "st": sum(1 for r in self.rows if r["type"] == "ST"),
+                  "ok": sum(1 for r in self.rows if r["ok"])}
+        return {"ok": not self.errors, "errors": self.errors, "notes": self.notes, "counts": counts,
+                "rows": self.rows,
+                "accepted": [r["message"] for r in self.rows if r["ok"] and r["type"] == "ST"]}
+
+
+def gate(lines, profile, document=None, doc_id=None) -> dict:
+    """Check a batch of lines against the source document they state facts from, under the profile's rule for lines
+    as the record. Returns {ok, errors, notes, counts, rows, accepted}."""
+    name = profile_arg(profile)
+    if not name:
+        raise FormError("profile is required: the gate applies to a profile that makes the lines the record (clin, pay)")
+    doc = _text("document", document, MAX_DOCUMENT) if document else None
+    ident = _text("doc_id", str(doc_id), MAX_FIELD).strip() if doc_id not in (None, "") else None
+    return _Gate(name, doc, ident).run(_text("lines", lines, MAX_BATCH))
+
+
 CORE_DESCRIPTION = (
     "The core vocabulary: eight message types, the ask, why, out, need and conf codes, and the acc constraint keys. "
     "No domain codes."
