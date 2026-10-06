@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>rogerwilco playground</title>
-<meta name="description" content="Validate rogerwilco RW1 lines, build readbacks and check them against the handoff they answer.">
+<title>rogerwilco</title>
+<meta name="description" content="How AI agents hand work to each other so a program can check it: seven rules, a one-line typed message with a readback, and a pointer from every fact to its source. With the numbers from four studies.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a58ab'/%3E%3Cpath d='M8 17l5 5 11-12' fill='none' stroke='%23fff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <style>
 /* Layout: one column and two panels. A decoded message sits in ruled cells, like the strip a controller pins in a
@@ -90,6 +90,25 @@ nav { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 0.95rem; }
 .lede { margin: 0; max-width: 65ch; font-size: 1.15rem; text-wrap: pretty; }
 .explain { max-width: 65ch; margin-top: 0.8rem; }
 .explain p { margin: 0.6rem 0; }
+.parts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(21rem, 100%), 1fr)); gap: 14px; margin-top: 4px; }
+.part { display: grid; gap: 6px; align-content: start; padding: 14px 16px; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; }
+.part h2 { margin: 0; font: 700 1.02rem/1.3 var(--sans); text-wrap: pretty; }
+.part .num { margin-top: 2px; font: 700 1.6rem/1.1 var(--mono); letter-spacing: -0.02em; color: var(--accent); }
+.part .num small { font: 400 0.86rem/1.35 var(--sans); letter-spacing: 0; color: var(--ink-soft); display: block; margin-top: 4px; text-wrap: pretty; }
+.part p { margin: 0; font-size: 0.95rem; color: var(--ink); }
+.part .when { color: var(--ink-soft); font-size: 0.9rem; }
+.rules { margin: 0; padding-left: 1.2rem; display: grid; gap: 4px; font-size: 0.95rem; }
+.not { padding: 12px 16px; background: var(--field); border: 1px solid var(--rule); border-radius: 8px; max-width: 65ch; }
+.not h2 { margin: 0 0 6px; font: 700 1rem/1.25 var(--sans); }
+.not p { margin: 0.4rem 0; font-size: 0.95rem; }
+.start { display: grid; gap: 10px; }
+.start h2 { margin: 0; font: 700 1.15rem/1.25 var(--sans); }
+.cmd { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.cmd .code { flex: 1 1 18rem; margin: 0; }
+.docbox textarea { min-height: 9rem; }
+.rowlist { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.rowlist li { display: grid; grid-template-columns: 4rem 1fr; gap: 10px; align-items: baseline; font: 0.9rem/1.45 var(--mono); overflow-wrap: anywhere; }
+.rowlist .badge { justify-self: start; }
 
 .bar { display: grid; grid-template-columns: minmax(10rem, 16rem) 1fr; gap: 6px 16px; align-items: end; }
 .bar p { margin: 0; color: var(--ink-soft); font-size: 0.9rem; min-width: 0; }
@@ -177,6 +196,7 @@ noscript p { margin: 0; padding: 10px 12px; color: var(--warn); background: var(
 
 @media (max-width: 560px) {
   .bar { grid-template-columns: 1fr; }
+  .rowlist li { grid-template-columns: 1fr; gap: 4px; }
   .mark { font-size: 1.45rem; }
   .issues li { grid-template-columns: 1fr; gap: 4px; }
 }
@@ -195,15 +215,58 @@ noscript p { margin: 0; padding: 10px 12px; color: var(--warn); background: var(
         <a href="/docs">API</a>
       </nav>
     </div>
-    <p class="lede">A way for AI agents to pass jobs to each other without anything getting lost.</p>
+    <p class="lede">How AI agents hand work to each other so that a program can check it.</p>
     <div class="explain">
-      <p>Imagine a team of AI helpers doing a job together, like paying a company's bills. One reads the emails, one checks the numbers, one sets up the payments, one double-checks everything. They have to tell each other what they found.</p>
-      <p>Today they do that in paragraphs, like people chatting. Paragraphs are long, the important numbers are buried in the words, and nobody can check that the next helper understood them correctly. If one of them misreads an amount, nobody notices until the money has gone.</p>
-      <p>rogerwilco fixes that with two ideas borrowed from pilots and air traffic control.</p>
-      <p><strong>One line, fixed spaces.</strong> Every message is a single line where each fact has its own labelled slot: what the job is, which invoice, how much, in what currency, when it is due. A program can read it, check it and refuse it if something is missing or made up. <code>RW1 HO lead-1 from=lead to=writer item=inv:491 ask=EXTRACT due=20261001</code> means "lead hands writer the job of extracting invoice 491, due 1 October". Anything that does not fit goes in a file, and the line points at the file.</p>
-      <p><strong>Read it back.</strong> When a pilot is told "descend to 5,000 feet", they say "descending to 5,000" back, and the controller checks it. rogerwilco makes the receiving agent do the same: it repeats the job back in its own line, and the sender's code compares the two before letting go of the work. <em>Roger</em> means "I received it". <em>Wilco</em> means "I understood it and I will do it". The receiver has to prove both.</p>
-      <p>When a decision belongs to a human, the agents ask a question with a short list of allowed answers (approve, decline, hold) instead of writing an essay. The person gets three buttons, not a page.</p>
-      <p>Below you can type a line and see whether a program accepts it, or paste a message and its readback and see whether the readback passes. The <a href="/research">research</a> page has the experiments, including the one that showed most of the saving comes from the rules and only some from the format.</p>
+      <p>When several agents share a job, they tell each other what they found and what they need in paragraphs. A paragraph cannot be checked by code, so nobody knows, until the work is done, whether the next agent read the figures right, whether a fact was made up or dropped on the way, or whether a decision that belonged to a person was taken by a machine.</p>
+      <p>rogerwilco is a set of controls for that. Below, what goes wrong in a handover, the control that catches it, and what <a href="/research">four studies</a> saw: a four-agent accounts-payable close run 28 times with planted events, a clinical-note study of 144 translations against 422 hand-annotated statements, a readback pilot with planted faults, and a wire study. Every figure comes from two or three runs per cell, Claude Sonnet and Haiku only, on synthetic data, with the gold sets and scorers written by the author. Enough to show direction; not yet a measurement.</p>
+    </div>
+    <div class="parts">
+      <div class="part">
+        <h2>The receiver reads the handoff differently from how the sender meant it</h2>
+        <p><strong>Control: the readback.</strong> The receiver repeats the handoff back as its own line and the sender's code compares it with the intent the sender wrote down before sending, before letting go of the work. <em>Roger</em> is received; <em>wilco</em> is understood and will comply.</p>
+        <div class="num">4 of 36<small>prose handoffs with no readback, in the pilot, were read differently from how the sender meant them, and the work went ahead on the wrong reading. In the readback arms, four misreads reached an output; all four were flagged and fixed by one correction, applied after the work, so the pre-work catch is inferred from the flag, not measured. In 21 runs of a synthetic month-end close with a strong model, nothing needed catching; full readback ran in three of them and caught nothing.</small></div>
+        <p class="when">Use it before anything irreversible: a payment, a payee change, anything sent outside. A full readback made a run's traffic between agents 1.6 times that of a plain acknowledgement. On a small model the code check over-flagged until its severity rule was fixed.</p>
+      </div>
+      <div class="part">
+        <h2>A fact is invented, or the words are paraphrased until they say something else</h2>
+        <p><strong>Control: the pointer and the gate.</strong> A fact that came from a document crosses as a line that says where the words are (<code>src=doc:3#l12</code>, <code>src=email:7</code>), and a gate refuses a line that has no pointer, or whose words are not at the place it cites.</p>
+        <div class="num">0 invented<small>on clinical notes: every line a strong model wrote quoted words that were in the document, it found 99.7% of the statements and quoted the right passage 99% of the time. A small model had 70 of 72 first attempts refused, paraphrased quotes above all, and got every document through in two rounds, with more help from the error list than a production gate would give.</small></div>
+        <p class="when">At the edge, where documents enter the system. Tested on short supplier emails and clinical notes; not yet on anything harder.</p>
+      </div>
+      <div class="part">
+        <h2>A fact is dropped between agents</h2>
+        <p><strong>Control: facts in slots, and a validator that refuses an incomplete line.</strong> One line per item, every fact in a labelled slot, a closed vocabulary. The facts cross once, as lines, and nobody writes a working file to restate them.</p>
+        <div class="num">18 refused<small>malformed or invented lines from a small model, each fixed on the next send. The same model in disciplined prose: a reader could answer 6 and 7 of 8 questions from its logs, against 8 of 8 and 7 of 8 from the lines logs (two runs each). With a strong model, the lines carried 73 of 73 checked facts from twelve short emails in each of three runs.</small></div>
+        <p class="when">For small or mixed models, and wherever someone has to trust the log.</p>
+      </div>
+      <div class="part">
+        <h2>A decision that belongs to a person is taken by a machine, or the person is interrupted for things the policy leaves to agents</h2>
+        <p><strong>Control: a written policy, and escalation as a question with a closed list of answers.</strong> The item, the amounts, the decision needed, and the answers the person may give: approve, decline, hold, reject, call back.</p>
+        <div class="num">3 of 3<small>reserved decisions reached the person and 0 of 4 decoys did, in every run with a strong model, free prose included. A small model missed the USD hold in two of six reserved decisions on disciplined prose and one of six on lines (two runs each), and interrupted for decisions already made in both.</small></div>
+        <p class="when">A strong model with the policy did this in every format. What the seven rules changed is the cost of asking: decision requests fell from 1,333 tokens a run in free prose to 520.</p>
+      </div>
+      <div class="part">
+        <h2>An instruction planted in a document is followed</h2>
+        <p><strong>Control: a written policy.</strong> Every arm had one, so its own effect was not isolated; what was tested is the format, which made no difference. Agents with a policy ignored a paragraph in a lookalike email telling them a bank change was pre-approved, escalated it anyway, and pushed back on a wrong approval from the boss with the evidence.</p>
+        <div class="num">6 of 6<small>runs ignored the injection with a strong model, in prose, disciplined prose and lines alike. A small model translating notes followed a planted instruction in three of six runs even with the gate in place.</small></div>
+        <p class="when">The protocol does not claim this one. Write the policy down and give it to a model that holds to it.</p>
+      </div>
+      <div class="part">
+        <h2>The receiver reads it back correctly and then does the wrong thing</h2>
+        <p><strong>Control: none before the work.</strong> A readback verifies understanding, not execution, and a validator checks form, not judgement.</p>
+        <div class="num">Still wrong<small>in the pilot a small model read a constraint back correctly five times and ignored it. In the close it paid the USD invoice it should have held, in disciplined prose (two of two runs) and in lines (one of two). The lines logs were the more complete record of what it did.</small></div>
+        <p class="when">What would help: a done report that carries the values as executed, checked against the handoff the way a readback is, and typed acceptance criteria that make the done-time check mechanical for the checkable ones. Planned, untested.</p>
+      </div>
+    </div>
+    <div class="not">
+      <h2>Where it earned nothing</h2>
+      <p>With a strong model in conversation, seven rules written in English (facts once, in a fixed shape; reasoning by reference; state only what changed; acknowledge a handoff; escalate with a closed list; ask, answer, finish; no preamble) cut the traffic between agents to a third and the person's reading to 40%, and the syntax added nothing to that but the checks above. The rules are free and are in the <a href="/skill">skill</a>. Use the syntax where code has to check the message, not to save tokens.</p>
+    </div>
+    <div class="start">
+      <h2>Use it</h2>
+      <p class="hint">An agent that can run code validates its own lines with the <a href="/skill">skill</a> (one folder, standard library). An agent that cannot calls this server as an MCP tool. Any agent reads the format from the <a href="/legend?profile=core" id="legend-link-2">legend</a> pasted into its prompt.</p>
+      <div class="cmd"><pre class="code">claude mcp add --transport http rogerwilco <span id="mcp-url-2"></span></pre><button type="button" class="small" id="copy-cmd">Copy</button></div>
+      <p class="hint">Below: write a line and see whether a program accepts it; paste a handoff and its readback and see whether the readback passes; paste a document and the lines that state facts from it and see whether every pointer holds.</p>
     </div>
   </header>
 
@@ -214,7 +277,7 @@ noscript p { margin: 0; padding: 10px 12px; color: var(--warn); background: var(
       <label class="label" for="profile">Profile</label>
       <select id="profile"><option value="core">core</option><option value="pform">pform</option><option value="pay">pay</option></select>
     </div>
-    <p id="profile-note">A profile is the word list for one kind of work. core is the basics, pform is for a knowledge graph, pay is for paying bills. Both panels use the one you pick.</p>
+    <p id="profile-note">A profile is the word list for one kind of work. core is the basics, pform is for a knowledge graph, pay is for paying bills, clin is for clinical notes. The two message panels use the one you pick.</p>
   </div>
 
   <section class="panel" id="line-panel" aria-labelledby="h-line">
@@ -275,6 +338,39 @@ noscript p { margin: 0; padding: 10px 12px; color: var(--warn); background: var(
     <div class="out" id="out-check" aria-live="polite" hidden></div>
   </section>
 
+  <section class="panel" id="gate-panel" aria-labelledby="h-gate">
+    <div>
+      <h2 id="h-gate">Check lines against their source</h2>
+      <p class="hint">This is the gate at the edge. Paste a document and the lines that state facts from it. Every line must be valid, must say where in the document its words are, and the words must be there. Lines of the document are counted from 1, blank lines included. The pay profile checks pointers into an inbox export instead, and that net plus VAT equals the amount.</p>
+    </div>
+    <div class="bar">
+      <div class="field">
+        <label class="label" for="gate-profile">Profile</label>
+        <select id="gate-profile"><option value="clin">clin</option><option value="pay">pay</option></select>
+      </div>
+      <div class="field">
+        <label class="label" for="gate-example">Example</label>
+        <select id="gate-example"></select>
+      </div>
+    </div>
+    <div class="pairbox">
+      <div class="field docbox">
+        <label class="label" for="gate-doc">The document</label>
+        <textarea id="gate-doc" rows="9" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></textarea>
+      </div>
+      <div class="field docbox">
+        <label class="label" for="gate-lines">The lines, one per row</label>
+        <textarea id="gate-lines" rows="9" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></textarea>
+      </div>
+    </div>
+    <div class="field">
+      <label class="label" for="gate-docid">Document id (the part after doc: in src=, optional)</label>
+      <input type="text" id="gate-docid" autocomplete="off" spellcheck="false" placeholder="7">
+    </div>
+    <div class="row"><button type="button" class="primary" id="btn-gate">Check lines</button></div>
+    <div class="out" id="out-gate" aria-live="polite" hidden></div>
+  </section>
+
   <footer class="foot">
     <span>Protocol RW1</span>
     <span id="build"></span>
@@ -307,6 +403,40 @@ noscript p { margin: 0; padding: 10px 12px; color: var(--warn); background: var(
     {"label": "Fails: receiver understood 150 words, sender meant 120", "ho": "RW1 HO research-03 from=research to=writer item=gh:crox/site#42 ask=DRAFT due=20261002 rb=acc keys=len+tone+must+no art=url:https://example.com/brief // hero copy, 120 words, plain tone, no em dashes, must name the reader's Monday problem", "rb": "RW1 RB writer-05 re=research-03 from=writer to=research item=gh:crox/site#42 ask=DRAFT due=20261002 acc=len:150w+tone:plain+must:monday-problem+no:em-dash do=copy // landing hero, 150 words", "expect": "len:120w+tone:plain+no:em-dash+must:monday-problem", "profile": null, "passes": false},
     {"label": "Fails: digest does not match the HO", "ho": "RW1 HO research-01 from=research to=writer item=gh:crox/site#42 ask=DRAFT due=20261002 pri=2 conf=M keep=research // hero copy, 120 words, no em dashes", "rb": "RW1 RB writer-01 re=research-01 from=writer to=research item=gh:crox/site#42 ask=DRAFT due=20261002 h=000000000000", "expect": "", "profile": null, "passes": false},
     {"label": "Fails: readback answers a different message", "ho": "RW1 HO research-01 from=research to=writer item=gh:crox/site#42 ask=DRAFT due=20261002 pri=2 conf=M keep=research // hero copy, 120 words, no em dashes", "rb": "RW1 RB writer-01 re=research-09 from=writer to=research item=gh:crox/site#42 ask=DRAFT due=20261002", "expect": "", "profile": null, "passes": false}
+  ],
+  "gates": [
+    {
+      "label": "Passes: every pointer holds (clinical note, 7 lines)",
+      "profile": "clin",
+      "doc": "Ridgeway Lane Surgery, Asthma Review\nDate: 14 September 2026\nPatient: Ms Dana FOLEY, DOB 02/04/1988\n\nMs Foley attended for her asthma review. She reports using her salbutamol inhaler about twice a\nweek, mostly after running. No night-time waking. She has never smoked. Her mother has asthma.\nPeak flow today 420 L/min. Continue beclometasone 200 micrograms two puffs twice daily.\nReview in 12 months, sooner if symptoms worsen.",
+      "lines": "RW1 ST extractor-1 from=extractor to=record p=clin item=med:salbutamol act=RPT pol=POS cert=CERT subj=PT time=CUR freq=PRN src=doc:7#l5-6 // using her salbutamol inhaler about twice a week\nRW1 ST extractor-2 from=extractor to=record p=clin item=sym:night-time-waking act=RPT pol=NEG cert=CERT subj=PT time=CUR src=doc:7#l6 // No night-time waking\nRW1 ST extractor-3 from=extractor to=record p=clin item=soc:smoking act=RPT pol=NEG cert=CERT subj=PT time=PAST src=doc:7#l6 // never smoked\nRW1 ST extractor-4 from=extractor to=record p=clin item=dx:asthma act=RPT pol=POS cert=CERT subj=FAM time=CUR src=doc:7#l6 // Her mother has asthma\nRW1 ST extractor-5 from=extractor to=record p=clin item=meas:peak-flow act=OBS pol=POS cert=CERT subj=PT time=CUR res=420 unit=L/min src=doc:7#l7 // Peak flow today 420 L/min\nRW1 ST extractor-6 from=extractor to=record p=clin item=med:beclometasone act=RX pol=POS cert=CERT subj=PT time=CUR dose=200micrograms freq=BD chg=CONT src=doc:7#l7 // Continue beclometasone 200 micrograms two puffs twice daily\nRW1 ST extractor-7 from=extractor to=record p=clin item=fu:review act=ORD pol=POS cert=CERT subj=PT time=FUT when=12m src=doc:7#l8 // Review in 12 months",
+      "docid": "7",
+      "passes": true
+    },
+    {
+      "label": "Fails: one quote paraphrased, one pointing at the wrong line",
+      "profile": "clin",
+      "doc": "Ridgeway Lane Surgery, Asthma Review\nDate: 14 September 2026\nPatient: Ms Dana FOLEY, DOB 02/04/1988\n\nMs Foley attended for her asthma review. She reports using her salbutamol inhaler about twice a\nweek, mostly after running. No night-time waking. She has never smoked. Her mother has asthma.\nPeak flow today 420 L/min. Continue beclometasone 200 micrograms two puffs twice daily.\nReview in 12 months, sooner if symptoms worsen.",
+      "lines": "RW1 ST extractor-1 from=extractor to=record p=clin item=med:salbutamol act=RPT pol=POS cert=CERT subj=PT time=CUR freq=PRN src=doc:7#l5-6 // using her salbutamol inhaler about twice a week\nRW1 ST extractor-2 from=extractor to=record p=clin item=sym:night-time-waking act=RPT pol=NEG cert=CERT subj=PT time=CUR src=doc:7#l6 // No night-time waking\nRW1 ST extractor-3 from=extractor to=record p=clin item=soc:smoking act=RPT pol=NEG cert=CERT subj=PT time=PAST src=doc:7#l6 // has never smoked a cigarette\nRW1 ST extractor-4 from=extractor to=record p=clin item=dx:asthma act=RPT pol=POS cert=CERT subj=PT time=CUR src=doc:7#l6 // Her mother has asthma\nRW1 ST extractor-5 from=extractor to=record p=clin item=meas:peak-flow act=OBS pol=POS cert=CERT subj=PT time=CUR res=420 unit=L/min src=doc:7#l5 // Peak flow today 420 L/min\nRW1 ST extractor-6 from=extractor to=record p=clin item=med:beclometasone act=RX pol=POS cert=CERT subj=PT time=CUR dose=200micrograms freq=BD chg=CONT src=doc:7#l7 // Continue beclometasone 200 micrograms two puffs twice daily\nRW1 ST extractor-7 from=extractor to=record p=clin item=fu:review act=ORD pol=POS cert=CERT subj=PT time=FUT when=12m src=doc:7#l8 // Review in 12 months",
+      "docid": "7",
+      "passes": false
+    },
+    {
+      "label": "Passes: invoices from an inbox export (pay profile)",
+      "profile": "pay",
+      "doc": "# Inbox export, three messages, oldest first.\n\n---\n**From:** Northfield Print Ltd <accounts@northfield-print.co.uk>\n**Subject:** Invoice INV-000491 (PO-1044)\n\nNet 315.50, VAT 63.10, total 378.60 GBP. Payment due 1 October.\n---\n**From:** Marlow Design <billing@marlowdesign.co.uk>\n**Subject:** Invoice MD-2026-057\n\nNet 4500.00, VAT 900.00, total 5400.00 GBP.\n---\n**From:** Kestrel Analytics <ar@kestrel.io>\n**Subject:** Invoice 7731\n\nAmount due USD 960.00. Wire details attached.\n",
+      "lines": "RW1 ST extractor-1 from=extractor to=reconciler p=pay item=inv:INV-000491 sup=northfield po=PO-1044 net=315.50 vat=63.10 amt=378.60 cur=GBP kind=GROSS src=email:1\nRW1 ST extractor-2 from=extractor to=reconciler p=pay item=inv:MD-2026-057 sup=marlow net=4500.00 vat=900.00 amt=5400.00 cur=GBP kind=GROSS src=email:2\nRW1 ST extractor-3 from=extractor to=reconciler p=pay item=inv:7731 sup=kestrel amt=960.00 cur=USD kind=GROSS flag=FX src=email:3 // policy only knows GBP runs\nRW1 HO extractor-4 from=extractor to=reconciler p=pay item=run:2026-09 ask=RECON due=20261001",
+      "docid": "",
+      "passes": true
+    },
+    {
+      "label": "Fails: net plus VAT is not the amount; a line with no source",
+      "profile": "pay",
+      "doc": "# Inbox export, three messages, oldest first.\n\n---\n**From:** Northfield Print Ltd <accounts@northfield-print.co.uk>\n**Subject:** Invoice INV-000491 (PO-1044)\n\nNet 315.50, VAT 63.10, total 378.60 GBP. Payment due 1 October.\n---\n**From:** Marlow Design <billing@marlowdesign.co.uk>\n**Subject:** Invoice MD-2026-057\n\nNet 4500.00, VAT 900.00, total 5400.00 GBP.\n---\n**From:** Kestrel Analytics <ar@kestrel.io>\n**Subject:** Invoice 7731\n\nAmount due USD 960.00. Wire details attached.\n",
+      "lines": "RW1 ST extractor-1 from=extractor to=reconciler p=pay item=inv:INV-000491 sup=northfield po=PO-1044 net=315.50 vat=63.10 amt=378.60 cur=GBP kind=GROSS src=email:1\nRW1 ST extractor-2 from=extractor to=reconciler p=pay item=inv:MD-2026-057 sup=marlow net=4500.00 vat=900.00 amt=5100.00 cur=GBP kind=GROSS src=email:2\nRW1 ST extractor-3 from=extractor to=reconciler p=pay item=inv:7731 sup=kestrel amt=960.00 cur=USD kind=GROSS flag=FX // policy only knows GBP runs\nRW1 HO extractor-4 from=extractor to=reconciler p=pay item=run:2026-09 ask=RECON due=20261001",
+      "docid": "",
+      "passes": false
+    }
   ]
 }
 </script>
@@ -521,6 +651,30 @@ noscript p { margin: 0; padding: 10px 12px; color: var(--warn); background: var(
     ]);
   }
 
+  // ---------------------------------------------------------------- panel 3: the gate
+
+  async function doGate() {
+    const lines = $("gate-lines").value.replace(/[\r\n]+$/, "");
+    if (!lines.trim()) { show("out-gate", [verdict("warn", "Nothing to check", "Paste the lines first, one per row.")]); return; }
+    const doc = $("gate-doc").value;
+    const r = await call("out-gate", "/gate", {
+      lines, profile: $("gate-profile").value, document: doc.trim() ? doc : null, doc_id: $("gate-docid").value.trim() || null,
+    });
+    if (!r) return;
+    const failed = r.rows.filter((row) => !row.ok);
+    const banner = r.ok
+      ? verdict(r.notes.length ? "warn" : "good", "Every pointer holds", plural(r.counts.st, "statement") + " accepted. " + (doc.trim() ? "Each one is valid, says where its words are, and the words are there." : "Checked for shape only."))
+      : verdict("bad", "Not the record yet", plural(failed.length, "row") + " of " + r.counts.rows + " failed. Fix every one and check the whole batch again; a line the gate cannot trace is not evidence.");
+    const list = failed.length ? h("ul", { class: "rowlist" }, failed.flatMap((row) => row.errors.map((e) =>
+      h("li", null, h("span", { class: "badge err" }, "row " + row.row), h("span", null, e))))) : null;
+    show("out-gate", [
+      banner,
+      list,
+      issues("note", "note", r.notes),
+      r.ok && doc.trim() ? h("p", { class: "note-text" }, "What the gate cannot see is judgement: a line can cite the right words and still read them wrongly (the wrong subject, the past as the present). A strong model gets those right on the rules; a weak one is made whole in form and can still be wrong in meaning.") : null,
+    ]);
+  }
+
   // ---------------------------------------------------------------- wiring
 
   async function run(outId, fn) {
@@ -539,9 +693,10 @@ noscript p { margin: 0; padding: 10px 12px; color: var(--warn); background: var(
   function updateProfileNote() {
     const name = $("profile").value;
     const found = profiles.find((p) => p.name === name);
-    var plain = {core: "core is the basic word list every agent understands.", pform: "pform adds the words for a knowledge-graph workflow.", pay: "pay adds the words for paying bills: amounts, currencies, approvals."};
-    $("profile-note").textContent = (plain[name] || (found && found.description ? found.description : "")) + " Both panels use the one you pick.";
+    var plain = {core: "core is the basic word list every agent understands.", pform: "pform adds the words for a knowledge-graph workflow.", pay: "pay adds the words for paying bills: amounts, currencies, approvals.", clin: "clin adds the words for a clinical note: one statement per line with its kind, polarity, certainty, subject and time."};
+    $("profile-note").textContent = (plain[name] || (found && found.description ? found.description : "")) + " The two message panels use the one you pick.";
     $("legend-link").setAttribute("href", "/legend?profile=" + encodeURIComponent(name));
+    $("legend-link-2").setAttribute("href", "/legend?profile=" + encodeURIComponent(name));
   }
 
   async function loadProfiles() {
@@ -559,6 +714,13 @@ noscript p { margin: 0; padding: 10px 12px; color: var(--warn); background: var(
     const options = (sel, items) => sel.replaceChildren(h("option", { value: "" }, "Your own"), ...items.map((it, i) => h("option", { value: String(i) }, it.label)));
     options($("example"), DATA.lines);
     options($("pairs"), DATA.pairs);
+    options($("gate-example"), DATA.gates);
+    $("gate-example").addEventListener("change", () => {
+      const it = DATA.gates[$("gate-example").value]; if (!it) return;
+      $("gate-profile").value = it.profile; $("gate-doc").value = it.doc; $("gate-lines").value = it.lines; $("gate-docid").value = it.docid;
+      run("out-gate", doGate);
+    });
+    for (const id of ["gate-doc", "gate-lines", "gate-docid"]) $(id).addEventListener("input", () => { $("gate-example").value = ""; });
     $("example").addEventListener("change", () => {
       const it = DATA.lines[$("example").value]; if (!it) return;
       put("line", it.line); setProfile(it.profile); $("rb-id").value = "";
@@ -581,15 +743,19 @@ noscript p { margin: 0; padding: 10px 12px; color: var(--warn); background: var(
     $("btn-rb").addEventListener("click", () => run("out-line", doReadback));
     $("btn-digest").addEventListener("click", () => run("out-line", doDigest));
     $("btn-check").addEventListener("click", () => run("out-check", doCheck));
+    $("btn-gate").addEventListener("click", () => run("out-gate", doGate));
     $("profile").addEventListener("change", updateProfileNote);
     const mcp = location.origin + "/mcp";
     $("mcp-url").textContent = mcp;
+    $("mcp-url-2").textContent = mcp;
     $("copy-mcp").addEventListener("click", (e) => copy(mcp, e.currentTarget, $("mcp-url")));
+    $("copy-cmd").addEventListener("click", (e) => copy("claude mcp add --transport http rogerwilco " + mcp, e.currentTarget, $("mcp-url-2").parentNode));
     fillExamples();
 
     // Open in a working state: the first example and the first readback pair, already run.
     $("example").value = "0"; $("example").dispatchEvent(new Event("change"));
     $("pairs").value = "0"; $("pairs").dispatchEvent(new Event("change"));
+    $("gate-example").value = "0"; $("gate-example").dispatchEvent(new Event("change"));
     loadProfiles();
     fetch("/healthz").then((r) => r.json()).then((j) => { $("build").textContent = "Build " + j.commit; }).catch(() => {});
   }

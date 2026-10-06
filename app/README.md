@@ -61,6 +61,7 @@ JSON in, JSON out, CORS open. A line that fails validation is a normal answer (`
 | `POST /to-json` | `{"line", "profile"}` | `{"message"}` |
 | `POST /from-json` | `{"message", "profile"}` | `{"line"}` |
 | `POST /digest` | `{"line", "profile"}` | `{"digest"}` |
+| `POST /gate` | `{"lines", "profile", "document", "doc_id"}` | `{"ok", "errors", "notes", "counts", "rows", "accepted"}` |
 | `GET /legend?profile=pay` | | the legend as `text/plain` |
 | `GET /profiles` | | `[{"name", "description"}]`, core first |
 | `GET /spec`, `GET /skill` | | `SPEC.md` and `SKILL.md` as `text/markdown` |
@@ -70,6 +71,7 @@ JSON in, JSON out, CORS open. A line that fails validation is a normal answer (`
 - `profile` is a profile name such as `pay` or `pform`. `null`, an empty string and `core` all mean the core vocabulary. A message can also name its profile itself with `p=`.
 - `expect_acc` is the criteria the sender kept back, as `key:value` tokens joined by `+`, for example `len:120w+tone:plain+no:em-dash`. `acc` on `/make-rb` has the same shape. Either can also be a JSON list of tokens.
 - `message` in `/validate` is the codec's best-effort parse. Trust it only when `ok` is true.
+- `/gate` checks a batch of lines against the source document they state facts from, under a profile that makes the lines the record (`clin`, `pay`). Every row must be a valid line; every `ST` must carry `src=`; for `clin` the tail is a quote that must be found verbatim in the cited document line(s), the item kind must be one of the profile's, and there is one `src` per line; for `pay` an invoice line carries `amt cur kind` and net plus VAT must equal the amount. `document` is optional: without it the gate checks shape only and says so in `notes`. `rows` reports every row with its own errors; `accepted` holds the parsed `ST` messages that passed. Limits: 200k characters of document, 60k of lines, 500 rows.
 - `/from-json` takes the message as an object or as a string that holds one. `/make-rb` needs an `HO` line.
 - `hash` on `/make-rb` defaults to true, which adds `h=` (the digest of the HO).
 - `/spec` and `/skill` answer a browser with `text/plain`, because browsers offer to save `text/markdown` instead of showing it. Any other client gets `text/markdown`.
@@ -85,12 +87,13 @@ It is built on the official [`mcp`](https://pypi.org/project/mcp/) Python SDK, p
 | Tool | Arguments | What it does |
 |---|---|---|
 | `validate` | `line`, `profile` | Checks one line. Returns `ok`, `message`, `errors`, `warnings`. |
+| `gate` | `lines`, `profile`, `document`, `doc_id` | Checks lines against the source document they state facts from. A failed gate is a result with `ok: false`, not a tool error. |
 | `check_rb` | `ho`, `rb`, `profile`, `expect_acc` | Sender-side check of a readback across the four tiers. |
 | `make_rb` | `ho`, `id`, `profile`, `acc`, `do`, `hash` | Builds a correct readback for an HO. |
 | `legend` | `profile` | The legend to paste into another agent's prompt. |
 | `to_json` | `line`, `profile` | The line's JSON form. |
 
-All five are marked read-only. A tool error, such as an unknown profile, comes back as a result with `isError: true`, so the calling model can see it and correct itself.
+All six are marked read-only. A tool error, such as an unknown profile, comes back as a result with `isError: true`, so the calling model can see it and correct itself.
 
 ### Add it to Claude Code
 
@@ -174,4 +177,4 @@ The tests cover every endpoint, the four readback tiers, the MCP handshake and t
 
 ## The playground
 
-`/` is one self-contained page with no build step. Paste a line and validate it, convert it to JSON, take its digest, or build the readback a receiver would send. The second panel is the sender's check: paste the HO and the RB, and it shows which of the four tiers passed. Roger is receipt and integrity, wilco is echo and comprehension. Both panels open on a working example.
+`/` is one self-contained page with no build step. It leads with what goes wrong in a handover, the control that catches it and the figure from the studies, then three panels. Paste a line and validate it, convert it to JSON, take its digest, or build the readback a receiver would send. The second panel is the sender's check: paste the HO and the RB, and it shows which of the four tiers passed. Roger is receipt and integrity, wilco is echo and comprehension. The third is the gate: paste a document and the lines that state facts from it, and it shows which pointers hold. All three open on a working example. The figures on the page are tested against the results tables under `research/`, so the page cannot drift from the studies.
