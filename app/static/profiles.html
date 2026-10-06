@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Same line, four kinds of work</title>
+<meta name="description" content="The shape of a rogerwilco line is the same for any work; the words for one kind of work live in a profile. The same hand-over, read-back and done loop in paying bills, releasing software, clinical notes and a knowledge graph, and how to write a profile of your own.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a58ab'/%3E%3Cpath d='M8 17l5 5 11-12' fill='none' stroke='%23fff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+/* Layout: one column and two panels. A decoded message sits in ruled cells, like the strip a controller pins in a
+   holder; a readback result shows the four tiers, roger (received, intact) then wilco (understood, will comply). */
+:root {
+  --bg: #eceff3;
+  --surface: #ffffff;
+  --field: #f3f5f8;
+  --ink: #15202b;
+  --ink-soft: #465565;
+  --rule: #c9d1da;
+  --accent: #0a58ab;
+  --on-accent: #ffffff;
+  --good: #14653b;
+  --good-tint: #e0f2e8;
+  --bad: #a3231a;
+  --bad-tint: #fbe6e3;
+  --warn: #7f4b00;
+  --warn-tint: #fcefd6;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1319;
+    --surface: #151d26;
+    --field: #1b2531;
+    --ink: #e6ecf2;
+    --ink-soft: #9aa9b8;
+    --rule: #2b3846;
+    --accent: #62aef5;
+    --on-accent: #08131d;
+    --good: #5fd08f;
+    --good-tint: #133423;
+    --bad: #ff8f85;
+    --bad-tint: #3b1b19;
+    --warn: #f0b955;
+    --warn-tint: #372a12;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1319;
+  --surface: #151d26;
+  --field: #1b2531;
+  --ink: #e6ecf2;
+  --ink-soft: #9aa9b8;
+  --rule: #2b3846;
+  --accent: #62aef5;
+  --on-accent: #08131d;
+  --good: #5fd08f;
+  --good-tint: #133423;
+  --bad: #ff8f85;
+  --bad-tint: #3b1b19;
+  --warn: #f0b955;
+  --warn-tint: #372a12;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  padding-inline: 16px;
+  padding-block: 24px 56px;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.5 var(--sans);
+}
+.wrap { max-width: 56rem; margin-inline: auto; display: grid; gap: 20px; }
+a { color: var(--accent); text-underline-offset: 3px; }
+code { font: 0.92em var(--mono); }
+
+header { display: grid; gap: 12px; }
+.top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; }
+.mark { margin: 0; display: flex; align-items: baseline; gap: 10px; font: 700 1.7rem/1.1 var(--mono); letter-spacing: -0.02em; }
+.roger { font-weight: 400; color: var(--ink-soft); }
+.wilco { color: var(--accent); }
+.ver { padding: 3px 6px; border: 1px solid var(--rule); border-radius: 4px; color: var(--ink-soft); font: 600 0.72rem/1 var(--mono); letter-spacing: 0.06em; }
+nav { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 0.95rem; }
+.lede { margin: 0; max-width: 65ch; font-size: 1.15rem; text-wrap: pretty; }
+.explain { max-width: 65ch; margin-top: 0.8rem; }
+.explain p { margin: 0.6rem 0; }
+.loop { display: grid; gap: 12px; }
+.step { display: grid; gap: 8px; padding: 14px 16px; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; }
+.step h2 { margin: 0; font: 700 1.05rem/1.25 var(--sans); }
+.step h2 span { color: var(--ink-soft); font-weight: 400; }
+.step p { margin: 0; font-size: 0.97rem; }
+.step .says { color: var(--ink-soft); font-style: italic; }
+.step .line { margin: 0; padding: 10px 12px; background: var(--field); border: 1px solid var(--rule); border-radius: 6px; font: 0.86rem/1.5 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+.step .line b { color: var(--accent); font-weight: 600; }
+.step .check { display: flex; gap: 8px; align-items: baseline; color: var(--good); font-size: 0.95rem; }
+.step .check .badge { background: var(--good-tint); color: var(--good); }
+.proof { padding: 14px 16px; background: var(--surface); border: 1px solid var(--rule); border-left: 4px solid var(--accent); border-radius: 8px; max-width: 65ch; }
+.proof p { margin: 0.4rem 0; }
+.proof .num { font: 700 1.5rem/1.1 var(--mono); color: var(--accent); letter-spacing: -0.02em; }
+.starts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr)); gap: 12px; }
+.start-card { display: grid; gap: 4px; align-content: start; padding: 12px 14px; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; color: var(--ink); text-decoration: none; }
+.start-card:hover { border-color: var(--accent); }
+.start-card b { font-size: 1rem; }
+.start-card span { color: var(--ink-soft); font-size: 0.9rem; }
+.start-card code { font-size: 0.8rem; color: var(--accent); }
+.section-h { margin: 8px 0 0; font: 700 1.25rem/1.25 var(--sans); }
+.parts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(21rem, 100%), 1fr)); gap: 14px; margin-top: 4px; }
+.part { display: grid; gap: 6px; align-content: start; padding: 14px 16px; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; }
+.part h2 { margin: 0; font: 700 1.02rem/1.3 var(--sans); text-wrap: pretty; }
+.part .num { margin-top: 2px; font: 700 1.6rem/1.1 var(--mono); letter-spacing: -0.02em; color: var(--accent); }
+.part .num small { font: 400 0.86rem/1.35 var(--sans); letter-spacing: 0; color: var(--ink-soft); display: block; margin-top: 4px; text-wrap: pretty; }
+.part p { margin: 0; font-size: 0.95rem; color: var(--ink); }
+.part .when { color: var(--ink-soft); font-size: 0.9rem; }
+.rules { margin: 0; padding-left: 1.2rem; display: grid; gap: 4px; font-size: 0.95rem; }
+.not { padding: 12px 16px; background: var(--field); border: 1px solid var(--rule); border-radius: 8px; max-width: 65ch; }
+.not h2 { margin: 0 0 6px; font: 700 1rem/1.25 var(--sans); }
+.not p { margin: 0.4rem 0; font-size: 0.95rem; }
+.start { display: grid; gap: 10px; }
+.start h2 { margin: 0; font: 700 1.15rem/1.25 var(--sans); }
+.cmd { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.cmd .code { flex: 1 1 18rem; margin: 0; }
+.docbox textarea { min-height: 9rem; }
+.rowlist { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.rowlist li { display: grid; grid-template-columns: 4rem 1fr; gap: 10px; align-items: baseline; font: 0.9rem/1.45 var(--mono); overflow-wrap: anywhere; }
+.rowlist .badge { justify-self: start; }
+
+.bar { display: grid; grid-template-columns: minmax(10rem, 16rem) 1fr; gap: 6px 16px; align-items: end; }
+.bar p { margin: 0; color: var(--ink-soft); font-size: 0.9rem; min-width: 0; }
+
+.panel { display: grid; gap: 14px; min-width: 0; padding: 16px; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; }
+.panel h2 { margin: 0; font: 700 1.15rem/1.25 var(--sans); text-wrap: balance; }
+.hint { margin: 4px 0 0; color: var(--ink-soft); font-size: 0.92rem; max-width: 65ch; }
+.field { min-width: 0; }
+.pairbox { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); gap: 14px; }
+.label { display: block; margin-bottom: 6px; color: var(--ink-soft); font: 600 0.74rem/1.2 var(--sans); text-transform: uppercase; letter-spacing: 0.08em; }
+textarea, input[type="text"], select {
+  width: 100%; padding: 10px 12px; color: var(--ink); background: var(--field);
+  border: 1px solid var(--rule); border-radius: 6px; font: 16px/1.5 var(--mono);
+}
+select { font-family: var(--sans); }
+textarea { min-height: 5.6rem; resize: vertical; }
+::placeholder { color: var(--ink-soft); opacity: 1; }
+
+.row { display: flex; flex-wrap: wrap; gap: 8px; }
+button {
+  min-height: 40px; padding: 0 16px; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--rule); border-radius: 6px; font: 600 0.95rem/1 var(--sans); cursor: pointer;
+}
+button:hover { border-color: var(--accent); }
+button.primary { color: var(--on-accent); background: var(--accent); border-color: var(--accent); }
+button.small { min-height: 30px; padding: 0 10px; font-size: 0.82rem; }
+@media (pointer: coarse) { button { min-height: 44px; } button.small { min-height: 36px; } }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+details { background: var(--field); border: 1px solid var(--rule); border-radius: 6px; }
+summary { padding: 8px 12px; font-size: 0.92rem; font-weight: 600; cursor: pointer; }
+.opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr)); gap: 12px; padding: 4px 12px 12px; }
+.opts input[type="text"] { background: var(--surface); }
+.tick { display: flex; align-items: center; gap: 8px; min-height: 40px; font-size: 0.92rem; }
+
+.out { display: grid; gap: 12px; min-width: 0; }
+.out[hidden] { display: none; }
+.verdict { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; padding: 10px 12px; color: var(--good); background: var(--good-tint); border-radius: 6px; }
+.verdict strong { font-size: 1.05rem; }
+.verdict.bad { color: var(--bad); background: var(--bad-tint); }
+.verdict.warn { color: var(--warn); background: var(--warn-tint); }
+.detail { min-width: 0; font-size: 0.95rem; overflow-wrap: anywhere; }
+
+.issues { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.issues li { display: grid; grid-template-columns: 5.5rem 1fr; gap: 10px; align-items: baseline; font: 0.9rem/1.45 var(--mono); overflow-wrap: anywhere; }
+.badge { justify-self: start; padding: 3px 6px; border-radius: 4px; font: 700 0.66rem/1 var(--sans); text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
+.badge.err { color: var(--bad); background: var(--bad-tint); }
+.badge.warn { color: var(--warn); background: var(--warn-tint); }
+.badge.note { color: var(--ink-soft); background: var(--field); border: 1px solid var(--rule); }
+
+.codebox { display: grid; gap: 6px; min-width: 0; }
+.codehead { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.codehead .label { margin: 0; }
+.code { margin: 0; padding: 10px 12px; background: var(--field); border: 1px solid var(--rule); border-radius: 6px; font: 0.9rem/1.5 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+.note-text { margin: 0; color: var(--ink-soft); font-size: 0.9rem; max-width: 65ch; }
+
+.strip { display: flex; flex-wrap: wrap; border-top: 1px solid var(--rule); border-left: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.cell { flex: 1 1 9rem; display: grid; gap: 2px; align-content: start; min-width: 0; padding: 8px 10px; background: var(--surface); border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.cell.type { flex: 0 1 11rem; }
+.cell.wide { flex: 1 1 100%; }
+.k { color: var(--ink-soft); font: 600 0.66rem/1.2 var(--sans); text-transform: uppercase; letter-spacing: 0.1em; }
+.v { font: 600 0.95rem/1.35 var(--mono); overflow-wrap: anywhere; }
+.type .v { color: var(--accent); font-size: 1.15rem; }
+.sub { color: var(--ink-soft); font: 400 0.85rem var(--sans); }
+.tail .v { font: 400 0.95rem/1.45 var(--sans); }
+
+.tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr)); gap: 12px; }
+.cap { margin-bottom: 6px; font: 700 0.95rem/1.2 var(--mono); }
+.cap span { margin-left: 8px; color: var(--ink-soft); font: 400 0.85rem var(--sans); }
+.pair { display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; border: 1px solid var(--rule); border-radius: 6px; }
+.tier { display: grid; gap: 2px; min-width: 0; padding: 8px 10px; background: var(--field); }
+.tier + .tier { border-left: 1px solid var(--rule); }
+.tier .name { font-size: 0.95rem; font-weight: 600; }
+.tier .st { color: var(--ink-soft); font: 400 0.82rem/1.2 var(--mono); }
+.tier.pass { background: var(--good-tint); }
+.tier.pass .st { color: var(--good); font-weight: 600; }
+.tier.fail { background: var(--bad-tint); }
+.tier.fail .st { color: var(--bad); font-weight: 600; }
+.tier.part { background: var(--warn-tint); }
+.tier.part .st { color: var(--warn); font-weight: 600; }
+
+.foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; color: var(--ink-soft); font-size: 0.85rem; }
+.foot > span { min-width: 0; overflow-wrap: anywhere; }
+noscript p { margin: 0; padding: 10px 12px; color: var(--warn); background: var(--warn-tint); border-radius: 6px; }
+
+@media (max-width: 560px) {
+  .bar { grid-template-columns: 1fr; }
+  .rowlist li { grid-template-columns: 1fr; gap: 4px; }
+  .mark { font-size: 1.45rem; }
+  .issues li { grid-template-columns: 1fr; gap: 4px; }
+}
+
+.doc { max-width: 65ch; min-width: 0; display: grid; gap: 14px; }
+.doc > *, .doc li, .doc .box { min-width: 0; }
+.doc li { overflow-wrap: anywhere; }
+.doc h1 { margin: 0; font: 700 1.6rem/1.2 var(--sans); letter-spacing: -0.01em; text-wrap: balance; }
+.doc h2 { margin: 18px 0 0; font: 700 1.25rem/1.25 var(--sans); }
+.doc h3 { margin: 10px 0 0; font: 700 1.02rem/1.3 var(--sans); }
+.doc p, .doc li { margin: 0; font-size: 1rem; }
+.doc ol, .doc ul { margin: 0; padding-left: 1.3rem; display: grid; gap: 6px; }
+.doc pre { margin: 0; padding: 10px 12px; background: var(--field); border: 1px solid var(--rule); border-radius: 6px; font: 0.84rem/1.5 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+.doc pre b { color: var(--accent); font-weight: 600; }
+.doc .reply { border-left: 3px solid var(--good); }
+.doc .box { padding: 12px 14px; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; display: grid; gap: 8px; }
+.doc .box h2, .doc .box h3 { margin: 0; }
+.doc .muted { color: var(--ink-soft); font-size: 0.93rem; }
+.doc .step-n { display: inline-block; min-width: 1.6rem; color: var(--accent); font: 700 0.9rem/1 var(--mono); }
+.doc table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+.doc th, .doc td { padding: 6px 8px; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+.doc th { color: var(--ink-soft); font: 600 0.74rem/1.2 var(--sans); text-transform: uppercase; letter-spacing: 0.08em; }
+.doc td code { font-size: 0.86rem; }
+.doc .ways { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(11rem, 100%), 1fr)); gap: 8px; }
+.doc .ways a { padding: 10px 12px; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; color: var(--ink); text-decoration: none; font-weight: 600; }
+.doc .ways a:hover { border-color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="top">
+      <h1 class="mark"><a href="/" style="text-decoration:none;color:inherit"><span class="roger">roger</span><span class="wilco">wilco</span></a><span class="ver">RW1</span></h1>
+      <nav aria-label="Site">
+        <a href="/quickstart">Start</a>
+        <a href="/lines">What a line is</a>
+        <a href="/profiles">Profiles</a>
+        <a href="/research">Research</a>
+        <a href="/docs">API</a>
+        <a href="/spec">Spec</a>
+        <a href="/skill">Skill</a>
+      </nav>
+    </div>
+  </header>
+    <main class="doc">
+    <h1>Same line, four kinds of work</h1>
+    <p>The shape of a line never changes: version, type, id, who it is from and to, what it is about, then labelled facts. The eight message types and the few basic words (the asks, the reasons for saying no, the done states) describe the act of handing work over, not the work itself. Everything about one kind of work lives in a <b>profile</b>: a small file that adds the labels, the allowed words and the asks for that work. The same checks run on all of them. Below, the same loop in four kinds of work. Every line on this page was run through the checker before the page was written.</p>
+
+    <h2>Paying bills</h2>
+    <p class="muted">profile <code>pay</code>: scheduler, payer, the finance director as human</p>
+    <p>The irreversible step is releasing a payment. The profile adds amounts, currencies, accounts, dates, and the five answers a finance director may give (approve, decline, hold, reject, call back).</p>
+    <div class="box"><h3>Hand over</h3><p>Release the Marlow payment, read it all back first.</p><pre>RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 <b>ask=PAY</b> <b>rb=all</b> sup=marlow <b>amt=5400.00</b> cur=GBP kind=GROSS <b>acct=40-12-88/61102938</b> paid=20261002 ref=MD-2026-057</pre></div><div class="box"><h3>Read back</h3><p>The payer repeats every fact, with the fingerprint.</p><pre>RW1 <b>RB</b> payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay <b>h=</b>a6cf98835d6c sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057</pre></div><div class="box"><h3>Done</h3><p>What was actually paid, to where, when.</p><pre>RW1 <b>DN</b> payer-2 re=scheduler-1 p=pay from=payer to=scheduler item=inv:MD-2026-057 <b>out=OK</b> amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057</pre></div>
+
+    <h2>Releasing software</h2>
+    <p class="muted">profile <code>deploy</code>: release, operator, on-call</p>
+    <p>The irreversible step is the deploy to production, or a migration with no way back. The profile adds environments, versions, the change window and the approval reference.</p>
+    <div class="box"><h3>Hand over</h3><p>Deploy v2.4.1 to production in the 02:00 window under change approval CAB-0931.</p><pre>RW1 HO release-1 p=deploy from=release to=operator item=svc:api <b>ask=DEPLOY</b> rb=all <b>env=PROD</b> <b>ver=v2.4.1</b> prev=v2.4.0 <b>win=20261007T0200-0230</b> apref=CAB-0931</pre></div><div class="box"><h3>Read back</h3><p>The operator repeats it; the release agent's program checks it before the window opens.</p><pre>RW1 <b>RB</b> operator-1 re=release-1 from=operator to=release item=svc:api ask=DEPLOY p=deploy <b>h=</b>ef37e04abf27 env=PROD ver=v2.4.1 prev=v2.4.0 win=20261007T0200-0230 apref=CAB-0931</pre></div><div class="box"><h3>Ask</h3><p>A migration has no down migration. The operator asks the human, with the allowed answers, rather than deciding.</p><pre>RW1 <b>AQ</b> operator-1 re=release-1 p=deploy from=operator <b>to=human</b> item=mig:0142 need=ENUM <b>opts=APPROVE+HOLD</b> mig=0142 <b>down=N</b> // migration 0142 has no down migration; approve as irreversible, or hold?</pre></div><div class="box"><h3>Done</h3><p>What is running now, and its health.</p><pre>RW1 <b>DN</b> operator-2 re=release-1 p=deploy from=operator to=release item=svc:api out=OK env=PROD ver=v2.4.1 prev=v2.4.0 <b>state=UP</b></pre></div>
+
+    <h2>Clinical notes</h2>
+    <p class="muted">profile <code>clin</code>: extractor, reviewer, the record</p>
+    <p>Here nothing is handed over; the lines <em>are</em> the record. One line per statement the note makes, with its kind, whether it is affirmed or denied, how certain, about whom, when, the value, and a pointer to the exact words. A program refuses any line whose words are not on the line of the note it points to.</p>
+    <div class="box"><h3>A measurement</h3><p>HbA1c 7.2% on line 14 of document 3.</p><pre>RW1 <b>ST</b> extractor-5 p=clin from=extractor to=record <b>item=meas:hba1c</b> act=OBS pol=POS cert=CERT subj=PT time=CUR <b>res=7.2</b> unit=% <b>src=doc:3#l14</b> // HbA1c 7.2%</pre></div><div class="box"><h3>A denial</h3><p>No chest pain: a negated symptom, reported by the patient.</p><pre>RW1 ST extractor-6 p=clin from=extractor to=record item=sym:chest-pain <b>act=RPT</b> <b>pol=NEG</b> cert=CERT subj=PT time=CUR src=doc:3#l9 // not had any chest pain</pre></div><div class="box"><h3>Done</h3><p>The whole note translated: 24 lines.</p><pre>RW1 <b>DN</b> extractor-7 re=lead-1 p=clin from=extractor to=human item=doc:3 out=OK <b>n=24</b></pre></div>
+
+    <h2>A knowledge graph</h2>
+    <p class="muted">profile <code>pform</code>: the stances of an assistant that tends a graph</p>
+    <p>Agents handing graph nodes to each other for scoring, enrichment or pruning. The profile adds the node's stage, status, importance and heat, and the asks those agents use.</p>
+    <div class="box"><h3>Hand over</h3><p>Triage asks the strategist to score node 4102, which has stalled for 15 days.</p><pre>RW1 HO TRI-01 p=pform from=TRI to=STR item=pensive:4102 <b>ask=SCORE4</b> stg=OPT os=NOW imp=7 <b>heat=HOT</b> <b>stall=15d</b> touch=20260914</pre></div><div class="box"><h3>Read back</h3><p>The strategist repeats it.</p><pre>RW1 <b>RB</b> STR-01 re=TRI-01 from=STR to=TRI item=pensive:4102 ask=SCORE4 p=pform <b>h=</b>25e742ea2f7d</pre></div><div class="box"><h3>Done</h3><p>Scored, with the score in the note and the node as the artefact.</p><pre>RW1 <b>DN</b> STR-02 re=TRI-01 p=pform from=STR to=TRI item=pensive:4102 out=OK <b>art=pensive:4102</b> // scored 31 of 40: capability 9, values 8, user value 7, revenue 7</pre></div>
+
+    <h2>Write your own</h2>
+    <p>A profile is a JSON file. This is the deploy profile with the extras trimmed: three enums (one of them the closed answers a human may give), two asks, three labels, two agents. Put it in the <code>profiles/</code> folder next to the others and every tool knows it: the validator, the readback check, the legend, the gate.</p>
+    <pre>{
+ "profile": "deploy",
+ "extends": "RW1",
+ "enums": {
+  "env": {
+   "DEV": "development",
+   "STAGE": "staging",
+   "PROD": "production"
+  },
+  "ans": {
+   "APPROVE": "yes, proceed as asked",
+   "DECLINE": "no, do not proceed",
+   "HOLD": "wait; do nothing until told"
+  }
+ },
+ "asks": {
+  "DEPLOY": "deploy the named version to the named environment in the change window",
+  "ROLLBACK": "return the environment to the previous version"
+ },
+ "slots": [
+  {
+   "key": "env",
+   "type": "enum:env",
+   "desc": "target environment",
+   "on": [
+    "HO",
+    "RB",
+    "ST",
+    "DN"
+   ]
+  },
+  {
+   "key": "ver",
+   "type": "token",
+   "desc": "version or commit to deploy",
+   "on": [
+    "HO",
+    "RB",
+    "ST",
+    "DN"
+   ]
+  },
+  {
+   "key": "win",
+   "type": "token",
+   "desc": "change window as YYYYMMDDTHHMM-HHMM",
+   "on": [
+    "HO",
+    "RB",
+    "DN"
+   ]
+  }
+ ],
+ "agents": [
+  "release",
+  "operator"
+ ]
+}</pre>
+    <ul>
+      <li><b>enums</b> are the allowed words for a label. <code>ans</code> is special: when a profile defines it, every question to a human takes its options from it and every answer must be one of them.</li>
+      <li><b>asks</b> are the jobs in this kind of work. They join the basic ones (DRAFT, REVIEW, FIX...), which stay available.</li>
+      <li><b>slots</b> are the labels, each with a type (<code>enum:env</code>, <code>token</code>, <code>money</code>, <code>date</code>, <code>int:1-10</code>, <code>bool</code>, <code>list:...</code>), a description the legend prints, and the message types it may appear on.</li>
+      <li><b>agents</b> are the names allowed in <code>from=</code> and <code>to=</code>. <code>human</code> is always allowed.</li>
+    </ul>
+    <p>A profile can add words; it may not change what a basic one means. Then: <code>rogerwilco legend --profile deploy</code> prints the one-page legend for an agent's prompt, and <code>rogerwilco validate "&lt;line&gt;" --profile deploy</code> checks a line against it.</p>
+    <p class="muted">Coming next: paste a profile straight into the playground and the API, so you can check lines against your own without installing anything.</p>
+    <p><a href="/quickstart">Start in two minutes</a> or <a href="/lines">read what a line is</a>.</p>
+  </main>
+
+
+  <footer class="foot">
+    <span>Protocol RW1</span>
+    <span>Tools for agents (MCP): <code>https://rogerwilco.crox.io/mcp</code></span>
+    <span><a href="https://github.com/afieldofdreams/rogerwilco">Source</a></span>
+  </footer>
+</div>
+</body>
+</html>
