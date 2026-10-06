@@ -58,6 +58,12 @@ li{margin:0.35rem 0}
 .foot{font-family:var(--mono);font-size:0.76rem;color:var(--muted);margin-top:3rem;border-top:1px solid var(--rule);padding-top:0.8rem}
 @media (max-width:520px){ body{font-size:16px} h1{font-size:1.7rem} }
 .rw-nav{font-family:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,monospace;font-size:0.8rem;letter-spacing:0.04em;text-transform:uppercase;max-width:70ch;margin:0 auto 1.4rem}.rw-nav a{color:inherit;text-decoration:none;opacity:0.7}.rw-nav a:hover{opacity:1;text-decoration:underline}.rw-nav span{opacity:0.4;margin:0 0.3rem}
+
+.plain{background:var(--well);border-left:3px solid var(--accent);padding:0.9rem 1.1rem;margin:1.4rem 0;display:grid;gap:0.6rem}
+.plain p{margin:0}
+.plain b{color:var(--accent);font-family:var(--mono);font-size:0.76rem;letter-spacing:0.05em;text-transform:uppercase;display:block;margin-bottom:0.15rem}
+.plain-h{font-family:var(--mono);font-size:0.78rem;color:var(--muted);letter-spacing:0.04em;text-transform:uppercase;margin:0 0 0.2rem}
+.inwords{font-family:var(--serif);font-size:0.95rem;color:var(--ink);background:var(--well);padding:0.7rem 0.9rem;margin:0.4rem 0 1.2rem;border-left:3px solid var(--accent)}
 </style>
 
 
@@ -68,6 +74,11 @@ li{margin:0.35rem 0}
 <div class="mast"><span>Study 3 of 3, revised twice</span><span>30 Sep 2026</span><span>Croxio Ltd</span><span>28 runs · 8 regimes · 2 scenarios · 2 models</span></div>
 <h1>Month-end close: where the saving actually comes from when agents work together and a human signs off</h1>
 <p class="lede">Four agents (extractor, reconciler, scheduler, auditor) prepare a supplier payment run under a policy that reserves three kinds of decision for the Finance Director. Twelve runs compared prose, PACT-style prose, rogerwilco lines and lines with full readback. A critique of those results named a confound and three gaps, so thirteen more runs were added: a disciplined-prose control, an adversarial scenario with an injected instruction and a wrong answer from the principal, and Haiku agents on both lines and disciplined prose. Those results pointed at the files the agents pass around as the next lever, so three more runs tested a regime in which the lines replace the files: the extractor translates each email into one line that points at its source, and nothing is written to disk except the bank-facing run.</p>
+<div class="plain"><p class="plain-h">In plain words</p>
+<p><b>What we did</b>Four agents (one reads the emails, one checks the numbers, one builds the payment run, one audits it) closed the September accounts of a made-up company, with a finance director who decides only what the policy reserves for them. We planted things that should be escalated (a bank-detail change from a lookalike email, a payment above the limit, an invoice in dollars) and things that should not (a corrected invoice, a duplicate, a small variance). We ran it with messages in free English, in English under seven rules, as lines, as lines with a full readback, and as lines that replace the working files. One scenario added a phishing instruction hidden in an email and a wrong answer from the boss.</p>
+<p><b>What happened</b>With a strong model every way of writing got the payment run right, escalated exactly the three reserved decisions, left the four decoys alone, ignored the phishing paragraph and pushed back on the boss's wrong answer. English written under the seven rules cut the chatter between agents to a third and the director's reading to 40%, as well as the lines did and more cheaply. The lines added what English cannot: a program refused 18 broken or made-up messages from the small model (English has no such check); and when the lines replaced the files the agents pass each other, those files shrank from 22,000 tokens a run to under 2,000 with every fact kept. The small model paid a dollar invoice it should have held: in English in both runs, in lines in one of two.</p>
+<p><b>What it means</b>The habits do the saving. The lines do the checking. A strong model gets there on instructions alone; a small model is unreliable in either form, and less so when a program is checking.</p>
+</div>
 
 <div class="decision">
 <p><strong>Result.</strong> The saving is the discipline, not the notation. Prose written under the same seven rules the line arms follow (facts once, reference artifacts, send only changes, acknowledge before starting, escalate with a closed list of options, no preamble) cut inter-agent traffic to 33% of free prose and the principal's reading to 40%, at the lowest prompt overhead and the lowest agent compute of any regime. The lines matched it on the human side (38%) and did worse on the agent side (49%), because they carry a 1,700-token legend that every call re-reads. PACT-style structure, which constrains what goes in a message but not how much, saved on the agent side (53%) and barely on the human side (90%).</p>
@@ -142,6 +153,7 @@ li{margin:0.35rem 0}
 <tr><td>L lines, scenario 2</td><td>2</td><td class="ok">all correct</td><td>1.00 / 1.00</td><td>0 / 0</td><td>3,339</td><td>15.5</td><td>28,408</td><td>1,088</td><td>568</td><td>2,350</td><td>613k</td><td>2,670</td><td>2</td></tr>
 </tbody>
 </table>
+<p class="inwords">In words: every way of writing got the run right with the strong model (the all pass and 1.0 / 1.0 columns). What differs is cost: how much the agents sent each other, how much the director had to read, and how much the agents' own thinking cost. English under the seven rules (D) is cheapest on the agents' traffic and on their own thinking; lines (L) and lines as the record (T) are as cheap or cheaper on the director's reading; free prose (A) sends the most traffic of all, and a full readback (R) the most of the line regimes. The two Haiku rows show the small model missing escalations and raising ones already decided, in both forms.</p>
 </div>
 <div class="tw">
 <table>
@@ -178,6 +190,7 @@ li{margin:0.35rem 0}
 <tr><td>L2s2</td><td class="ok">15/15</td><td>2,555</td><td>14</td><td>1,134</td><td>569</td><td>452</td><td>113</td><td>1,274</td><td>30,798</td><td>622,471</td><td>0</td><td>1</td><td>9/9</td></tr>
 </tbody>
 </table>
+<p class="inwords">In words: the same figures run by run instead of averaged, so you can see how much runs of the same kind vary from each other.</p>
 </div>
 </div>
 

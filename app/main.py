@@ -72,6 +72,20 @@ def index():
                         headers={"Cache-Control": "no-cache"})
 
 
+PAGES = {"quickstart": "quickstart.html", "lines": "lines.html", "profiles": "profiles.html"}
+
+
+@router.get("/quickstart", include_in_schema=False)
+def quickstart():
+    return FileResponse(svc.APP_DIR / "static" / PAGES["quickstart"], media_type="text/html", headers={"Cache-Control": "no-cache"})
+
+
+@router.get("/lines", include_in_schema=False)
+def lines():
+    return FileResponse(svc.APP_DIR / "static" / PAGES["lines"], media_type="text/html", headers={"Cache-Control": "no-cache"})
+
+
+
 RESEARCH_DIR = svc.APP_DIR / "static" / "research"
 RESEARCH_PAGES = {"wire-study", "pilot", "month-end", "translation", "readback"}
 
@@ -134,8 +148,11 @@ def legend(profile: str | None = Query(default=None, description=PROFILE_HELP)):
 
 
 @router.get("/profiles", summary="Available profiles")
-def profiles():
-    return svc.profiles()
+def profiles(request: Request):
+    # A browser gets the page about profiles; a program (Accept: */* or application/json) gets the list.
+    if "text/html" in request.headers.get("accept", ""):
+        return FileResponse(svc.APP_DIR / "static" / PAGES["profiles"], media_type="text/html", headers={"Cache-Control": "no-cache", "Vary": "Accept"})
+    return JSONResponse(svc.profiles(), headers={"Vary": "Accept"})
 
 
 def _markdown(request: Request, which: str) -> Response:

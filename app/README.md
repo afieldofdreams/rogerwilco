@@ -177,4 +177,6 @@ The tests cover every endpoint, the four readback tiers, the MCP handshake and t
 
 ## The playground
 
+The site is five pages, each a self-contained HTML file under `static/` with no build step: `/` (what it is, the three-message loop, the playground), `/quickstart` (four ways to start, each with a real request and reply), `/lines` (every message type with an example, and what a program checks), `/profiles` (the same loop in four kinds of work, and how to write a profile; the same path answers a program with the JSON list of profiles) and `/research` (the five studies in plain words, each with its full report).
+
 `/` is one self-contained page with no build step. It leads with what goes wrong in a handover, the control that catches it and the figure from the studies, then three panels. Paste a line and validate it, convert it to JSON, take its digest, or build the readback a receiver would send. The second panel is the sender's check: paste the HO and the RB, and it shows which of the four tiers passed. Roger is receipt and integrity, wilco is echo and comprehension. The third is the gate: paste a document and the lines that state facts from it, and it shows which pointers hold. All three open on a working example. The figures on the page are tested against the results tables under `research/`, so the page cannot drift from the studies.

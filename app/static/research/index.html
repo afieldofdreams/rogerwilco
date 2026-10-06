@@ -36,6 +36,9 @@ p{margin:0.9rem 0}
 .lede{font-size:1.12rem}
 .study{border-top:1px solid var(--rule);padding-top:1.2rem;margin-top:2rem}
 .study .q{font-style:italic;color:var(--muted);margin:0.4rem 0 0.8rem}
+.plain{display:grid;gap:0.5rem;margin:0.8rem 0}
+.plain p{margin:0}
+.plain b{color:var(--accent);font-family:var(--mono);font-size:0.78rem;letter-spacing:0.05em;text-transform:uppercase;display:block;margin-bottom:0.1rem}
 .nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.8rem;margin:0.8rem 0 1rem}
 .num{background:var(--well);padding:0.7rem 0.9rem;min-width:0}
 .num b{display:block;font-family:var(--mono);font-size:1.25rem;font-weight:500;font-variant-numeric:tabular-nums}
@@ -51,67 +54,92 @@ a.go:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 <nav class="rw-nav" aria-label="Site"><a href="/">rogerwilco</a> <span aria-hidden="true">/</span> research</nav>
 <main>
 <div class="mast"><span>Five studies</span><span>September to October 2026</span><span>Croxio Ltd</span></div>
-<h1>The evidence behind rogerwilco, including the part that went against it</h1>
-<p class="lede">Five studies, each answering the question the previous one raised. Every corpus is synthetic, every harness and log is in the repository, the third study includes the control that overturned the first write-up's headline, and the fifth plants faults so that the readback has something to catch.</p>
+<h1>What we tested, what happened, and what it means</h1>
+<p class="lede">Five studies, one after another, each asking the question the one before it raised. Everything in them is made up for the test: the companies, the invoices, the clinical notes. Every log and every grade is in the repository. Each study is told here in plain words; the full report is one click away.</p>
 
 <section class="study">
-<h2>1. Wire study</h2>
-<p class="q">Does a closed-vocabulary line beat English, JSON, glyphs or a positional form on tokens, round trip and decision parity?</p>
-<div class="nums">
-  <div class="num"><b>240</b><span>synthetic handoffs, five formats, two models</span></div>
-  <div class="num"><b>29% to 60%</b><span>fewer tokens than English for the same facts</span></div>
-  <div class="num"><b>240/240</b><span>round trip exact; parity 100% on Sonnet</span></div>
+<h2>1. Do the lines save money?</h2>
+<p class="q">Wire study, 27 September. 240 messages, five ways of writing them, two models.</p>
+<div class="plain">
+<p><b>What we did</b>We wrote the same 240 handover messages five ways: plain English, JSON, a rogerwilco line, a form made of symbols, and a very tight form where every fact sits in a fixed position. We counted the tokens each way costs, checked that every message survives being turned into data and back, and gave 60 of them to a model that had not seen the format and asked what it would do with each.</p>
+<p><b>What happened</b>A line costs about 29% fewer tokens than English; the tight form about 59% fewer. Every message survived the round trip. The strong model understood every form perfectly. The small model lost its place in the tight form in one run of two, getting four messages in ten wrong; in the other run, one in twelve.</p>
+<p><b>What it means</b>The saving per message is small: 20 to 40 tokens. A hundred handovers a day save less than one resend of a system prompt. So tokens are not the reason to use lines. The reason is that a program can check them. The tight form is for programs talking to programs, not for models.</p>
 </div>
-<p>Keyed form won over positional because a small model miscounted positional columns in one run of two; three-letter codes won over glyphs because glyph savings were tokenizer-dependent and the legend cost more.</p>
+<div class="nums">
+  <div class="num"><b>29%</b><span>fewer tokens than English for a line, 59% for the tight form</span></div>
+  <div class="num"><b>240 of 240</b><span>messages survived the round trip exactly</span></div>
+  <div class="num"><b>4 in 10</b><span>messages the small model misread in the tight form, in one run of two</span></div>
+</div>
 <a class="go" href="/research/wire-study">Read the wire study</a>
 </section>
 
 <section class="study">
-<h2>2. Readback pilot</h2>
-<p class="q">Does a comprehension readback catch a misread brief before the work is done, and at what cost in tokens and false alarms?</p>
-<div class="nums">
-  <div class="num"><b>36</b><span>trials with planted faults, blind grading</span></div>
-  <div class="num"><b>4/4</b><span>handoff misreads caught by readback, typed or prose</span></div>
-  <div class="num"><b>0</b><span>false alarms from the typed readback on Sonnet</span></div>
+<h2>2. Does reading a message back catch misunderstandings?</h2>
+<p class="q">Readback pilot, 28 September. 36 handovers, three ways of handing over, two models.</p>
+<div class="plain">
+<p><b>What we did</b>We gave agents briefs with traps in them. For example, the message said "120 words" but the attached brief said "150 words, no more". Then we handed the job over three ways: in plain English with no readback; in plain English with the receiver writing back what it understood, judged by another model; and as a rogerwilco line with the receiver reading it back and a program checking it.</p>
+<p><b>What happened</b>Without a readback, 4 of 36 jobs were done on the wrong reading and stayed wrong. With a readback of either kind, every misread was flagged and fixed with one correction. The line version prevented two of them before any check, probably because having to put a number after <code>len=</code> made the receiver read the brief instead of trusting the message (one trap, two runs: a strong hypothesis, not a result). On the small model the program over-flagged terse readbacks, ten false alarms in eleven; a rule change planned for the next version would remove them.</p>
+<p><b>What it means</b>Reading back works. The line is a little better than a paragraph, mainly because it forces a value. A readback proves the receiver understood; it does not prove it will do it. A small model read a rule back correctly five times and then ignored it. That gap is what the fifth study looks at.</p>
 </div>
-<p>Readback verifies understanding, not execution: an agent stated the constraint it then failed. Comprehension readback costs about twice the tokens of a bare handoff with the legend in the prompt, and five times with the full skill file.</p>
+<div class="nums">
+  <div class="num"><b>4 of 36</b><span>jobs done on the wrong reading with no readback</span></div>
+  <div class="num"><b>4 of 4</b><span>misreads that reached an output caught by a readback and fixed in one go</span></div>
+  <div class="num"><b>0</b><span>false alarms from the program's check on the strong model</span></div>
+</div>
 <a class="go" href="/research/pilot">Read the pilot</a>
 </section>
 
 <section class="study">
-<h2>3. Month-end close</h2>
-<p class="q">When four agents prepare a payment run under a policy that reserves decisions for a human, where does the saving actually come from?</p>
-<div class="nums">
-  <div class="num"><b>28</b><span>runs, eight regimes, two scenarios, two models</span></div>
-  <div class="num"><b>33%</b><span>of free-prose traffic under the seven rules, in plain English</span></div>
-  <div class="num"><b>22k to 1.9k</b><span>tokens of files per run once the lines are the record</span></div>
+<h2>3. What happens when four agents close a company's month together?</h2>
+<p class="q">Month-end close, 29 to 30 September. 28 runs, six ways of writing messages (two of them rerun with the small model), two scenarios, two models.</p>
+<div class="plain">
+<p><b>What we did</b>Four agents (one reads the emails, one checks the numbers, one builds the payment run, one audits it) closed the September accounts of a made-up company, with a finance director who decides only what the policy reserves for them. We planted things that should be escalated (a bank-detail change from a lookalike email, a payment above the limit, an invoice in dollars) and things that should not (a corrected invoice, a duplicate, a small variance). We ran it with messages in free English, in English under seven rules, as lines, as lines with a full readback, and as lines that replace the working files. One scenario added a phishing instruction hidden in an email and a wrong answer from the boss.</p>
+<p><b>What happened</b>With a strong model every way of writing got the payment run right, escalated exactly the three reserved decisions, left the four decoys alone, ignored the phishing paragraph and pushed back on the boss's wrong answer. English written under the seven rules cut the chatter between agents to a third and the director's reading to 40%, as well as the lines did and more cheaply. The lines added what English cannot: a program refused 18 broken or made-up messages from the small model (English has no such check); and when the lines replaced the files the agents pass each other, those files shrank from 22,000 tokens a run to under 2,000 with every fact kept. The small model paid a dollar invoice it should have held: in English in both runs, in lines in one of two.</p>
+<p><b>What it means</b>The habits do the saving. The lines do the checking. A strong model gets there on instructions alone; a small model is unreliable in either form, and less so when a program is checking.</p>
 </div>
-<p>The saving is the discipline, not the notation: disciplined prose matched the lines on the human's reading and beat them on the agents' traffic and compute. The notation buys verification, which the strong model did not need and the weak model did, and even then not enough. It also buys translation: when the extractor turns each email into one line with a source pointer and no agent writes a working file, the files the agents pass around fall from 22k tokens a run to under 2k with the same outcome. Includes an adversarial scenario with an injected instruction and a wrong answer from the principal.</p>
+<div class="nums">
+  <div class="num"><b>a third</b><span>of the traffic between agents, and 40% of the director's reading, with the seven rules in plain English</span></div>
+  <div class="num"><b>18</b><span>broken or made-up messages from the small model that the program refused</span></div>
+  <div class="num"><b>22k to 2k</b><span>tokens of files passed between agents when lines carried the facts instead</span></div>
+</div>
 <a class="go" href="/research/month-end">Read the month-end study</a>
 </section>
 
 <section class="study">
-<h2>4. Translation</h2>
-<p class="q">Can a clinical document become one line per statement, with its attributes, values and the exact words behind it, completely, accurately and the same every time?</p>
-<div class="nums">
-  <div class="num"><b>144</b><span>translations of twelve documents, 422 gold assertions, lines and JSON, Sonnet and Haiku</span></div>
-  <div class="num"><b>99.7%</b><span>of assertions found by Sonnet, 99% citing the exact words, nothing invented</span></div>
-  <div class="num"><b>70 of 72</b><span>Haiku first attempts refused by the gate; made whole in form, still wrong in meaning</span></div>
+<h2>4. Can a document become lines of fact you can trust?</h2>
+<p class="q">Translation study, 30 September. 12 clinical notes, 422 statements marked by hand, 144 translations, two models.</p>
+<div class="plain">
+<p><b>What we did</b>We wrote twelve made-up clinical notes with the hard things in them: things that are denied, things that might be, things about a relative, things from years ago, a table, a correction, a hidden instruction. We marked every statement by hand: 422 of them. Then we asked two models to turn each note into one line per statement, with a pointer to the exact words in the note, twelve times each. A program refused any line whose words were not in the note at the place it pointed to.</p>
+<p><b>What happened</b>The strong model found 99.7% of the statements, pointed at the right words 99% of the time, and invented nothing, because a line without words behind it cannot get through. The small model had 70 of its first 72 attempts refused, mostly for paraphrasing instead of quoting, got every note through in two rounds, and still misread meaning: it marked what the patient said as something the doctor observed 59 times, and read the present as the past 104 times. Writing the same facts as JSON instead of lines made no difference to accuracy or cost.</p>
+<p><b>What it means</b>The pointer and the check make the record trustworthy: nothing in it is made up, and every fact can be traced to its words. A weak model is made correct in form, not in meaning.</p>
 </div>
-<p>With a strong model the lines are the record: complete, traceable to the words, identical across runs for 89% of assertions. Lines and JSON came out the same and cost the same per assertion. The record is 5.6 times the size of the note, so what the lines buy is structure and provenance, not compression.</p>
+<div class="nums">
+  <div class="num"><b>99.7%</b><span>of the statements found by the strong model, 99% pointing at the right words</span></div>
+  <div class="num"><b>0</b><span>lines accepted whose words were not in the note</span></div>
+  <div class="num"><b>70 of 72</b><span>first attempts by the small model refused, then every note through in two rounds</span></div>
+</div>
 <a class="go" href="/research/translation">Read the translation study</a>
 </section>
 
 <section class="study">
-<h2>5. Readback and set-back</h2>
-<p class="q">When a handoff before an irreversible act carries a fault, does a readback catch it before the act, at what false-alarm rate, and does the receiver's report of the act catch a wrong one?</p>
-<div class="nums">
-  <div class="num"><b>9 and 14 of 16</b><span>planted faults became a wrong payment, master change or email without a readback, Sonnet and Haiku</span></div>
-  <div class="num"><b>0 and 0 of 16</b><span>with a line read back and checked in code; every content fault rejected at the readback, no false alarm on 12 clean handoffs</span></div>
-  <div class="num"><b>1 and 3 of 16</b><span>with a prose readback judged by a model: the misaddressed handoff, which a prose readback does not surface</span></div>
+<h2>5. Before something that cannot be undone, does reading back catch a fault?</h2>
+<p class="q">Readback and set-back, 6 October. 114 trials, 19 handovers, 16 of them with a planted fault, three ways of handing over, two models.</p>
+<div class="plain">
+<p><b>What we did</b>We handed an agent single jobs it cannot take back: release a payment, change a supplier's bank account, send a supplier an email. Into sixteen of the nineteen handovers we planted one fault: a wrong digit, the wrong account, the wrong date, the wrong invoice, net instead of gross, a message meant for a different agent. Three ways of handing over, as in the pilot: English with no readback; English with a readback judged by a model; a line read back and checked by a program. The agent then did the job and reported what it had done, or asked or refused instead.</p>
+<p><b>What happened</b>With no readback, 9 of the 16 faults became a wrong act that could not be undone (14 with the small model). The agent caught the ones it could see for itself, like an account that was not on file, and let the rest through. With an English readback judged by a model, 1 and 3 got through, every one a message addressed to someone else. With a line read back and checked by a program, none got through on either model: every wrong figure was caught at the readback, and the agent refused or queried the misaddressed messages (the program will not build a readback for a message that is not for you, and the strong model said so). No correct handover was wrongly held up. In the lines arm every job done after a confirmed readback was right, and every "done" report told the truth about what had been done.</p>
+<p><b>What it means</b>For the step you cannot undo, the line read back and checked by a program is the control. The "done" report with the actual values is the second loop; in this study it had nothing to catch, because nobody did the wrong thing after a correct readback. Two things to fix: a corrected message should say why it changed, and the done report belongs in the rulebook.</p>
 </div>
-<p>The second loop, the receiver reporting the values it executed, told the truth in 28 of 28 typed reports and had nothing to catch: every act after a confirmed readback was right on every field. A prose done note, judged by a model, drew 17 flags for omitted fields and none for a wrong value. One trial per cell, two Claude models, synthetic faults: direction, not measurement.</p>
+<div class="nums">
+  <div class="num"><b>9 and 14 of 16</b><span>faults that became a wrong, irreversible act with no readback, strong and small model</span></div>
+  <div class="num"><b>0 and 0 of 16</b><span>with a line read back and checked by a program</span></div>
+  <div class="num"><b>0</b><span>correct handovers wrongly held up, out of 12</span></div>
+</div>
 <a class="go" href="/research/readback">Read the readback study</a>
+</section>
+
+<section class="study">
+<h2>The honest summary</h2>
+<p>Lines do not save money with a strong model; the habits do. Lines let a program check what agents say to each other, refuse made-up words, trace every fact to its source, and catch a wrong figure before a payment goes out. With a small model that matters a lot. With a strong model it matters at the steps you cannot undo. Every study here is small: one to three runs per cell, two models, one author writing both the tests and the marking. Enough to show direction; not yet a measurement.</p>
 </section>
 
 <div class="foot">Corpora, harnesses, raw logs and grades: the research/ folder of the rogerwilco repository. The naming changed from formcore (prefix FC1) to rogerwilco (RW1) on 29 September 2026; raw logs keep what the agents saw.</div>
