@@ -52,6 +52,16 @@ class FromJSONBody(BaseModel):
     profile: str | None = Field(default=None, description=PROFILE_HELP)
 
 
+class GateBody(BaseModel):
+    lines: str = Field(description="One rogerwilco line per row: the lines that state facts from the source document.")
+    profile: str = Field(description="A profile that makes the lines the record: clin or pay.", examples=["clin"])
+    document: str | None = Field(
+        default=None, description="The source document as plain text. For clin, src=doc:<id>#l<n> counts its lines "
+                                  "from 1 and each line's quote must be found in the lines it cites. For pay, an inbox "
+                                  "export with messages separated by --- lines, so email:<n> can be checked.")
+    doc_id: str | None = Field(default=None, description="The document's id, the part after doc: in src=. Optional.")
+
+
 router = APIRouter()
 MARKDOWN = {200: {"content": {"text/markdown": {}}}}
 
@@ -111,6 +121,11 @@ def from_json(body: FromJSONBody):
 @router.post("/digest", summary="The h= digest of a line")
 def digest(body: LineBody):
     return svc.digest(body.line, body.profile)
+
+
+@router.post("/gate", summary="Check lines against the source they came from")
+def gate(body: GateBody):
+    return svc.gate(body.lines, body.profile, body.document, body.doc_id)
 
 
 @router.get("/legend", response_class=PlainTextResponse, summary="Legend to paste into an agent's prompt")

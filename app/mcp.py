@@ -1,4 +1,4 @@
-"""MCP server for rogerwilco, over Streamable HTTP. Tools: validate, check_rb, make_rb, legend, to_json.
+"""MCP server for rogerwilco, over Streamable HTTP. Tools: validate, gate, check_rb, make_rb, legend, to_json.
 
 Built on the official SDK (pip install "mcp<2"; the 2.x line renamed FastMCP and moved the transport options). The
 server is stateless and answers with plain JSON, so any client can call it with a single POST and no session.
@@ -34,9 +34,11 @@ FastMCP, TransportSecuritySettings, ToolAnnotations = _import_sdk()
 
 INSTRUCTIONS = (
     "rogerwilco (RW1) is a one-line typed message format for handing work between agents, with a readback the sender "
-    "verifies. Call legend to get the format in a few lines. Use validate on every line you send or receive, make_rb "
-    "to build the readback for an HO you received, and check_rb to verify a readback before you treat a handoff as "
-    "accepted. to_json converts a line to its JSON form."
+    "verifies. A fact that came from a document crosses as a line that points back at it (src=). Call legend to get "
+    "the format in a few lines. Use validate on every line you send or receive, make_rb to build the readback for an "
+    "HO you received, and check_rb to verify a readback before you treat a handoff as accepted. When lines state facts "
+    "from a source document (profile clin or pay), send the document and the lines to gate and fix every error before "
+    "anyone acts on them. to_json converts a line to its JSON form."
 )
 
 Line = Annotated[str, Field(description="One rogerwilco message on one line, starting RW1.")]
@@ -95,8 +97,29 @@ def to_json(line: Line, profile: Profile = "") -> dict[str, Any]:
     return svc.to_json(line, profile)
 
 
+def gate(
+    lines: Annotated[str, Field(description=(
+        "The translation: one rogerwilco line per row, the lines that stand in for the source document."))],
+    profile: Annotated[str, Field(description="A profile that makes the lines the record: clin or pay.")],
+    document: Annotated[str, Field(description=(
+        "Optional but what the gate is for. The source document as plain text. For clin, src=doc:<id>#l<n> counts "
+        "its lines from 1 and each line's quote (the tail) must be found verbatim in the lines it cites. For pay, an "
+        "inbox export with messages separated by --- lines, so email:<n> can be checked."))] = "",
+    doc_id: Annotated[str, Field(description="The document's id, the part after doc: in src=. Optional.")] = "",
+) -> dict[str, Any]:
+    """Check a batch of lines against the source they came from, before anyone acts on them or they become the
+    record. Every row must be a valid line under the profile, every statement (ST) must point at its evidence with
+    src=, and the evidence must say what the line says: for clin the quote in the tail is found verbatim in the cited
+    document line(s), the item kind is one of the profile's, there is exactly one src per line and ids are unique;
+    for pay a line about a source document carries src=, an invoice line carries amt cur kind, and net plus vat
+    equals amt. Returns {ok, errors, notes, counts, rows, accepted}. ok is false if any row fails; fix every error
+    and send the whole batch again."""
+    return svc.gate(lines, profile, document or None, doc_id or None)
+
+
 TOOLS = (
     (validate, "Validate a rogerwilco line", None),
+    (gate, "Check lines against their source", None),
     (check_rb, "Check a readback", None),
     (make_rb, "Make a readback", None),
     (legend, "Get the legend", False),     # plain text, not a JSON object
