@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <title>rogerwilco</title>
-<meta name="description" content="How AI agents hand work to each other so a program can check it: seven rules, a one-line typed message with a readback, and a pointer from every fact to its source. With the numbers from four studies.">
+<meta name="description" content="How AI agents hand work to each other so a program can check it: seven rules, a one-line typed message with a readback, and a pointer from every fact to its source. With the numbers from five studies.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a58ab'/%3E%3Cpath d='M8 17l5 5 11-12' fill='none' stroke='%23fff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <style>
 /* Layout: one column and two panels. A decoded message sits in ruled cells, like the strip a controller pins in a
@@ -218,14 +218,14 @@ noscript p { margin: 0; padding: 10px 12px; color: var(--warn); background: var(
     <p class="lede">How AI agents hand work to each other so that a program can check it.</p>
     <div class="explain">
       <p>When several agents share a job, they tell each other what they found and what they need in paragraphs. A paragraph cannot be checked by code, so nobody knows, until the work is done, whether the next agent read the figures right, whether a fact was made up or dropped on the way, or whether a decision that belonged to a person was taken by a machine.</p>
-      <p>rogerwilco is a set of controls for that. Below, what goes wrong in a handover, the control that catches it, and what <a href="/research">four studies</a> saw: a four-agent accounts-payable close run 28 times with planted events, a clinical-note study of 144 translations against 422 hand-annotated statements, a readback pilot with planted faults, and a wire study. Every figure comes from two or three runs per cell, Claude Sonnet and Haiku only, on synthetic data, with the gold sets and scorers written by the author. Enough to show direction; not yet a measurement.</p>
+      <p>rogerwilco is a set of controls for that. Below, what goes wrong in a handover, the control that catches it, and what <a href="/research">five studies</a> saw: a fault-injection study of 114 handoffs before irreversible acts, a four-agent accounts-payable close run 28 times with planted events, a clinical-note study of 144 translations against 422 hand-annotated statements, a readback pilot, and a wire study. Every figure comes from two or three runs per cell, Claude Sonnet and Haiku only, on synthetic data, with the gold sets and scorers written by the author. Enough to show direction; not yet a measurement.</p>
     </div>
     <div class="parts">
       <div class="part">
         <h2>The receiver reads the handoff differently from how the sender meant it</h2>
         <p><strong>Control: the readback.</strong> The receiver repeats the handoff back as its own line and the sender's code compares it with the intent the sender wrote down before sending, before letting go of the work. <em>Roger</em> is received; <em>wilco</em> is understood and will comply.</p>
-        <div class="num">4 of 36<small>prose handoffs with no readback, in the pilot, were read differently from how the sender meant them, and the work went ahead on the wrong reading. In the readback arms, four misreads reached an output; all four were flagged and fixed by one correction, applied after the work, so the pre-work catch is inferred from the flag, not measured. In 21 runs of a synthetic month-end close with a strong model, nothing needed catching; full readback ran in three of them and caught nothing.</small></div>
-        <p class="when">Use it before anything irreversible: a payment, a payee change, anything sent outside. A full readback made a run's traffic between agents 1.6 times that of a plain acknowledgement. On a small model the code check over-flagged until its severity rule was fixed.</p>
+        <div class="num">9 of 16, then 0<small>planted faults in a handoff before a payment, a payee change or a supplier email became a wrong irreversible act without a readback (14 of 16 with a small model). With the line read back and checked in code, none did, on either model: every content fault was rejected at the readback, the misaddressed handoffs were refused by the receiver, no clean handoff was rejected, and every act after a confirmed readback was right on every field. In 21 runs of a clean month-end close with a strong model, nothing needed catching.</small></div>
+        <p class="when">Use it before anything irreversible: a payment, a payee change, anything sent outside. It costs one more turn per handoff, two when corrected, and the receiver's brief carries the legend.</p>
       </div>
       <div class="part">
         <h2>A fact is invented, or the words are paraphrased until they say something else</h2>
