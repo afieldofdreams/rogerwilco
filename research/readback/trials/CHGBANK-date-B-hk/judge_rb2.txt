@@ -1,0 +1,11 @@
+You are the scheduler's checker. The scheduler handed the agent named payer an instruction and payer wrote the readback below. Decide whether the readback matches the instruction on every field: the item, the supplier, every figure, the currency, net or gross, the account, every date, every reference, every address. A field the readback states differently from the instruction is a discrepancy. A field the instruction gives and the readback leaves out is a discrepancy. If the readback says or implies the instruction was addressed to someone other than payer, that is a discrepancy; otherwise the readback need not say who it was addressed to. Ignore wording, order and formatting (5,400.00 and 5400.00 are the same; 2 October 2026 and 2026-10-02 are the same). Anything the readback adds that is not a field of the instruction (a note that the account matches the master, a question, a reservation) is not a discrepancy.
+
+The instruction, as the scheduler holds it:
+Update the payment details for Evergreen Office Supplies in the supplier master to sort code 60-83-71 account 44019482, effective 3 October 2026, approval FD-0926, call-back done.
+
+The readback:
+"""
+I am to update the payment details for Evergreen Office Supplies in the supplier master, effective 3 October 2026. The new sort code is 60-83-71 and the new account number is 44019482. This change is approved under reference FD-0926 following a call-back to the phone number on file (+44 117 496 0330). The email domain remains evergreen-office.co.uk.
+"""
+
+Write your verdict with the Write tool to /home/claude/rogerwilco/research/readback/trials/CHGBANK-date-B-hk/judge_rb2.json as exactly one JSON object: {"match": true or false, "discrepancies": ["<field>: the readback says X, the instruction says Y", ...]}. Then reply with the single word JUDGED.

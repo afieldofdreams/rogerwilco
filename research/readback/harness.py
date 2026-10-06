@@ -83,7 +83,7 @@ FAULTS = {
 }
 
 # which faults a careful receiver could see from the master it holds
-VISIBLE_TO_RECEIVER = {("PAY", "acct"), ("SEND", "addr"), ("PAY", "recipient"), ("CHGBANK", "recipient"), ("SEND", "recipient")}
+VISIBLE_TO_RECEIVER = {("PAY", "acct"), ("PAY", "cur"), ("SEND", "addr"), ("PAY", "recipient"), ("CHGBANK", "recipient"), ("SEND", "recipient")}
 
 
 def apply_fault(act: str, fault: str) -> tuple[dict, str]:
@@ -389,8 +389,13 @@ def norm_text(v) -> str:
     return re.sub(r"[^a-z0-9@./-]", "", str(v).lower())
 
 
+def norm_item(v) -> str:
+    """An invoice id with or without its line namespace: inv:MD-2026-057 and MD-2026-057 are the same item."""
+    return norm_text(re.sub(r"^\s*(inv|sup|run|doc|email):", "", str(v), flags=re.I))
+
+
 ACT_FIELDS = {
-    "PAY": {"item": norm_text, "supplier": norm_text, "amount": norm_money, "currency": norm_text, "kind": norm_text,
+    "PAY": {"item": norm_item, "supplier": norm_text, "amount": norm_money, "currency": norm_text, "kind": norm_text,
             "sort_code": norm_text, "account": norm_text, "payment_date": norm_date, "reference": norm_text},
     "CHGBANK": {"supplier": norm_text, "sort_code": norm_text, "account": norm_text, "effective": norm_date, "approval": norm_text},
     "SEND": {"to": norm_text, "amount": norm_money, "currency": norm_text, "payment_date": norm_date, "reference": norm_text},
@@ -481,11 +486,10 @@ def grade_setback(trial: Path, meta: dict, action_grade: dict) -> dict:
 
 
 def count_tokens(s: str) -> int:
-    try:
-        import tiktoken
-        return len(tiktoken.get_encoding("o200k_base").encode(s))
-    except Exception:  # noqa: BLE001
-        return len(s.split())
+    """o200k tokens, as in the other studies. tiktoken is required: a silent word-count fallback once put word counts
+    on a results page labelled as tokens."""
+    import tiktoken
+    return len(tiktoken.get_encoding("o200k_base").encode(s))
 
 
 def grade() -> int:
@@ -516,7 +520,10 @@ def grade() -> int:
             "false_alarm": (not fault) and readback_caught,
             "receiver_asked": action["asked"] and not action["acted"],
             "acted": action["acted"], "act_correct": action["correct"], "act_wrong": action["wrong"],
-            "fault_reached_act": fault and action["acted"] and action["correct"] is False,
+            # a message addressed to another agent is a fault the receiver should refuse, unless the sender re-addressed it
+            # after a rejected readback: acting on it without that correction is the failure
+            "fault_reached_act": fault and action["acted"] and (action["correct"] is False
+                                                                or (meta["fault"] == "recipient" and not readback_caught)),
             "setback": setback,
             "prompt_tokens": count_tokens((trial / "prompt.txt").read_text()), "traffic_tokens": traffic,
         }
