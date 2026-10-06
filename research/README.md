@@ -1,6 +1,6 @@
 # Research
 
-Three studies behind the protocol, each with its corpus, harness, raw logs and a results page. Everything here is synthetic; nothing comes from a client or a private knowledge graph.
+Five studies behind the protocol, each with its corpus, harness, raw logs and a results page. Everything here is synthetic; nothing comes from a client or a private knowledge graph.
 
 | Study | Question | Folder | Results page |
 |---|---|---|---|
@@ -8,6 +8,7 @@ Three studies behind the protocol, each with its corpus, harness, raw logs and a
 | Readback pilot | Does a comprehension readback catch misread briefs before the work is done, and at what cost in tokens and false alarms? 36 trials, planted faults, blind grading. | `pilot/` | `pilot/report.html` |
 | Month-end close | Do typed lines cut inter-agent traffic, keep the human's read load down and bring the human in exactly when policy says, in a four-agent accounts-payable run with planted events? 28 runs: prose, PACT-style prose, disciplined prose (the same rules without the syntax), lines, lines with full readback, lines as the record (no working files, one line per source document with a `src=` pointer), lines and disciplined prose on Haiku, and an adversarial scenario with an injected instruction and a wrong answer from the principal. | `month-end/` | `month-end/results/report.html` |
 | Translation | Can a clinical document become one assertion line per statement (kind, act, polarity, certainty, subject, time, values, one source pointer, the verbatim quote), completely, accurately and repeatably? 144 translations of twelve synthetic documents against 422 gold assertions: lines and JSON, Sonnet and Haiku, three runs each, every output gated on provenance. | `translation/` | `translation/report.html` |
+| Readback and set-back | When a handoff before an irreversible act carries a fault, does a readback catch it before the act, at what false-alarm rate, and does the receiver's report of the act catch a wrong one? 114 trials: 19 handoffs (a payment, a payee change, a supplier email) with planted faults and clean controls, three arms (prose with no readback, prose with a model-judged readback, lines with a code-checked readback and a DN carrying the executed values), Sonnet and Haiku receivers, run as headless Claude sessions. | `readback/` | `readback/results/report.html` |
 
 ## Naming
 
@@ -15,4 +16,4 @@ The first two studies ran under the working name **formcore** with the line pref
 
 ## Reproducing
 
-Each folder has its own README or a docstring at the top of its harness. The wire study and the pilot were run with Claude subagents driven from a Claude session; the month-end study's harness (`month-end/tools/`) is file-based so any model that can run shell commands can play an agent. `harness/` is a model-agnostic runner that drives the same scenarios over an OpenAI-compatible or Anthropic API, unattended, with keys from the environment; see its README.
+Each folder has its own README or a docstring at the top of its harness. The wire study and the pilot were run with Claude subagents driven from a Claude session; the month-end study's harness (`month-end/tools/`) is file-based so any model that can run shell commands can play an agent; the readback study runs as headless `claude -p` sessions from `readback/run.py`. `harness/` is a model-agnostic runner that drives the same scenarios over an OpenAI-compatible or Anthropic API, unattended, with keys from the environment; see its README.
