@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>rogerwilco Wire Study</title>
-
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>The wire study</title>
+<meta name="description" content="Does writing a handover as a line save tokens, and can a model still read it? 240 messages, five forms, two models.">
 <!-- site:head -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,45 +22,27 @@
 </header>
 <!-- /site:header -->
 <main class="report">
-<div class="mast"><span>Working paper v0.1</span><span>27 Sep 2026</span><span>Croxio Ltd · Lumos</span><span>Status: draft, QA pass 1 applied</span></div>
-<h1>Typed compression for agent handoffs</h1>
-<p class="lede">Does a codebook-governed wire format beat English for agent-to-agent messages? A prototype (rogerwilco) and a five-format test on 240 synthetic Pensive handoffs.</p>
-<div class="plain"><p class="plain-h">In plain words</p>
-<p><b>What we did</b>We wrote the same 240 handover messages five ways: plain English, JSON, a rogerwilco line, a form made of symbols, and a very tight form where every fact sits in a fixed position. We counted the tokens each way costs, checked that every message survives being turned into data and back, and gave 60 of them to a model that had not seen the format and asked what it would do with each.</p>
-<p><b>What happened</b>A line costs about 29% fewer tokens than English; the tight form about 59% fewer. Every message survived the round trip. The strong model understood every form perfectly. The small model lost its place in the tight form in one run of two, getting four messages in ten wrong; in the other run, one in twelve.</p>
-<p><b>What it means</b>The saving per message is small: 20 to 40 tokens. A hundred handovers a day save less than one resend of a system prompt. So tokens are not the reason to use lines. The reason is that a program can check them. The tight form is for programs talking to programs, not for models.</p>
-</div>
 
-<p class="epigraph">EGLL 271220Z 24012KT 9999 FEW025 SCT040 17/09 Q1016<small>A METAR. Fixed positions, closed vocabularies, one line. Sixty years old and still read by both humans and parsers. This is the shape being tested.</small></p>
+<p class="mast"><span>Study 1 of 5</span><span>27 September 2026</span><span>Croxio Ltd</span><span>240 messages, five forms, two models</span></p>
+<h1>Does writing a handover as a line save tokens, and can a model still read it?</h1>
+<div class="answer"><p>Yes to both, with a catch. The same handover costs about 29% fewer tokens as a line than in English, and about 59% fewer in a very tight form where every fact sits in a fixed position. Every message survived being turned into data and back. A strong model read every form perfectly. A small model lost its place in the tight form in one run of two.</p><p>The catch is that the saving is small: 20 to 40 tokens a message. A hundred handovers a day save less than one resend of a system prompt. So tokens are not the reason to write handovers as lines. The reason, which the next four studies test, is that a program can check a line and cannot check a paragraph.</p></div>
 
-<div class="decision">
-<p><strong>Decision.</strong> Adopt the keyed form (<code>HO|TRI&gt;STR|P4102|stg=OPT|…</code>) as the P-Form handoff wire in the Pensive Protocol. Use the positional form with checksum only where code, not a model, is the reader. Drop glyphs. Do not pursue latent communication. Next validation gate: real Pensive nodes, three runs per cell, Claude's own tokenizer.</p>
-<p><strong>What changed from the conversation.</strong> Two claims I made earlier were wrong. Savings are 29 to 60 percent, not 80. And a small model read the glyph form perfectly, twice; glyphs fail on legend cost and tokenizer dependence, not on comprehension.</p>
-</div>
+<dl class="glance"><dt>The question</dt><dd>How much does a fixed-vocabulary line save over English and JSON, does it lose anything on the way, and does a model reading it make the same decisions as it would from English?</dd><dt>The material</dt><dd>240 made-up handover messages between agents working on a knowledge graph: one agent asking another to score, enrich or retire a record, with a deadline, a priority and a note. Spread evenly across the six things the receiver might decide to do.</dd><dt>Compared</dt><dd>Five ways of writing the same message: plain English, JSON, a keyed line (<code>key=value</code>, the form that became rogerwilco), a glyph form where every code is a single symbol, and a tight positional form with an optional checksum.</dd><dt>Measured</dt><dd>Tokens (two tokenizers), whether the message survives a round trip into data and back, what happens when a line is corrupted, and decision parity: whether a model that has never seen the format makes the same call from it as from English.</dd><dt>Models</dt><dd>Claude Haiku 4.5 (two runs) and Claude Sonnet (one run) as the blind readers.</dd><dt>Graded by</dt><dd>Code. Tokens and round trips are counted; the readers' decisions are scored against a six-rule policy applied in code.</dd></dl>
 
-<h2>1. Question and scope</h2>
-<p>The starting point was "agents talking English is pointless, they need their own language." The literature makes that a three-way choice: emergent languages (agents invent codes under pressure), latent communication (agents pass hidden states, not text), or a governed dialect (a fixed codebook that both sides load). This study tests only the third, because it is the only one that runs on a hosted API and stays readable. M-Form is the precedent: a semantic compression format for medical records. The technique underneath it is domain-agnostic, so the prototype is built as a generic schema-driven codec, with P-Form (Pensive handoffs) as its first schema.</p>
-<p>Three things count as validation, agreed up front: token reduction against English and JSON; lossless round trip; and decision parity, where a blind receiving agent makes the same call from the compact message as from the English one.</p>
+<h2>Why we did it</h2>
+<p>The starting idea was a common one: agents talking to each other in English is wasteful, so they should have their own language. There are three ways to do that. Let the agents invent a code under pressure. Pass hidden model states instead of text. Or give both sides a fixed codebook, written by people, that a program can also read. Only the third runs on a hosted model API and stays readable by a human, so that is the one we tested.</p>
+<p>Before building anything else on it we wanted three facts: how much a codebook form saves against English and JSON, whether anything is lost on the way, and whether a model reading the compact form decides the same way it would from a paragraph. We agreed those three as the test before writing the code.</p>
 
-<h2>2. Prior art</h2>
-<p><em>Typed positional formats.</em> METAR, FIX, HL7 v2 and ATC phraseology all do the same thing: closed vocabularies, fixed slot order, a delimiter, optional free-text tail. They are the prior art for the wire shape, and nobody owns them.</p>
-<p><em>Learned prompt compression.</em> LLMLingua (Microsoft, 2023) drops low-perplexity tokens with a small model and reports up to 20x compression on few-shot prompts with under 2 percent loss. It is lossy and unstructured, so it suits retrieved context and conversation history, not typed handoffs where a dropped field is an error.</p>
-<p><em>Structural compression.</em> TOON (2025) is a lossless re-encoding of the JSON data model that reports about 40 to 46 percent fewer tokens than JSON on uniform arrays with retrieval accuracy at parity. Its authors note that models process CSV-like tables less reliably than headed forms, and a 2026 benchmark found TOON's advantage shrinks in short contexts once the format legend is charged to the prompt. That legend tax turns out to be the main design constraint here too.</p>
-<p><em>Latent communication.</em> Interlat (ACL 2026) passes an LLM's last hidden states between agents, compressing to eight latent steps with up to 24x communication speedup and better task success than fine-tuned natural-language baselines. StateBridge (2026) does it training-free across model families. The "Beyond Tokens" survey (June 2026) frames this as the direction of travel. Two caveats matter for us: it needs weight-level access, which a hosted API does not give, and "When Latent Agents Lie" shows hidden payloads can diverge from the visible commitment, so the audit gap is real. A mechanistic study of a four-agent latent system found most of the channel's dimensions unused and the representations dominated by the base model's geometry, which suggests the bandwidth argument is weaker than it sounds.</p>
-<p><em>Emergent language.</em> GlossoGen (September 2026) shows Claude and GPT agents drifting from English to unintelligible codes under budget pressure in a fully cooperative task, with no adversarial pressure at all. This matches the decade-old MARL result (Lazaridou 2017, Kottur 2017) that self-invented protocols optimise for task efficiency and lose compositionality unless externally constrained. That is the case against "let the agents invent it." The codebook has to be authored.</p>
-
-<h2>3. Method</h2>
-<p><strong>Codec.</strong> <code>rogerwilco</code> is about 250 lines of Python. A JSON schema declares enums and message types; each type declares typed slots (enum, int with range, days, date, list, text). The codec encodes a dict to one line, decodes it back, rejects anything that fails validation, and can emit a delta against a previous state. Two wire styles share one schema:</p>
+<h2>What we tested</h2>
+<p>A small codec turns a data record (who is handing over, to whom, which item, what state it is in, what is wanted, by when) into one line and back. From one set of 240 records we produced five renderings of every message:</p>
 <ul>
-<li><strong>Keyed.</strong> Pipe-delimited, <code>key=value</code>, optional fields omitted. Self-describing enough to read cold.</li>
-<li><strong>Tight.</strong> Space-separated, every slot in fixed position, <code>-</code> for absent, optional 3-character CRC. METAR-shaped.</li>
+<li><strong>English.</strong> A sentence or two, generated from templates with varied phrasing, so it is tidier than real agent prose.</li>
+<li><strong>JSON.</strong> The record as an object with full field names.</li>
+<li><strong>Keyed line.</strong> Every fact as <code>key=value</code>, optional fields left out, so it can be read cold. This is the shape rogerwilco kept.</li>
+<li><strong>Glyph.</strong> Every key and code replaced by a single Unicode symbol, to test the idea that a denser-looking line is a cheaper one.</li>
+<li><strong>Tight.</strong> Every fact in a fixed position, a dash for an absent one, and an optional three-character checksum. The shape of a METAR weather report.</li>
 </ul>
-<p>Three comparison renderings of the same data: English prose (template-generated with varied phrasing, so it is more regular than real stance writing), compact JSON with full field names, and a glyph form where every key and enum code is a single Unicode symbol, to test the hieroglyph hypothesis directly.</p>
-<p><strong>Data.</strong> 240 synthetic handoffs, balanced across six receiver outcomes. Fields follow the Pensive Protocol: stance codes, pipeline stage, operational status, importance, heat, stall days, confidence, ask, keep-assigned, due date, source view, blocked-by, note.</p>
-<p><strong>Tokens.</strong> Counted with OpenAI's <code>o200k_base</code> and <code>cl100k_base</code> via tiktoken. Claude's tokenizer is not public; two independent BPE vocabularies are used to show which effects are tokenizer-specific. Treat absolute numbers as proxies.</p>
-<p><strong>Parity.</strong> Sixty messages (ten per outcome), rendered in all five formats. Each batch went to a fresh subagent that had not seen the codec, with a six-rule ordered receiver policy, the format legend, and an instruction to read rather than run code. Haiku 4.5 ran twice per format, Sonnet once. Scored against the policy applied programmatically.</p>
-
-<h3>The same message in five forms</h3>
+<p>The same message in all five forms, with its token count on the right:</p>
 <div class="wire">
 <span class="k">English</span><span class="v">Handing this over from Ideator. Flagging node 4131, pipeline stage action, operational status scheduled, importance 10 out of 10. It's been stalled for 5 days. I'd put confidence at high. I need Strategist to retire or merge node. Keep Triage and Adam on the assignment.</span><span class="n">64</span>
 <span class="k">JSON</span><span class="v">{"type":"handoff","from":"Ideator","to":"Strategist","node":4131,"stage":"action","confidence":"high","ask":"retire or merge node","opstatus":"scheduled","importance":10,"stall_days":5,"keep_assigned":["Triage","Adam"]}</span><span class="n">61</span>
@@ -69,129 +51,56 @@
 <span class="k">Tight</span><span class="v">HO IDE STR 4131 ACT SCH 10 - 5 H PRUNE TRI+ADAM - - -</span><span class="n">23</span>
 <span class="k">Tight + CRC</span><span class="v">HO IDE STR 4131 ACT SCH 10 - 5 H PRUNE TRI+ADAM - - - #38a</span><span class="n">26</span>
 </div>
-<p class="src" style="color:var(--muted)">Right column: o200k tokens for that line.</p>
+<p>The names in the example are the roles in the test corpus: Ideator, Strategist and Triage are agents, Adam is the person they report to.</p>
+<p>The reader's job in the parity test was a six-rule policy of the kind a receiving agent would follow: for example, if the item is blocked, wait; if it has stalled for 14 days or more and matters enough, escalate; if it is done, close it. Each message has one right answer under the policy, so a reader's answers can be marked by a program.</p>
 
-<h2>4. Results</h2>
-<h3>4.1 Tokens</h3>
-<div class="chart wide" aria-label="Mean tokens per message by format, o200k tokenizer">
-<svg viewBox="0 0 700 210" role="img">
-  <title>Mean tokens per message, o200k</title>
-  <g class="grid">
-    <line x1="120" y1="12" x2="120" y2="190"/>
-    <line x1="120" y1="190" x2="660" y2="190"/>
-  </g>
-  <g class="lab">
-    <text x="120" y="205" text-anchor="middle">0</text>
-    <text x="270" y="205" text-anchor="middle">20</text>
-    <text x="420" y="205" text-anchor="middle">40</text>
-    <text x="570" y="205" text-anchor="middle">60</text>
-  </g>
-  <g>
-    <text x="110" y="34" text-anchor="end">English</text><rect class="base" x="120" y="22" width="516.75" height="18"/><text x="642" y="36" class="lab" text-anchor="start">68.9</text>
-    <text x="110" y="68" text-anchor="end">JSON</text><rect class="base" x="120" y="56" width="483.75" height="18"/><text x="609" y="70" class="lab" text-anchor="start">64.5</text>
-    <text x="110" y="102" text-anchor="end">Keyed</text><rect class="bar" x="120" y="90" width="366.75" height="18"/><text x="494" y="104" text-anchor="start">48.9</text>
-    <text x="110" y="136" text-anchor="end">Glyph</text><rect class="bar" x="120" y="124" width="316.5" height="18"/><text x="444" y="138" text-anchor="start">42.2</text>
-    <text x="110" y="170" text-anchor="end">Tight</text><rect class="bar" x="120" y="158" width="210" height="18"/><text x="337" y="172" text-anchor="start">28.0</text>
-  </g>
-</svg>
-</div>
-<div class="tw wide">
-<table>
-<caption>Table 1. Mean tokens per message over 240 handoffs. Legend is the one-off codebook cost. Break-even is how many messages pay back the legend against English.</caption>
-<thead><tr><th>Format</th><th>o200k</th><th>vs English</th><th>cl100k</th><th>vs English</th><th>Legend (o200k)</th><th>Break-even</th></tr></thead>
-<tbody>
-<tr><td>English</td><td>68.9</td><td></td><td>71.2</td><td></td><td>0</td><td></td></tr>
-<tr><td>JSON</td><td>64.5</td><td>−6.4%</td><td>66.3</td><td>−7.0%</td><td>~0</td><td></td></tr>
-<tr><td>Keyed</td><td>48.9</td><td>−29.0%</td><td>49.7</td><td>−30.2%</td><td>435</td><td>22 msgs</td></tr>
-<tr><td>Glyph</td><td>42.2</td><td>−38.8%</td><td>47.6</td><td>−33.1%</td><td>752</td><td>28 msgs</td></tr>
-<tr><td>Tight</td><td>28.0</td><td>−59.3%</td><td>28.1</td><td>−60.5%</td><td>271</td><td>7 msgs</td></tr>
-</tbody>
-</table>
-<p class="inwords">In words: the same message costs 69 tokens in English, 65 in JSON, 49 as a line, 42 in symbols and 28 in the tight form. The legend is what you pay once to teach an agent the format; break-even is how many messages it takes to earn that back against English.</p>
-</div>
-<p>In the keyed form, 35 percent of tokens are delimiters: <code>|</code>, <code>=</code>, <code>&gt;</code> and <code>+</code> each cost a token of their own, with a few <code>=</code> merging into the letter after them. The tight form wins by removing them, not by shortening words. A space-prefixed short code is usually one token on both vocabularies, so <code>ACT</code> and <code>action</code> cost the same; abbreviation buys almost nothing on its own.</p>
-<p>Delta encoding for a repeated state read (a heartbeat re-reading a node it already holds) took the same message from 43 to 21 tokens by sending only identity plus changed fields.</p>
+<h2>How we ran it</h2>
+<ol class="steps"><li>Generated 240 handover records from one schema, 40 for each of the six outcomes the policy can produce, and rendered each record in the five forms.</li><li>Counted the tokens of every rendering with two public tokenizers (OpenAI's o200k and cl100k). Claude's own tokenizer is not public, so two were used to show which effects depend on the tokenizer. The absolute numbers are proxies; the ordering is the claim.</li><li>Round trip: encoded every record to a line and decoded it back, in the keyed form and in the tight form with and without the checksum, and checked the result equalled the original.</li><li>Corruption: mutated roughly 700 lines per form and counted how many the decoder refused and how many it accepted silently with a wrong value. For the keyed form the mutations were a dropped field, an unknown code or key, a bad number, a truncated line and a duplicated field; for the tight form a dropped, swapped or inserted field and a single changed digit.</li><li>Parity: took 60 of the messages (10 per outcome) in each of the five forms and gave each batch to a fresh model that had not seen the codec, with the format's legend and the six-rule policy, and asked what it would do with each message. It was told to read, not to run code. Haiku read every form twice, Sonnet once. Answers were scored in code against the policy.</li><li>Delta: measured one more thing on the side, a message that reports only what changed since the last state read, to see how far a repeated read can shrink.</li></ol>
 
-<h3>4.2 Fidelity</h3>
-<p>Round trip was exact on 240 of 240 messages for the keyed codec and 480 of 480 for the tight codec (with and without checksum). Corruption tests differ by design:</p>
+<h2>What happened</h2>
+<div class="charts"><div class="chart"><h3>Mean tokens per message (o200k)</h3><svg viewBox="0 0 520 128" role="img" aria-label="Mean tokens per message (o200k)"><text class="lab" x="0" y="17">English</text><rect class="bar" x="150" y="4" width="276" height="16"/><text class="axis" x="432" y="17">68.9</text><text class="lab" x="0" y="41">JSON</text><rect class="bar" x="150" y="28" width="258" height="16"/><text class="axis" x="414" y="41">64.5</text><text class="lab" x="0" y="65">Keyed line</text><rect class="bar" x="150" y="52" width="196" height="16"/><text class="axis" x="352" y="65">48.9</text><text class="lab" x="0" y="89">Glyph</text><rect class="bar" x="150" y="76" width="169" height="16"/><text class="axis" x="325" y="89">42.2</text><text class="lab" x="0" y="113">Tight</text><rect class="bar" x="150" y="100" width="112" height="16"/><text class="axis" x="268" y="113">28.0</text></svg></div></div>
+<div class="tw"><table><thead><tr><th>Form</th><th>Tokens (o200k)</th><th>vs English</th><th>Tokens (cl100k)</th><th>vs English</th><th>Legend, once</th><th>Pays back after</th></tr></thead><tbody><tr><td>English</td><td>68.9</td><td></td><td>71.2</td><td></td><td>0</td><td></td></tr><tr><td>JSON</td><td>64.5</td><td>−6.4%</td><td>66.3</td><td>−7.0%</td><td>about 0</td><td></td></tr><tr><td>Keyed line</td><td>48.9</td><td>−29.0%</td><td>49.7</td><td>−30.2%</td><td>435</td><td>22 messages</td></tr><tr><td>Glyph</td><td>42.2</td><td>−38.8%</td><td>47.6</td><td>−33.1%</td><td>752</td><td>28 messages</td></tr><tr><td>Tight</td><td>28.0</td><td>−59.3%</td><td>28.1</td><td>−60.5%</td><td>271</td><td>7 messages</td></tr></tbody></table></div>
+<p class="cap">Table 1. Mean tokens per message over the 240 handovers, on two tokenizers. The legend is the one-off cost of teaching a reader the format; the last column is how many messages it takes to earn that back against English.</p>
+<p class="inwords">In words: the same message costs 69 tokens in English, 65 in JSON, 49 as a line, 42 in symbols and 28 in the tight form. A line saves about 20 tokens a message; the tight form about 40. Teaching a reader the keyed form costs 435 tokens once, which 22 messages pay back.</p>
+<p>Where the saving comes from is instructive. In the keyed form 35% of the tokens (o200k) are the separators: each <code>|</code>, <code>=</code>, <code>&gt;</code> and <code>+</code> costs a token of its own. The tight form wins by removing them, not by shortening words: a short code preceded by a space is usually one token on both vocabularies, so <code>ACT</code> and <code>action</code> cost the same. Abbreviation on its own buys almost nothing. The delta message, which sends only identity plus what changed, took a repeated state read from 43 tokens to 21.</p>
+<p><strong>Round trip and corruption.</strong> Every message came back equal to its record: 240 of 240 in the keyed form, 480 of 480 in the tight form with and without the checksum. Under corruption the forms differ by design. The keyed decoder refused 629 of 697 mutated lines (90%); of the 68 it accepted, 58 were a dropped optional field, which a keyed format cannot see is missing. The tight decoder without a checksum accepted 185 of 698 mutations silently (27%), 170 of them a single changed digit; the checksum version accepted none of 699. A changed digit is exactly the fault no unchecked format can catch, and the keyed test did not include digit flips, so the 90% and the 27% are not like for like.</p>
+<div class="tw"><table><thead><tr><th>Form</th><th>Haiku, run 1</th><th>Haiku, run 2</th><th>Sonnet</th></tr></thead><tbody><tr><td>English</td><td>100</td><td>100</td><td>100</td></tr><tr><td>JSON</td><td>91.7</td><td>91.7</td><td>100</td></tr><tr><td>Keyed line</td><td>90.0</td><td>100</td><td>100</td></tr><tr><td>Glyph</td><td>100</td><td>100</td><td>100</td></tr><tr><td>Tight</td><td>58.3</td><td>91.7</td><td>100</td></tr></tbody></table></div>
+<p class="cap">Table 2. Decision parity: the percentage of 60 messages the blind reader routed correctly under the six-rule policy.</p>
+<p class="inwords">In words: the strong model read every form right every time, so for it the choice of form is about cost and checking, not understanding. The small model read English and the symbol form right every time, got one message in twelve wrong in JSON, read the keyed line right in one run and 90% in the other, and in the tight form got four in ten wrong in one run and one in twelve in the other.</p>
+<p>The small model's errors fall into three kinds. <strong>Losing its place.</strong> In its first tight-form run, 20 of its 25 errors were telling an unblocked item to wait: fourteen fixed positions with dashes for the empty ones, and it read the number in a neighbouring column as a blocker. The second run did not repeat it, which says the form is fragile at this tier rather than unreadable. <strong>A loud word beating the rule order.</strong> Across JSON, keyed and tight, an item whose stage was <code>DONE</code> was closed even when an earlier rule should have fired first. It never happened in English, where "stage done" sits inside a sentence. <strong>A two-part numeric rule missed.</strong> In JSON only, both runs, "stalled 14 days or more and important" was read as "accept". Full field names did not help.</p>
+<p>One code collided with a decision: the status <code>WAIT</code> was spelled the same as the answer <code>WAIT</code>. It explains only 2 of the 20 column errors, so it is not the cause, but it is a hygiene fault and cheap to fix.</p>
+
+<h2>What it means</h2>
+<p>Lossless compression of a typed message this size tops out at 29% to 60%. That matches what the published structural compression format TOON reports against JSON, and it is the ceiling, not the floor: the English here was tidy template prose, so real handovers would widen the gap a little.</p>
+<p>At 20 to 40 tokens saved per message, the handover channel was never where the cost is. The delta result points at where it is: repeated reads of the same state, where sending only what changed halves the message.</p>
+<p>The symbol form was half right. It saved tokens on one tokenizer and both models read it perfectly, so "unreadable" was wrong. But the saving is tokenizer-dependent (4% over the keyed line on the other vocabulary), the legend is 1.7 times larger, and a glyph is usually two tokens where a three-letter code is one. Density on the page is not density in tokens.</p>
+<p>The tight form is the cheapest and the most fragile. With a checksum it is the only form that catches a corrupted digit, but a small model miscounted its columns in one run of two. It belongs where a program is the reader, not a model.</p>
+<p>The keyed line decodes to the same record as every other form, a human can read it cold, and the codebook is a document anyone can load. That is the answer to "agents need their own language": a governed dialect, not an invented one. Agents left to invent their own codes under budget pressure drift into forms nobody can audit, as the GlossoGen study of Claude and GPT agents showed in September 2026.</p>
+
+<h2>What we decided</h2>
+<dl class="decided"><dt>The rogerwilco line is the keyed form: <code>key=value</code>, in any order.</dt><dd>The small model read it at 90% to 100% and miscounted the positional form's columns in one run of two. The positional form was not carried into the protocol.<span class="where">SPEC section 2, wire format. The study's line used pipes between fields and put the sender, receiver and item in fixed positions; the protocol uses spaces, makes those three keyed slots, and adds a version token and a message id.</span></dd><dt>Codes are short words and letters, not symbols.</dt><dd>The symbol saving depended on the tokenizer, its legend cost 1.7 times more, and it bought no comprehension.<span class="where">SPEC section 4, core vocabulary.</span></dd><dt>A corrupted digit is caught by a digest on the readback, not by a checksum on the line.</dt><dd>The one thing the tight form could do that the keyed line could not was catch a changed digit. rogerwilco does it with <code>h=</code>, a digest of the message as received, carried on the readback.<span class="where">SPEC section 5.1, tier 2.</span></dd><dt>A code may not be spelled like an answer the receiver can give.</dt><dd>The <code>WAIT</code> collision. The status became <code>HOLD</code>. This is a rule for whoever writes a profile; the codec does not enforce it.<span class="where">profiles/pform.json.</span></dd><dt>No agent-invented codes and no hidden-state channels.</dt><dd>Invented codes drift and cannot be audited; hidden states need access to model weights that a hosted API does not give.</dd><dt>Tokens are not the reason to use lines. Checking is.</dt><dd>20 to 40 tokens a message is not worth a protocol. The next study asks whether a readback checked by a program catches a misunderstanding before the work is done.<span class="where">Study 2, the readback pilot.</span></dd></dl>
+
+<h2>What this does not show</h2>
 <ul>
-<li>Keyed: 697 mutated lines, 629 rejected (90%). Of the 68 accepted, 58 were a dropped optional field. A keyed format cannot see that an optional field went missing; that is structural, not a bug.</li>
-<li>Tight without checksum: 698 mutations, 185 decoded silently to wrong values (27%). Of those, 170 were a single digit changed in a numeric field and 15 were two fields swapped; every dropped or inserted field was rejected by the arity check. The keyed test did not include digit flips, and no unchecked format can catch them, so the 90% and 27% figures are not like for like.</li>
-<li>Tight with the 3-character CRC: 699 mutations, zero silent errors. A 3-character CRC has roughly a 0.08% collision chance per corrupted line, so this is strong rather than absolute.</li>
-</ul>
-
-<h3>4.3 Decision parity</h3>
-<div class="tw wide">
-<table>
-<caption>Table 2. Percent of 60 messages routed correctly by a blind receiver. Haiku 4.5 ran twice; Sonnet once.</caption>
-<thead><tr><th>Format</th><th>Haiku run 1</th><th>Haiku run 2</th><th>Sonnet</th></tr></thead>
-<tbody>
-<tr><td>English</td><td class="ok">100</td><td class="ok">100</td><td class="ok">100</td></tr>
-<tr><td>JSON</td><td>91.7</td><td>91.7</td><td class="ok">100</td></tr>
-<tr><td>Keyed</td><td>90.0</td><td class="ok">100</td><td class="ok">100</td></tr>
-<tr><td>Glyph</td><td class="ok">100</td><td class="ok">100</td><td class="ok">100</td></tr>
-<tr><td>Tight</td><td class="bad">58.3</td><td>91.7</td><td class="ok">100</td></tr>
-</tbody>
-</table>
-<p class="inwords">In words: the strong model read every form right every time. The small model read English and the symbol form right every time, got one message in twelve wrong in JSON, and in the tight form got four in ten wrong in one run and one in twelve in the other.</p>
-</div>
-<p>Sonnet was perfect in every format, so at that tier the wire format is a cost and safety decision, not a comprehension one. Haiku's errors cluster into three kinds:</p>
-<ul>
-<li><strong>Column miscount.</strong> Haiku tight run 1: 20 of 25 errors were WAIT applied to unblocked nodes. Fourteen positional slots with <code>-</code> placeholders and it lost its place. Run 2 did not repeat it, which says the format is fragile at this tier, not unreadable.</li>
-<li><strong>Salient token beats rule order.</strong> Across JSON, keyed and tight, a node at stage <code>DONE</code> was routed CLOSE (rule 5) even when rules 1 to 4 should have fired first. It never happened in English, where "pipeline stage done" sits inside a sentence, and never in glyph form, where the stage is a Greek letter. A bare <code>DONE</code> token reads like a verdict.</li>
-<li><strong>Two-condition numeric rule missed.</strong> JSON only, both runs: ESCALATE (stall ≥ 14 and importance ≥ 7) read as ACCEPT. Full field names did not help.</li>
-</ul>
-<p>One enum collides with a decision label: the operational status <code>WAIT</code> is spelled the same as the WAIT outcome. It explains only 2 of the 20 column-miscount errors, so it is not the cause, but it is a schema hygiene fault and cheap to fix. The stronger signal for the miscount is that all 20 mispredicted messages had a number in the source-view column, immediately before the blocked-by column, against 7 of the 25 correctly routed non-WAIT messages. Haiku read the neighbouring number as a blocker.</p>
-
-<h2>5. Findings</h2>
-<ol class="findings">
-<li><strong>Structural compression gives 29 to 60 percent, not 80.</strong> This matches TOON's published range and is the ceiling for lossless typed messages of this size. The earlier 80 percent figure came from comparing a verbose prose example against a hand-tuned line.</li>
-<li><strong>Handoff tokens were never the cost.</strong> At 20 to 40 tokens saved per message, a hundred handoffs a day save less than one system-prompt resend. The delta result (43 to 21 tokens) points at the real target: repeated node state reads in the heartbeat loop, per the April cost model.</li>
-<li><strong>The hieroglyph idea is half right.</strong> Glyphs did save tokens on o200k and were read perfectly by both models, so "off-distribution and unreadable" was wrong. But the saving is tokenizer-dependent (4 percent over keyed on cl100k), the legend is 1.7x larger, and a glyph is usually two tokens where a three-letter code is one. Density on the page is not density in tokens.</li>
-<li><strong>Positional is cheapest and most fragile.</strong> Tight form cuts the keyed cost by 43 percent and, with a CRC, is the only form that catches value corruption. But a small model miscounted columns in one run of two. It belongs on code-to-code paths, or on model-read paths only after header echo or column reduction is tested.</li>
-<li><strong>Compact formats need label hygiene.</strong> No enum value should share spelling with an outcome the receiver can choose, and terminal-sounding codes (<code>DONE</code>) pull small models past earlier rules. Rename <code>opstatus.WAIT</code> before adoption and test a neutral spelling for the done stage.</li>
-<li><strong>Legibility survives.</strong> The keyed and tight forms decode to the same dict, JSON and glyph are renderings of it, the codebook lives in the Protocol, and a human can read the keyed form cold. This is the answer to "your own language": a governed dialect, not an emergent one. GlossoGen shows what the alternative drifts into.</li>
-<li><strong>Latent communication is not available to us.</strong> It needs hidden-state access. On a hosted API the text channel is the only channel, so the question is which text, and this study answers that.</li>
-</ol>
-
-<h2>6. Next steps</h2>
-<p><strong>Adopt now (Protocol edit, one session).</strong> Add P-Form v0.1 keyed form to the Pensive Protocol as the handoff wire between stances: message types HO, FLAG, BLOCK, FIN; the enum table; the free-text tail rule; the label hygiene rule. Rename the colliding enum. Stances write it, Gardener validates it with the codec.</p>
-<p><strong>Validation gate for v0.2 (one week).</strong></p>
-<ul>
-<li>Real Pensive nodes, read-only pull, n ≥ 500, sampled from views 119, 120, 121 and 97.</li>
-<li>Three runs per cell, Haiku and Sonnet, with 95 percent bootstrap intervals. Add a tight-with-header variant to see if header echo fixes the column miscount.</li>
-<li>Token counts from Claude's own count-tokens endpoint, replacing the tiktoken proxies.</li>
-<li>Measure a full heartbeat cycle end to end with delta-encoded state reads, not per-message savings. That is the number that decides whether this is worth running.</li>
-<li>Pass criteria: ≥ 95 percent parity on Haiku across all three runs for the adopted form; ≥ 25 percent reduction on real heartbeat traffic; zero silent corruption on the code path.</li>
-</ul>
-<p><strong>Do not pursue.</strong> Glyphs (legend cost, tokenizer dependence, no comprehension advantage). Latent channels (no access, audit gap). Agent-invented codes (drift).</p>
-<p><strong>IP.</strong> Slot-based typed messages are decades-old prior art (METAR, FIX, HL7). What is ownable is the application: M-Form, P-Form and this protocol are Adam Field's (Croxio Ltd); clinical data from any client stays out of the published work. Record today's date on the P-Form schema so the lineage is dated.</p>
-
-<h2>7. Limitations</h2>
-<ul>
-<li>Synthetic data. The English rendering is template-generated, so it is more regular and more parseable than real stance prose. Real handoffs will likely widen the token gap and could narrow the parity gap.</li>
-<li>Proxy tokenizers. Absolute counts will differ on Claude's vocabulary; the ordering of formats is unlikely to.</li>
-<li>Small parity samples: 60 messages per cell, two runs for Haiku, one for Sonnet. The Haiku tight result (58 then 92) shows the variance is large. Treat Table 2 as a screen, not a measurement.</li>
-<li>Receivers were subagents instructed to read rather than compute. One agent made a stray reporting call and confirmed on query that it decoded by hand; none reported running code, but this was not enforced by tooling.</li>
-<li>The receiver policy is six rules. Real stance decisions are less crisp, which favours English more than these numbers suggest.</li>
+<li>The English was generated from templates, so it is more regular and easier to parse than real agent prose. Real handovers would likely widen the token gap and could narrow the parity gap.</li>
+<li>Token counts are from public tokenizers, not Claude's. The ordering of the forms is unlikely to change; the absolute numbers will.</li>
+<li>Parity samples are small: 60 messages per form, two runs for the small model and one for the strong one. The tight-form result (58% then 92%) shows how large the variance is. Treat Table 2 as a screen, not a measurement.</li>
+<li>The readers were asked to read rather than compute, but nothing enforced it. None reported running code; one made a stray tool call and confirmed on query that it had decoded by hand.</li>
+<li>The receiver policy is six crisp rules. Real decisions are less crisp, which favours English more than these numbers suggest.</li>
 </ul>
 
 <h2>Sources</h2>
-<ol class="src">
-<li>Jiang et al., LLMLingua, Microsoft Research 2023. <a href="https://www.microsoft.com/en-us/research/blog/llmlingua-innovating-llm-efficiency-with-prompt-compression/">microsoft.com</a></li>
-<li>Token-Oriented Object Notation (TOON), spec and benchmarks. <a href="https://github.com/toon-format/toon">github.com/toon-format/toon</a></li>
-<li>TOON vs JSON: A Benchmark of Plain and Constrained Decoding Generation, arXiv 2603.03306. <a href="https://arxiv.org/abs/2603.03306">arxiv.org</a></li>
-<li>Enabling Agents to Communicate Entirely in Latent Space (Interlat), ACL 2026, arXiv 2511.09149. <a href="https://arxiv.org/abs/2511.09149">arxiv.org</a></li>
-<li>StateBridge: Training-free Hidden-state Alignment for Latent Communication, arXiv 2608.13317. <a href="https://arxiv.org/pdf/2608.13317">arxiv.org</a></li>
-<li>Beyond Tokens: A Unified Framework for Latent Communication in LLM-based Multi-Agent Systems, arXiv 2606.05711. <a href="https://arxiv.org/html/2606.05711v2">arxiv.org</a></li>
-<li>What Do Latent Agents Actually Represent? (LatentMAS autopsy). <a href="https://lacuna.tiptreesystems.com/work/what-do-latent-agents-actually-represent-interpreting-hidden-state-communication/wrk_204284790a3eb93d579b536d2378b8b4">lacuna.tiptreesystems.com</a></li>
-<li>Zylos Research, Latent-Space Multi-Agent Communication, Aug 2026 (includes "When Latent Agents Lie"). <a href="https://zylos.ai/research/2026-08-01-latent-space-multi-agent-communication/">zylos.ai</a></li>
-<li>GlossoGen: Emergent Language in Complex Multi-Agent LLM Interactions, arXiv 2609.01491. <a href="https://arxiv.org/html/2609.01491v1">arxiv.org</a></li>
-<li>Emergent Languages in Populations of Language Model Agents: From Token Efficiency to Oversight Evasion, arXiv 2605.31170. <a href="https://arxiv.org/html/2605.31170">arxiv.org</a></li>
-<li>Prompt Compression guide, NeuralTrust, Jul 2026. <a href="https://neuraltrust.ai/blog/prompt-compression-guide">neuraltrust.ai</a></li>
-</ol>
+<ul class="src">
+<li>Token-Oriented Object Notation (TOON), specification and benchmarks. <a href="https://github.com/toon-format/toon">github.com/toon-format/toon</a></li>
+<li>GlossoGen: Emergent Language in Complex Multi-Agent LLM Interactions, September 2026. <a href="https://arxiv.org/abs/2609.01491">arXiv 2609.01491</a></li>
+<li>Enabling Agents to Communicate Entirely in Latent Space (Interlat), ACL 2026. <a href="https://arxiv.org/abs/2511.09149">arXiv 2511.09149</a></li>
+<li>Jiang et al., LLMLingua, Microsoft Research, 2023.</li>
+</ul>
 
-<p class="foot">rogerwilco v0.1 · 240 synthetic handoffs · tiktoken o200k_base and cl100k_base · parity receivers Claude Haiku 4.5 and Claude Sonnet · code and raw results in the accompanying archive.</p>
+<h2>Where everything is</h2>
+<p>Corpus, codec, token measurements, corruption tests, the five reader prompts, every reader answer and its score: <code>research/wire-study</code> in the <a href="https://github.com/afieldofdreams/rogerwilco">rogerwilco repository</a> (<code>measure.py</code>, <code>parity_prep.py</code>, <code>results/measure.json</code>, <code>results/parity.json</code>). The original working paper is <code>report.html</code> in the same folder. The study ran under the protocol's working name, formcore, and the raw files keep it.</p>
+<p class="foot">Study 1 of 5 · 27 September 2026 · 240 synthetic handovers · tiktoken o200k_base and cl100k_base · readers Claude Haiku 4.5 (two runs) and Claude Sonnet (one run) · graded in code</p>
+
 </main>
 <!-- site:footer -->
 <footer class="site-foot">
@@ -201,6 +110,5 @@
   <span>A <a href="https://crox.io">Crox</a> lab. London.</span>
 </footer>
 <!-- /site:footer -->
-
 </body>
 </html>
