@@ -17,8 +17,8 @@ Agents hand work to each other in prose today. Prose hides state, cannot be vali
 | Folder | What | Start here |
 |---|---|---|
 | [`rogerwilco/`](rogerwilco/) | The protocol as a Claude Agent Skill: `SKILL.md`, the spec, the reference codec (standard library only), profiles, conformance tests. Copy the folder into `.claude/skills/` or upload it as a skill. | [`rogerwilco/README.md`](rogerwilco/README.md) |
-| [`app/`](app/) | The hosted validator: REST endpoints, a remote MCP server, the playground and the docs. Runs at [rogerwilco.crox.io](https://rogerwilco.crox.io). Add the MCP server by URL to any agent that has no shell. | [`app/README.md`](app/README.md) |
-| [`research/`](research/) | The evidence: a five-format wire study, a readback pilot with planted faults, and a multi-agent month-end close with human-in-the-loop escalation. Corpora, harnesses, raw logs and results pages. | [`research/README.md`](research/README.md) |
+| [`app/`](app/) | The hosted checks: REST endpoints, a remote MCP server (validate, gate, check_rb, make_rb, legend, to_json), the playground and the docs. Runs at [rogerwilco.crox.io](https://rogerwilco.crox.io). Add the MCP server by URL to any agent that has no shell. | [`app/README.md`](app/README.md) |
+| [`research/`](research/) | The evidence: a five-format wire study, a readback pilot with planted faults, a multi-agent month-end close with human-in-the-loop escalation (28 runs), and a clinical translation study (144 translations against 422 gold assertions). Corpora, harnesses, raw logs and results pages. | [`research/README.md`](research/README.md) |
 
 ## Quick start
 
