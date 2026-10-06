@@ -108,7 +108,7 @@ python3 scripts/rogerwilco.py validate "RW1 HO a-1 from=a to=b item=x:1 ask=DRAF
 python3 scripts/rogerwilco.py make-rb "<HO line>" <your-id> [--acc "k:v+k:v" --do copy]   # readback with h= digest
 python3 scripts/rogerwilco.py check-rb "<HO line>" "<RB line>" [--expect-acc "k:v+k:v"]    # sender side: receipt, integrity, echo, comprehension
 python3 scripts/rogerwilco.py to-json "<line>"  |  from-json '<json>'
-python3 scripts/rogerwilco.py legend [--profile pay] [--lean]      # legend for another agent's prompt; --lean drops the comprehension-readback keys (about 1,000 tokens with the pay profile)
+python3 scripts/rogerwilco.py legend [--profile pay] [--lean]      # legend for another agent's prompt; --lean drops the comprehension-readback keys (about 1,200 tokens with the pay profile)
 ```
 
 If you have no shell, read the line against the table above and apply rule 2.
