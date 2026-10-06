@@ -6,242 +6,51 @@
 <meta name="color-scheme" content="light dark">
 <title>rogerwilco</title>
 <meta name="description" content="A way for AI agents to say exactly what they are about to do, so a program can check it before they do it. Three one-line messages: hand over, read back, done.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230a58ab'/%3E%3Cpath d='M8 17l5 5 11-12' fill='none' stroke='%23fff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<!-- site:head -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/static/site.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23B8402A'/%3E%3Cpath d='M8 17l5 5 11-12' fill='none' stroke='%23fff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<!-- /site:head -->
 <style>
-/* Layout: one column and two panels. A decoded message sits in ruled cells, like the strip a controller pins in a
-   holder; a readback result shows the four tiers, roger (received, intact) then wilco (understood, will comply). */
-:root {
-  --bg: #eceff3;
-  --surface: #ffffff;
-  --field: #f3f5f8;
-  --ink: #15202b;
-  --ink-soft: #465565;
-  --rule: #c9d1da;
-  --accent: #0a58ab;
-  --on-accent: #ffffff;
-  --good: #14653b;
-  --good-tint: #e0f2e8;
-  --bad: #a3231a;
-  --bad-tint: #fbe6e3;
-  --warn: #7f4b00;
-  --warn-tint: #fcefd6;
-  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace;
-  color-scheme: light;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0d1319;
-    --surface: #151d26;
-    --field: #1b2531;
-    --ink: #e6ecf2;
-    --ink-soft: #9aa9b8;
-    --rule: #2b3846;
-    --accent: #62aef5;
-    --on-accent: #08131d;
-    --good: #5fd08f;
-    --good-tint: #133423;
-    --bad: #ff8f85;
-    --bad-tint: #3b1b19;
-    --warn: #f0b955;
-    --warn-tint: #372a12;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #0d1319;
-  --surface: #151d26;
-  --field: #1b2531;
-  --ink: #e6ecf2;
-  --ink-soft: #9aa9b8;
-  --rule: #2b3846;
-  --accent: #62aef5;
-  --on-accent: #08131d;
-  --good: #5fd08f;
-  --good-tint: #133423;
-  --bad: #ff8f85;
-  --bad-tint: #3b1b19;
-  --warn: #f0b955;
-  --warn-tint: #372a12;
-  color-scheme: dark;
-}
-
-* { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
-body {
-  margin: 0;
-  padding-inline: 16px;
-  padding-block: 24px 56px;
-  background: var(--bg);
-  color: var(--ink);
-  font: 16px/1.5 var(--sans);
-}
-.wrap { max-width: 56rem; margin-inline: auto; display: grid; gap: 20px; }
-a { color: var(--accent); text-underline-offset: 3px; }
-code { font: 0.92em var(--mono); }
-
-header { display: grid; gap: 12px; }
-.top { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; }
-.mark { margin: 0; display: flex; align-items: baseline; gap: 10px; font: 700 1.7rem/1.1 var(--mono); letter-spacing: -0.02em; }
-.roger { font-weight: 400; color: var(--ink-soft); }
-.wilco { color: var(--accent); }
-.ver { padding: 3px 6px; border: 1px solid var(--rule); border-radius: 4px; color: var(--ink-soft); font: 600 0.72rem/1 var(--mono); letter-spacing: 0.06em; }
-nav { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 0.95rem; }
-.lede { margin: 0; max-width: 65ch; font-size: 1.15rem; text-wrap: pretty; }
-.explain { max-width: 65ch; margin-top: 0.8rem; }
-.explain p { margin: 0.6rem 0; }
-.loop { display: grid; gap: 12px; }
-.step { display: grid; gap: 8px; padding: 14px 16px; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; }
-.step h2 { margin: 0; font: 700 1.05rem/1.25 var(--sans); }
-.step h2 span { color: var(--ink-soft); font-weight: 400; }
-.step p { margin: 0; font-size: 0.97rem; }
-.step .says { color: var(--ink-soft); font-style: italic; }
-.step .line { margin: 0; padding: 10px 12px; background: var(--field); border: 1px solid var(--rule); border-radius: 6px; font: 0.86rem/1.5 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; }
-.step .line b { color: var(--accent); font-weight: 600; }
-.step .check { display: flex; gap: 8px; align-items: baseline; color: var(--good); font-size: 0.95rem; }
-.step .check .badge { background: var(--good-tint); color: var(--good); }
-.proof { padding: 14px 16px; background: var(--surface); border: 1px solid var(--rule); border-left: 4px solid var(--accent); border-radius: 8px; max-width: 65ch; }
-.proof p { margin: 0.4rem 0; }
-.proof .num { font: 700 1.5rem/1.1 var(--mono); color: var(--accent); letter-spacing: -0.02em; }
-.starts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr)); gap: 12px; }
-.start-card { display: grid; gap: 4px; align-content: start; padding: 12px 14px; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; color: var(--ink); text-decoration: none; }
-.start-card:hover { border-color: var(--accent); }
-.start-card b { font-size: 1rem; }
-.start-card span { color: var(--ink-soft); font-size: 0.9rem; }
-.start-card code { font-size: 0.8rem; color: var(--accent); }
-.section-h { margin: 8px 0 0; font: 700 1.25rem/1.25 var(--sans); }
-.parts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(21rem, 100%), 1fr)); gap: 14px; margin-top: 4px; }
-.part { display: grid; gap: 6px; align-content: start; padding: 14px 16px; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; }
-.part h2 { margin: 0; font: 700 1.02rem/1.3 var(--sans); text-wrap: pretty; }
-.part .num { margin-top: 2px; font: 700 1.6rem/1.1 var(--mono); letter-spacing: -0.02em; color: var(--accent); }
-.part .num small { font: 400 0.86rem/1.35 var(--sans); letter-spacing: 0; color: var(--ink-soft); display: block; margin-top: 4px; text-wrap: pretty; }
-.part p { margin: 0; font-size: 0.95rem; color: var(--ink); }
-.part .when { color: var(--ink-soft); font-size: 0.9rem; }
-.rules { margin: 0; padding-left: 1.2rem; display: grid; gap: 4px; font-size: 0.95rem; }
-.not { padding: 12px 16px; background: var(--field); border: 1px solid var(--rule); border-radius: 8px; max-width: 65ch; }
-.not h2 { margin: 0 0 6px; font: 700 1rem/1.25 var(--sans); }
-.not p { margin: 0.4rem 0; font-size: 0.95rem; }
-.start { display: grid; gap: 10px; }
-.start h2 { margin: 0; font: 700 1.15rem/1.25 var(--sans); }
-.cmd { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-.cmd .code { flex: 1 1 18rem; margin: 0; }
-.docbox textarea { min-height: 9rem; }
-.rowlist { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
-.rowlist li { display: grid; grid-template-columns: 4rem 1fr; gap: 10px; align-items: baseline; font: 0.9rem/1.45 var(--mono); overflow-wrap: anywhere; }
-.rowlist .badge { justify-self: start; }
-
-.bar { display: grid; grid-template-columns: minmax(10rem, 16rem) 1fr; gap: 6px 16px; align-items: end; }
-.bar p { margin: 0; color: var(--ink-soft); font-size: 0.9rem; min-width: 0; }
-
-.panel { display: grid; gap: 14px; min-width: 0; padding: 16px; background: var(--surface); border: 1px solid var(--rule); border-radius: 8px; }
-.panel h2 { margin: 0; font: 700 1.15rem/1.25 var(--sans); text-wrap: balance; }
-.hint { margin: 4px 0 0; color: var(--ink-soft); font-size: 0.92rem; max-width: 65ch; }
-.field { min-width: 0; }
-.pairbox { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(20rem, 100%), 1fr)); gap: 14px; }
-.label { display: block; margin-bottom: 6px; color: var(--ink-soft); font: 600 0.74rem/1.2 var(--sans); text-transform: uppercase; letter-spacing: 0.08em; }
-textarea, input[type="text"], select {
-  width: 100%; padding: 10px 12px; color: var(--ink); background: var(--field);
-  border: 1px solid var(--rule); border-radius: 6px; font: 16px/1.5 var(--mono);
-}
-select { font-family: var(--sans); }
-textarea { min-height: 5.6rem; resize: vertical; }
-::placeholder { color: var(--ink-soft); opacity: 1; }
-
-.row { display: flex; flex-wrap: wrap; gap: 8px; }
-button {
-  min-height: 40px; padding: 0 16px; color: var(--ink); background: var(--surface);
-  border: 1px solid var(--rule); border-radius: 6px; font: 600 0.95rem/1 var(--sans); cursor: pointer;
-}
-button:hover { border-color: var(--accent); }
-button.primary { color: var(--on-accent); background: var(--accent); border-color: var(--accent); }
-button.small { min-height: 30px; padding: 0 10px; font-size: 0.82rem; }
-@media (pointer: coarse) { button { min-height: 44px; } button.small { min-height: 36px; } }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
-details { background: var(--field); border: 1px solid var(--rule); border-radius: 6px; }
-summary { padding: 8px 12px; font-size: 0.92rem; font-weight: 600; cursor: pointer; }
-.opts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr)); gap: 12px; padding: 4px 12px 12px; }
-.opts input[type="text"] { background: var(--surface); }
-.tick { display: flex; align-items: center; gap: 8px; min-height: 40px; font-size: 0.92rem; }
-
-.out { display: grid; gap: 12px; min-width: 0; }
-.out[hidden] { display: none; }
-.verdict { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; padding: 10px 12px; color: var(--good); background: var(--good-tint); border-radius: 6px; }
-.verdict strong { font-size: 1.05rem; }
-.verdict.bad { color: var(--bad); background: var(--bad-tint); }
-.verdict.warn { color: var(--warn); background: var(--warn-tint); }
-.detail { min-width: 0; font-size: 0.95rem; overflow-wrap: anywhere; }
-
-.issues { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
-.issues li { display: grid; grid-template-columns: 5.5rem 1fr; gap: 10px; align-items: baseline; font: 0.9rem/1.45 var(--mono); overflow-wrap: anywhere; }
-.badge { justify-self: start; padding: 3px 6px; border-radius: 4px; font: 700 0.66rem/1 var(--sans); text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
-.badge.err { color: var(--bad); background: var(--bad-tint); }
-.badge.warn { color: var(--warn); background: var(--warn-tint); }
-.badge.note { color: var(--ink-soft); background: var(--field); border: 1px solid var(--rule); }
-
-.codebox { display: grid; gap: 6px; min-width: 0; }
-.codehead { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.codehead .label { margin: 0; }
-.code { margin: 0; padding: 10px 12px; background: var(--field); border: 1px solid var(--rule); border-radius: 6px; font: 0.9rem/1.5 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; }
-.note-text { margin: 0; color: var(--ink-soft); font-size: 0.9rem; max-width: 65ch; }
-
-.strip { display: flex; flex-wrap: wrap; border-top: 1px solid var(--rule); border-left: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
-.cell { flex: 1 1 9rem; display: grid; gap: 2px; align-content: start; min-width: 0; padding: 8px 10px; background: var(--surface); border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
-.cell.type { flex: 0 1 11rem; }
-.cell.wide { flex: 1 1 100%; }
-.k { color: var(--ink-soft); font: 600 0.66rem/1.2 var(--sans); text-transform: uppercase; letter-spacing: 0.1em; }
-.v { font: 600 0.95rem/1.35 var(--mono); overflow-wrap: anywhere; }
-.type .v { color: var(--accent); font-size: 1.15rem; }
-.sub { color: var(--ink-soft); font: 400 0.85rem var(--sans); }
-.tail .v { font: 400 0.95rem/1.45 var(--sans); }
-
-.tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr)); gap: 12px; }
-.cap { margin-bottom: 6px; font: 700 0.95rem/1.2 var(--mono); }
-.cap span { margin-left: 8px; color: var(--ink-soft); font: 400 0.85rem var(--sans); }
-.pair { display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; border: 1px solid var(--rule); border-radius: 6px; }
-.tier { display: grid; gap: 2px; min-width: 0; padding: 8px 10px; background: var(--field); }
-.tier + .tier { border-left: 1px solid var(--rule); }
-.tier .name { font-size: 0.95rem; font-weight: 600; }
-.tier .st { color: var(--ink-soft); font: 400 0.82rem/1.2 var(--mono); }
-.tier.pass { background: var(--good-tint); }
-.tier.pass .st { color: var(--good); font-weight: 600; }
-.tier.fail { background: var(--bad-tint); }
-.tier.fail .st { color: var(--bad); font-weight: 600; }
-.tier.part { background: var(--warn-tint); }
-.tier.part .st { color: var(--warn); font-weight: 600; }
-
-.foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; color: var(--ink-soft); font-size: 0.85rem; }
-.foot > span { min-width: 0; overflow-wrap: anywhere; }
-noscript p { margin: 0; padding: 10px 12px; color: var(--warn); background: var(--warn-tint); border-radius: 6px; }
-
-@media (max-width: 560px) {
-  .bar { grid-template-columns: 1fr; }
-  .rowlist li { grid-template-columns: 1fr; gap: 4px; }
-  .mark { font-size: 1.45rem; }
-  .issues li { grid-template-columns: 1fr; gap: 4px; }
+/* page-specific: the hero. One column on a phone, in reading order (lede, why, the three lines, the radio, the
+   proof). On a wide screen the words sit on the left and the three lines on the right, so the line is what you see. */
+.hero { display: grid; gap: 20px; }
+.hero-grid { display: grid; gap: 20px; }
+.words { display: contents; }
+.words .lede { order: 1; } .words .intro { order: 2; } .hero-grid .loop { order: 3; } .words .radio { order: 4; } .words .proof { order: 5; }
+@media (min-width: 1000px) {
+  .hero-grid { grid-template-columns: minmax(0, 27rem) minmax(0, 1fr); gap: 28px 56px; align-items: start; padding-top: 10px; }
+  .words { display: grid; gap: 22px; }
+  .words .lede { font-size: 1.5rem; line-height: 1.32; max-width: none; }
+  .hero-grid .loop { max-width: none; }
 }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <div class="top">
-      <h1 class="mark"><span><span class="roger">roger</span><span class="wilco">wilco</span></span><span class="ver">RW1</span></h1>
-      <nav aria-label="Site">
-        <a href="/quickstart">Start</a>
-        <a href="/lines">What a line is</a>
-        <a href="/profiles">Profiles</a>
-        <a href="/research">Research</a>
-        <a href="/docs">API</a>
-        <a href="/spec">Spec</a>
-        <a href="/skill">Skill</a>
-        <a href="/legend?profile=core" id="legend-link" hidden>Legend</a>
-      </nav>
-    </div>
+<!-- site:header -->
+<header class="site-head">
+  <p class="mark"><a href="/"><span class="roger">roger</span><span class="wilco">wilco</span></a><span class="ver">RW1</span></p>
+  <nav class="site-nav" aria-label="Site"><a href="/quickstart">start</a> <a href="/lines">what a line is</a> <a href="/profiles">profiles</a> <a href="/research">research</a> <a href="/about">about</a> <a href="/docs">api</a> <a class="lab" href="https://crox.io">Crox</a></nav>
+</header>
+<!-- /site:header -->
+<main class="wrap">
+  <section class="hero">
+    <div class="hero-grid">
+    <div class="words">
     <p class="lede">A way for AI agents to say exactly what they are about to do, so a program can check it before they do it.</p>
-    <div class="explain">
+    <div class="explain intro">
       <p>AI agents are starting to do real things: pay a bill, change the bank account a supplier is paid into, send an email to a customer. Some of those cannot be undone. Before an agent does one of them, two things should be true. The agent that asked and the agent that acts agree on exactly what is going to happen. And afterwards there is a record of exactly what did happen.</p>
       <p>rogerwilco does that with three tiny messages. Each one is a single line of text. Every fact has a label. A program can read it like a form, not like a paragraph.</p>
+    </div>
+    <div class="explain radio">
+      <p>The names come from the radio. When a pilot is told "descend to 3,000 feet, QNH 1013", the pilot says it back and the controller listens for a mistake. <em>Roger</em> means "I received it". <em>Wilco</em> means "I understood it and I will do it". Then, in the flight deck, "QNH 1013 set" is called out and the other pilot checks the dial. Agents can do the same, and a program can do the listening.</p>
+    </div>
+    <div class="proof">
+      <p class="num">9 of 16, then 0</p>
+      <p>We tested it. We planted sixteen faults in handovers just before a payment, a bank-detail change and a supplier email: a wrong digit, the wrong account, the wrong date, a message meant for someone else. Without a readback, nine of the sixteen became a wrong act that could not be undone (fourteen with a smaller model). With the line read back and checked by a program, none did, on either model, and no correct handover was wrongly held up. <a href="/research/readback">What we did and what happened</a>, and <a href="/research">the four studies before it</a>, including the one that found that with a strong model the lines do not save money. What they save is mistakes.</p>
+    </div>
     </div>
     <div class="loop">
       <div class="step">
@@ -262,12 +71,6 @@ noscript p { margin: 0; padding: 10px 12px; color: var(--warn); background: var(
         <p class="check"><span class="badge">check</span><span>The done message carries the values as they were actually used, not as they were asked for, so a program can check those against the instruction too. That is the second loop: not just "I understood", but "here is what I did". In our fifth study that check ran on every done message; writing it into the rulebook is the next change.</span></p>
       </div>
     </div>
-    <div class="explain">
-      <p>The names come from the radio. When a pilot is told "descend to 3,000 feet, QNH 1013", the pilot says it back and the controller listens for a mistake. <em>Roger</em> means "I received it". <em>Wilco</em> means "I understood it and I will do it". Then, in the flight deck, "QNH 1013 set" is called out and the other pilot checks the dial. Agents can do the same, and a program can do the listening.</p>
-    </div>
-    <div class="proof">
-      <p class="num">9 of 16, then 0</p>
-      <p>We tested it. We planted sixteen faults in handovers just before a payment, a bank-detail change and a supplier email: a wrong digit, the wrong account, the wrong date, a message meant for someone else. Without a readback, nine of the sixteen became a wrong act that could not be undone (fourteen with a smaller model). With the line read back and checked by a program, none did, on either model, and no correct handover was wrongly held up. <a href="/research/readback">What we did and what happened</a>, and <a href="/research">the four studies before it</a>, including the one that found that with a strong model the lines do not save money. What they save is mistakes.</p>
     </div>
     <h2 class="section-h">Start in two minutes</h2>
     <div class="starts">
@@ -277,7 +80,7 @@ noscript p { margin: 0; padding: 10px 12px; color: var(--warn); background: var(
       <a class="start-card" href="/quickstart#agent"><b>Your agent</b><span>Add the tools to Claude Code in one line, or give any agent the legend.</span><code>claude mcp add ...</code></a>
     </div>
     <p class="hint">Want the words first? <a href="/lines">What a line is</a> explains every message type with one example each, and what the <a href="/spec">spec</a> and the <a href="/skill">skill</a> are for.</p>
-  </header>
+  </section>
 
   <noscript><p>The playground needs JavaScript. The JSON API works without it: see <a href="/docs">/docs</a>.</p></noscript>
 
@@ -380,13 +183,15 @@ noscript p { margin: 0; padding: 10px 12px; color: var(--warn); background: var(
     <div class="out" id="out-gate" aria-live="polite" hidden></div>
   </section>
 
-  <footer class="foot">
-    <span>Protocol RW1</span>
-    <span id="build"></span>
-    <span>Tools for agents (MCP): <code id="mcp-url">/mcp</code> <button type="button" class="small" id="copy-mcp">Copy URL</button></span>
-    <span><a href="https://github.com/afieldofdreams/rogerwilco">Source</a></span>
-  </footer>
-</div>
+</main>
+<!-- site:footer -->
+<footer class="site-foot">
+  <span>Protocol RW1</span>
+  <span>Tools for agents: <code id="mcp-url">https://rogerwilco.crox.io/mcp</code></span>
+  <span><a href="https://github.com/afieldofdreams/rogerwilco">Source</a></span>
+  <span>A <a href="https://crox.io">Crox</a> lab. London.</span>
+</footer>
+<!-- /site:footer -->
 
 <script type="application/json" id="examples">
 {
@@ -709,7 +514,7 @@ noscript p { margin: 0; padding: 10px 12px; color: var(--warn); background: var(
     const found = profiles.find((p) => p.name === name);
     var plain = {core: "core is the basic word list every agent understands.", pform: "pform adds the words for a knowledge-graph workflow.", pay: "pay adds the words for paying bills: amounts, currencies, approvals.", clin: "clin adds the words for a clinical note: one statement per line with its kind, polarity, certainty, subject and time.", deploy: "deploy adds the words for releasing software: environments, versions, change windows."};
     $("profile-note").textContent = (plain[name] || (found && found.description ? found.description : "")) + " The two message panels use the one you pick.";
-    $("legend-link").setAttribute("href", "/legend?profile=" + encodeURIComponent(name));
+    if ($("legend-link")) $("legend-link").setAttribute("href", "/legend?profile=" + encodeURIComponent(name));
   }
 
   async function loadProfiles() {
@@ -759,8 +564,7 @@ noscript p { margin: 0; padding: 10px 12px; color: var(--warn); background: var(
     $("btn-gate").addEventListener("click", () => run("out-gate", doGate));
     $("profile").addEventListener("change", updateProfileNote);
     const mcp = location.origin + "/mcp";
-    $("mcp-url").textContent = mcp;
-    $("copy-mcp").addEventListener("click", (e) => copy(mcp, e.currentTarget, $("mcp-url")));
+    if ($("mcp-url")) $("mcp-url").textContent = mcp;
     fillExamples();
 
     // Open in a working state: the first example and the first readback pair, already run.
@@ -768,7 +572,6 @@ noscript p { margin: 0; padding: 10px 12px; color: var(--warn); background: var(
     $("pairs").value = "0"; $("pairs").dispatchEvent(new Event("change"));
     $("gate-example").value = "0"; $("gate-example").dispatchEvent(new Event("change"));
     loadProfiles();
-    fetch("/healthz").then((r) => r.json()).then((j) => { $("build").textContent = "Build " + j.commit; }).catch(() => {});
   }
 
   start();
