@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rogerwilco"
+version = "0.2.0"
+description = "One-line typed messages for handing work between AI agents, with a readback the sender checks in code."
+readme = "rogerwilco/README.md"
+license = {file = "rogerwilco/LICENSE"}
+requires-python = ">=3.10"
+authors = [{name = "Adam Field", email = "adam@crox.io"}]
+keywords = ["agents", "handoff", "readback", "protocol", "mcp"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+  "Topic :: Software Development :: Libraries",
+]
+
+[project.urls]
+Homepage = "https://rogerwilco.crox.io"
+Source = "https://github.com/afieldofdreams/rogerwilco"
+
+[project.scripts]
+rogerwilco = "rogerwilco.scripts.rogerwilco:main"
+
+[tool.setuptools]
+packages = ["rogerwilco", "rogerwilco.scripts"]
+
+[tool.setuptools.package-data]
+rogerwilco = ["profiles/*.json", "SKILL.md", "references/*.md", "tests/*"]

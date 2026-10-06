@@ -636,5 +636,10 @@ def _main(argv: list[str]) -> int:
         print("ERROR:", e); return 1
 
 
+def main() -> int:
+    """Console entry point (`rogerwilco validate ...` after pip install)."""
+    return _main(sys.argv[1:])
+
+
 if __name__ == "__main__":
-    sys.exit(_main(sys.argv[1:]))
+    sys.exit(main())

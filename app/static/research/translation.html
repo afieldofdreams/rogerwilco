@@ -59,6 +59,12 @@ li{margin:0.35rem 0}
 .foot{font-family:var(--mono);font-size:0.76rem;color:var(--muted);margin-top:3rem;border-top:1px solid var(--rule);padding-top:0.8rem}
 @media (max-width:520px){ body{font-size:16px} h1{font-size:1.7rem} }
 .rw-nav{font-family:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,monospace;font-size:0.8rem;letter-spacing:0.04em;text-transform:uppercase;max-width:70ch;margin:0 auto 1.4rem}.rw-nav a{color:inherit;text-decoration:none;opacity:0.7}.rw-nav a:hover{opacity:1;text-decoration:underline}.rw-nav span{opacity:0.4;margin:0 0.3rem}
+
+.plain{background:var(--well);border-left:3px solid var(--accent);padding:0.9rem 1.1rem;margin:1.4rem 0;display:grid;gap:0.6rem}
+.plain p{margin:0}
+.plain b{color:var(--accent);font-family:var(--mono);font-size:0.76rem;letter-spacing:0.05em;text-transform:uppercase;display:block;margin-bottom:0.15rem}
+.plain-h{font-family:var(--mono);font-size:0.78rem;color:var(--muted);letter-spacing:0.04em;text-transform:uppercase;margin:0 0 0.2rem}
+.inwords{font-family:var(--serif);font-size:0.95rem;color:var(--ink);background:var(--well);padding:0.7rem 0.9rem;margin:0.4rem 0 1.2rem;border-left:3px solid var(--accent)}
 </style>
 
 
@@ -69,6 +75,11 @@ li{margin:0.35rem 0}
 <div class="mast"><span>Study 4 of 4</span><span>30 Sep 2026</span><span>Croxio Ltd</span><span>144 translations · 12 documents · 2 forms · 2 models · 3 runs</span></div>
 <h1>Translation: can a clinical document become lines that are complete, accurate, traceable and the same every time?</h1>
 <p class="lede">The month-end study ended with the lines replacing the working files: every fact once, in a slot, with a pointer to its source. This study asks whether that holds where extraction is hard. Twelve synthetic clinical documents, 422 hand-annotated assertions with the hard cases built in (negation, hedging, conditionals, family history, history against the present, tables, abbreviations, a correction, a planted instruction), translated twelve times each: as rogerwilco lines and as JSON objects with the same vocabulary, by Sonnet and by Haiku, three runs of each. A gate refuses any line whose quote is not in the document at the place it cites.</p>
+<div class="plain"><p class="plain-h">In plain words</p>
+<p><b>What we did</b>We wrote twelve made-up clinical notes with the hard things in them: things that are denied, things that might be, things about a relative, things from years ago, a table, a correction, a hidden instruction. We marked every statement by hand: 422 of them. Then we asked two models to turn each note into one line per statement, with a pointer to the exact words in the note, twelve times each. A program refused any line whose words were not in the note at the place it pointed to.</p>
+<p><b>What happened</b>The strong model found 99.7% of the statements, pointed at the right words 99% of the time, and invented nothing, because a line without words behind it cannot get through. The small model had 70 of its first 72 attempts refused, mostly for paraphrasing instead of quoting, got every note through in two rounds, and still misread meaning: it marked what the patient said as something the doctor observed 59 times, and read the present as the past 104 times. Writing the same facts as JSON instead of lines made no difference to accuracy or cost.</p>
+<p><b>What it means</b>The pointer and the check make the record trustworthy: nothing in it is made up, and every fact can be traced to its words. A weak model is made correct in form, not in meaning.</p>
+</div>
 
 <div class="decision">
 <p><strong>Result.</strong> With Sonnet the lines are the record. 99.7% of the gold assertions were found (four misses in 36 document translations), 98.7% of the lines were gold assertions, 88% of the matched lines were exact on every attribute and value, and 99% of them cited the exact words. Nothing was invented: the gate makes a line without words behind it impossible, so the 16 extras across 36 translations are restatements and out-of-scope sentences, not facts. The correction in document 4 came back linked to the line it replaces with <code>re=</code> in every run, and the instruction planted in document 5 was ignored in every run. Across three runs, 401 of 404 assertions were found every time, 92% with the same attributes and 89% identical to the value.</p>
@@ -120,6 +131,7 @@ li{margin:0.35rem 0}
 <tr><td>JSON, Haiku</td><td class="bad">0.939</td><td>0.990 (0.951)</td><td>0.939</td><td class="bad">0.881</td><td>0.972</td><td>0.989</td><td>0.996</td><td class="bad">0.859</td><td>0.913</td><td class="bad">0.662</td><td>0.992</td><td>0.863</td><td>2,195</td><td>63.9</td><td>5.2</td><td class="bad">2/36</td><td class="bad">0.485</td></tr>
 </tbody>
 </table>
+<p class="inwords">In words: the strong model found 99.7% of the marked statements writing lines and 99.6% writing JSON; the small model found about 93% either way. Exact lines is how often every detail on a line was right: 88% for the strong model, 66% for the small one. First pass is how often the first attempt got through the gate: always for the strong model, almost never for the small one.</p>
 </div>
 <div class="tw">
 <table>
@@ -132,6 +144,7 @@ li{margin:0.35rem 0}
 <tr><td>JSON, Haiku</td><td>247 / 166</td><td>30 / 24</td><td>43 / 20</td><td>24 / 4</td><td>70 / 32</td><td>74 / 66</td><td>153 / 113</td><td>50 / 27</td><td>20 / 8</td><td>9 / 1</td><td>6 / 4</td><td class="bad">5 / 2</td></tr>
 </tbody>
 </table>
+<p class="inwords">In words: the hard cases one by one. Each pair is how many the model found and how many it got exactly right. The strong model missed at most one in any group. The small model struggled most with allergies, things about a relative, things from the past, things the patient reported, things that would be true if something else were, and the hidden instruction.</p>
 </div>
 </div>
 
