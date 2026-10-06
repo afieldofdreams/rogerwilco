@@ -288,8 +288,21 @@ def test_openapi_and_docs(client):
 def test_index_page(client):
     r = client.get("/")
     assert r.status_code == 200 and r.headers["content-type"].startswith("text/html")
-    for href in ('href="/spec"', 'href="/skill"', 'href="/legend?profile=core"', 'href="/quickstart"', 'href="/lines"', 'href="/research"'):
+    for href in ('href="/spec"', 'href="/skill"', 'href="/quickstart"', 'href="/lines"', 'href="/profiles"', 'href="/research"', 'href="/about"', 'href="https://crox.io"'):
         assert href in r.text
+    assert 'class="site-head"' in r.text and '/static/site.css' in r.text
+
+
+def test_every_page_carries_the_same_header(client):
+    pages = ["/", "/quickstart", "/lines", "/about", "/research", "/research/readback"]
+    heads = []
+    for path in pages:
+        text = client.get(path, headers={"Accept": "text/html"}).text
+        start, end = text.index('<header class="site-head">'), text.index("</header>")
+        heads.append(re.sub(r' aria-current="page"', "", text[start:end]))
+        assert '<footer class="site-foot">' in text, path
+    assert len(set(heads)) == 1
+    assert client.get("/about").status_code == 200 and client.get("/static/site.css").headers["content-type"].startswith("text/css")
 
 
 def test_quickstart_and_lines_pages(client):
@@ -645,5 +658,6 @@ def test_research_index_and_pages(client):
         page = client.get(f"/research/{slug}")
         assert page.status_code == 200, slug
         assert page.text.lstrip().startswith("<!doctype html>"), slug
-        assert '<meta charset="utf-8">' in page.text and "<main>" in page.text, slug
+        assert '<meta charset="utf-8">' in page.text and '<main class="report">' in page.text, slug
+        assert 'class="site-head"' in page.text and '/static/site.css' in page.text, slug   # the shared chrome
     assert client.get("/research/nope").status_code == 404

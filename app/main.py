@@ -8,6 +8,7 @@ from fastapi import APIRouter, FastAPI, HTTPException, Query, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse, Response
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
@@ -72,7 +73,7 @@ def index():
                         headers={"Cache-Control": "no-cache"})
 
 
-PAGES = {"quickstart": "quickstart.html", "lines": "lines.html", "profiles": "profiles.html"}
+PAGES = {"quickstart": "quickstart.html", "lines": "lines.html", "profiles": "profiles.html", "about": "about.html"}
 
 
 @router.get("/quickstart", include_in_schema=False)
@@ -83,6 +84,11 @@ def quickstart():
 @router.get("/lines", include_in_schema=False)
 def lines():
     return FileResponse(svc.APP_DIR / "static" / PAGES["lines"], media_type="text/html", headers={"Cache-Control": "no-cache"})
+
+
+@router.get("/about", include_in_schema=False)
+def about():
+    return FileResponse(svc.APP_DIR / "static" / PAGES["about"], media_type="text/html", headers={"Cache-Control": "no-cache"})
 
 
 
@@ -216,6 +222,7 @@ def create_app() -> FastAPI:
 
     app.include_router(router)
     app.router.routes.extend(mcp_routes)
+    app.mount("/static", StaticFiles(directory=str(svc.APP_DIR / "static")), name="static")   # site.css
     return app
 
 
