@@ -12,6 +12,14 @@ RW1 DN writer-03 re=research-01 from=writer to=research item=gh:crox/site#42 out
 
 Agents hand work to each other in prose today. Prose hides state, cannot be validated, and gets misread silently. rogerwilco puts the facts in slots, keeps reasoning in a bounded tail or an artifact, and makes the receiver read the handoff back before it owns it. The readback is checked in four tiers: receipt and integrity (roger), echo and comprehension (wilco). It is content, not transport: it rides inside an MCP tool result, an A2A part, a chat turn, a queue message or a log line.
 
+## Install
+
+```
+pip install rogerwilco          # the codec and the `rogerwilco` command; standard library only
+```
+
+Until the package is on PyPI: `pip install git+https://github.com/afieldofdreams/rogerwilco`. The site at [rogerwilco.crox.io](https://rogerwilco.crox.io) has a two-minute start.
+
 ## Three things in this repo
 
 | Folder | What | Start here |

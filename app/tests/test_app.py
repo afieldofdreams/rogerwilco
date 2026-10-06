@@ -288,8 +288,41 @@ def test_openapi_and_docs(client):
 def test_index_page(client):
     r = client.get("/")
     assert r.status_code == 200 and r.headers["content-type"].startswith("text/html")
-    for href in ('href="/spec"', 'href="/skill"', 'href="/legend?profile=core"'):
+    for href in ('href="/spec"', 'href="/skill"', 'href="/legend?profile=core"', 'href="/quickstart"', 'href="/lines"', 'href="/research"'):
         assert href in r.text
+
+
+def test_quickstart_and_lines_pages(client):
+    for path, needle in (("/quickstart", "Start in two minutes"), ("/lines", "What a line is")):
+        r = client.get(path)
+        assert r.status_code == 200 and r.headers["content-type"].startswith("text/html") and needle in r.text
+
+
+def test_profiles_page_and_list_share_a_path(client):
+    page = client.get("/profiles", headers={"Accept": "text/html,application/xhtml+xml"})
+    assert page.status_code == 200 and page.headers["content-type"].startswith("text/html") and "Same line, four kinds of work" in page.text
+    listing = client.get("/profiles", headers={"Accept": "application/json"})
+    assert listing.headers["content-type"].startswith("application/json")
+    assert {p["name"] for p in listing.json()} >= {"core", "pay", "clin", "pform", "deploy"}
+    # every line shown on the profiles page validates under the profile it names
+    for line in re.findall(r"<pre>(RW1 .*?)</pre>", page.text, re.S):
+        line = re.sub(r"</?b>", "", line).replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&").strip()
+        profile = re.search(r"p=([a-z]+)", line).group(1)
+        body = post(client, "/validate", line=line, profile=profile).json()
+        assert body["ok"], (line, body["errors"])
+
+
+def test_quickstart_replies_are_real(client):
+    """The requests on the quickstart page answer exactly what the page shows."""
+    ho = ("RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=all sup=marlow amt=5400.00 cur=GBP "
+          "kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057")
+    rb = post(client, "/make-rb", ho=ho, id="payer-1", profile="pay").json()["rb"]
+    assert "h=a6cf98835d6c" in rb                                                      # the fingerprint printed on the page
+    assert post(client, "/check-rb", ho=ho, rb=rb, profile="pay").json() == {"ok": True, "problems": [], "notes": []}
+    bad = post(client, "/check-rb", ho=ho, rb=rb.replace("amt=5400.00", "amt=5100.00"), profile="pay").json()
+    assert bad == {"ok": False, "problems": ["tier3 echo: amt mismatch: HO 5400.00 vs RB 5100.00"], "notes": []}
+    page = client.get("/quickstart").text
+    assert "tier3 echo: amt mismatch: HO 5400.00 vs RB 5100.00" in page and rb in page
 
 
 def _examples() -> dict:
@@ -445,34 +478,34 @@ def test_index_page_numbers_match_the_studies():
     if not (root / "month-end" / "results" / "summary.md").is_file():
         pytest.skip("research corpus not checked out")
     html = (APP_DIR / "static" / "index.html").read_text(encoding="utf-8")
+    research = (APP_DIR / "static" / "research" / "index.html").read_text(encoding="utf-8")
     rows = {}
     for line in (root / "month-end" / "results" / "summary.md").read_text(encoding="utf-8").splitlines():
         cells = [c.strip() for c in line.strip().strip("|").split("|")]
         if len(cells) > 8 and cells[1].isdigit():
             rows[cells[0]] = (int(re.match(r"\d+", cells[5]).group()), int(re.match(r"\d+", cells[7]).group()))
     a, d = rows["A prose"], rows["D disciplined prose"]
-    assert round(d[0] / a[0], 2) == 0.33 and "to a third" in html            # traffic between agents
-    assert round(d[1] / a[1], 2) == 0.40 and "reading to 40%" in html         # the person's reading
+    assert round(d[0] / a[0], 2) == 0.33 and "to a third" in research        # traffic between agents
+    assert round(d[1] / a[1], 2) == 0.40 and "reading to 40%" in research     # the person's reading
     cells = {}
     for line in (root / "month-end" / "results" / "summary.md").read_text(encoding="utf-8").splitlines():
         c = [x.strip() for x in line.strip().strip("|").split("|")]
         if len(c) > 9 and c[1].isdigit():
             cells[c[0]] = c
-    assert cells["A prose"][8] == "1333" and cells["D disciplined prose"][8] == "520" and "1,333 tokens a run in free prose to 520" in html
+    assert cells["A prose"][8] == "1333" and cells["D disciplined prose"][8] == "520"
     assert cells["D-haiku disciplined prose, Haiku agents"][3].startswith("0.67") and cells["L-haiku lines, Haiku agents"][3].startswith("0.83")
-    assert "two of six reserved decisions on disciplined prose and one of six on lines" in html   # 0.67 = 4/6, 0.83 = 5/6
-    assert all(cells[k][3] == "1.0 / 1.0" for k in cells if "haiku" not in k) and "3 of 3" in html and "0 of 4 decoys" in html
+    assert all(cells[k][3] == "1.0 / 1.0" for k in cells if "haiku" not in k) and "three reserved decisions" in research
     rb = root / "readback" / "results" / "summary.json"
     if rb.is_file():
         cells = json.loads(rb.read_text(encoding="utf-8"))["cells"]
         assert cells["A-sonnet"]["fault_reached_act"] == 9 and cells["A-haiku"]["fault_reached_act"] == 14
         assert cells["C-sonnet"]["fault_reached_act"] == 0 and cells["C-haiku"]["fault_reached_act"] == 0
         assert all(cells[k]["false_alarms"] == 0 for k in cells)
-    assert "9 of 16, then 0" in html and "14 of 16 with a small model" in html
+    assert "9 of 16, then 0" in html and "fourteen with a smaller model" in html and "9 and 14 of 16" in research
     tr = (root / "translation" / "results" / "summary.md").read_text(encoding="utf-8")
     sonnet = [c.strip() for c in [l for l in tr.splitlines() if l.startswith("| L-sonnet")][0].strip("|").split("|")]
-    assert sonnet[2].startswith("0.997") and "99.7%" in html                  # recall
-    assert sonnet[13].startswith("0.99") and "right passage 99%" in html       # quote ok
+    assert sonnet[2].startswith("0.997") and "99.7%" in research              # recall
+    assert sonnet[13].startswith("0.99") and "right words 99%" in research     # quote ok
 
 
 # ------------------------------------------------------------------ HTTP behaviour
