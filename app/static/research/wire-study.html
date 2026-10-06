@@ -4,88 +4,24 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>rogerwilco Wire Study</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<style>
-:root{
-  --paper:#F6F7F9; --ink:#171A1F; --muted:#5B6470; --accent:#1E5A6E; --warn:#9A5B12;
-  --rule:#D6DAE0; --well:#ECEFF3; --good:#2F6B3A;
-  --serif:"Source Serif 4", Georgia, "Times New Roman", serif;
-  --mono:"IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, monospace;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --paper:#14171B; --ink:#E6E8EB; --muted:#9AA3AE; --accent:#63B3C7; --warn:#D9A054;
-    --rule:#2B3138; --well:#1D2126; --good:#7CC48A; color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{
-  --paper:#14171B; --ink:#E6E8EB; --muted:#9AA3AE; --accent:#63B3C7; --warn:#D9A054;
-  --rule:#2B3138; --well:#1D2126; --good:#7CC48A; color-scheme:dark;
-}
-body{background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.55;
-  padding-inline:16px;padding-block:32px 80px;margin:0}
-main{max-width:70ch;margin-inline:auto}
-.wide{max-width:900px;margin-inline:auto}
-h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.15;text-wrap:balance;margin:0}
-h1{font-size:2.1rem;letter-spacing:-0.01em}
-h2{font-size:1.35rem;margin-top:2.6rem;padding-top:1.2rem;border-top:1px solid var(--rule)}
-h3{font-size:1.05rem;margin-top:1.6rem}
-p{margin:0.9rem 0}
-.mast{font-family:var(--mono);font-size:0.78rem;color:var(--muted);letter-spacing:0.04em;text-transform:uppercase;
-  display:flex;flex-wrap:wrap;gap:0.4rem 1.4rem;margin-bottom:1.2rem}
-.lede{font-size:1.12rem;color:var(--ink)}
-.epigraph{font-family:var(--mono);font-size:0.86rem;color:var(--muted);margin:1.4rem 0 0.4rem;white-space:nowrap;overflow-x:auto}
-.epigraph small{display:block;font-family:var(--serif);font-size:0.9rem;white-space:normal;margin-top:0.3rem}
-.decision{background:var(--well);border-left:3px solid var(--accent);padding:0.9rem 1.1rem;margin:1.4rem 0}
-.decision p{margin:0.45rem 0}
-.decision strong{color:var(--accent)}
-code,pre{font-family:var(--mono);font-size:0.84rem}
-pre{background:var(--well);padding:0.8rem 1rem;overflow-x:auto;margin:0.8rem 0;line-height:1.5}
-.wire{display:grid;grid-template-columns:7.5rem 1fr 3.2rem;gap:0.35rem 0.8rem;align-items:baseline;font-family:var(--mono);font-size:0.82rem;
-  background:var(--well);padding:0.9rem 1rem;overflow-x:auto;margin:0.8rem 0}
-.wire .k{color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;font-size:0.72rem}
-.wire .v{white-space:nowrap}
-.wire .n{text-align:right;font-variant-numeric:tabular-nums;color:var(--accent)}
-table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:0.82rem;margin:0.8rem 0;font-variant-numeric:tabular-nums}
-th,td{padding:0.45rem 0.6rem;border-bottom:1px solid var(--rule);text-align:right;vertical-align:top}
-th:first-child,td:first-child{text-align:left}
-th{color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:0.05em;font-size:0.72rem}
-.tw{overflow-x:auto}
-caption{caption-side:bottom;text-align:left;font-family:var(--serif);font-size:0.9rem;color:var(--muted);padding-top:0.5rem}
-.bad{color:var(--warn);font-weight:500}
-.ok{color:var(--good)}
-ol.findings{padding-left:1.4rem;margin:0.6rem 0}
-ol.findings li{margin:0.7rem 0}
-ol.findings li strong{font-weight:600}
-ul{padding-left:1.3rem}
-li{margin:0.35rem 0}
-.chart{margin:1rem 0}
-.chart svg{width:100%;height:auto;display:block}
-.chart text{font-family:var(--mono);font-size:12px;fill:var(--ink)}
-.chart .lab{fill:var(--muted)}
-.chart .bar{fill:var(--accent)}
-.chart .base{fill:var(--muted);opacity:0.55}
-.chart .grid{stroke:var(--rule);stroke-width:1}
-.src{font-size:0.92rem}
-.src li{margin:0.3rem 0;overflow-wrap:anywhere}
-a{color:var(--accent)}
-a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.foot{font-family:var(--mono);font-size:0.76rem;color:var(--muted);margin-top:3rem;border-top:1px solid var(--rule);padding-top:0.8rem}
-@media (max-width:520px){ body{font-size:16px} h1{font-size:1.7rem} .wire{grid-template-columns:5.5rem 1fr 2.6rem} }
-.rw-nav{font-family:"IBM Plex Mono","SFMono-Regular",Menlo,Consolas,monospace;font-size:0.8rem;letter-spacing:0.04em;text-transform:uppercase;max-width:70ch;margin:0 auto 1.4rem}.rw-nav a{color:inherit;text-decoration:none;opacity:0.7}.rw-nav a:hover{opacity:1;text-decoration:underline}.rw-nav span{opacity:0.4;margin:0 0.3rem}
-
-.plain{background:var(--well);border-left:3px solid var(--accent);padding:0.9rem 1.1rem;margin:1.4rem 0;display:grid;gap:0.6rem}
-.plain p{margin:0}
-.plain b{color:var(--accent);font-family:var(--mono);font-size:0.76rem;letter-spacing:0.05em;text-transform:uppercase;display:block;margin-bottom:0.15rem}
-.plain-h{font-family:var(--mono);font-size:0.78rem;color:var(--muted);letter-spacing:0.04em;text-transform:uppercase;margin:0 0 0.2rem}
-.inwords{font-family:var(--serif);font-size:0.95rem;color:var(--ink);background:var(--well);padding:0.7rem 0.9rem;margin:0.4rem 0 1.2rem;border-left:3px solid var(--accent)}
-</style>
 
 
+<!-- site:head -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/static/site.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23B8402A'/%3E%3Cpath d='M8 17l5 5 11-12' fill='none' stroke='%23fff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<!-- /site:head -->
 </head>
 <body>
-<nav class="rw-nav" aria-label="Site"><a href="/">rogerwilco</a> <span aria-hidden="true">/</span> <a href="/research">research</a></nav>
-<main>
+<!-- site:header -->
+<header class="site-head">
+  <p class="mark"><a href="/"><span class="roger">roger</span><span class="wilco">wilco</span></a><span class="ver">RW1</span></p>
+  <nav class="site-nav" aria-label="Site"><a href="/quickstart">start</a> <a href="/lines">what a line is</a> <a href="/profiles">profiles</a> <a href="/research" aria-current="page">research</a> <a href="/about">about</a> <a href="/docs">api</a> <a class="lab" href="https://crox.io">Crox</a></nav>
+</header>
+<!-- /site:header -->
+<main class="report">
 <div class="mast"><span>Working paper v0.1</span><span>27 Sep 2026</span><span>Croxio Ltd · Lumos</span><span>Status: draft, QA pass 1 applied</span></div>
 <h1>Typed compression for agent handoffs</h1>
 <p class="lede">Does a codebook-governed wire format beat English for agent-to-agent messages? A prototype (rogerwilco) and a five-format test on 240 synthetic Pensive handoffs.</p>
@@ -257,6 +193,14 @@ a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
 <p class="foot">rogerwilco v0.1 · 240 synthetic handoffs · tiktoken o200k_base and cl100k_base · parity receivers Claude Haiku 4.5 and Claude Sonnet · code and raw results in the accompanying archive.</p>
 </main>
+<!-- site:footer -->
+<footer class="site-foot">
+  <span>Protocol RW1</span>
+  <span>Tools for agents: <code id="mcp-url">https://rogerwilco.crox.io/mcp</code></span>
+  <span><a href="https://github.com/afieldofdreams/rogerwilco">Source</a></span>
+  <span>A <a href="https://crox.io">Crox</a> lab. London.</span>
+</footer>
+<!-- /site:footer -->
 
 </body>
 </html>
