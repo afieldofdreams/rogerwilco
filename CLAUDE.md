@@ -6,6 +6,7 @@ Protocol, hosted validator and research for typed agent-to-agent handoffs with v
 
 - `rogerwilco/` is the skill and the reference implementation. `SKILL.md` is what Claude reads; `references/SPEC.md` is the protocol; `scripts/rogerwilco.py` is the codec (standard library only, keep it that way); `profiles/` holds the core vocabulary and domain profiles; `tests/conformance.jsonl` is the conformance suite. An implementation is conformant when `python3 rogerwilco/tests/test_conformance.py` passes.
 - `app/` is the FastAPI service deployed at rogerwilco.crox.io: REST, MCP at `/mcp`, playground at `/`. It imports the codec by path (`RW_SKILL_DIR`), never by copying it.
+- `app/static/` is the site. One stylesheet, `site.css`, styles every page. The head links, the header with the nav and the footer are shared: each page holds them between `<!-- site:head -->`, `<!-- site:header -->` and `<!-- site:footer -->` markers, and `python3 app/tools/stamp.py` rewrites them from one source. Edit the nav or the footer in `stamp.py`, run it, commit the stamped pages; there is no build step at deploy time.
 - `research/` holds the studies. It is never read by the app. Raw logs are kept as they were produced, including the working name `formcore` and prefix `FC1` used before the rename on 2026-09-29; only the version token changed.
 - `Dockerfile` at the root builds the app. Coolify builds it from `main`.
 
