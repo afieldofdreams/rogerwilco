@@ -1,1 +1,1 @@
-"""rogerwilco app: REST API, MCP endpoint and playground page for the RW1 protocol."""
+"""rogerwilco app: REST API, MCP endpoint and site for the RW1 protocol."""

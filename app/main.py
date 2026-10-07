@@ -1,4 +1,4 @@
-"""rogerwilco app: a JSON API over the RW1 reference codec, an MCP endpoint at /mcp, and a playground at /.
+"""rogerwilco app: a JSON API over the RW1 reference codec, an MCP endpoint at /mcp, and the site at /.
 
 Run from the repo root:  uvicorn app.main:app --reload
 """

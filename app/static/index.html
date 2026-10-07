@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <title>rogerwilco</title>
-<meta name="description" content="A way for AI agents to say exactly what they are about to do, so a program can check it before they do it. Three one-line messages: hand over, read back, done.">
+<meta name="description" content="Aviation learned how to hand an instruction from one person to another so that it cannot be misheard. rogerwilco gives that discipline to AI agents: three one-line messages, read back and checked by a program before anything happens.">
 <!-- site:head -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,12 +21,14 @@
 .hero { display: grid; gap: 20px; }
 .hero-grid { display: grid; gap: 20px; }
 .words { display: contents; }
-.words .lede { order: 1; } .words .intro { order: 2; } .hero-grid .loop { order: 3; } .words .radio { order: 4; } .words .proof { order: 5; }
+.words .lede { order: 1; } .words .intro { order: 2; } .hero-grid .loop { order: 3; } .words .radio { order: 4; }
 @media (min-width: 1000px) {
   .hero-grid { grid-template-columns: minmax(0, 27rem) minmax(0, 1fr); gap: 28px 56px; align-items: start; padding-top: 10px; }
   .words { display: grid; gap: 22px; }
   .words .lede { font-size: 1.5rem; line-height: 1.32; max-width: none; }
   .hero-grid .loop { max-width: none; }
+  .hero > .proof { max-width: none; display: grid; grid-template-columns: minmax(0, 27rem) minmax(0, 1fr); gap: 8px 56px; align-items: start; }
+  .hero > .proof .num { font-size: 2.2rem; }
 }
 </style>
 </head>
@@ -42,17 +44,13 @@
   <section class="hero">
     <div class="hero-grid">
     <div class="words">
-    <p class="lede">A way for AI agents to say exactly what they are about to do, so a program can check it before they do it.</p>
+    <p class="lede">Aviation learned, at great cost, how to hand an instruction from one person to another so that it cannot be misheard. rogerwilco gives that discipline to AI agents.</p>
     <div class="explain intro">
-      <p>AI agents are starting to do real things: pay a bill, change the bank account a supplier is paid into, send an email to a customer. Some of those cannot be undone. Before an agent does one of them, two things should be true. The agent that asked and the agent that acts agree on exactly what is going to happen. And afterwards there is a record of exactly what did happen.</p>
-      <p>rogerwilco does that with three tiny messages. Each one is a single line of text. Every fact has a label. A program can read it like a form, not like a paragraph.</p>
+      <p>On 27 March 1977 two Boeing 747s collided on a runway in Tenerife and 583 people died. One crew began its take-off on a clearance it had not been given. The words on the radio were ordinary English, and ordinary English was the problem: "we are now at take-off" meant one thing to the crew saying it and another to the controller hearing it. Aviation's answer was not a better pilot. It was a protocol. A fixed vocabulary, so a word means one thing. The person who will act reads the instruction back, and the person who gave it listens for the mistake. In the flight deck, the setting is called out and the other pilot checks the dial. Flying became the safest way to travel, and that discipline is part of why.</p>
+      <p>AI agents are now doing things that cannot be undone: paying invoices, changing the account a supplier is paid into, sending emails to customers. They hand each other those instructions in paragraphs. rogerwilco gives them the flight deck's discipline instead: three tiny messages, each a single line of text, every fact with a label, so a program can read it like a form and check it before anything happens.</p>
     </div>
     <div class="explain radio">
-      <p>The names come from the radio. When a pilot is told "descend to 3,000 feet, QNH 1013", the pilot says it back and the controller listens for a mistake. <em>Roger</em> means "I received it". <em>Wilco</em> means "I understood it and I will do it". Then, in the flight deck, "QNH 1013 set" is called out and the other pilot checks the dial. Agents can do the same, and a program can do the listening.</p>
-    </div>
-    <div class="proof">
-      <p class="num">9 of 16, then 0</p>
-      <p>We tested it. We planted sixteen faults in handovers just before a payment, a bank-detail change and a supplier email: a wrong digit, the wrong account, the wrong date, a message meant for someone else. Without a readback, nine of the sixteen became a wrong act that could not be undone (fourteen with a smaller model). With the line read back and checked by a program, none did, on either model, and no correct handover was wrongly held up. <a href="/research/readback">What we did and what happened</a>, and <a href="/research">the four studies before it</a>, including the one that found that with a strong model the lines do not save money. What they save is mistakes.</p>
+      <p>The names come from the radio. <em>Roger</em> means "I received it". <em>Wilco</em> means "I understood it and I will do it". A controller says "descend to 3,000 feet, QNH 1013"; the pilot says it back; the controller listens. Agents can do the same, and a program can do the listening.</p>
     </div>
     </div>
     <div class="loop">
@@ -75,117 +73,18 @@
       </div>
     </div>
     </div>
+    <div class="proof">
+      <p class="num">9 of 16, then 0</p>
+      <p>Does it carry over? We planted sixteen faults in handovers between agents just before a payment, a bank-detail change and a supplier email: a wrong digit, the wrong account, the wrong date, a message meant for someone else. Without a readback, nine of the sixteen became a wrong act that could not be undone (fourteen with a smaller model). With the line read back and checked by a program, none did, on either model, and no correct handover was wrongly held up. Five small studies so far, so this is an indication rather than proof, and every log is in the open. <a href="/research/readback">What we did and what happened</a>, and <a href="/research">the four studies before it</a>, including the one that found that with a strong model the lines do not save money. What they save is mistakes.</p>
+    </div>
     <h2 class="section-h">Start in two minutes</h2>
     <div class="starts">
-      <a class="start-card" href="#line-panel"><b>Playground</b><span>Right here, below. Pick an example, change a number, press Check.</span></a>
       <a class="start-card" href="/quickstart#api"><b>API</b><span>One POST, no key, no sign-up.</span><code>POST /check-rb</code></a>
       <a class="start-card" href="/quickstart#python"><b>Python</b><span>One package, no dependencies.</span><code>pip install rogerwilco</code></a>
       <a class="start-card" href="/quickstart#agent"><b>Your agent</b><span>Add the tools to Claude Code in one line, or give any agent the legend.</span><code>claude mcp add ...</code></a>
     </div>
     <p class="hint">Want the words first? <a href="/lines">What a line is</a> explains every message type with one example each, and what the <a href="/spec">spec</a> and the <a href="/skill">skill</a> are for.</p>
   </section>
-
-  <noscript><p>The playground needs JavaScript. The JSON API works without it: see <a href="/docs">/docs</a>.</p></noscript>
-
-  <div class="bar">
-    <div class="field">
-      <label class="label" for="profile">Profile</label>
-      <select id="profile"><option value="core">core</option><option value="pform">pform</option><option value="pay">pay</option></select>
-    </div>
-    <p id="profile-note">A profile is the word list for one kind of work. core is the basics, pform is for a knowledge graph, pay is for paying bills, clin is for clinical notes. The two message panels use the one you pick.</p>
-  </div>
-
-  <section class="panel" id="line-panel" aria-labelledby="h-line">
-    <div>
-      <h2 id="h-line">Check a line</h2>
-      <p class="hint">Pick an example or write your own, then press Check. You will see whether a program accepts it and what it read from it. Try changing a word to one that is not on the list. "Make readback" writes the reply the other agent should send. "JSON" shows the same message as data. "Fingerprint" is the short code that proves a message arrived unchanged.</p>
-    </div>
-    <div class="field">
-      <label class="label" for="example">Example</label>
-      <select id="example"></select>
-    </div>
-    <div class="field">
-      <label class="label" for="line">Message</label>
-      <textarea id="line" rows="4" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></textarea>
-    </div>
-    <div class="row">
-      <button type="button" class="primary" id="btn-validate">Check</button>
-      <button type="button" id="btn-json">JSON</button>
-      <button type="button" id="btn-rb">Make readback</button>
-      <button type="button" id="btn-digest">Fingerprint</button>
-    </div>
-    <details>
-      <summary>Readback options</summary>
-      <div class="opts">
-        <div class="field"><label class="label" for="rb-id">Readback id</label><input type="text" id="rb-id" autocomplete="off" spellcheck="false" placeholder="writer-01"></div>
-        <div class="field"><label class="label" for="rb-acc">acc (optional)</label><input type="text" id="rb-acc" autocomplete="off" spellcheck="false" placeholder="len:120w+tone:plain"></div>
-        <div class="field"><label class="label" for="rb-do">do (optional)</label><input type="text" id="rb-do" autocomplete="off" spellcheck="false" placeholder="copy"></div>
-        <label class="tick"><input type="checkbox" id="rb-hash" checked> Add h= digest</label>
-      </div>
-    </details>
-    <div class="out" id="out-line" aria-live="polite" hidden></div>
-  </section>
-
-  <section class="panel" id="check-panel" aria-labelledby="h-check">
-    <div>
-      <h2 id="h-check">Check a readback</h2>
-      <p class="hint">This is what the sender's program does before it lets go of a job. Paste the hand-over (HO) you sent and the read-back (RB) that came back. Four checks run in order: the reply is to the right message from the right agent; the message arrived unchanged; every fact was repeated back correctly; and, if you asked for it, the receiver understood the brief the way you meant it. The first two are roger, the last two are wilco. Pick the examples that fail to see what a miss looks like.</p>
-    </div>
-    <div class="field">
-      <label class="label" for="pairs">Example</label>
-      <select id="pairs"></select>
-    </div>
-    <div class="pairbox">
-      <div class="field">
-        <label class="label" for="ho">The hand-over (HO) the sender sent</label>
-        <textarea id="ho" rows="5" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></textarea>
-      </div>
-      <div class="field">
-        <label class="label" for="rb">The read-back (RB) that came back</label>
-        <textarea id="rb" rows="5" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></textarea>
-      </div>
-    </div>
-    <div class="field">
-      <label class="label" for="expect">What the sender was really looking for (optional: the acceptance criteria it kept to itself)</label>
-      <input type="text" id="expect" autocomplete="off" spellcheck="false" placeholder="len:120w+tone:plain+no:em-dash+must:monday-problem">
-    </div>
-    <div class="row"><button type="button" class="primary" id="btn-check">Check readback</button></div>
-    <div class="out" id="out-check" aria-live="polite" hidden></div>
-  </section>
-
-  <section class="panel" id="gate-panel" aria-labelledby="h-gate">
-    <div>
-      <h2 id="h-gate">Check lines against a document</h2>
-      <p class="hint">When an agent turns a document (an email, an invoice, a clinical note) into lines of fact, each line says which line of the document its words came from. Paste the document and the lines, and a program checks that every pointer is real and the words are really there. Lines of the document are counted from 1, blank lines included. For the pay profile it checks pointers into an inbox export instead, and that net plus VAT equals the total.</p>
-    </div>
-    <div class="bar">
-      <div class="field">
-        <label class="label" for="gate-profile">Profile</label>
-        <select id="gate-profile"><option value="clin">clin</option><option value="pay">pay</option></select>
-      </div>
-      <div class="field">
-        <label class="label" for="gate-example">Example</label>
-        <select id="gate-example"></select>
-      </div>
-    </div>
-    <div class="pairbox">
-      <div class="field docbox">
-        <label class="label" for="gate-doc">The document</label>
-        <textarea id="gate-doc" rows="9" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></textarea>
-      </div>
-      <div class="field docbox">
-        <label class="label" for="gate-lines">The lines, one per row</label>
-        <textarea id="gate-lines" rows="9" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"></textarea>
-      </div>
-    </div>
-    <div class="field">
-      <label class="label" for="gate-docid">Document id (the part after doc: in src=, optional)</label>
-      <input type="text" id="gate-docid" autocomplete="off" spellcheck="false" placeholder="7">
-    </div>
-    <div class="row"><button type="button" class="primary" id="btn-gate">Check lines</button></div>
-    <div class="out" id="out-gate" aria-live="polite" hidden></div>
-  </section>
-
 </main>
 <!-- site:footer -->
 <footer class="site-foot">
@@ -196,389 +95,6 @@
 </footer>
 <!-- /site:footer -->
 
-<script type="application/json" id="examples">
-{
-  "lines": [
-    {"label": "HO: hand work over", "line": "RW1 HO research-01 from=research to=writer item=gh:crox/site#42 ask=DRAFT due=20261002 pri=2 conf=M keep=research // hero copy, 120 words, no em dashes", "profile": null, "valid": true},
-    {"label": "HO: asks for a comprehension readback", "line": "RW1 HO research-03 from=research to=writer item=gh:crox/site#42 ask=DRAFT due=20261002 rb=acc keys=len+tone+must+no art=url:https://example.com/brief // hero copy, 120 words, plain tone, no em dashes, must name the reader's Monday problem", "profile": null, "valid": true},
-    {"label": "RB: readback with digest", "line": "RW1 RB writer-01 re=research-01 from=writer to=research item=gh:crox/site#42 ask=DRAFT due=20261002 h=c40bba4360dc", "profile": null, "valid": true},
-    {"label": "AQ: bounded question", "line": "RW1 AQ writer-02 re=research-01 from=writer to=research item=gh:crox/site#42 need=ENUM opts=formal+plain+punchy // tone?", "profile": null, "valid": true},
-    {"label": "AN: answer", "line": "RW1 AN research-02 re=writer-02 from=research to=writer val=plain", "profile": null, "valid": true},
-    {"label": "ST: status", "line": "RW1 ST builder-10 from=builder to=ops item=jira:OPS-77 pct=60 eta=20261003 blk=jira:OPS-80", "profile": null, "valid": true},
-    {"label": "DN: done", "line": "RW1 DN writer-03 re=research-01 from=writer to=research item=gh:crox/site#42 out=OK art=sha256:9f3e1c // v1, 118 words", "profile": null, "valid": true},
-    {"label": "UN: unable", "line": "RW1 UN writer-04 re=research-01 from=writer to=research item=gh:crox/site#42 why=NOCTX alt=copywriter // no style guide on file", "profile": null, "valid": true},
-    {"label": "FL: failed", "line": "RW1 FL builder-09 re=ops-04 from=builder to=ops item=jira:OPS-77 why=ERR art=url:https://ci.example/run/812 retry=Y // test suite red on 3 cases", "profile": null, "valid": true},
-    {"label": "AQ to a human: escalation", "line": "RW1 AQ triage-09 from=triage to=human item=pensive:4664 need=ENUM opts=RETIRE+ACTIVATE+PARK by=20261005 // stale 15d, no owner active; default PARK", "profile": null, "valid": true},
-    {"label": "pay profile: release a payment", "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057", "profile": "pay", "valid": true},
-    {"label": "pay profile: invoice handoff", "line": "RW1 HO extractor-01 p=pay from=extractor to=reconciler item=inv:INV-000491 ask=RECON sup=northfield po=PO-2291 amt=5400.00 cur=GBP kind=NET // 5400.00 net, check against the PO", "profile": "pay", "valid": true},
-    {"label": "deploy profile: deploy to production", "line": "RW1 HO release-1 p=deploy from=release to=operator item=svc:api ask=DEPLOY rb=all env=PROD ver=v2.4.1 prev=v2.4.0 win=20261007T0200-0230 apref=CAB-0931", "profile": "deploy", "valid": true},
-    {"label": "pform profile: knowledge-graph handoff", "line": "RW1 HO TRI-01 p=pform from=TRI to=ARC item=pensive:4102 ask=SCORE4 stg=DIA os=NOW imp=7 heat=HOT stall=15d touch=20260914", "profile": "pform", "valid": true},
-    {"label": "Invalid: unknown ask code", "line": "RW1 HO research-01 from=research to=writer item=gh:crox/site#42 ask=WRITE", "profile": null, "valid": false},
-    {"label": "Invalid: missing item", "line": "RW1 HO research-01 from=research to=writer ask=DRAFT", "profile": null, "valid": false}
-  ],
-  "pairs": [
-    {"label": "Passes: a payment read back exactly (the example above)", "ho": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057", "rb": "RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=a6cf98835d6c sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057", "expect": "", "profile": "pay", "passes": true},
-    {"label": "Fails: the amount came back as 5,100.00", "ho": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057", "rb": "RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=a6cf98835d6c sup=marlow amt=5100.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057", "expect": "", "profile": "pay", "passes": false},
-    {"label": "Passes: envelope echoed, digest matches", "ho": "RW1 HO research-01 from=research to=writer item=gh:crox/site#42 ask=DRAFT due=20261002 pri=2 conf=M keep=research // hero copy, 120 words, no em dashes", "rb": "RW1 RB writer-01 re=research-01 from=writer to=research item=gh:crox/site#42 ask=DRAFT due=20261002 h=c40bba4360dc", "expect": "", "profile": null, "passes": true},
-    {"label": "Passes: comprehension readback, one assumption to confirm", "ho": "RW1 HO research-03 from=research to=writer item=gh:crox/site#42 ask=DRAFT due=20261002 rb=acc keys=len+tone+must+no art=url:https://example.com/brief // hero copy, 120 words, plain tone, no em dashes, must name the reader's Monday problem", "rb": "RW1 RB writer-05 re=research-03 from=writer to=research item=gh:crox/site#42 ask=DRAFT due=20261002 acc=len:120w+tone:plain+must:monday-problem+no:em-dash+fmt:md do=copy // landing hero, 120 words, plain, lead with the Monday problem", "expect": "len:120w+tone:plain+no:em-dash+must:monday-problem", "profile": null, "passes": true},
-    {"label": "Fails: receiver misread the ask", "ho": "RW1 HO ops-03 from=ops to=builder item=jira:OPS-77 ask=FIX due=20261001", "rb": "RW1 RB builder-05 re=ops-03 from=builder to=ops item=jira:OPS-77 ask=BUILD due=20261001", "expect": "", "profile": null, "passes": false},
-    {"label": "Fails: receiver understood 150 words, sender meant 120", "ho": "RW1 HO research-03 from=research to=writer item=gh:crox/site#42 ask=DRAFT due=20261002 rb=acc keys=len+tone+must+no art=url:https://example.com/brief // hero copy, 120 words, plain tone, no em dashes, must name the reader's Monday problem", "rb": "RW1 RB writer-05 re=research-03 from=writer to=research item=gh:crox/site#42 ask=DRAFT due=20261002 acc=len:150w+tone:plain+must:monday-problem+no:em-dash do=copy // landing hero, 150 words", "expect": "len:120w+tone:plain+no:em-dash+must:monday-problem", "profile": null, "passes": false},
-    {"label": "Fails: digest does not match the HO", "ho": "RW1 HO research-01 from=research to=writer item=gh:crox/site#42 ask=DRAFT due=20261002 pri=2 conf=M keep=research // hero copy, 120 words, no em dashes", "rb": "RW1 RB writer-01 re=research-01 from=writer to=research item=gh:crox/site#42 ask=DRAFT due=20261002 h=000000000000", "expect": "", "profile": null, "passes": false},
-    {"label": "Fails: readback answers a different message", "ho": "RW1 HO research-01 from=research to=writer item=gh:crox/site#42 ask=DRAFT due=20261002 pri=2 conf=M keep=research // hero copy, 120 words, no em dashes", "rb": "RW1 RB writer-01 re=research-09 from=writer to=research item=gh:crox/site#42 ask=DRAFT due=20261002", "expect": "", "profile": null, "passes": false}
-  ],
-  "gates": [
-    {
-      "label": "Passes: every pointer holds (clinical note, 7 lines)",
-      "profile": "clin",
-      "doc": "Ridgeway Lane Surgery, Asthma Review\nDate: 14 September 2026\nPatient: Ms Dana FOLEY, DOB 02/04/1988\n\nMs Foley attended for her asthma review. She reports using her salbutamol inhaler about twice a\nweek, mostly after running. No night-time waking. She has never smoked. Her mother has asthma.\nPeak flow today 420 L/min. Continue beclometasone 200 micrograms two puffs twice daily.\nReview in 12 months, sooner if symptoms worsen.",
-      "lines": "RW1 ST extractor-1 from=extractor to=record p=clin item=med:salbutamol act=RPT pol=POS cert=CERT subj=PT time=CUR freq=PRN src=doc:7#l5-6 // using her salbutamol inhaler about twice a week\nRW1 ST extractor-2 from=extractor to=record p=clin item=sym:night-time-waking act=RPT pol=NEG cert=CERT subj=PT time=CUR src=doc:7#l6 // No night-time waking\nRW1 ST extractor-3 from=extractor to=record p=clin item=soc:smoking act=RPT pol=NEG cert=CERT subj=PT time=PAST src=doc:7#l6 // never smoked\nRW1 ST extractor-4 from=extractor to=record p=clin item=dx:asthma act=RPT pol=POS cert=CERT subj=FAM time=CUR src=doc:7#l6 // Her mother has asthma\nRW1 ST extractor-5 from=extractor to=record p=clin item=meas:peak-flow act=OBS pol=POS cert=CERT subj=PT time=CUR res=420 unit=L/min src=doc:7#l7 // Peak flow today 420 L/min\nRW1 ST extractor-6 from=extractor to=record p=clin item=med:beclometasone act=RX pol=POS cert=CERT subj=PT time=CUR dose=200micrograms freq=BD chg=CONT src=doc:7#l7 // Continue beclometasone 200 micrograms two puffs twice daily\nRW1 ST extractor-7 from=extractor to=record p=clin item=fu:review act=ORD pol=POS cert=CERT subj=PT time=FUT when=12m src=doc:7#l8 // Review in 12 months",
-      "docid": "7",
-      "passes": true
-    },
-    {
-      "label": "Fails: one quote paraphrased, one pointing at the wrong line",
-      "profile": "clin",
-      "doc": "Ridgeway Lane Surgery, Asthma Review\nDate: 14 September 2026\nPatient: Ms Dana FOLEY, DOB 02/04/1988\n\nMs Foley attended for her asthma review. She reports using her salbutamol inhaler about twice a\nweek, mostly after running. No night-time waking. She has never smoked. Her mother has asthma.\nPeak flow today 420 L/min. Continue beclometasone 200 micrograms two puffs twice daily.\nReview in 12 months, sooner if symptoms worsen.",
-      "lines": "RW1 ST extractor-1 from=extractor to=record p=clin item=med:salbutamol act=RPT pol=POS cert=CERT subj=PT time=CUR freq=PRN src=doc:7#l5-6 // using her salbutamol inhaler about twice a week\nRW1 ST extractor-2 from=extractor to=record p=clin item=sym:night-time-waking act=RPT pol=NEG cert=CERT subj=PT time=CUR src=doc:7#l6 // No night-time waking\nRW1 ST extractor-3 from=extractor to=record p=clin item=soc:smoking act=RPT pol=NEG cert=CERT subj=PT time=PAST src=doc:7#l6 // has never smoked a cigarette\nRW1 ST extractor-4 from=extractor to=record p=clin item=dx:asthma act=RPT pol=POS cert=CERT subj=PT time=CUR src=doc:7#l6 // Her mother has asthma\nRW1 ST extractor-5 from=extractor to=record p=clin item=meas:peak-flow act=OBS pol=POS cert=CERT subj=PT time=CUR res=420 unit=L/min src=doc:7#l5 // Peak flow today 420 L/min\nRW1 ST extractor-6 from=extractor to=record p=clin item=med:beclometasone act=RX pol=POS cert=CERT subj=PT time=CUR dose=200micrograms freq=BD chg=CONT src=doc:7#l7 // Continue beclometasone 200 micrograms two puffs twice daily\nRW1 ST extractor-7 from=extractor to=record p=clin item=fu:review act=ORD pol=POS cert=CERT subj=PT time=FUT when=12m src=doc:7#l8 // Review in 12 months",
-      "docid": "7",
-      "passes": false
-    },
-    {
-      "label": "Passes: invoices from an inbox export (pay profile)",
-      "profile": "pay",
-      "doc": "# Inbox export, three messages, oldest first.\n\n---\n**From:** Northfield Print Ltd <accounts@northfield-print.co.uk>\n**Subject:** Invoice INV-000491 (PO-1044)\n\nNet 315.50, VAT 63.10, total 378.60 GBP. Payment due 1 October.\n---\n**From:** Marlow Design <billing@marlowdesign.co.uk>\n**Subject:** Invoice MD-2026-057\n\nNet 4500.00, VAT 900.00, total 5400.00 GBP.\n---\n**From:** Kestrel Analytics <ar@kestrel.io>\n**Subject:** Invoice 7731\n\nAmount due USD 960.00. Wire details attached.\n",
-      "lines": "RW1 ST extractor-1 from=extractor to=reconciler p=pay item=inv:INV-000491 sup=northfield po=PO-1044 net=315.50 vat=63.10 amt=378.60 cur=GBP kind=GROSS src=email:1\nRW1 ST extractor-2 from=extractor to=reconciler p=pay item=inv:MD-2026-057 sup=marlow net=4500.00 vat=900.00 amt=5400.00 cur=GBP kind=GROSS src=email:2\nRW1 ST extractor-3 from=extractor to=reconciler p=pay item=inv:7731 sup=kestrel amt=960.00 cur=USD kind=GROSS flag=FX src=email:3 // policy only knows GBP runs\nRW1 HO extractor-4 from=extractor to=reconciler p=pay item=run:2026-09 ask=RECON due=20261001",
-      "docid": "",
-      "passes": true
-    },
-    {
-      "label": "Fails: net plus VAT is not the amount; a line with no source",
-      "profile": "pay",
-      "doc": "# Inbox export, three messages, oldest first.\n\n---\n**From:** Northfield Print Ltd <accounts@northfield-print.co.uk>\n**Subject:** Invoice INV-000491 (PO-1044)\n\nNet 315.50, VAT 63.10, total 378.60 GBP. Payment due 1 October.\n---\n**From:** Marlow Design <billing@marlowdesign.co.uk>\n**Subject:** Invoice MD-2026-057\n\nNet 4500.00, VAT 900.00, total 5400.00 GBP.\n---\n**From:** Kestrel Analytics <ar@kestrel.io>\n**Subject:** Invoice 7731\n\nAmount due USD 960.00. Wire details attached.\n",
-      "lines": "RW1 ST extractor-1 from=extractor to=reconciler p=pay item=inv:INV-000491 sup=northfield po=PO-1044 net=315.50 vat=63.10 amt=378.60 cur=GBP kind=GROSS src=email:1\nRW1 ST extractor-2 from=extractor to=reconciler p=pay item=inv:MD-2026-057 sup=marlow net=4500.00 vat=900.00 amt=5100.00 cur=GBP kind=GROSS src=email:2\nRW1 ST extractor-3 from=extractor to=reconciler p=pay item=inv:7731 sup=kestrel amt=960.00 cur=USD kind=GROSS flag=FX // policy only knows GBP runs\nRW1 HO extractor-4 from=extractor to=reconciler p=pay item=run:2026-09 ask=RECON due=20261001",
-      "docid": "",
-      "passes": false
-    }
-  ]
-}
-</script>
 
-<script>
-"use strict";
-(() => {
-  const $ = (id) => document.getElementById(id);
-  const DATA = JSON.parse($("examples").textContent);
-  const TYPE_NAMES = { HO: "handoff", RB: "readback", AQ: "ask", AN: "answer", ST: "status", DN: "done", UN: "unable", FL: "fail" };
-
-  // ---------------------------------------------------------------- small helpers
-
-  // Builds DOM nodes. Every string goes in as a text node, so nothing the user types is ever parsed as HTML.
-  function h(tag, props, ...kids) {
-    const node = document.createElement(tag);
-    for (const [key, value] of Object.entries(props || {})) {
-      if (value == null || value === false) continue;
-      node.setAttribute(key, value === true ? "" : value);
-    }
-    for (const kid of kids.flat()) if (kid != null && kid !== false) node.append(kid);
-    return node;
-  }
-
-  async function api(path, body) {
-    try {
-      const res = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-      const data = await res.json().catch(() => null);
-      if (res.ok) return { data };
-      return { error: (data && data.error) || "The server answered " + res.status + "." };
-    } catch (e) {
-      return { error: "Could not reach the server.", network: true };
-    }
-  }
-
-  const show = (outId, nodes) => { const box = $(outId); box.replaceChildren(...nodes.filter(Boolean)); box.hidden = false; };
-  const verdict = (kind, title, detail) => h("div", { class: "verdict " + kind, role: "status" }, h("strong", null, title), detail ? h("span", { class: "detail" }, detail) : null);
-  const issues = (kind, label, items) => items.length ? h("ul", { class: "issues" }, items.map((t) => h("li", null, h("span", { class: "badge " + kind }, label), h("span", null, t)))) : null;
-  const plural = (n, word) => n + " " + word + (n === 1 ? "" : "s");
-
-  function selectText(node) {
-    const range = document.createRange();
-    range.selectNodeContents(node);
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
-  }
-
-  async function copy(text, button, fallbackNode) {
-    const old = button.textContent;
-    try { await navigator.clipboard.writeText(text); button.textContent = "Copied"; }
-    catch (e) { if (fallbackNode) selectText(fallbackNode); button.textContent = "Selected"; }
-    setTimeout(() => { button.textContent = old; }, 1500);
-  }
-
-  function codeBox(label, text) {
-    const pre = h("pre", { class: "code" }, text);
-    const btn = h("button", { type: "button", class: "small" }, "Copy");
-    btn.addEventListener("click", () => copy(text, btn, pre));
-    return h("div", { class: "codebox" }, h("div", { class: "codehead" }, h("span", { class: "label" }, label), btn), pre);
-  }
-
-  // The head of a line is everything before the tail. slotOf reads one key=value from it.
-  const head = (line) => line.split(" // ")[0];
-  const slotOf = (line, key) => { const m = head(line).match(new RegExp("(?:^| )" + key + "=(\\S+)")); return m ? m[1] : null; };
-  const fmt = (v) => Array.isArray(v) ? v.join("+") : typeof v === "boolean" ? (v ? "Y" : "N") : String(v);
-
-  // Lines are long and wrap on a phone, so a textarea grows to show all of its text.
-  const AUTOSIZE = ["line", "ho", "rb"];
-  const fit = (el) => { el.style.height = "auto"; el.style.height = (el.scrollHeight + 2) + "px"; };
-  const put = (id, text) => { $(id).value = text; fit($(id)); };
-
-  // Returns the box's single line, or null after saying what is wrong.
-  function readLine(id, outId, what) {
-    const raw = $(id).value.replace(/[\r\n]+$/, "");
-    if (!raw.trim()) { show(outId, [verdict("warn", "Nothing to check", "Write or paste " + what + " first.")]); return null; }
-    if (/[\r\n]/.test(raw)) { show(outId, [verdict("warn", "One line per box", "A rogerwilco message is a single line. Remove the line break, or paste the next message in its own box.")]); return null; }
-    return raw;
-  }
-
-  async function call(outId, path, body) {
-    const res = await api(path, body);
-    if (res.error) { show(outId, [verdict("bad", res.network ? "No answer" : "Not accepted", res.error)]); return null; }
-    return res.data;
-  }
-
-  const profile = () => { const v = $("profile").value; return v === "core" ? null : v; };
-
-  // ---------------------------------------------------------------- panel 1: one line
-
-  function strip(m) {
-    const cells = [];
-    const cell = (cls, k, v) => cells.push(h("div", { class: "cell " + cls }, h("span", { class: "k" }, k), h("span", { class: "v" }, v)));
-    cell("type", "type", [m.type, h("span", { class: "sub" }, TYPE_NAMES[m.type] ? " " + TYPE_NAMES[m.type] : "")]);
-    if (m.id) cell("", "id", m.id);
-    if (m.re) cell("", "re", m.re);
-    if (m.from || m.to) cell("", "from to", (m.from || "?") + " → " + (m.to || "?"));
-    if (m.item) cell("", "item", m.item);
-    for (const [k, v] of Object.entries(m.slots || {})) cell("", k, fmt(v));
-    if (m.tail != null) cell("wide tail", "tail", m.tail);
-    return h("div", { class: "strip", role: "group", "aria-label": "Decoded message" }, cells);
-  }
-
-  async function doValidate() {
-    const line = readLine("line", "out-line", "a message");
-    if (line == null) return;
-    const r = await call("out-line", "/validate", { line, profile: profile() });
-    if (!r) return;
-    const m = r.message;
-    const what = m.type ? m.type + (TYPE_NAMES[m.type] ? ", " + TYPE_NAMES[m.type] : "") : "";
-    const tally = [];
-    if (r.errors.length) tally.push(plural(r.errors.length, "error"));
-    if (r.warnings.length) tally.push(plural(r.warnings.length, "warning"));
-    show("out-line", [
-      r.ok ? verdict(r.warnings.length ? "warn" : "good", "Valid", [what, tally.join(", ")].filter(Boolean).join(". "))
-           : verdict("bad", "Not valid", tally.join(", ") + ". The cells below show what the codec could read."),
-      m.type ? strip(m) : null,
-      issues("err", "error", r.errors),
-      issues("warn", "warning", r.warnings),
-    ]);
-  }
-
-  async function doJson() {
-    const line = readLine("line", "out-line", "a message");
-    if (line == null) return;
-    const r = await call("out-line", "/to-json", { line, profile: profile() });
-    if (!r) return;
-    show("out-line", [
-      verdict("good", "JSON form", "The same message in its other form. The codec maps both ways."),
-      codeBox("JSON", JSON.stringify(r.message, null, 2)),
-    ]);
-  }
-
-  async function doDigest() {
-    const line = readLine("line", "out-line", "a message");
-    if (line == null) return;
-    const r = await call("out-line", "/digest", { line, profile: profile() });
-    if (!r) return;
-    show("out-line", [
-      verdict("good", "Digest", "h=" + r.digest),
-      codeBox("h= value", r.digest),
-      h("p", { class: "note-text" }, "The first 12 hex characters of SHA-256 over the message's canonical JSON. A receiver that runs code puts it in h= on its readback, and the sender checks it in tier 2."),
-    ]);
-  }
-
-  function suggestedId(line) {
-    const num = (line.split(" ")[2] || "").match(/(\d+)$/);
-    return (slotOf(line, "to") || "receiver") + "-" + (num ? num[1] : "01");
-  }
-
-  async function doReadback() {
-    const line = readLine("line", "out-line", "an HO");
-    if (line == null) return;
-    const id = $("rb-id").value.trim() || suggestedId(line);
-    $("rb-id").value = id;
-    const r = await call("out-line", "/make-rb", {
-      ho: line, id, profile: profile(), acc: $("rb-acc").value.trim() || null,
-      do: $("rb-do").value.trim() || null, hash: $("rb-hash").checked,
-    });
-    if (!r) return;
-    const toCheck = h("button", { type: "button", class: "primary" }, "Check this pair");
-    toCheck.addEventListener("click", () => {
-      put("ho", line); put("rb", r.rb); $("expect").value = ""; $("pairs").value = "";
-      run("out-check", doCheck);
-      $("check-panel").scrollIntoView({ block: "start" });
-    });
-    show("out-line", [
-      verdict("good", "Readback built", "What the receiver sends back before it owns the work."),
-      codeBox("RB", r.rb),
-      h("div", { class: "row" }, toCheck),
-    ]);
-  }
-
-  // ---------------------------------------------------------------- panel 2: check a readback
-
-  // Which tiers ran, read from the codec's problems and notes. Only presentation: the verdict is the codec's.
-  function tierStates(ho, rb, problems, notes) {
-    const reached = problems.every((p) => /^tier\d/.test(p));
-    const failed = (n) => problems.some((p) => p.startsWith("tier" + n));
-    const asked = (slotOf(ho, "rb") || "").toLowerCase().split("+");
-    const state = (n, skipped) => !reached ? ["skip", "not reached"] : skipped ? ["skip", skipped] : failed(n) ? ["fail", "fail"] : ["pass", "pass"];
-    let t4 = state(4, !(asked.includes("acc") || asked.includes("plan")) && "not asked");
-    if (t4[0] === "pass" && notes.some((n) => n.startsWith("tier4:"))) t4 = ["part", "recorded, not compared"];
-    return { reached, tiers: [state(1), state(2, slotOf(rb, "h") == null && "no h= sent"), state(3), t4] };
-  }
-
-  function tierGroup(title, meaning, items) {
-    const tier = ([n, name, [cls, label]]) => h("div", { class: "tier " + cls }, h("span", { class: "k" }, "tier " + n), h("span", { class: "name" }, name), h("span", { class: "st" }, label));
-    return h("div", null, h("div", { class: "cap" }, title, h("span", null, meaning)), h("div", { class: "pair" }, items.map(tier)));
-  }
-
-  async function doCheck() {
-    const ho = readLine("ho", "out-check", "the HO");
-    if (ho == null) return;
-    const rb = readLine("rb", "out-check", "the RB");
-    if (rb == null) return;
-    const r = await call("out-check", "/check-rb", { ho, rb, profile: profile(), expect_acc: $("expect").value.trim() || null });
-    if (!r) return;
-    const { reached, tiers } = tierStates(ho, rb, r.problems, r.notes);
-    const to = slotOf(ho, "to");
-    let banner;
-    if (!reached) banner = verdict("bad", "Not checked", "A line did not parse or is the wrong type, so no tier ran.");
-    else if (r.ok) banner = verdict(r.notes.length ? "warn" : "good", "Roger, wilco", "The readback passes and " + (to || "the receiver") + " owns the item." + (r.notes.length ? " " + plural(r.notes.length, "note") + " to confirm." : ""));
-    else banner = verdict("bad", "Say again", "The readback fails, so it is void. The sender still owns the item and re-sends the HO with re= pointing at this RB.");
-    show("out-check", [
-      banner,
-      h("div", { class: "tiers" },
-        tierGroup("roger", "received, intact", [[1, "Receipt", tiers[0]], [2, "Integrity", tiers[1]]]),
-        tierGroup("wilco", "understood, will comply", [[3, "Echo", tiers[2]], [4, "Comprehension", tiers[3]]])),
-      issues("err", "problem", r.problems),
-      issues("note", "note", r.notes),
-    ]);
-  }
-
-  // ---------------------------------------------------------------- panel 3: the gate
-
-  async function doGate() {
-    const lines = $("gate-lines").value.replace(/[\r\n]+$/, "");
-    if (!lines.trim()) { show("out-gate", [verdict("warn", "Nothing to check", "Paste the lines first, one per row.")]); return; }
-    const doc = $("gate-doc").value;
-    const r = await call("out-gate", "/gate", {
-      lines, profile: $("gate-profile").value, document: doc.trim() ? doc : null, doc_id: $("gate-docid").value.trim() || null,
-    });
-    if (!r) return;
-    const failed = r.rows.filter((row) => !row.ok);
-    const banner = r.ok
-      ? verdict(r.notes.length ? "warn" : "good", "Every pointer holds", plural(r.counts.st, "statement") + " accepted. " + (doc.trim() ? "Each one is valid, says where its words are, and the words are there." : "Checked for shape only."))
-      : verdict("bad", "Not the record yet", plural(failed.length, "row") + " of " + r.counts.rows + " failed. Fix every one and check the whole batch again; a line the gate cannot trace is not evidence.");
-    const list = failed.length ? h("ul", { class: "rowlist" }, failed.flatMap((row) => row.errors.map((e) =>
-      h("li", null, h("span", { class: "badge err" }, "row " + row.row), h("span", null, e))))) : null;
-    show("out-gate", [
-      banner,
-      list,
-      issues("note", "note", r.notes),
-      r.ok && doc.trim() ? h("p", { class: "note-text" }, "What the gate cannot see is judgement: a line can cite the right words and still read them wrongly (the wrong subject, the past as the present). A strong model gets those right on the rules; a weak one is made whole in form and can still be wrong in meaning.") : null,
-    ]);
-  }
-
-  // ---------------------------------------------------------------- wiring
-
-  async function run(outId, fn) {
-    try { await fn(); }
-    catch (e) { show(outId, [verdict("bad", "Something broke", String(e && e.message || e))]); }
-  }
-
-  function setProfile(name) {
-    const sel = $("profile");
-    sel.value = name || "core";
-    if (sel.value !== (name || "core")) sel.value = "core";
-    updateProfileNote();
-  }
-
-  let profiles = [];
-  function updateProfileNote() {
-    const name = $("profile").value;
-    const found = profiles.find((p) => p.name === name);
-    var plain = {core: "core is the basic word list every agent understands.", pform: "pform adds the words for a knowledge-graph workflow.", pay: "pay adds the words for paying bills: amounts, currencies, approvals.", clin: "clin adds the words for a clinical note: one statement per line with its kind, polarity, certainty, subject and time.", deploy: "deploy adds the words for releasing software: environments, versions, change windows."};
-    $("profile-note").textContent = (plain[name] || (found && found.description ? found.description : "")) + " The two message panels use the one you pick.";
-    if ($("legend-link")) $("legend-link").setAttribute("href", "/legend?profile=" + encodeURIComponent(name));
-  }
-
-  async function loadProfiles() {
-    try {
-      const res = await fetch("/profiles");
-      if (!res.ok) return;
-      profiles = await res.json();
-      const sel = $("profile");
-      sel.replaceChildren(...profiles.map((p) => h("option", { value: p.name }, p.name)));
-    } catch (e) { /* keep the three built-in options */ }
-    updateProfileNote();
-  }
-
-  function fillExamples() {
-    const options = (sel, items) => sel.replaceChildren(h("option", { value: "" }, "Your own"), ...items.map((it, i) => h("option", { value: String(i) }, it.label)));
-    options($("example"), DATA.lines);
-    options($("pairs"), DATA.pairs);
-    options($("gate-example"), DATA.gates);
-    $("gate-example").addEventListener("change", () => {
-      const it = DATA.gates[$("gate-example").value]; if (!it) return;
-      $("gate-profile").value = it.profile; $("gate-doc").value = it.doc; $("gate-lines").value = it.lines; $("gate-docid").value = it.docid;
-      run("out-gate", doGate);
-    });
-    for (const id of ["gate-doc", "gate-lines", "gate-docid"]) $(id).addEventListener("input", () => { $("gate-example").value = ""; });
-    $("example").addEventListener("change", () => {
-      const it = DATA.lines[$("example").value]; if (!it) return;
-      put("line", it.line); setProfile(it.profile); $("rb-id").value = "";
-      run("out-line", doValidate);
-    });
-    $("pairs").addEventListener("change", () => {
-      const it = DATA.pairs[$("pairs").value]; if (!it) return;
-      put("ho", it.ho); put("rb", it.rb); $("expect").value = it.expect; setProfile(it.profile);
-      run("out-check", doCheck);
-    });
-    $("line").addEventListener("input", () => { $("example").value = ""; });
-    for (const id of ["ho", "rb", "expect"]) $(id).addEventListener("input", () => { $("pairs").value = ""; });
-    for (const id of AUTOSIZE) $(id).addEventListener("input", (e) => fit(e.target));
-    window.addEventListener("resize", () => AUTOSIZE.forEach((id) => fit($(id))));
-  }
-
-  function start() {
-    $("btn-validate").addEventListener("click", () => run("out-line", doValidate));
-    $("btn-json").addEventListener("click", () => run("out-line", doJson));
-    $("btn-rb").addEventListener("click", () => run("out-line", doReadback));
-    $("btn-digest").addEventListener("click", () => run("out-line", doDigest));
-    $("btn-check").addEventListener("click", () => run("out-check", doCheck));
-    $("btn-gate").addEventListener("click", () => run("out-gate", doGate));
-    $("profile").addEventListener("change", updateProfileNote);
-    const mcp = location.origin + "/mcp";
-    if ($("mcp-url")) $("mcp-url").textContent = mcp;
-    fillExamples();
-
-    // Open in a working state: the first example and the first readback pair, already run.
-    $("example").value = "0"; $("example").dispatchEvent(new Event("change"));
-    $("pairs").value = "0"; $("pairs").dispatchEvent(new Event("change"));
-    $("gate-example").value = "0"; $("gate-example").dispatchEvent(new Event("change"));
-    loadProfiles();
-  }
-
-  start();
-})();
-</script>
 </body>
 </html>
