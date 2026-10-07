@@ -283,7 +283,7 @@ def test_openapi_and_docs(client):
     assert client.get("/docs").status_code == 200
 
 
-# ------------------------------------------------------------------ playground
+# ------------------------------------------------------------------ the site
 
 def test_index_page(client):
     r = client.get("/")
@@ -291,6 +291,17 @@ def test_index_page(client):
     for href in ('href="/spec"', 'href="/skill"', 'href="/quickstart"', 'href="/lines"', 'href="/profiles"', 'href="/research"', 'href="/about"', 'href="https://crox.io"'):
         assert href in r.text
     assert 'class="site-head"' in r.text and '/static/site.css' in r.text
+
+
+def test_home_page_lines_are_real(client):
+    """The three lines on the home page validate under the pay profile, and the readback passes the sender's check."""
+    html = (APP_DIR / "static" / "index.html").read_text(encoding="utf-8")
+    lines = [re.sub(r"<[^>]+>", "", m) for m in re.findall(r'<pre class="line">(.*?)</pre>', html, re.S)]
+    assert len(lines) == 3 and [l.split()[1] for l in lines] == ["HO", "RB", "DN"]
+    for line in lines:
+        assert post(client, "/validate", line=line, profile="pay").json()["ok"] is True, line
+    assert post(client, "/check-rb", ho=lines[0], rb=lines[1], profile="pay").json()["ok"] is True
+    assert "Tenerife" in html and "1977" in html
 
 
 def test_every_page_carries_the_same_header(client):
@@ -336,23 +347,6 @@ def test_quickstart_replies_are_real(client):
     assert bad == {"ok": False, "problems": ["tier3 echo: amt mismatch: HO 5400.00 vs RB 5100.00"], "notes": []}
     page = client.get("/quickstart").text
     assert "tier3 echo: amt mismatch: HO 5400.00 vs RB 5100.00" in page and rb in page
-
-
-def _examples() -> dict:
-    html = (APP_DIR / "static" / "index.html").read_text(encoding="utf-8")
-    return json.loads(re.search(r'<script type="application/json" id="examples">(.*?)</script>', html, re.S).group(1))
-
-
-def test_playground_line_examples_do_what_they_say(client):
-    for ex in _examples()["lines"]:
-        body = post(client, "/validate", line=ex["line"], profile=ex["profile"]).json()
-        assert body["ok"] is ex["valid"], ex["label"]
-
-
-def test_playground_readback_examples_do_what_they_say(client):
-    for ex in _examples()["pairs"]:
-        body = post(client, "/check-rb", ho=ex["ho"], rb=ex["rb"], profile=ex["profile"], expect_acc=ex["expect"] or None).json()
-        assert body["ok"] is ex["passes"], ex["label"]
 
 
 # ------------------------------------------------------------------ the gate: lines as the record
@@ -476,12 +470,6 @@ def test_gate_matches_the_translation_study(client):
         doc = (RESEARCH / "data" / "docs" / f"doc{n:02d}.md").read_text(encoding="utf-8")
         body = post(client, "/gate", lines=path.read_text(encoding="utf-8"), profile="clin", document=doc, doc_id=str(n)).json()
         assert body["ok"] is True, (str(path), body["errors"][:3])
-
-
-def test_playground_gate_examples_do_what_they_say(client):
-    for ex in _examples()["gates"]:
-        body = post(client, "/gate", lines=ex["lines"], profile=ex["profile"], document=ex["doc"], doc_id=ex["docid"] or None).json()
-        assert body["ok"] is ex["passes"], (ex["label"], body["errors"][:3])
 
 
 def test_index_page_numbers_match_the_studies():

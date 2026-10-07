@@ -1,6 +1,6 @@
 # rogerwilco app
 
-A small web app for the [rogerwilco](../rogerwilco/SKILL.md) protocol (RW1): a JSON API over the reference codec, an MCP server that agents can call, and a playground in the browser. Roger means received, wilco means understood and will comply, and the app lets you check both.
+A small web app for the [rogerwilco](../rogerwilco/SKILL.md) protocol (RW1): a JSON API over the reference codec, an MCP server that agents can call, and the site that explains it. Roger means received, wilco means understood and will comply, and the app lets you check both.
 
 It has no auth and no database. Every request is answered from the codec in the skill folder.
 
@@ -12,10 +12,10 @@ This folder is `app/` in the repo, next to the skill (`rogerwilco/`). The `Docke
 Dockerfile              repo root: python:3.12-slim, copies rogerwilco/ and app/, port 8080
 rogerwilco/             the skill: SKILL.md, references/SPEC.md, profiles/, scripts/rogerwilco.py
 app/
-  main.py               FastAPI app: routes, CORS, error handling, serves the playground
+  main.py               FastAPI app: routes, CORS, error handling, serves the site
   mcp.py                MCP server (official SDK), mounted at /mcp
   service.py            finds the codec, imports it by path, wraps it as JSON in, JSON out
-  static/index.html     the playground: one page, no build step
+  static/index.html     the home page: no build step
   tests/test_app.py     pytest
   requirements.txt
 ```
@@ -31,7 +31,7 @@ pip install -r app/requirements.txt
 uvicorn app.main:app --reload
 ```
 
-Then open <http://localhost:8000> for the playground, or <http://localhost:8000/docs> for the API reference. Pass `--port` to use another port.
+Then open <http://localhost:8000> for the site, or <http://localhost:8000/docs> for the API reference. Pass `--port` to use another port.
 
 ## Docker
 
@@ -40,7 +40,7 @@ docker build -t rogerwilco --build-arg GIT_COMMIT=$(git rev-parse --short HEAD) 
 docker run --rm -p 8080:8080 rogerwilco
 ```
 
-`GIT_COMMIT` is reported by `/healthz` and shown in the playground footer. Without it the commit reads `unknown`.
+`GIT_COMMIT` is reported by `/healthz`. Without it the commit reads `unknown`.
 
 | Variable | Meaning |
 |---|---|
@@ -53,7 +53,7 @@ JSON in, JSON out, CORS open. A line that fails validation is a normal answer (`
 
 | Method and path | Body or query | Answer |
 |---|---|---|
-| `GET /` | | the playground |
+| `GET /` | | the home page |
 | `GET /healthz` | | `{"ok": true, "version": "RW1", "commit": "..."}` |
 | `POST /validate` | `{"line", "profile"}` | `{"ok", "message", "errors", "warnings"}` |
 | `POST /check-rb` | `{"ho", "rb", "profile", "expect_acc"}` | `{"ok", "problems", "notes"}` |
@@ -140,7 +140,7 @@ BASE=http://localhost:8000
 # the app is up
 curl -s $BASE/healthz
 
-# the playground is served
+# the home page is served
 curl -s -o /dev/null -w '%{http_code} %{content_type}\n' $BASE/
 
 # a valid line, then an invalid one
@@ -173,10 +173,10 @@ pip install pytest httpx
 python -m pytest app/tests
 ```
 
-The tests cover every endpoint, the four readback tiers, the MCP handshake and tools, and how the app starts. They also run every example embedded in the playground through the API, so the page cannot drift from the codec.
+The tests cover every endpoint, the four readback tiers, the MCP handshake and tools, and how the app starts. They also run the lines shown on the home page and the quickstart through the API, so the pages cannot drift from the codec.
 
-## The playground
+## The site
 
-The site is five pages, each a self-contained HTML file under `static/` with no build step: `/` (what it is, the three-message loop, the playground), `/quickstart` (four ways to start, each with a real request and reply), `/lines` (every message type with an example, and what a program checks), `/profiles` (the same loop in four kinds of work, and how to write a profile; the same path answers a program with the JSON list of profiles) and `/research` (the five studies in plain words, each with its full report).
+The site is five pages, each a self-contained HTML file under `static/` with no build step: `/` (what it is and the three-message loop), `/quickstart` (four ways to start, each with a real request and reply), `/lines` (every message type with an example, and what a program checks), `/profiles` (the same loop in four kinds of work, and how to write a profile; the same path answers a program with the JSON list of profiles) and `/research` (the five studies in plain words, each with its full report).
 
 `/` is one self-contained page with no build step. It leads with what goes wrong in a handover, the control that catches it and the figure from the studies, then three panels. Paste a line and validate it, convert it to JSON, take its digest, or build the readback a receiver would send. The second panel is the sender's check: paste the HO and the RB, and it shows which of the four tiers passed. Roger is receipt and integrity, wilco is echo and comprehension. The third is the gate: paste a document and the lines that state facts from it, and it shows which pointers hold. All three open on a working example. The figures on the page are tested against the results tables under `research/`, so the page cannot drift from the studies.
