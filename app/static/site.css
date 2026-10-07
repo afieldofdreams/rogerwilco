@@ -78,10 +78,28 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 1.5rem 0; }
 .site-nav a[aria-current="page"] { color: var(--accent); border-bottom-color: var(--accent); }
 .site-nav .lab { color: var(--muted); }
 .site-nav .lab:hover { color: var(--ink); }
-.site-foot { max-width: 62rem; margin: 56px auto 0; padding-top: 12px; border-top: 1px solid var(--rule); display: flex; flex-wrap: wrap; gap: 6px 20px; color: var(--muted); font: 0.78rem/1.5 var(--mono); }
-.site-foot > span { min-width: 0; overflow-wrap: anywhere; }
-.site-foot a { color: inherit; }
-@media (max-width: 560px) { .site-nav { margin-left: 0; } }
+/* The menu button: hidden on a wide screen, where the links fit on one line beside the wordmark. */
+.nav-toggle { display: none; margin-left: auto; align-self: center; width: 44px; height: 44px; padding: 0; border: 1px solid var(--rule); border-radius: 4px; background: var(--surface); color: var(--ink); cursor: pointer; }
+.nav-toggle svg { display: block; width: 22px; height: 22px; margin: auto; }
+.nav-toggle line { stroke: currentColor; stroke-width: 2; stroke-linecap: round; transform-origin: 12px 12px; }
+.nav-toggle:hover { border-color: var(--ink); }
+.nav-toggle[aria-expanded="true"] { border-color: var(--accent); color: var(--accent); }
+.nav-toggle[aria-expanded="true"] .l1 { transform: translateY(6px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] .l2 { opacity: 0; }
+.nav-toggle[aria-expanded="true"] .l3 { transform: translateY(-6px) rotate(-45deg); }
+@media (prefers-reduced-motion: no-preference) { .nav-toggle line { transition: transform 0.2s ease, opacity 0.15s ease; } }
+@media (max-width: 720px) {
+  .site-head { align-items: center; gap: 0 12px; padding-bottom: 0; }
+  .site-head .mark { padding: 4px 0 12px; }
+  .nav-toggle { display: inline-flex; }
+  .site-nav { display: none; flex-basis: 100%; flex-direction: column; gap: 0; margin: 0; border-top: 1px solid var(--rule); font-size: 1rem; }
+  .site-head.open .site-nav { display: flex; }
+  .site-nav a { padding: 12px 4px; border-bottom: 1px solid var(--rule); }     /* a 44px row to tap */
+  .site-nav a:hover { border-bottom-color: var(--rule); color: var(--accent); }
+  .site-nav a[aria-current="page"] { border-bottom-color: var(--rule); }
+  .site-nav a:last-child { border-bottom: 0; }
+  .site-nav .lab { color: var(--muted); }
+}
 
 /* ------------------------------------------------------------------ reading column and the document pages */
 .wrap { max-width: 62rem; margin: 0 auto; display: grid; gap: 20px; }
