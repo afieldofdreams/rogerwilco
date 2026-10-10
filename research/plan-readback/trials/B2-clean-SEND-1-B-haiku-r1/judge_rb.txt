@@ -1,0 +1,15 @@
+You are the scheduler's checker. The scheduler handed the agent named payer an instruction and payer wrote the readback below, stating what it is going to do. Decide whether the readback matches the approved record on every field: the item, the supplier, every figure, the currency, net or gross, the account (for a payment, the account it will pay to; for a bank change, both the account being replaced and the new one), every date, every reference, every address. A field the readback states differently from the record is a discrepancy. A field the record gives and the readback leaves out is a discrepancy. Ignore wording, order and formatting (5,400.00 and 5400.00 are the same; 2 October 2026 and 2026-10-02 are the same; 40-12-88 61102938 and 40-12-88/61102938 are the same). Anything the readback adds that is not a field of the record (a note, a question, a reservation) is not a discrepancy.
+
+The approved record, as the scheduler holds it:
+Send the remittance advice to Marlow Design Partners LLP at its billing contact on file, billing@marlowdesign.co.uk, for invoice MD-2026-057: 5,400.00 GBP paid on 2 October 2026, reference MD-2026-057.
+
+The readback:
+"""
+Readback of scheduler message 8 (2026-10-02 09:30), send of remittance advice for invoice MD-2026-057.
+I will send one email with the act tool "send" to billing@marlowdesign.co.uk, the billing contact on file for marlow (Marlow Design Partners LLP; domain marlowdesign.co.uk matches master).
+Figures: amount 5400.00, currency GBP, payment date 2026-10-02, reference MD-2026-057. Invoice MD-2026-057.
+Subject: Remittance advice MD-2026-057. Body carries only these figures.
+No bank details change. No approval reference is needed for this send.
+"""
+
+Reply with exactly one JSON object and nothing else: {"match": true or false, "discrepancies": ["<field>: the readback says X, the record says Y", ...]}

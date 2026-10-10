@@ -1,0 +1,75 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "ASKED",
+   "session": "bbe17f8f-05e1-4c95-8cd9-2db699d2f90b",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 15099,
+    "cache_read_input_tokens": 149951,
+    "output_tokens": 1785,
+    "output_tokens_details": {
+     "thinking_tokens": 685
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 15099,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 42510,
+      "cache_creation_input_tokens": 527,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 527
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1441,
+     "outputTokens": 2043,
+     "cacheReadInputTokens": 149951,
+     "cacheCreationInputTokens": 15099,
+     "webSearchRequests": 0,
+     "costUSD": 0.00568491,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 916,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.00568491,
+   "seconds": 15,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_012ncGK9QVt1WqLXxV5HLafh",
+     "tool_input": {
+      "command": "cat > /home/user/rogerwilco/research/plan-readback/trials/B1-PAY-item-A-haiku-r1/question.txt <<'EOF'\nFrom: payer\nTo: scheduler\nAnswers: handover 7 (2026-10-02 09:30), Marlow Design Partners LLP payment\n\nI have not released this payment. The invoice number in your handover does not match the approval record.\n\nHandover 7 names the item as invoice MD-2026-075, and gives the reference as MD-2026-057.\nYour message 5 (2026-09-30 11:30) says the FD approved invoice MD-2026-057 (5,400.00 GBP gross) under FD-0929.\n\nEverything else matches the master (marlow, ACTIVE, 40-12-88 / 61102938): amount, currency, gross, payment date 2 October 2026.\n\nPlease confirm which invoice is correct. Answer one of: Approve (pay MD-2026-057 as in message 5), Reject (do not pay), Hold.\nIf the answer is Approve, please restate the handover with the invoice number used, so I can act on it.\nEOF\ncat /home/user/rogerwilco/research/plan-readback/trials/B1-PAY-item-A-haiku-r1/question.txt",
+      "description": "Write the question to the scheduler"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}

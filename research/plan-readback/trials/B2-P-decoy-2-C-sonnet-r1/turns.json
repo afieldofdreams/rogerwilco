@@ -1,0 +1,161 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "a37103e2-118c-40c4-81b3-215b17a7cd96",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 14063,
+    "cache_read_input_tokens": 150818,
+    "output_tokens": 517,
+    "output_tokens_details": {
+     "thinking_tokens": 0
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 14063,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 42076,
+      "cache_creation_input_tokens": 341,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 341
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1445,
+     "outputTokens": 200,
+     "cacheReadInputTokens": 0,
+     "cacheCreationInputTokens": 0,
+     "webSearchRequests": 0,
+     "costUSD": 0.00024450000000000003,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 182,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    },
+    "claude-sonnet-5-5": {
+     "inputTokens": 8,
+     "outputTokens": 517,
+     "cacheReadInputTokens": 150818,
+     "cacheCreationInputTokens": 14063,
+     "webSearchRequests": 0,
+     "costUSD": 0.07651980000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 0,
+     "canonicalModel": "claude-sonnet-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.07676430000000001,
+   "seconds": 11,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE",
+   "session": "a37103e2-118c-40c4-81b3-215b17a7cd96",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 7170,
+    "cache_read_input_tokens": 189101,
+    "output_tokens": 606,
+    "output_tokens_details": {
+     "thinking_tokens": 0
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7170,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 49266,
+      "cache_creation_input_tokens": 321,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 321
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1445,
+     "outputTokens": 200,
+     "thinkingTokens": 182,
+     "cacheReadInputTokens": 0,
+     "cacheCreationInputTokens": 0,
+     "webSearchRequests": 0,
+     "costUSD": 0.00024450000000000003,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000
+    },
+    "claude-sonnet-5-5": {
+     "inputTokens": 16,
+     "outputTokens": 1123,
+     "thinkingTokens": 0,
+     "cacheReadInputTokens": 339919,
+     "cacheCreationInputTokens": 21233,
+     "webSearchRequests": 0,
+     "costUSD": 0.13018590000000002,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-sonnet-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.1304304,
+   "seconds": 11,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_017xy18YrHXMpAsFR5k6wcrL",
+     "tool_input": {
+      "command": "L=\"RW1 DN payer-2 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 p=pay out=OK amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057\"; python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"$L\" --profile pay && echo \"$L\" > dn.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}

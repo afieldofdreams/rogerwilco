@@ -1,0 +1,145 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "d03ac99f-05ef-4b5e-978a-c1a83831b58d",
+   "usage": {
+    "input_tokens": 14,
+    "cache_creation_input_tokens": 17288,
+    "cache_read_input_tokens": 288391,
+    "output_tokens": 3195,
+    "output_tokens_details": {
+     "thinking_tokens": 1638
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 17288,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 21,
+      "cache_read_input_tokens": 45282,
+      "cache_creation_input_tokens": 491,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 491
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1459,
+     "outputTokens": 3393,
+     "cacheReadInputTokens": 288391,
+     "cacheCreationInputTokens": 17288,
+     "webSearchRequests": 0,
+     "costUSD": 0.00818391,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1813,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.00818391,
+   "seconds": 19,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01BtZHsYLwUCFakgMNpV2n74",
+     "tool_input": {
+      "command": "L='RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=SEND p=pay h=13a553c44ae6 sup=marlow addr=billing@marlowdesign.co.uk amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 // remittance advice to marlow billing contact on file, figures as handed over' && python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"$L\" --profile pay && printf '%s\\n' \"$L\" > rb.txt && cat rb.txt",
+      "description": "Validate and write the readback line to rb.txt"
+     }
+    },
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01JfDyaNEK23TNHP9xHmjNLn",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"$(cat rb.txt)\" --profile pay",
+      "description": "Validate the readback line"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 7
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE",
+   "session": "d03ac99f-05ef-4b5e-978a-c1a83831b58d",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 7472,
+    "cache_read_input_tokens": 203048,
+    "output_tokens": 930,
+    "output_tokens_details": {
+     "thinking_tokens": 260
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7472,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 52841,
+      "cache_creation_input_tokens": 404,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 404
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1467,
+     "outputTokens": 4323,
+     "thinkingTokens": 2073,
+     "cacheReadInputTokens": 491439,
+     "cacheCreationInputTokens": 24760,
+     "webSearchRequests": 0,
+     "costUSD": 0.01217459,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.01217459,
+   "seconds": 10,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}

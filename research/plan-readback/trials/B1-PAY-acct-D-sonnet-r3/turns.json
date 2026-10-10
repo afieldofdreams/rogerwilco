@@ -1,0 +1,88 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "ASKED",
+   "session": "8e2371f7-cb3c-47ea-94dd-f4a4fdceba8c",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 14306,
+    "cache_read_input_tokens": 151533,
+    "output_tokens": 711,
+    "output_tokens_details": {
+     "thinking_tokens": 158
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 14306,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 42356,
+      "cache_creation_input_tokens": 436,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 436
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1441,
+     "outputTokens": 20,
+     "cacheReadInputTokens": 0,
+     "cacheCreationInputTokens": 0,
+     "webSearchRequests": 0,
+     "costUSD": 0.0001541,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 0,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    },
+    "claude-sonnet-5-5": {
+     "inputTokens": 8,
+     "outputTokens": 711,
+     "cacheReadInputTokens": 151533,
+     "cacheCreationInputTokens": 14306,
+     "webSearchRequests": 0,
+     "costUSD": 0.0795033,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 158,
+     "canonicalModel": "claude-sonnet-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.07965739999999999,
+   "seconds": 14,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01X4w8CH4vX3hGreBhuCXDtZ",
+     "tool_input": {
+      "command": "cat > question.txt <<'EOF'\nRW1 AQ payer-1 re=scheduler-1 from=payer to=scheduler need=TEXT item=inv:MD-2026-057 p=pay sup=marlow acct=04-00-75/88214561 // HO acct 04-00-75/88214561 is not the ACTIVE master account for marlow (40-12-88/61102938). Not paying. Please confirm or re-issue with the master account.\nEOF\npython3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"$(cat question.txt)\" --profile pay"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}

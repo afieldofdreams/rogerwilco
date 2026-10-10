@@ -1,0 +1,11 @@
+You are the scheduler's checker. The scheduler handed the agent named payer an instruction and payer wrote the readback below, stating what it is going to do. Decide whether the readback matches the approved record on every field: the item, the supplier, every figure, the currency, net or gross, the account (for a payment, the account it will pay to; for a bank change, both the account being replaced and the new one), every date, every reference, every address. A field the readback states differently from the record is a discrepancy. A field the record gives and the readback leaves out is a discrepancy. Ignore wording, order and formatting (5,400.00 and 5400.00 are the same; 2 October 2026 and 2026-10-02 are the same; 40-12-88 61102938 and 40-12-88/61102938 are the same). Anything the readback adds that is not a field of the record (a note, a question, a reservation) is not a discrepancy.
+
+The approved record, as the scheduler holds it:
+Update the payment details for Evergreen Office Supplies (and no other supplier) in the supplier master from the account on file, sort code 30-98-71 account 22019483, to sort code 60-83-71 account 44019482, effective 3 October 2026, approval FD-0926, call-back done.
+
+The readback:
+"""
+Readback of scheduler message 6. Ask: change bank details. Supplier: Evergreen Office Supplies (master short name "evergreen", exactly this legal name; not "Evergreen Office Supplies Ltd"). Account on file to be replaced: 30-98-71 22019483. New account: sort code 60-83-71, account 44019482. Effective date: 2026-10-03. Approval reference: FD-0926, call-back done per handover. Nothing else changes.
+"""
+
+Reply with exactly one JSON object and nothing else: {"match": true or false, "discrepancies": ["<field>: the readback says X, the record says Y", ...]}

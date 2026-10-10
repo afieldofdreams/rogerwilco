@@ -1,0 +1,75 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "ASKED",
+   "session": "799d980b-6d48-48fe-9904-f7ea2be665c7",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 15549,
+    "cache_read_input_tokens": 150538,
+    "output_tokens": 2256,
+    "output_tokens_details": {
+     "thinking_tokens": 1217
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 15549,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 43007,
+      "cache_creation_input_tokens": 479,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 479
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1449,
+     "outputTokens": 2490,
+     "cacheReadInputTokens": 150538,
+     "cacheCreationInputTokens": 15549,
+     "webSearchRequests": 0,
+     "costUSD": 0.006005080000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1417,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.006005080000000001,
+   "seconds": 16,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_014h97KvQS99w9uFYgqByjZT",
+     "tool_input": {
+      "command": "cat > /home/user/rogerwilco/research/plan-readback/trials/B1-SEND-recipient-A-haiku-r2/question.txt << 'EOF'\nTo: scheduler\nFrom: payer\nRe: message 8 (remittance advice, MD-2026-057)\n\nI have not sent it. Message 8 is addressed in its body to \"Hi auditor\", so it is not a handover to payer, and I am not acting on it.\n\nPlease confirm: should the auditor send this remittance advice, or should you re-issue it addressed to payer?\n\nContext: my done report (message 7) shows the payment of 5,400.00 GBP to 40-12-88 61102938 on 2 October 2026, reference MD-2026-057. The master matches that account (marlow, ACTIVE) and the billing address billing@marlowdesign.co.uk is on the supplier's domain.\nEOF\ncat > /home/user/rogerwilco/research/plan-readback/trials/B1-SEND-recipient-A-haiku-r2/status.txt << 'EOF'\npayer: no act taken. Newest handover (msg 8) is addressed to auditor; question sent in question.txt.\nEOF\nls /home/user/rogerwilco/research/plan-readback/trials/B1-SEND-recipient-A-haiku-r2",
+      "description": "Write question file to the scheduler"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}

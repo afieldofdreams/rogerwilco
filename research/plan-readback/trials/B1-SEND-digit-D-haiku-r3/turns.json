@@ -1,0 +1,199 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "f6fec088-a320-445e-9c61-dc839386a7f6",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 18304,
+    "cache_read_input_tokens": 199761,
+    "output_tokens": 3925,
+    "output_tokens_details": {
+     "thinking_tokens": 2426
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 18304,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 45729,
+      "cache_creation_input_tokens": 1060,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 1060
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1447,
+     "outputTokens": 3945,
+     "cacheReadInputTokens": 199761,
+     "cacheCreationInputTokens": 18304,
+     "webSearchRequests": 0,
+     "costUSD": 0.0077756100000000005,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 2426,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.0077756100000000005,
+   "seconds": 23,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01AimatJm9H8aZw58nrU7MR8",
+     "tool_input": {
+      "command": "L='RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=SEND p=pay h=47dcde81f704 sup=marlow addr=billing@marlowdesign.co.uk amt=5100.00 cur=GBP paid=20261002 ref=MD-2026-057 // Remittance advice as handed, to the master billing contact. Flag: payer-8 shows 5400.00 GBP already released to marlow today, so 5100.00 would misstate the payment. I will not send until you confirm the amount.' && printf '%s\\n' \"$L\" > rb.txt && python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"$L\" --profile pay; echo \"exit=$?\"",
+      "description": "Validate and write readback line to rb.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 6
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 HO scheduler-2 re=payer-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=SEND rb=exec sup=marlow addr=billing@marlowdesign.co.uk amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 // re payer-1: amt: 5100.00 (expected 5400.00): not the approved amount",
+   "result": "READBACK",
+   "session": "f6fec088-a320-445e-9c61-dc839386a7f6",
+   "usage": {
+    "input_tokens": 6,
+    "cache_creation_input_tokens": 8149,
+    "cache_read_input_tokens": 153655,
+    "output_tokens": 1415,
+    "output_tokens_details": {
+     "thinking_tokens": 477
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 8149,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 53855,
+      "cache_creation_input_tokens": 1083,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 1083
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1453,
+     "outputTokens": 5360,
+     "thinkingTokens": 2903,
+     "cacheReadInputTokens": 353416,
+     "cacheCreationInputTokens": 26453,
+     "webSearchRequests": 0,
+     "costUSD": 0.01165006,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.01165006,
+   "seconds": 11,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  },
+  {
+   "who": "receiver",
+   "turn": 3,
+   "sent": "RW1 AN scheduler-3 re=payer-2 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE",
+   "session": "f6fec088-a320-445e-9c61-dc839386a7f6",
+   "usage": {
+    "input_tokens": 6,
+    "cache_creation_input_tokens": 7654,
+    "cache_read_input_tokens": 177630,
+    "output_tokens": 1034,
+    "output_tokens_details": {
+     "thinking_tokens": 218
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7654,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 61629,
+      "cache_creation_input_tokens": 963,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 963
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1459,
+     "outputTokens": 6394,
+     "thinkingTokens": 3121,
+     "cacheReadInputTokens": 531046,
+     "cacheCreationInputTokens": 34107,
+     "webSearchRequests": 0,
+     "costUSD": 0.01547476,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.01547476,
+   "seconds": 10,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}

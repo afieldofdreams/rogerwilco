@@ -1,0 +1,75 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "DONE",
+   "session": "2c81a8e2-bb9e-4af4-b178-73010946f5d7",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 15347,
+    "cache_read_input_tokens": 191669,
+    "output_tokens": 2157,
+    "output_tokens_details": {
+     "thinking_tokens": 792
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 15347,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 42764,
+      "cache_creation_input_tokens": 521,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 521
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1443,
+     "outputTokens": 2177,
+     "cacheReadInputTokens": 191669,
+     "cacheCreationInputTokens": 15347,
+     "webSearchRequests": 0,
+     "costUSD": 0.00621889,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 792,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.00621889,
+   "seconds": 15,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01V6XFVzJ8tJ6Nghjzh2VV5p",
+     "tool_input": {
+      "command": "cat > /home/user/rogerwilco/research/plan-readback/trials/B2-P-format-1-A-haiku-r4/done.txt <<'EOF'\nTo: scheduler\nFrom: payer\nAnswers: handover 6 (2026-10-02 09:30), item MD-2026-057\n\nDone. The act tool released one payment, complete, values as executed:\n- Supplier: Marlow Design Partners LLP\n- Invoice: MD-2026-057\n- Amount: 5400.00 GBP, GROSS\n- Account: sort code 40-12-88, account 61102938 (ACTIVE row on file in supplier_bank.json)\n- Payment date: 2026-10-02\n- Reference: MD-2026-057\n- Approval: FD-0929 (per handover)\n\nMatches the handover. The handover gave no account, so I took the ACTIVE Marlow account from the master.\n\nNot done: the remittance advice. Your 10:15 reminder says advices go out after each release, but I have no send handover for this payment, so I sent no email. Send a send handover if one is wanted.\nEOF\ncat /home/user/rogerwilco/research/plan-readback/trials/B2-P-format-1-A-haiku-r4/done.txt",
+      "description": "Write the done report for the scheduler"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  }
+ ]
+}

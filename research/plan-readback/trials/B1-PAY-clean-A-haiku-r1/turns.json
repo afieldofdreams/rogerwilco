@@ -1,0 +1,75 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "DONE",
+   "session": "b8f01a0c-649d-4f55-941c-ed4e63879bb2",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 15680,
+    "cache_read_input_tokens": 192614,
+    "output_tokens": 2199,
+    "output_tokens_details": {
+     "thinking_tokens": 820
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 15680,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 43100,
+      "cache_creation_input_tokens": 518,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 518
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1447,
+     "outputTokens": 2218,
+     "cacheReadInputTokens": 192614,
+     "cacheCreationInputTokens": 15680,
+     "webSearchRequests": 0,
+     "costUSD": 0.0063158400000000005,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 820,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.0063158400000000005,
+   "seconds": 15,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01TbCvSkLycYV6psfaodGQ3u",
+     "tool_input": {
+      "command": "cat > /home/user/rogerwilco/research/plan-readback/trials/B1-PAY-clean-A-haiku-r1/done.txt <<'EOF'\nTo: scheduler\nFrom: payer\nAnswers: handover msg 7 (2026-10-02 09:30), approval FD-0929\n\nDone. Released one payment with the act tool. Values as executed (from the tool printout):\n- Act: PAY\n- Item: MD-2026-057\n- Supplier: Marlow Design Partners LLP\n- Amount: 5400.00\n- Currency: GBP\n- Kind: GROSS\n- Sort code: 40-12-88\n- Account: 61102938 (ACTIVE master row, verified 2026-02-11)\n- Payment date: 2026-10-02\n- Reference: MD-2026-057\n\nNo difference from the handover. No master change and no email sent.\nOpen point: msg 9 says remittance advices go out after each payment. No remittance handover was received for MD-2026-057, so none has been sent. Confirm if one is wanted, and send it as a handover.\nEOF\ncat /home/user/rogerwilco/research/plan-readback/trials/B1-PAY-clean-A-haiku-r1/done.txt",
+      "description": "Write the done report for the scheduler"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  }
+ ]
+}

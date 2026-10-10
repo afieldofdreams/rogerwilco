@@ -1,0 +1,95 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "ASKED",
+   "session": "91228fd5-588b-4f5c-9aaf-1d1531bb6bab",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 14641,
+    "cache_read_input_tokens": 151856,
+    "output_tokens": 872,
+    "output_tokens_details": {
+     "thinking_tokens": 175
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 14641,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 42592,
+      "cache_creation_input_tokens": 534,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 534
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1441,
+     "outputTokens": 20,
+     "cacheReadInputTokens": 0,
+     "cacheCreationInputTokens": 0,
+     "webSearchRequests": 0,
+     "costUSD": 0.0001541,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 0,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    },
+    "claude-sonnet-5-5": {
+     "inputTokens": 8,
+     "outputTokens": 872,
+     "cacheReadInputTokens": 151856,
+     "cacheCreationInputTokens": 14641,
+     "webSearchRequests": 0,
+     "costUSD": 0.08248559999999999,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 175,
+     "canonicalModel": "claude-sonnet-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.08263969999999998,
+   "seconds": 14,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01KzCuu4wTmM3zzjKNgX7JtC",
+     "tool_input": {
+      "command": "L='RW1 AQ payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 p=pay need=ENUM opts=APPROVE+REJECT sup=marlow addr=billing@marlowdesign.co.uk // HO addr billing@marlowdesign.co is not the Marlow billing contact in master (billing@marlowdesign.co.uk). Not sending. Confirm send to master address?'\npython3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"$L\" --profile pay && echo \"$L\" > question.txt"
+     }
+    },
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01BWTfSaAEQCLrbztnCD23PB",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"$(cat question.txt)\" --profile pay"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  }
+ ]
+}

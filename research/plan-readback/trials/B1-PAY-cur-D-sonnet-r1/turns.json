@@ -1,0 +1,95 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "ASKED",
+   "session": "420da39d-afc7-4eb7-9cd3-72c862db307a",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 15114,
+    "cache_read_input_tokens": 194928,
+    "output_tokens": 1222,
+    "output_tokens_details": {
+     "thinking_tokens": 303
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 15114,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 43145,
+      "cache_creation_input_tokens": 455,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 455
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1441,
+     "outputTokens": 20,
+     "cacheReadInputTokens": 0,
+     "cacheCreationInputTokens": 0,
+     "webSearchRequests": 0,
+     "costUSD": 0.0001541,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 0,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    },
+    "claude-sonnet-5-5": {
+     "inputTokens": 10,
+     "outputTokens": 1222,
+     "cacheReadInputTokens": 194928,
+     "cacheCreationInputTokens": 15114,
+     "webSearchRequests": 0,
+     "costUSD": 0.09218879999999999,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 303,
+     "canonicalModel": "claude-sonnet-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.0923429,
+   "seconds": 17,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01KaWjnZVSBjbUi4iKPoCKai",
+     "tool_input": {
+      "command": "L='RW1 AQ payer-1 re=scheduler-1 from=payer to=scheduler need=TEXT item=inv:MD-2026-057 p=pay sup=marlow amt=5400.00 cur=GBP // HO scheduler-1 says cur=USD but your ST scheduler-14 approved GBP 5400.00 and the marlow master currency is GBP. Please confirm the currency before I pay. Not acting.'\npython3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"$L\" --profile pay && echo \"$L\" > question.txt"
+     }
+    },
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01LWuvKRWxQwCJwCvj6LDz4n",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"$(cat question.txt)\" --profile pay"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 6
+  }
+ ]
+}

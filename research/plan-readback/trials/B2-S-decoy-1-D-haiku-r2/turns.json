@@ -1,0 +1,145 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "c946c26c-4d4e-49df-89d6-eb03285b6f1a",
+   "usage": {
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 17069,
+    "cache_read_input_tokens": 242014,
+    "output_tokens": 2939,
+    "output_tokens_details": {
+     "thinking_tokens": 1264
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 17069,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 44577,
+      "cache_creation_input_tokens": 977,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 977
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1453,
+     "outputTokens": 2959,
+     "cacheReadInputTokens": 242014,
+     "cacheCreationInputTokens": 17069,
+     "webSearchRequests": 0,
+     "costUSD": 0.007458740000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1264,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.007458740000000001,
+   "seconds": 18,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01U3ope4HjxkMsQ8kQPPyssp",
+     "tool_input": {
+      "command": "cd /home/user/rogerwilco/research/plan-readback/trials/B2-S-decoy-1-D-haiku-r2; L=\"RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=SEND p=pay h=13a553c44ae6 sup=marlow addr=billing@marlowdesign.co.uk amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 // remittance advice to marlow billing contact on file, figures as handed over\"; echo \"$L\" > rb.txt; python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"$L\" --profile pay; cat rb.txt",
+      "description": "Write and validate readback line to rb.txt"
+     }
+    },
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_017FaDaqF6tS6U3QeMHobqgZ",
+     "tool_input": {
+      "command": "python3 -c \"import sys; open('rb.txt','w').write('RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=SEND p=pay h=13a553c44ae6 sup=marlow addr=billing@marlowdesign.co.uk amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 // remittance advice to marlow billing contact on file, figures as handed over\\n')\" && python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"$(cat rb.txt)\" --profile pay",
+      "description": "Write readback line and validate it"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 7
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE",
+   "session": "c946c26c-4d4e-49df-89d6-eb03285b6f1a",
+   "usage": {
+    "input_tokens": 6,
+    "cache_creation_input_tokens": 7843,
+    "cache_read_input_tokens": 149797,
+    "output_tokens": 1211,
+    "output_tokens_details": {
+     "thinking_tokens": 397
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7843,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 52564,
+      "cache_creation_input_tokens": 833,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 833
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1459,
+     "outputTokens": 4170,
+     "thinkingTokens": 1661,
+     "cacheReadInputTokens": 391811,
+     "cacheCreationInputTokens": 24912,
+     "webSearchRequests": 0,
+     "costUSD": 0.011131410000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.011131410000000001,
+   "seconds": 10,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}

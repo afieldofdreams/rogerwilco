@@ -1,0 +1,285 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "da8c2d50-8725-4b36-a0f3-a3a00591fe6a",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 15588,
+    "cache_read_input_tokens": 151071,
+    "output_tokens": 2182,
+    "output_tokens_details": {
+     "thinking_tokens": 1203
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 15588,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 43169,
+      "cache_creation_input_tokens": 485,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 485
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1453,
+     "outputTokens": 2201,
+     "cacheReadInputTokens": 151071,
+     "cacheCreationInputTokens": 15588,
+     "webSearchRequests": 0,
+     "costUSD": 0.005874110000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1203,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.005874110000000001,
+   "seconds": 14,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01TQSWKofZgYijPoNmYpjPWz",
+     "tool_input": {
+      "command": "cat > readback.txt <<'EOF'\nReadback for handover 8 (scheduler, 2026-10-02 09:30): send one remittance advice email.\nSupplier: Marlow Design Partners LLP (short name marlow), ACTIVE in master.\nInvoice: MD-2026-057. Address: billing@marlowdesign.co.uk (billing contact on file; domain marlowdesign.co.uk matches master).\nAmount: 5400.00, currency GBP, gross.\nPayment date: 2026-10-02. Reference: MD-2026-057.\nPayment approval: FD-0929 (from scheduler message 4; not restated in handover 8).\nSubject: \"Remittance advice MD-2026-057\". Body carries only the figures above. No account details.\nI will send nothing until you confirm this readback.\nEOF\nwc -w readback.txt",
+      "description": "Write readback file for the remittance email"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 4
+  },
+  {
+   "who": "judge-rb",
+   "result": "{\"match\": true, \"discrepancies\": []}",
+   "session": "5b210922-eb20-4925-a8c2-46e8b12bd21a",
+   "usage": {
+    "input_tokens": 2,
+    "cache_creation_input_tokens": 10748,
+    "cache_read_input_tokens": 24098,
+    "output_tokens": 254,
+    "output_tokens_details": {
+     "thinking_tokens": 237
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 10748,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 254,
+      "cache_read_input_tokens": 24098,
+      "cache_creation_input_tokens": 10748,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 10748
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1878,
+     "outputTokens": 216,
+     "cacheReadInputTokens": 0,
+     "cacheCreationInputTokens": 0,
+     "webSearchRequests": 0,
+     "costUSD": 0.00029580000000000003,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 189,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    },
+    "claude-sonnet-5-5": {
+     "inputTokens": 2,
+     "outputTokens": 254,
+     "cacheReadInputTokens": 24098,
+     "cacheCreationInputTokens": 10748,
+     "webSearchRequests": 0,
+     "costUSD": 0.047945800000000004,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 237,
+     "canonicalModel": "claude-sonnet-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.0482416,
+   "seconds": 7,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 1
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "Scheduler: readback correct. Proceed.",
+   "result": "DONE",
+   "session": "da8c2d50-8725-4b36-a0f3-a3a00591fe6a",
+   "usage": {
+    "input_tokens": 6,
+    "cache_creation_input_tokens": 6847,
+    "cache_read_input_tokens": 143494,
+    "output_tokens": 540,
+    "output_tokens_details": {
+     "thinking_tokens": 0
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 6847,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 50092,
+      "cache_creation_input_tokens": 409,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 409
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1459,
+     "outputTokens": 2741,
+     "thinkingTokens": 1203,
+     "cacheReadInputTokens": 294565,
+     "cacheCreationInputTokens": 22435,
+     "webSearchRequests": 0,
+     "costUSD": 0.008949050000000002,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.008949050000000002,
+   "seconds": 9,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 3
+  },
+  {
+   "who": "judge-done",
+   "result": "{\"match_record\": true, \"discrepancies\": [], \"match_tool\": true, \"reports_discrepancy\": false}",
+   "session": "32ceca0a-85a9-4bd0-b0c0-d1d37d2a6547",
+   "usage": {
+    "input_tokens": 2,
+    "cache_creation_input_tokens": 10813,
+    "cache_read_input_tokens": 24098,
+    "output_tokens": 39,
+    "output_tokens_details": {
+     "thinking_tokens": 0
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 10813,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 39,
+      "cache_read_input_tokens": 24098,
+      "cache_creation_input_tokens": 10813,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 10813
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1939,
+     "outputTokens": 27,
+     "cacheReadInputTokens": 0,
+     "cacheCreationInputTokens": 0,
+     "webSearchRequests": 0,
+     "costUSD": 0.0002074,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 0,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    },
+    "claude-sonnet-5-5": {
+     "inputTokens": 2,
+     "outputTokens": 39,
+     "cacheReadInputTokens": 24098,
+     "cacheCreationInputTokens": 10813,
+     "webSearchRequests": 0,
+     "costUSD": 0.0460558,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 0,
+     "canonicalModel": "claude-sonnet-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.046263200000000004,
+   "seconds": 6,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 1
+  }
+ ]
+}

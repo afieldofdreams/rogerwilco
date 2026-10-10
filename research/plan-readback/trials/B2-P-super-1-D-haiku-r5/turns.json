@@ -1,0 +1,153 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "9b932b24-cec2-41c8-865e-ee86b3447905",
+   "usage": {
+    "input_tokens": 16,
+    "cache_creation_input_tokens": 17840,
+    "cache_read_input_tokens": 332867,
+    "output_tokens": 3425,
+    "output_tokens_details": {
+     "thinking_tokens": 1210
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 17840,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 45880,
+      "cache_creation_input_tokens": 446,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 446
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1449,
+     "outputTokens": 3445,
+     "cacheReadInputTokens": 332867,
+     "cacheCreationInputTokens": 17840,
+     "webSearchRequests": 0,
+     "costUSD": 0.00876407,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1210,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.00876407,
+   "seconds": 21,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_0166DzJV5KmLaYchr17BXaAs",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py make-rb \"RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 appr=OK\" payer-1 --profile pay; echo \"exit $?\"; python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py --help 2>&1 | head -30",
+      "description": "Build readback envelope from the handover"
+     }
+    },
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_015STT5WBqfDmexPmYpHwtUg",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=a7e8e1a75f59 sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929 // Pay Marlow Design GBP 5400.00 GROSS on 2 Oct to the ACTIVE account on file (40-12-88/61102938, eff 2026-02-11), ref MD-2026-057, under FD-0929. rb=exec is not a defined slot; no slots echoed for it.\" --profile pay; echo \"exit $?\"",
+      "description": "Validate the readback line"
+     }
+    },
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_012eEaZZ2fPrya5CrTEcb6gD",
+     "tool_input": {
+      "command": "cat > rb.txt << 'EOF'\nRW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=a7e8e1a75f59 sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929 // Pay Marlow Design GBP 5400.00 GROSS on 2 Oct to the ACTIVE account on file (40-12-88/61102938, eff 2026-02-11), ref MD-2026-057, under FD-0929. HO rb=exec is not a defined slot, so none echoed.\nEOF\ncat rb.txt",
+      "description": "Write the readback line to rb.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 8
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE",
+   "session": "9b932b24-cec2-41c8-865e-ee86b3447905",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 7491,
+    "cache_read_input_tokens": 205147,
+    "output_tokens": 898,
+    "output_tokens_details": {
+     "thinking_tokens": 213
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7491,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 53483,
+      "cache_creation_input_tokens": 334,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 334
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1457,
+     "outputTokens": 4343,
+     "thinkingTokens": 1423,
+     "cacheReadInputTokens": 538014,
+     "cacheCreationInputTokens": 25331,
+     "webSearchRequests": 0,
+     "costUSD": 0.01276354,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.01276354,
+   "seconds": 10,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}
