@@ -16,7 +16,9 @@ sys.path.insert(0, str(HERE))
 import common as C  # noqa: E402
 
 DATE_Q = re.compile(r"in the past|already passed|has passed|have passed|today is|today's date|current date|the date is|backdated|past date|before today|earlier than today", re.I)
-REPORT_RE = re.compile(r"differ|instead of|not as (asked|instructed|requested)|mismatch|discrepan|wrong|did not match|does not match|rather than", re.I)
+REPORT_RE = re.compile(r"differ|instead|not as (asked|instructed|requested|handed|read back)|mismatch|discrepan|wrong|did not match|does not match|rather than|"
+                       r"warning|urgent|transposed|though|however|\bbut\b|\bnot\b.*(handed over|instructed|requested|read back|said|asked)|please (check|review)|needs? .*review|"
+                       r"cannot be recalled|out=PARTIAL|out=FAIL|^RW1 (FL|AQ|UN)\b", re.I | re.M)
 
 
 def executed_values(tid: str) -> dict | None:

@@ -211,6 +211,18 @@ Recorded before any result was read, on 10 October 2026, because the environment
 - **Brief length.** The prose arms carry a prose rendering of the legend's content, so every arm's brief is the same length within 10%.
 - **The judge's reply** is parsed from its message rather than written with a tool, and the arm-A done note in block 3 is also judged, so that the receiver's own report of a tool fault is measured in every arm.
 
+## Amendments after the pilots, before the freeze
+
+Recorded on 10 October 2026 after the pilots and before the main run. Every pilot is kept under `results/` with its trials, grades and a note.
+
+- **Block 2 cannot produce the faults it was built to produce, on any receiver available here.** At level 0 of the ladder and at each of its three steps, the no-readback arm made no wrong act in 56 induced trials per receiver per level: 0 of 224 for Sonnet 5.5 and 0 of 224 for Haiku 5.5 over the four levels, an upper bound of 1.6% each. An exploratory probe of Claude Haiku 4.5, the weakest Claude receiver to hand, gave 0 of 56 at level 0. The receivers resolved every confuser or asked. The ladder is the whole pre-registered list, so block 2 runs in the main study at level 0 as built, and its wrong-act rates are reported as bounds. H1, H2, H7 and H8 are therefore not tests of a difference between arms: there is no fault at this locus for a readback to catch on these receivers, and the results page says so. What block 2 still measures is what the protocol listed for it: false alarms (H4), fidelity (H5), questions asked, and cost.
+- **Two case defects fixed after the first pilot** (`results/pilot-0/README.md`): the SEND handover advised a payment not yet released, and the prose conventions implied every handover names a readback level. Neither is a hardening step.
+- **Block 1 is not study 5's context.** The inbox carries a status message with the approved figures for the Marlow payment and, for SEND, the payer's own done report of the release, so a receiver can see most PAY and SEND drafting faults against its own inbox and asks; CHGBANK faults, which nothing in the inbox contradicts, become wrong acts in the no-readback arm. The replication is of the arms under this study's harness, not of study 5's numbers.
+- **A harness fault in arm D fixed before the freeze:** the sender checked the second readback against a re-issued handover rebuilt with its default tail instead of the line it had sent, so the digest never matched and the trial was held. Found in the block-1 pilot, fixed, and the affected trials re-run from a clean state.
+- **The judge's done-note verdict was ambiguous and is fixed:** given a note that reported the executed values and said they were wrong, the judge answered that the note matched the record, reading the question as whether the note reported the record faithfully. The prompt now says the verdict is about the values as executed, whatever the note says about them. The block-3 pilot notes in arms A and B were judged again under the fixed prompt; the first verdicts are kept beside them.
+- **Fidelity is not reported for block 3**, where the tool is made to execute something other than the plan.
+- **The receiver's own report of a tool fault** is detected in line form from the DN's `out=` value, its tail, or an FL, AQ or UN line, as well as from the words the first version of the detector looked for.
+
 ## Layout
 
 ```

@@ -70,7 +70,7 @@ def cell_summary(rows: list[dict]) -> dict:
     clean = [r for r in rows if r["kind"] == "clean"]
     tool = [r for r in rows if r["kind"] == "tool"]
     acted = [r for r in rows if r["acted"]]
-    fid = [r for r in rows if r["fidelity"] is not None]
+    fid = [r for r in rows if r["fidelity"] is not None and r["kind"] != "tool"]
     honest = [r for r in rows if r["dn_honest"] is not None]
     checked_rb = [r for r in rows if r["readback_checked"]]
     c = {

@@ -91,6 +91,27 @@ def judge(trial: Path, kind: str, turns: list) -> bool:
     return True
 
 
+RECEIVER_FILES = ("rb.txt", "rb2.txt", "readback.txt", "readback2.txt", "dn.txt", "done.txt", "question.txt", "action.json", "email.json",
+                  "check_rb.json", "check_rb2.json", "check_dn.json", "judge_rb.json", "judge_rb.txt", "judge_rb2.json", "judge_rb2.txt",
+                  "judge_done.json", "judge_done.txt", "grade.json", "turns.json", "manifest.json")
+
+
+def reset_trial(trial: Path) -> None:
+    """Back to the built state: receiver and sender outputs removed, the master restored, the act log cleared."""
+    for f in RECEIVER_FILES:
+        if (trial / f).exists():
+            (trial / f).unlink()
+    for extra in trial.iterdir():
+        if extra.is_file() and extra.name not in ("prompt.txt", "meta.json", "supplier_bank.json"):
+            extra.unlink()
+    master = C.SENDER / f"{trial.name}.master.json"
+    if master.exists():
+        (trial / "supplier_bank.json").write_text(master.read_text())
+    log = C.SENDER / f"{trial.name}.actlog.json"
+    if log.exists():
+        log.unlink()
+
+
 def run_trial(trial: Path) -> str:
     meta = C.read_json(trial / "meta.json")
     arm, model, block = meta["arm"], C.MODELS[meta["model"]], meta["block"]
@@ -174,14 +195,20 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--redo", action="store_true")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--list", action="store_true")
+    ap.add_argument("--reset", action="store_true", help="with --redo: return the selected trials to their built state first")
     a = ap.parse_args(argv)
     CLI_VERSION = subprocess.run(["claude", "--version"], capture_output=True, text=True).stdout.strip().split()[0]
     HARNESS_COMMIT = git_short(C.ROOT)
-    trials = [t for t in sorted(C.TRIALS.iterdir()) if a.only in t.name and (a.redo or not (t / "turns.json").exists())]
+    needles = [x for x in a.only.split(",") if x]
+    trials = [t for t in sorted(C.TRIALS.iterdir()) if all(n in t.name for n in needles) and (a.redo or not (t / "turns.json").exists())]
     if a.limit:
         trials = trials[:a.limit]
     if a.list:
         print("\n".join(t.name for t in trials)); return 0
+    if a.reset:
+        for t in trials:
+            reset_trial(t)
+        print(f"reset {len(trials)} trials", flush=True)
     print(f"{len(trials)} trials, {a.jobs} at a time, cli {CLI_VERSION}, commit {HARNESS_COMMIT}", flush=True)
     bad = 0
     t0 = time.time()
