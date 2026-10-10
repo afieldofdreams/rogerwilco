@@ -155,9 +155,13 @@ def handover_message(arm: str, act: str, fields: dict, to_agent: str, full: bool
     return C.ho_line(act, fields, to_agent, full=full, rb="all" if arm == "C" else "exec")
 
 
+SUFFIX = ""
+
+
 def make_trial(tid: str, block: int, handover: str, arm: str, model: str, repeat: int, act: str, rows: list, inbox: list,
                fields: dict, to_agent: str, full: bool, record: dict, fault: str | None, tool_fault: dict | None,
                context_desc: str) -> bool:
+    tid = tid + SUFFIX
     d = C.TRIALS / tid
     if d.exists():
         return False
@@ -170,12 +174,13 @@ def make_trial(tid: str, block: int, handover: str, arm: str, model: str, repeat
     (d / "mail" / "inbox.md").write_text(render_inbox(inbox, arm, ho_text))
     sysp = system_prompt(arm, act)
     briefs = C.DATA / "briefs"; briefs.mkdir(exist_ok=True)
-    brief_path = briefs / f"{arm}-{act}.txt"
+    level = f"-h{C.HARDEN}" if C.HARDEN else ""
+    brief_path = briefs / f"{arm}-{act}{level}.txt"
     if not brief_path.exists() or brief_path.read_text() != sysp:
         brief_path.write_text(sysp)
     (d / "prompt.txt").write_text(user_turn(d))
     C.write_json(d / "meta.json", {"id": tid, "block": block, "handover": handover, "arm": arm, "model": model, "repeat": repeat, "act": act,
-                                   "brief": f"data/briefs/{arm}-{act}.txt"})
+                                   "brief": f"data/briefs/{arm}-{act}{level}.txt", "harden": C.HARDEN})
     C.SENDER.mkdir(exist_ok=True)
     C.write_json(C.SENDER / f"{tid}.json", {
         "id": tid, "block": block, "handover": handover, "arm": arm, "model": model, "repeat": repeat, "act": act,
@@ -250,7 +255,10 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--repeats", type=int, default=1)
     ap.add_argument("--only", default="")
     ap.add_argument("--pilot", action="store_true")
+    ap.add_argument("--suffix", default="")
     a = ap.parse_args(argv)
+    global SUFFIX
+    SUFFIX = a.suffix
     build([int(b) for b in a.blocks.split(",")], a.arms.split(","), a.models.split(","), a.repeats, a.only, a.pilot)
     return 0
 

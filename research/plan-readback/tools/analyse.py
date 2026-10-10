@@ -126,12 +126,14 @@ def tests(cells: dict, models: list[str]) -> dict:
     return out
 
 
-def analyse(tag: str | None) -> None:
+def analyse(tag: str | None, only: str = "", level: int | None = None) -> None:
     rows = []
     for trial in sorted(C.TRIALS.iterdir()):
         g = trial / "grade.json"
-        if g.exists():
-            rows.append(C.read_json(g))
+        if g.exists() and only in trial.name:
+            r = C.read_json(g)
+            if level is None or r.get("harden", 0) == level:
+                rows.append(r)
     out_dir = C.RESULTS / tag if tag else C.RESULTS
     out_dir.mkdir(parents=True, exist_ok=True)
     cells = {}
@@ -184,9 +186,9 @@ def analyse(tag: str | None) -> None:
 
 
 def main(argv: list[str]) -> int:
-    ap = argparse.ArgumentParser(); ap.add_argument("--tag", default=None)
+    ap = argparse.ArgumentParser(); ap.add_argument("--tag", default=None); ap.add_argument("--only", default=""); ap.add_argument("--level", type=int, default=None)
     a = ap.parse_args(argv)
-    analyse(a.tag)
+    analyse(a.tag, a.only, a.level)
     return 0
 
 

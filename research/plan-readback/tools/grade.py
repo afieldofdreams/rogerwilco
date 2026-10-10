@@ -178,7 +178,7 @@ def grade_trial(trial: Path) -> dict | None:
             traffic[f] = C.count_tokens((trial / f).read_text())
     g = {
         "id": meta["id"], "block": block, "handover": hid, "arm": arm, "model": meta["model"], "repeat": meta["repeat"], "act": act,
-        "kind": kind, "fault": state["fault"], "tool_fault": state.get("tool_fault"), "context": state.get("context"),
+        "kind": kind, "fault": state["fault"], "tool_fault": state.get("tool_fault"), "context": state.get("context"), "harden": state.get("harden", 0),
         "status": turns.get("status"), "models_seen": manifest.get("models_seen"), "cost_usd": manifest.get("cost_usd"),
         "readback_checked": bool(checks), "readback_rejected": rb_rejected, "readback2_rejected": rb2_rejected, "held": held,
         "readback_problems": checks.get("rb", {}).get("problems", []),
