@@ -1,0 +1,75 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "ASKED",
+   "session": "229c67bb-2cc4-439f-89e0-a78caea4c031",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 15146,
+    "cache_read_input_tokens": 150032,
+    "output_tokens": 1809,
+    "output_tokens_details": {
+     "thinking_tokens": 739
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 15146,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 42578,
+      "cache_creation_input_tokens": 506,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 506
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1453,
+     "outputTokens": 1827,
+     "cacheReadInputTokens": 150032,
+     "cacheCreationInputTokens": 15146,
+     "webSearchRequests": 0,
+     "costUSD": 0.00558832,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 739,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.00558832,
+   "seconds": 14,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01JhdTHiMRvERtPb93pv7mJJ",
+     "tool_input": {
+      "command": "cat > /home/user/rogerwilco/research/plan-readback/trials/B1-PAY-digit-A-haiku-r1-p/question.txt << 'EOF'\nFrom: payer\nTo: scheduler\nRe: handover message 7 (2026-10-02 09:30), Marlow Design Partners LLP, invoice MD-2026-057\n\nI have not paid. Your handover gives 5,100.00 GBP gross, but your message 5 (2026-09-30 11:30) says MD-2026-057 was approved under FD-0929 at 5,400.00 GBP gross. The two figures differ by 300.00 and a payment cannot be recalled.\n\nWhich amount is approved? Answer one of:\n- Approve 5,100.00 GBP gross (proceed as handed)\n- Approve 5,400.00 GBP gross (I would pay 5,400.00)\n- Hold (do not pay in this run)\n\nPayee account 40-12-88 61102938 is the ACTIVE account on file for marlow; no change needed.\nEOF\ncat /home/user/rogerwilco/research/plan-readback/trials/B1-PAY-digit-A-haiku-r1-p/question.txt | wc -c",
+      "description": "Write question to scheduler about amount mismatch"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}

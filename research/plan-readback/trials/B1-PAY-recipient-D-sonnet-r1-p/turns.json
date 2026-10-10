@@ -1,0 +1,95 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "ASKED",
+   "session": "4d81b2b3-c817-4443-8536-c6c760a50204",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 12852,
+    "cache_read_input_tokens": 196545,
+    "output_tokens": 979,
+    "output_tokens_details": {
+     "thinking_tokens": 170
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 12852,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 42947,
+      "cache_creation_input_tokens": 370,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 370
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1453,
+     "outputTokens": 20,
+     "cacheReadInputTokens": 0,
+     "cacheCreationInputTokens": 0,
+     "webSearchRequests": 0,
+     "costUSD": 0.0001553,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 0,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    },
+    "claude-sonnet-5-5": {
+     "inputTokens": 10,
+     "outputTokens": 979,
+     "cacheReadInputTokens": 196545,
+     "cacheCreationInputTokens": 12852,
+     "webSearchRequests": 0,
+     "costUSD": 0.0808725,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 170,
+     "canonicalModel": "claude-sonnet-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.0810278,
+   "seconds": 15,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01JD8yP3SjPDw3haKDcZ9RzK",
+     "tool_input": {
+      "command": "L='RW1 UN payer-1 re=scheduler-1 from=payer to=scheduler p=pay item=inv:MD-2026-057 why=SCOPE sup=marlow // HO scheduler-1 is addressed to=auditor, not payer. Please confirm or re-issue to payer before I release anything.'\npython3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"$L\" --profile pay && echo \"$L\" > question.txt"
+     }
+    },
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01U79yXeY2JLzc6ihMYAhbqq",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"$(cat question.txt)\" --profile pay"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 6
+  }
+ ]
+}
