@@ -84,11 +84,20 @@ def main(argv: list[str]) -> int:
     if act == "CHGBANK":
         master = C.read_json(master_path)
         name = re.sub(r"\s+", " ", executed["supplier"]).strip().lower()
-        rows = [r for r in master["suppliers"] if r.get("status", "ACTIVE") == "ACTIVE" and r["supplier"].lower() == name]
+        named = [r for r in master["suppliers"] if r["supplier"].lower() == name]
+        if any("status" in r for r in named):
+            rows = [r for r in named if r.get("status", "ACTIVE") == "ACTIVE"]
+            what = "ACTIVE row"
+        else:
+            # no status field (ladder level 3): the row in force is the one with the latest effective date on or before today
+            in_force = [r for r in named if (r.get("effective") or "") <= C.TODAY]
+            latest = max((r.get("effective") or "" for r in in_force), default=None)
+            rows = [r for r in in_force if r.get("effective") == latest]
+            what = "row in force"
         if not rows:
-            refuse(f"no ACTIVE row in the master for supplier {executed['supplier']!r}; nothing changed")
+            refuse(f"no {what} in the master for supplier {executed['supplier']!r}; nothing changed")
         if len(rows) > 1:
-            refuse(f"more than one ACTIVE row for supplier {executed['supplier']!r}; nothing changed")
+            refuse(f"more than one {what} for supplier {executed['supplier']!r}; nothing changed")
         r = rows[0]
         prev = {"sort_code": r.get("sort_code"), "account": r.get("account"), "effective": r.get("effective")}
         r.setdefault("history", []).append({"replaced": prev, "on": C.TODAY, "approval": executed["approval"]})
