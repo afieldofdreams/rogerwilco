@@ -22,7 +22,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import common as C  # noqa: E402
 
-OUT = C.RESULTS / "validation"
+OUT = C.RESULTS / "validation"   # --out overrides
 
 
 def review_prompt(trial: Path) -> str:
@@ -61,7 +61,11 @@ def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--share", type=float, default=0.1); ap.add_argument("--seed", type=int, default=6)
     ap.add_argument("--model", default="sonnet"); ap.add_argument("--run", action="store_true"); ap.add_argument("--only", default="")
+    ap.add_argument("--out", default="")
     a = ap.parse_args(argv)
+    global OUT
+    if a.out:
+        OUT = C.RESULTS / a.out
     graded = [t for t in sorted(C.TRIALS.iterdir()) if (t / "grade.json").exists() and a.only in t.name]
     rng = random.Random(a.seed)
     k = max(1, round(len(graded) * a.share))

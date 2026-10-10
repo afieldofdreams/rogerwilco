@@ -158,7 +158,12 @@ def grade_trial(trial: Path) -> dict | None:
     false_alarm = None
     if checks:
         if arm in ("C", "D", "E"):
-            false_alarm = rb_rejected and all(p.startswith(("tier", "parse", "first line", "empty")) for p in checks["rb"]["problems"])
+            # a rejection with no value wrong is a false alarm, unless the handover carried a planted fault and the digest or the
+            # address caught it: that is tier 1 or 2 doing its job on a message that differs from the record
+            probs = checks["rb"]["problems"]
+            formal = all(p.startswith(("tier", "parse", "first line", "empty")) for p in probs)
+            integrity = any(p.startswith(("tier1", "tier2")) for p in probs)
+            false_alarm = rb_rejected and formal and not (kind == "planted" and integrity)
         elif arm == "B":
             txt = (trial / "readback.txt").read_text() if (trial / "readback.txt").exists() else ""
             false_alarm = rb_rejected and prose_has_record(txt, act, state["record"])

@@ -74,18 +74,35 @@ def word(reply: str) -> str:
     return m.group(1) if m else "OTHER"
 
 
+def last_json_object(text: str) -> dict | None:
+    """The last well-formed JSON object in a reply. A judge that writes a verdict, then "correcting:" and another, means the last."""
+    found = None
+    depth = 0; start = None
+    for i, ch in enumerate(text):
+        if ch == "{":
+            if depth == 0:
+                start = i
+            depth += 1
+        elif ch == "}" and depth:
+            depth -= 1
+            if depth == 0 and start is not None:
+                try:
+                    obj = json.loads(text[start:i + 1])
+                    if isinstance(obj, dict):
+                        found = obj
+                except ValueError:
+                    pass
+                start = None
+    return found
+
+
 def judge(trial: Path, kind: str, turns: list) -> bool:
     prompt = K.judge_prompt(trial, kind)
     (trial / f"judge_{kind}.txt").write_text(prompt)
     r = claude(prompt, C.JUDGE_MODEL, str(uuid.uuid4()), False, trial, "You are a careful checker. You reply with one JSON object and nothing else.", tools="")
     turns.append({"who": f"judge-{kind}", **r})
-    text = r.get("result", "")
-    m = re.search(r"\{.*\}", text, re.S)
-    if not m:
-        return False
-    try:
-        verdict = json.loads(m.group(0))
-    except ValueError:
+    verdict = last_json_object(r.get("result", ""))
+    if verdict is None:
         return False
     C.write_json(trial / f"judge_{kind}.json", verdict)
     return True

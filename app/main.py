@@ -93,7 +93,7 @@ def about():
 
 
 RESEARCH_DIR = svc.APP_DIR / "static" / "research"
-RESEARCH_PAGES = {"wire-study", "pilot", "month-end", "translation", "readback"}
+RESEARCH_PAGES = {"wire-study", "pilot", "month-end", "translation", "readback", "plan-readback"}
 
 
 @router.get("/research", include_in_schema=False)

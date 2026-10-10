@@ -223,6 +223,15 @@ Recorded on 10 October 2026 after the pilots and before the main run. Every pilo
 - **Fidelity is not reported for block 3**, where the tool is made to execute something other than the plan.
 - **The receiver's own report of a tool fault** is detected in line form from the DN's `out=` value, its tail, or an FL, AQ or UN line, as well as from the words the first version of the detector looked for.
 
+## Amendments after the main run, in the analysis only
+
+Recorded on 10 October 2026 after the main run. None changes a hypothesis, a test or a trial; each is a defect in the grading or the harness found by reading the results, and the trials it touched are named.
+
+- **Fidelity is measured over the slots a readback carries,** with coverage reported beside it. The protocol defined fidelity as the act matching the confirmed readback on every execution slot; an echo readback carries none of the slots the receiver resolved, so under the first implementation the echo arm read as 31% fidelity, which was the measure failing rather than the receiver. Over the slots carried, every arm is at 100%; the echo arm covers none of the act's resolved slots.
+- **A rejected readback whose values were all right is a false alarm in any context, never a catch,** except where the handover carried a planted fault and the digest or the address check caught it: that is the integrity tier doing its job on a message that differs from the record. Four block-1 trials in arm D, where the receiver resolved the right values from the master and the digest of the faulty handover still failed, moved from false alarm to catch.
+- **The judge's reply is parsed as the last well-formed JSON object it wrote.** In 22 trials the judge wrote a verdict, then "Wait, correcting:" and a second one, and the first parser took the span across both and found nothing. Fourteen done notes were judged again with the fixed parser; eight trials whose first readback got no verdict, and so never acted, were kept under `results/rerun-first/` and run again from their built state.
+- **One receiver in arm C said READBACK and wrote no readback** (`B1-CHGBANK-recipient-C-haiku-r3`): it had correctly found the handover addressed to the auditor and said so in its reply instead of writing a question file. It is graded as no act and no question, and reported.
+
 ## Layout
 
 ```

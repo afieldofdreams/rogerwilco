@@ -18,7 +18,7 @@ import run as R  # noqa: E402
 
 
 def main(argv: list[str]) -> int:
-    ap = argparse.ArgumentParser(); ap.add_argument("--only", action="append", default=[])
+    ap = argparse.ArgumentParser(); ap.add_argument("--only", action="append", default=[]); ap.add_argument("--missing", action="store_true", help="only done notes with no verdict yet")
     a = ap.parse_args(argv)
     n = 0
     for trial in sorted(C.TRIALS.iterdir()):
@@ -30,6 +30,8 @@ def main(argv: list[str]) -> int:
         if meta["arm"] not in ("A", "B") or (meta["arm"] == "A" and meta["block"] != 3):
             continue
         old = trial / "judge_done.json"
+        if a.missing and old.exists():
+            continue
         if old.exists():
             k = 1
             while (trial / f"judge_done.v{k}.json").exists():

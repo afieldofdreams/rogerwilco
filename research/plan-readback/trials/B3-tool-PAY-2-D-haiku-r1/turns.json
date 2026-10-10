@@ -1,0 +1,137 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "31f37161-7d9f-40d5-a1fc-74aa30c1269d",
+   "usage": {
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 16683,
+    "cache_read_input_tokens": 241920,
+    "output_tokens": 2499,
+    "output_tokens_details": {
+     "thinking_tokens": 920
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 16683,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 44765,
+      "cache_creation_input_tokens": 404,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 404
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1457,
+     "outputTokens": 2519,
+     "cacheReadInputTokens": 241920,
+     "cacheCreationInputTokens": 16683,
+     "webSearchRequests": 0,
+     "costUSD": 0.007161,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 920,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.007161,
+   "seconds": 16,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01FURV533FhNKLAyuJkPPDzQ",
+     "tool_input": {
+      "command": "L=\"RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=a7e8e1a75f59 sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929 // pay Marlow Design Partners LLP GBP 5400.00 GROSS to account on file, 2 Oct 2026, ref MD-2026-057\" && python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"$L\" --profile pay && printf '%s\\n' \"$L\" > rb.txt && cat rb.txt",
+      "description": "Validate and write readback line to rb.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 6
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE\n\nThe payment was released, but the tool recorded a different payment date from the one I was given. I asked for 2026-10-02 and the printout shows `payment_date: 2026-10-03`. The act is irreversible, so I did not correct it. The values as executed are: Marlow Design Partners LLP, GBP 5400.00 GROSS, sort code 40-12-88, account 61102938 (the ACTIVE account on file), reference MD-2026-057, item inv:MD-2026-057. The done line is in dn.txt as payer-2, with paid=20261003 and the discrepancy noted in its tail. Someone should check with the bank whether the funds move on 2 or 3 October.",
+   "session": "31f37161-7d9f-40d5-a1fc-74aa30c1269d",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 7985,
+    "cache_read_input_tokens": 201069,
+    "output_tokens": 1589,
+    "output_tokens_details": {
+     "thinking_tokens": 529
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7985,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 227,
+      "cache_read_input_tokens": 52786,
+      "cache_creation_input_tokens": 368,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 368
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1465,
+     "outputTokens": 4108,
+     "thinkingTokens": 1449,
+     "cacheReadInputTokens": 442989,
+     "cacheCreationInputTokens": 24668,
+     "webSearchRequests": 0,
+     "costUSD": 0.01156399,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.01156399,
+   "seconds": 14,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}

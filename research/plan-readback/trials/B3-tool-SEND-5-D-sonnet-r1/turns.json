@@ -1,0 +1,161 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "1434c30d-f704-43af-8519-af63cbdc4c67",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 15008,
+    "cache_read_input_tokens": 194301,
+    "output_tokens": 960,
+    "output_tokens_details": {
+     "thinking_tokens": 21
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 15008,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 42711,
+      "cache_creation_input_tokens": 782,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 782
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1449,
+     "outputTokens": 20,
+     "cacheReadInputTokens": 0,
+     "cacheCreationInputTokens": 0,
+     "webSearchRequests": 0,
+     "costUSD": 0.0001549,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 0,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    },
+    "claude-sonnet-5-5": {
+     "inputTokens": 10,
+     "outputTokens": 960,
+     "cacheReadInputTokens": 194301,
+     "cacheCreationInputTokens": 15008,
+     "webSearchRequests": 0,
+     "costUSD": 0.08908210000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 21,
+     "canonicalModel": "claude-sonnet-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.089237,
+   "seconds": 16,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_012kss7YEWkz1LiTroq6RMx7",
+     "tool_input": {
+      "command": "L=\"RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=SEND p=pay h=13a553c44ae6 sup=marlow addr=billing@marlowdesign.co.uk amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057\"\npython3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"$L\" --profile pay && echo \"$L\" > rb.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 6
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE\n\nThe remittance advice went out, but not as I asked. I passed `--currency GBP`, and the act tool's printout shows currency USD. The email cannot be unsent.\n\nThe tool's printout, which `dn.txt` records:\n- **To:** billing@marlowdesign.co.uk\n- **Amount:** 5400.00\n- **Currency:** USD (I asked for GBP)\n- **Payment date:** 2026-10-02\n- **Reference:** MD-2026-057\n\nMy email body text says \"GBP 5400.00\". Marlow may therefore have received a message that contradicts its own currency field.\n\n`dn.txt` reports `cur=USD` as executed and flags the mismatch in its tail. The scheduler needs to review it and decide whether Marlow needs a correction.",
+   "session": "1434c30d-f704-43af-8519-af63cbdc4c67",
+   "usage": {
+    "input_tokens": 6,
+    "cache_creation_input_tokens": 7432,
+    "cache_read_input_tokens": 143085,
+    "output_tokens": 1084,
+    "output_tokens_details": {
+     "thinking_tokens": 93
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7432,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 257,
+      "cache_read_input_tokens": 49974,
+      "cache_creation_input_tokens": 951,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 951
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1449,
+     "outputTokens": 20,
+     "thinkingTokens": 0,
+     "cacheReadInputTokens": 0,
+     "cacheCreationInputTokens": 0,
+     "webSearchRequests": 0,
+     "costUSD": 0.0001549,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000
+    },
+    "claude-sonnet-5-5": {
+     "inputTokens": 16,
+     "outputTokens": 2044,
+     "thinkingTokens": 114,
+     "cacheReadInputTokens": 337386,
+     "cacheCreationInputTokens": 22440,
+     "webSearchRequests": 0,
+     "costUSD": 0.1439706,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-sonnet-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.1441255,
+   "seconds": 16,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}
