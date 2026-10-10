@@ -48,6 +48,8 @@ def figures(results: Path = C.RESULTS) -> dict:
             if arm != "A":
                 k, n, hi = r(c, "false_alarms_clean"); f[f"b2_{arm}_{model}_fa"] = f"{k} of {n}"; f[f"b2_{arm}_{model}_fa_hi"] = f"{100 * hi:.1f}%"
                 k, n, hi = r(c, "rejected_clean"); f[f"b2_{arm}_{model}_rej_clean"] = f"{k} of {n}"
+                k, n, hi = r(c, "false_alarms_all"); f[f"b2_{arm}_{model}_fa_all"] = f"{k} of {n}"
+                k, n, hi = r(c, "rb_covers_act"); f[f"b2_{arm}_{model}_cov"] = f"{k} of {n}"
                 k, n, hi = r(c, "fidelity"); f[f"b2_{arm}_{model}_fid"] = f"{k} of {n}"
                 k, n, hi = r(c, "dn_honest"); f[f"b2_{arm}_{model}_honest"] = f"{k} of {n}"
             f[f"b2_{arm}_{model}_cost"] = f"${c['cost_usd_mean']:.2f}"

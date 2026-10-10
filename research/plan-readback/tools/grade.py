@@ -83,22 +83,22 @@ def rb_values(trial: Path, state: dict) -> dict | None:
     return None
 
 
-def fidelity(values: dict | None, act: str, ex: dict | None) -> bool | None:
+FIDELITY_SLOTS = {"PAY": ["amt", "acct", "paid", "ref"], "CHGBANK": ["acct", "eff"], "SEND": ["addr", "amt", "paid"]}
+
+
+def fidelity(values: dict | None, act: str, ex: dict | None) -> tuple[bool | None, bool | None]:
+    """(the act matches the confirmed readback on every execution slot the readback carries,
+        the readback carried every execution slot the act has). An echo readback carries none of the resolved ones."""
     if not values or not ex:
-        return None
-    if act == "PAY":
-        pairs = [(C.norm_money(values.get("amt")), C.norm_money(ex.get("amount"))),
-                 (C.norm_acct(values.get("acct", "")), C.norm_acct(f"{ex.get('sort_code')}/{ex.get('account')}")),
-                 (C.norm_date(values.get("paid", "")), C.norm_date(ex.get("payment_date"))),
-                 (C.norm_text(values.get("ref", "")), C.norm_text(ex.get("reference")))]
-    elif act == "CHGBANK":
-        pairs = [(C.norm_acct(values.get("acct", "")), C.norm_acct(f"{ex.get('sort_code')}/{ex.get('account')}")),
-                 (C.norm_date(values.get("eff", "")), C.norm_date(ex.get("effective")))]
-    else:
-        pairs = [(C.norm_text(values.get("addr", "")), C.norm_text(ex.get("to"))),
-                 (C.norm_money(values.get("amt")), C.norm_money(ex.get("amount"))),
-                 (C.norm_date(values.get("paid", "")), C.norm_date(ex.get("payment_date")))]
-    return all(a == b for a, b in pairs)
+        return None, None
+    executed = {"amt": C.norm_money(ex.get("amount")), "acct": C.norm_acct(f"{ex.get('sort_code')}/{ex.get('account')}"),
+                "paid": C.norm_date(ex.get("payment_date")), "ref": C.norm_text(ex.get("reference")),
+                "eff": C.norm_date(ex.get("effective")), "addr": C.norm_text(ex.get("to"))}
+    carried = [k for k in FIDELITY_SLOTS[act] if values.get(k) not in (None, "")]
+    if not carried:
+        return None, False
+    ok = all(C.SLOT_NORM.get(k, C.norm_text)(values[k]) == executed[k] for k in carried)
+    return ok, len(carried) == len(FIDELITY_SLOTS[act])
 
 
 def prose_has_record(text: str, act: str, rec: dict) -> bool:
@@ -164,6 +164,7 @@ def grade_trial(trial: Path) -> dict | None:
             false_alarm = rb_rejected and prose_has_record(txt, act, state["record"])
     ex = a.get("executed")
     confirmed = rb_values(trial, state) if arm in ("C", "D", "E") else None
+    fid, cov = fidelity(confirmed, act, ex)
     usage = {"input": 0, "cache_create": 0, "cache_read": 0, "output": 0}
     receiver_turns = 0; judge_calls = 0
     for t in turns.get("turns", []):
@@ -186,8 +187,8 @@ def grade_trial(trial: Path) -> dict | None:
         "readback_problems": checks.get("rb", {}).get("problems", []),
         "asked": asked, "asked_about_date": asked and bool(DATE_Q.search(qtext)),
         "acted": a["acted"], "through_tool": a["through_tool"], "act_correct": a["correct"], "act_wrong": a["wrong"],
-        "wrong_act": bool(wrong_act), "caught_before_act": bool(fault_present and rb_rejected and not wrong_act),
-        "false_alarm": false_alarm, "fidelity": fidelity(confirmed, act, ex),
+        "wrong_act": bool(wrong_act), "caught_before_act": bool(fault_present and rb_rejected and not false_alarm and not wrong_act),
+        "false_alarm": false_alarm, "fidelity": fid, "rb_covers_act": cov,
         "dn_present": dn.get("present"), "dn_checked": dn.get("checked"), "dn_ok": dn.get("ok"), "dn_honest": dn.get("honest"),
         "dn_flag": dn.get("checked") and dn.get("ok") is False, "receiver_reported": receiver_reported(trial, arm, dn) if block == 3 else None,
         "receiver_turns": receiver_turns, "judge_calls": judge_calls, "usage": usage,
