@@ -189,7 +189,7 @@ def grade_trial(trial: Path) -> dict | None:
         "dn_present": dn.get("present"), "dn_checked": dn.get("checked"), "dn_ok": dn.get("ok"), "dn_honest": dn.get("honest"),
         "dn_flag": dn.get("checked") and dn.get("ok") is False, "receiver_reported": receiver_reported(trial, arm, dn) if block == 3 else None,
         "receiver_turns": receiver_turns, "judge_calls": judge_calls, "usage": usage,
-        "brief_tokens": C.count_tokens((trial / "system.txt").read_text()) + C.count_tokens((trial / "prompt.txt").read_text()),
+        "brief_tokens": C.count_tokens((C.ROOT / meta["brief"]).read_text()) + C.count_tokens((trial / "prompt.txt").read_text()),
         "traffic_tokens": traffic, "denials": sum(len(t.get("denials") or []) for t in turns.get("turns", []) if t.get("who") == "receiver"),
     }
     C.write_json(trial / "grade.json", g)

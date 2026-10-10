@@ -1,0 +1,75 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "ASKED",
+   "session": "6450d24c-c3e8-41fb-9a9c-2ed3edecf13d",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 15747,
+    "cache_read_input_tokens": 150368,
+    "output_tokens": 2199,
+    "output_tokens_details": {
+     "thinking_tokens": 1045
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 15747,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 43013,
+      "cache_creation_input_tokens": 573,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 573
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1453,
+     "outputTokens": 2219,
+     "cacheReadInputTokens": 150368,
+     "cacheCreationInputTokens": 15747,
+     "webSearchRequests": 0,
+     "costUSD": 0.005907880000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1045,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.005907880000000001,
+   "seconds": 15,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_014i3fZYAusauijCWcE54Uxy",
+     "tool_input": {
+      "command": "cat > question.txt <<'EOF'\nTo: scheduler\nFrom: payer\nRe: message 7 (remittance advice, Marlow Design Partners LLP, MD-2026-057)\n\nI have not sent the remittance advice. Before I send an email I need the following settled:\n\n1. Payment status: message 7 says 5,400.00 GBP was paid on 2 October 2026. Message 5 says it is only to be scheduled for 2 October, and I have no pay handover for it. Under my rules the advice goes out after the payment is released. Has it been released?\n2. Approval: message 5 cites FD-0929. Message 7 does not give an approval reference. Please confirm FD-0929 is the reference for this email.\n3. Amount basis: please confirm 5,400.00 GBP is gross (message 5 says gross).\n\nAddress I would use, from the master for marlow: billing@marlowdesign.co.uk (ACTIVE, domain marlowdesign.co.uk, matches).\n\nAnswer needed, one of: Approve (send as in message 7, once 1 and 2 are confirmed) / Hold (do not send yet) / Reject.\nEOF\ncat question.txt",
+      "description": "Write question to scheduler in question.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}

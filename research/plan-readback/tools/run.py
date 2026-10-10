@@ -30,7 +30,7 @@ sys.path.insert(0, str(HERE))
 import common as C  # noqa: E402
 import check as K  # noqa: E402
 
-ALLOWED = "Read,Write,Bash(python3:*)"
+ALLOWED = "Read,Write,Bash(python3:*),Bash(cat:*),Bash(ls:*)"
 TURN_TIMEOUT = 480
 MAX_TURNS = 4
 
@@ -94,7 +94,7 @@ def judge(trial: Path, kind: str, turns: list) -> bool:
 def run_trial(trial: Path) -> str:
     meta = C.read_json(trial / "meta.json")
     arm, model, block = meta["arm"], C.MODELS[meta["model"]], meta["block"]
-    system = (trial / "system.txt").read_text()
+    system = (C.ROOT / meta["brief"]).read_text()
     turns: list = []
     sid = str(uuid.uuid4())
     r = claude((trial / "prompt.txt").read_text(), model, sid, False, trial, system)

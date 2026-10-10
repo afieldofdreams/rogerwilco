@@ -1,0 +1,75 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "ASKED",
+   "session": "7b2cf360-1040-4533-912a-45d8765a9250",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 16809,
+    "cache_read_input_tokens": 193534,
+    "output_tokens": 3440,
+    "output_tokens_details": {
+     "thinking_tokens": 2041
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 16809,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 43320,
+      "cache_creation_input_tokens": 1329,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 1329
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1443,
+     "outputTokens": 3596,
+     "cacheReadInputTokens": 193534,
+     "cacheCreationInputTokens": 16809,
+     "webSearchRequests": 0,
+     "costUSD": 0.007239440000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 2177,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.007239440000000001,
+   "seconds": 21,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01NSEp5bUhFXmQkrzx32Dvcv",
+     "tool_input": {
+      "command": "sed -n '/^## 6\\./,/^## 7\\./p' mail/inbox.md | sed '$d' | python3 -c \"import sys,hashlib; b=sys.stdin.read().rstrip('\\n').encode(); print(hashlib.sha256(b).hexdigest())\"",
+      "description": "Compute digest of the handover as received"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  }
+ ]
+}
