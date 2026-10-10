@@ -200,6 +200,17 @@ Decided now, so the result cannot choose the conclusion:
 - If H7 holds on the strong receivers: the results page says the catch comes from reading back the plan and checking it, not from the line; the line's claim is a check with no judge call and no false alarms from judgement.
 - If H1 fails: a readback before an irreversible act is not a valid control at the receiver's locus; the control is pre-send validation plus the done-report check, and the spec and the site say so.
 
+## Amendments before the freeze
+
+Recorded before any result was read, on 10 October 2026, because the environment the study runs in differs from the one the protocol assumed:
+
+- **Runner.** The trials run as headless Claude Code sessions (`claude -p`), as study 5 did, not on `research/harness`: the environment holds no provider API key. The brief is the session's system prompt with the dynamic sections excluded; Claude Code's tool definitions are still in context, and the real date can still reach the receiver, so the brief states the case date and says it governs, and questions about the date are counted separately.
+- **Receivers.** Claude Sonnet 5.5 and Claude Haiku 5.5 only. The non-Anthropic receivers wait on a key, and the cross-vendor claim is not made from this run.
+- **Judge.** Claude Sonnet 5.5 for every receiver; the second-vendor judge waits on the same key.
+- **The previous-account slot** is `x_prev`, an extension key the codec accepts without a profile change, rather than a new profile slot.
+- **Brief length.** The prose arms carry a prose rendering of the legend's content, so every arm's brief is the same length within 10%.
+- **The judge's reply** is parsed from its message rather than written with a tool, and the arm-A done note in block 3 is also judged, so that the receiver's own report of a tool fault is measured in every arm.
+
 ## Layout
 
 ```
