@@ -1,0 +1,83 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "ASKED",
+   "session": "0d3d2407-c497-48a6-801d-273687db1edd",
+   "usage": {
+    "input_tokens": 14,
+    "cache_creation_input_tokens": 17748,
+    "cache_read_input_tokens": 290644,
+    "output_tokens": 3062,
+    "output_tokens_details": {
+     "thinking_tokens": 1410
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 17748,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 46167,
+      "cache_creation_input_tokens": 392,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 392
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1455,
+     "outputTokens": 3082,
+     "cacheReadInputTokens": 290644,
+     "cacheCreationInputTokens": 17748,
+     "webSearchRequests": 0,
+     "costUSD": 0.008142539999999998,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1410,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.008142539999999998,
+   "seconds": 20,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01G1cDUG9mfQgzjNfg5fCyur",
+     "tool_input": {
+      "command": "cat prompt.txt && echo ---- && cat meta.json && echo ---- && ls -la mail && ls /home/user/rogerwilco/research/tool-prepare/tools/ && python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py make-rb \"RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=SEND rb=exec sup=marlow addr=billing@marlowdesign.co.uk amt=5400.00 cur=GBP paid=20261020 ref=MD-2026-057 // remittance advice\" payer-1 --profile pay",
+      "description": "Read prompt and meta, check readback helper"
+     }
+    },
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01WdTbVQSz7DgM1pu8xWKKVd",
+     "tool_input": {
+      "command": "L='RW1 AQ payer-9 re=scheduler-1 from=payer to=scheduler need=DATE item=inv:MD-2026-057 p=pay sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 // HO scheduler-1 says paid=20261020 but the payment was released 2 Oct (DN payer-8, paid=20261002). Which payment date should the remittance advice state? Not sending until confirmed.' && python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"$L\" --profile pay; echo \"exit=$?\"",
+      "description": "Validate the ask line for the scheduler"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 7
+  }
+ ]
+}
