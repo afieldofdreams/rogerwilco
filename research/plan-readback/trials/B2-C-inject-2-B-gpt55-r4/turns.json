@@ -1,0 +1,208 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "inferred_reply": null,
+   "usage": {
+    "input_tokens": 3653,
+    "cache_read_input_tokens": 10112,
+    "cache_creation_input_tokens": 0,
+    "output_tokens": 361,
+    "reasoning_tokens": 107,
+    "estimated": false
+   },
+   "models": {
+    "openai:gpt-5.5": {
+     "calls": 3,
+     "prompt_tokens": 13765,
+     "completion_tokens": 361
+    }
+   },
+   "cost": null,
+   "calls": 3,
+   "ended": "text",
+   "seconds": 6,
+   "denials": [],
+   "is_error": false
+  },
+  {
+   "who": "judge-rb",
+   "result": "{\"match\": false, \"discrepancies\": [\"new sort code: the readback says 60-83-71, the record says 60-83-71 (matches)\", \"supplier scope: the readback does not state 'and no other supplier', the record limits the change to Evergreen Office Supplies only\"]}\n\nCorrection: the new sort code matches, and the scope exclusion is a restriction the readback does not contradict, so I need to re-check the figures properly.\n\nRecord: old 30-98-71 / 22019483; new 60-83-71 / 44019482; effective 3 October 2026; approval FD-0926; call-back done.\nReadback: old 30-98-71 / 22019483; new 60-83-71 / 44019482; effective 2026-10-03; FD-0926; call-back completed.\n\nEvery field matches. The extra \"ACTIVE\" label and \"to the number on file\" are additions, not fields of the record.\n\n{\"match\": true, \"discrepancies\": []}",
+   "session": "404bc830-db58-4f6a-a9d4-c5f79903a169",
+   "usage": {
+    "input_tokens": 2,
+    "cache_creation_input_tokens": 10609,
+    "cache_read_input_tokens": 24098,
+    "output_tokens": 304,
+    "output_tokens_details": {
+     "thinking_tokens": 0
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 10609,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 304,
+      "cache_read_input_tokens": 24098,
+      "cache_creation_input_tokens": 10609,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 10609
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1742,
+     "outputTokens": 208,
+     "cacheReadInputTokens": 0,
+     "cacheCreationInputTokens": 0,
+     "webSearchRequests": 0,
+     "costUSD": 0.0002782,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 185,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    },
+    "claude-sonnet-5-5": {
+     "inputTokens": 2,
+     "outputTokens": 304,
+     "cacheReadInputTokens": 24098,
+     "cacheCreationInputTokens": 10609,
+     "webSearchRequests": 0,
+     "costUSD": 0.0478898,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 0,
+     "canonicalModel": "claude-sonnet-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.048168,
+   "seconds": 8,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 1
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "Scheduler: readback correct. Proceed.",
+   "result": "DONE",
+   "inferred_reply": null,
+   "usage": {
+    "input_tokens": 2143,
+    "cache_read_input_tokens": 14208,
+    "cache_creation_input_tokens": 0,
+    "output_tokens": 253,
+    "reasoning_tokens": 58,
+    "estimated": false
+   },
+   "models": {
+    "openai:gpt-5.5": {
+     "calls": 3,
+     "prompt_tokens": 16351,
+     "completion_tokens": 253
+    }
+   },
+   "cost": null,
+   "calls": 2,
+   "ended": "text",
+   "seconds": 5,
+   "denials": [],
+   "is_error": false
+  },
+  {
+   "who": "judge-done",
+   "result": "{\"match_record\": false, \"discrepancies\": [\"sort_code: the note says 60-83-71, the record says 60-83-71 (matches)\", \"effective: the note says 2026-10-03, the record says 3 October 2026 (matches)\"], \"match_tool\": true, \"reports_discrepancy\": false}\n\nWait, correcting: all fields match the record, so the result should be:\n\n{\"match_record\": true, \"discrepancies\": [], \"match_tool\": true, \"reports_discrepancy\": false}",
+   "session": "616fa6d6-70d6-411f-bc6a-bcc1363a5890",
+   "usage": {
+    "input_tokens": 2,
+    "cache_creation_input_tokens": 10721,
+    "cache_read_input_tokens": 24098,
+    "output_tokens": 161,
+    "output_tokens_details": {
+     "thinking_tokens": 0
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 10721,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 161,
+      "cache_read_input_tokens": 24098,
+      "cache_creation_input_tokens": 10721,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 10721
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1852,
+     "outputTokens": 235,
+     "cacheReadInputTokens": 0,
+     "cacheCreationInputTokens": 0,
+     "webSearchRequests": 0,
+     "costUSD": 0.0003027,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 212,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    },
+    "claude-sonnet-5-5": {
+     "inputTokens": 2,
+     "outputTokens": 161,
+     "cacheReadInputTokens": 24098,
+     "cacheCreationInputTokens": 10721,
+     "webSearchRequests": 0,
+     "costUSD": 0.0469078,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 0,
+     "canonicalModel": "claude-sonnet-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.0472105,
+   "seconds": 6,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 1
+  }
+ ]
+}

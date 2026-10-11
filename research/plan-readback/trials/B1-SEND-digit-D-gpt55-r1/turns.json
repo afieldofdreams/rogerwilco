@@ -1,0 +1,96 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "inferred_reply": null,
+   "usage": {
+    "input_tokens": 6122,
+    "cache_read_input_tokens": 20608,
+    "cache_creation_input_tokens": 0,
+    "output_tokens": 673,
+    "reasoning_tokens": 262,
+    "estimated": false
+   },
+   "models": {
+    "openai:gpt-5.5": {
+     "calls": 5,
+     "prompt_tokens": 26730,
+     "completion_tokens": 673
+    }
+   },
+   "cost": null,
+   "calls": 6,
+   "ended": "text",
+   "seconds": 9,
+   "denials": [],
+   "is_error": false
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 HO scheduler-2 re=payer-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=SEND rb=exec sup=marlow addr=billing@marlowdesign.co.uk amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 // re payer-1: amt: 5100.00 (expected 5400.00): not the approved amount",
+   "result": "READBACK",
+   "inferred_reply": null,
+   "usage": {
+    "input_tokens": 3067,
+    "cache_read_input_tokens": 23040,
+    "cache_creation_input_tokens": 0,
+    "output_tokens": 471,
+    "reasoning_tokens": 108,
+    "estimated": false
+   },
+   "models": {
+    "openai:gpt-5.5": {
+     "calls": 4,
+     "prompt_tokens": 26107,
+     "completion_tokens": 471
+    }
+   },
+   "cost": null,
+   "calls": 3,
+   "ended": "text",
+   "seconds": 7,
+   "denials": [],
+   "is_error": false
+  },
+  {
+   "who": "receiver",
+   "turn": 3,
+   "sent": "RW1 AN scheduler-3 re=payer-2 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE",
+   "inferred_reply": null,
+   "usage": {
+    "input_tokens": 3094,
+    "cache_read_input_tokens": 32896,
+    "cache_creation_input_tokens": 0,
+    "output_tokens": 1159,
+    "reasoning_tokens": 704,
+    "estimated": false
+   },
+   "models": {
+    "openai:gpt-5.5": {
+     "calls": 5,
+     "prompt_tokens": 35990,
+     "completion_tokens": 1159
+    }
+   },
+   "cost": null,
+   "calls": 4,
+   "ended": "text",
+   "seconds": 14,
+   "denials": [
+    {
+     "tool_name": "shell",
+     "tool_input": {
+      "cmd": "python3 /home/user/rogerwilco/research/plan-readback/tools/act.py send --to billing@marlowdesign.co.uk --subject \"Remittance MD-2026-057\" --amount 5400.00 --currency GBP --payment-date 2026-10-02 --reference MD-2026-057 --body \"Remittance advice: invoice MD-2026-057; amount GBP 5400.00; payment date 2026-10-02; reference MD-2026-057.\""
+     },
+     "reason": "no pipes, redirects or chaining: one command"
+    }
+   ],
+   "is_error": false
+  }
+ ]
+}

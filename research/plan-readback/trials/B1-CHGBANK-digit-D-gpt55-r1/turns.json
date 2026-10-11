@@ -1,0 +1,119 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "inferred_reply": null,
+   "usage": {
+    "input_tokens": 6635,
+    "cache_read_input_tokens": 26368,
+    "cache_creation_input_tokens": 0,
+    "output_tokens": 1099,
+    "reasoning_tokens": 328,
+    "estimated": false
+   },
+   "models": {
+    "openai:gpt-5.5": {
+     "calls": 6,
+     "prompt_tokens": 33003,
+     "completion_tokens": 1099
+    }
+   },
+   "cost": null,
+   "calls": 7,
+   "ended": "text",
+   "seconds": 14,
+   "denials": [
+    {
+     "tool_name": "shell",
+     "tool_input": {
+      "cmd": "python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=1a33a28f4510 sup=evergreen acct=60-83-71/44019428 eff=20261003 apref=FD-0926 x_prev=30-98-71/22019483 // Change Evergreen Office Supplies bank details to 60-83-71/44019428 effective 2026-10-03 under FD-0926; current account is 30-98-71/22019483.\" --profile pay"
+     },
+     "reason": "no pipes, redirects or chaining: one command"
+    }
+   ],
+   "is_error": false
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 HO scheduler-2 re=payer-1 p=pay from=scheduler to=payer item=sup:evergreen ask=CHGBANK rb=exec sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 appr=OK // re payer-1: acct: 60-83-71/44019428 (expected 60-83-71/44019482): not the ACTIVE account on file for the supplier named in the HO",
+   "result": "READBACK",
+   "inferred_reply": null,
+   "usage": {
+    "input_tokens": 4547,
+    "cache_read_input_tokens": 34944,
+    "cache_creation_input_tokens": 0,
+    "output_tokens": 846,
+    "reasoning_tokens": 219,
+    "estimated": false
+   },
+   "models": {
+    "openai:gpt-5.5": {
+     "calls": 5,
+     "prompt_tokens": 39491,
+     "completion_tokens": 846
+    }
+   },
+   "cost": null,
+   "calls": 5,
+   "ended": "text",
+   "seconds": 10,
+   "denials": [
+    {
+     "tool_name": "shell",
+     "tool_input": {
+      "cmd": "python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=1a33a28f4510 sup=evergreen acct=60-83-71/44019428 eff=20261003 apref=FD-0926 x_prev=30-98-71/22019483 // Change Evergreen Office Supplies bank details to 60-83-71/44019428 effective 2026-10-03 under FD-0926; current account is 30-98-71/22019483.\" --profile pay"
+     },
+     "reason": "no pipes, redirects or chaining: one command"
+    }
+   ],
+   "is_error": false
+  },
+  {
+   "who": "receiver",
+   "turn": 3,
+   "sent": "RW1 AN scheduler-3 re=payer-2 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE",
+   "inferred_reply": null,
+   "usage": {
+    "input_tokens": 4041,
+    "cache_read_input_tokens": 41088,
+    "cache_creation_input_tokens": 0,
+    "output_tokens": 753,
+    "reasoning_tokens": 293,
+    "estimated": false
+   },
+   "models": {
+    "openai:gpt-5.5": {
+     "calls": 5,
+     "prompt_tokens": 45129,
+     "completion_tokens": 753
+    }
+   },
+   "cost": null,
+   "calls": 4,
+   "ended": "text",
+   "seconds": 10,
+   "denials": [
+    {
+     "tool_name": "shell",
+     "tool_input": {
+      "cmd": "python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=1a33a28f4510 sup=evergreen acct=60-83-71/44019428 eff=20261003 apref=FD-0926 x_prev=30-98-71/22019483 // Change Evergreen Office Supplies bank details to 60-83-71/44019428 effective 2026-10-03 under FD-0926; current account is 30-98-71/22019483.\" --profile pay"
+     },
+     "reason": "no pipes, redirects or chaining: one command"
+    },
+    {
+     "tool_name": "shell",
+     "tool_input": {
+      "cmd": "python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"RW1 DN payer-3 re=scheduler-2 from=payer to=scheduler item=sup:evergreen out=OK p=pay sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 // Master updated for Evergreen Office Supplies; previous account was 30-98-71/22019483.\" --profile pay"
+     },
+     "reason": "no pipes, redirects or chaining: one command"
+    }
+   ],
+   "is_error": false
+  }
+ ]
+}
