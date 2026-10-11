@@ -179,7 +179,7 @@ def analyse(tag: str | None, only: str = "", exclude: str = "") -> None:
     rows = []
     for trial in sorted(C.TRIALS.iterdir()):
         g = trial / "grade.json"
-        if g.exists() and only in trial.name and not (exclude and exclude in trial.name):
+        if g.exists() and only in trial.name and not (exclude and trial.name.endswith(exclude)):
             rows.append(C.read_json(g))
     out_dir = C.RESULTS / tag if tag else C.RESULTS
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -233,7 +233,7 @@ def analyse(tag: str | None, only: str = "", exclude: str = "") -> None:
 
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(); ap.add_argument("--tag", default=None); ap.add_argument("--only", default="")
-    ap.add_argument("--exclude", default="", help="skip trials whose id contains this (the pilot's -p)")
+    ap.add_argument("--exclude", default="", help="skip trials whose id ends with this (the pilot's -p)")
     a = ap.parse_args(argv)
     analyse(a.tag, a.only, a.exclude)
     return 0
