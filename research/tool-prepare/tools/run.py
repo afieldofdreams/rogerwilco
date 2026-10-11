@@ -96,6 +96,22 @@ def reset_trial(trial: Path) -> None:
         p = C.SENDER / f"{trial.name}.{f}"
         if p.exists():
             p.unlink()
+    orig = C.SENDER / f"{trial.name}.inbox.md"
+    if orig.exists():
+        (trial / "mail" / "inbox.md").write_text(orig.read_text())
+        orig.unlink()
+
+
+def deliver(trial: Path, line: str) -> None:
+    """Add the scheduler's message to the inbox as it arrives, so that the receiver (and the two-phase tool, by id) can read it there."""
+    inbox = trial / "mail" / "inbox.md"
+    text = inbox.read_text()
+    orig = C.SENDER / f"{trial.name}.inbox.md"      # the inbox as built, so that a reset can restore it
+    if not orig.exists():
+        orig.write_text(text)
+    n = text.count("\n## ") + (1 if text.startswith("## ") else 0) + 1
+    stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")
+    inbox.write_text(text.rstrip("\n") + f"\n\n## {n}. {stamp} from scheduler to payer\n{line}\n")
 
 
 def run_trial(trial: Path) -> str:
@@ -137,6 +153,7 @@ def run_trial(trial: Path) -> str:
                     status = "held: rejected twice; stopped without acting"
                     break
                 reply = "Message from scheduler:\n\n" + check["reply"]
+                deliver(trial, check["reply"])
                 n += 1
                 r = claude(reply, model, sid, True, trial, system)
                 turns.append({"who": "receiver", "turn": n, "sent": check["reply"], **r})
