@@ -1,0 +1,3 @@
+# The codec as frozen for study 7
+
+`scripts/rogerwilco.py`, `profiles/core.json` and `profiles/pay.json` exactly as study 6 froze them: the codec at commit `1bf4f5f3351c827b0947138eb6d8b6fc2938ee24`, before the protocol change of 11 October 2026 that added `rb=exec`, the `prev` slot and the pre-send and done checks to the live codec. Study 7 keeps study 6's freeze so that its arms C and D are the same arms, and so that nothing the receiver runs can move under the study: the receiver's brief names this copy's path, not the live codec, and the sender's checks, the two-phase tool's readback line and the parse of DN lines all load it. The live protocol's `prev` slot is `x_prev` here, as it was in study 6.
