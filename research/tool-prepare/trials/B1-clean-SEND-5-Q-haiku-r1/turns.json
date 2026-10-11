@@ -1,0 +1,137 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "PREPARED",
+   "session": "7efeefa6-f2e5-45e1-bb59-34f2c35df94c",
+   "usage": {
+    "input_tokens": 6,
+    "cache_creation_input_tokens": 15531,
+    "cache_read_input_tokens": 110750,
+    "output_tokens": 1577,
+    "output_tokens_details": {
+     "thinking_tokens": 963
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 15531,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 7,
+      "cache_read_input_tokens": 42802,
+      "cache_creation_input_tokens": 1540,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 1540
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1459,
+     "outputTokens": 1597,
+     "cacheReadInputTokens": 110750,
+     "cacheCreationInputTokens": 15531,
+     "webSearchRequests": 0,
+     "costUSD": 0.0051581000000000005,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 963,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.0051581000000000005,
+   "seconds": 14,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 3
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y x_tok=ee07b23f // readback correct, commit ee07b23f",
+   "result": "DONE",
+   "session": "7efeefa6-f2e5-45e1-bb59-34f2c35df94c",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 7989,
+    "cache_read_input_tokens": 197098,
+    "output_tokens": 1239,
+    "output_tokens_details": {
+     "thinking_tokens": 240
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7989,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 51475,
+      "cache_creation_input_tokens": 856,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 856
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1467,
+     "outputTokens": 2836,
+     "thinkingTokens": 1203,
+     "cacheReadInputTokens": 307848,
+     "cacheCreationInputTokens": 23520,
+     "webSearchRequests": 0,
+     "costUSD": 0.009347180000000002,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.009347180000000002,
+   "seconds": 11,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01CoStxKMirdrAgxQLd35Pab",
+     "tool_input": {
+      "command": "cd_target=/home/user/rogerwilco/research/tool-prepare/trials/B1-clean-SEND-5-Q-haiku-r1; LINE=\"RW1 DN payer-2 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 out=OK addr=billing@marlowdesign.co.uk amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 // remittance advice sent\"; python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"$LINE\" --profile pay && printf '%s\\n' \"$LINE\" > /home/user/rogerwilco/research/tool-prepare/trials/B1-clean-SEND-5-Q-haiku-r1/dn.txt && cat /home/user/rogerwilco/research/tool-prepare/trials/B1-clean-SEND-5-Q-haiku-r1/dn.txt",
+      "description": "Validate and write the DN line to dn.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  }
+ ]
+}
