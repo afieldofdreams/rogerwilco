@@ -1,0 +1,146 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "f3b19d4f-3e65-4eeb-bf7c-696b35954020",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 15368,
+    "cache_read_input_tokens": 195158,
+    "output_tokens": 1642,
+    "output_tokens_details": {
+     "thinking_tokens": 489
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 15368,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 43380,
+      "cache_creation_input_tokens": 341,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 341
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1467,
+     "outputTokens": 1662,
+     "cacheReadInputTokens": 195158,
+     "cacheCreationInputTokens": 15368,
+     "webSearchRequests": 0,
+     "costUSD": 0.0060028799999999995,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 489,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.0060028799999999995,
+   "seconds": 12,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01K7R4bpTFG85QvZ2rkxeg16",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=88b2f659e1d9 sup=evergreen appr=OK acct=60-83-71/44019482 eff=20261003 apref=FD-0926\" --profile pay && printf '%s\\n' \"RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=88b2f659e1d9 sup=evergreen appr=OK acct=60-83-71/44019482 eff=20261003 apref=FD-0926\" > rb.txt && cat rb.txt",
+      "description": "Validate and write readback to rb.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE",
+   "session": "f3b19d4f-3e65-4eeb-bf7c-696b35954020",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 7662,
+    "cache_read_input_tokens": 245766,
+    "output_tokens": 1007,
+    "output_tokens_details": {
+     "thinking_tokens": 164
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7662,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 51080,
+      "cache_creation_input_tokens": 303,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 303
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1477,
+     "outputTokens": 2669,
+     "thinkingTokens": 653,
+     "cacheReadInputTokens": 440924,
+     "cacheCreationInputTokens": 23030,
+     "webSearchRequests": 0,
+     "costUSD": 0.01049744,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.01049744,
+   "seconds": 10,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01Mh4vmgHnDn1ryq6AXWo4tm",
+     "tool_input": {
+      "command": "cd /home/user/rogerwilco/rogerwilco && python3 scripts/rogerwilco.py validate \"RW1 DN payer-2 re=scheduler-1 from=payer to=scheduler item=sup:evergreen out=OK sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926\" --profile pay",
+      "description": "Validate the DN line"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  }
+ ]
+}

@@ -1,0 +1,17 @@
+READBACK re scheduler-1
+act: SEND
+invoice: MD-2026-057
+supplier: Marlow Design Partners LLP
+to: billing@marlowdesign.co.uk
+amount: 5400.00 GBP
+date: 2026-10-02
+reference: MD-2026-057
+
+Envelope: RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=SEND p=pay h=13a553c44ae6
+
+Notes for the scheduler:
+- The handover gives no address, so the address is the ACTIVE billing contact for marlow in supplier_bank.json (billing@marlowdesign.co.uk, domain marlowdesign.co.uk, which matches the master).
+- The handover does not name an account and this act does not change the master. The payment DN payer-8 (09:12) recorded the account 40-12-88/61102938, which is the ACTIVE marlow account on file.
+- The handover gives no currency-kind field for the email; the figure is shown as GBP 5400.00 as given.
+- The message body will carry only the invoice, amount, payment date and reference. Nothing else.
+- Awaiting your confirmation before sending.

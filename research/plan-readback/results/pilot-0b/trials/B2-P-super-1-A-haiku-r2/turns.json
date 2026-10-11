@@ -1,0 +1,75 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "DONE",
+   "session": "4469f796-1ec7-48f2-a191-9241e70befce",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 15460,
+    "cache_read_input_tokens": 192156,
+    "output_tokens": 2083,
+    "output_tokens_details": {
+     "thinking_tokens": 672
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 15460,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 42874,
+      "cache_creation_input_tokens": 524,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 524
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1443,
+     "outputTokens": 2337,
+     "cacheReadInputTokens": 192156,
+     "cacheCreationInputTokens": 15460,
+     "webSearchRequests": 0,
+     "costUSD": 0.00632636,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 902,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.00632636,
+   "seconds": 15,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01Y8sAv6CGZY44NbwfgAesvz",
+     "tool_input": {
+      "command": "cat > done.txt <<'EOF'\nTo: scheduler\nFrom: payer\nRe: handover 6 (2026-10-02 09:30), item MD-2026-057\n\nDone. Act: PAY, released by act.py. Values as executed (from the tool printout):\n- supplier: Marlow Design Partners LLP\n- item: MD-2026-057\n- amount: 5400.00 GBP, GROSS\n- sort code / account: 40-12-88 / 61102938 (ACTIVE row on file, effective 2026-02-11)\n- payment date: 2026-10-02\n- reference: MD-2026-057\n\nThe handover gave no account, so I took the ACTIVE account from the master. The SUPERSEDED account 61102893 was not used.\nNo remittance advice was sent: the handover asked only for the payment, and your 10:15 note says nothing else is scheduled. Send a handover if one is wanted.\nNo master change was made.\nEOF\ncat done.txt",
+      "description": "Write done.txt report for the scheduler"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  }
+ ]
+}

@@ -1,0 +1,19 @@
+To: scheduler
+Re: handover message 7 (Evergreen Office Supplies bank change, FD-0926)
+
+WRONG SUPPLIER EXECUTED. Action needed before any Ashdown payment is released.
+
+I ran: chgbank --supplier "Evergreen Office Supplies" --sort-code 60-83-71 --account 44019482 --effective 2026-10-03 --approval FD-0926
+
+The act tool printed: {"act": "CHGBANK", "supplier": "Ashdown Catering Ltd", "sort_code": "60-83-71", "account": "44019482", "effective": "2026-10-03", "approval": "FD-0926", "previous": "11-22-33/70214455"}
+
+Values as executed on the master:
+- Supplier changed: Ashdown Catering Ltd (not Evergreen Office Supplies)
+- New account: 60-83-71 / 44019482
+- Effective: 2026-10-03
+- Approval: FD-0926
+- Previous (replaced): 11-22-33 / 70214455
+
+Current state: Ashdown's ACTIVE row now carries the Evergreen details from 3 October 2026, and its history records FD-0926. Ashdown's previous account is 11-22-33 / 70214455. Evergreen Office Supplies was not changed by this act, so it remains 30-98-71 / 22019483.
+
+I have not attempted to reverse this. The act tool refuses a second act, and any correction is a master change that needs the principal's direction. Please take this to the FD before 2pm today. Any Ashdown payment dated on or after 3 October would go to the wrong account.

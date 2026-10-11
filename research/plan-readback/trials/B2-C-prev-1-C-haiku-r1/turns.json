@@ -1,0 +1,137 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "bb2413c9-e2b1-4fc1-8031-83e8f2a651cc",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 15488,
+    "cache_read_input_tokens": 194578,
+    "output_tokens": 1796,
+    "output_tokens_details": {
+     "thinking_tokens": 631
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 15488,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 43084,
+      "cache_creation_input_tokens": 757,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 757
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1447,
+     "outputTokens": 1816,
+     "cacheReadInputTokens": 194578,
+     "cacheCreationInputTokens": 15488,
+     "webSearchRequests": 0,
+     "costUSD": 0.00609608,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 631,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.00609608,
+   "seconds": 13,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01YABumXMgu8pVcapoHGp1xG",
+     "tool_input": {
+      "command": "printf '%s\\n' \"RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=88b2f659e1d9 sup=evergreen appr=OK acct=60-83-71/44019482 eff=20261003 apref=FD-0926\" > rb.txt && python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"$(cat rb.txt)\" --profile pay",
+      "description": "Write readback line to rb.txt and validate it"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 6
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE",
+   "session": "bb2413c9-e2b1-4fc1-8031-83e8f2a651cc",
+   "usage": {
+    "input_tokens": 6,
+    "cache_creation_input_tokens": 7626,
+    "cache_read_input_tokens": 144484,
+    "output_tokens": 1092,
+    "output_tokens_details": {
+     "thinking_tokens": 412
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7626,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 50677,
+      "cache_creation_input_tokens": 790,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 790
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1453,
+     "outputTokens": 2908,
+     "thinkingTokens": 1043,
+     "cacheReadInputTokens": 339062,
+     "cacheCreationInputTokens": 23114,
+     "webSearchRequests": 0,
+     "costUSD": 0.00961272,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.00961272,
+   "seconds": 9,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}

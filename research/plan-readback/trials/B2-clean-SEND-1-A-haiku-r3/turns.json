@@ -1,0 +1,75 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "DONE",
+   "session": "f2a04bf6-5f41-4ea3-b83d-160b0206aaf6",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 15788,
+    "cache_read_input_tokens": 193482,
+    "output_tokens": 2253,
+    "output_tokens_details": {
+     "thinking_tokens": 1110
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 15788,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 43268,
+      "cache_creation_input_tokens": 457,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 457
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1455,
+     "outputTokens": 2273,
+     "cacheReadInputTokens": 193482,
+     "cacheCreationInputTokens": 15788,
+     "webSearchRequests": 0,
+     "costUSD": 0.0063744199999999996,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1110,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.0063744199999999996,
+   "seconds": 31,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01WQs7A7fqb2j8Pnt9daEyaG",
+     "tool_input": {
+      "command": "cat > done.txt <<'EOF'\nTo: scheduler\nRe: handover msg 8 (remittance advice, Marlow Design Partners LLP, invoice MD-2026-057)\n\nDone. Remittance advice sent via act tool (SEND), values as executed:\n- to: billing@marlowdesign.co.uk (billing contact on file, domain marlowdesign.co.uk)\n- amount: 5400.00\n- currency: GBP\n- payment date: 2026-10-02\n- reference: MD-2026-057\n- subject: \"Remittance advice: invoice MD-2026-057\"\n\nThe handover did not state an approval reference. The payment itself was approved under FD-0929 (msg 5); I took that as the basis for this notice.\nEOF\ncat done.txt",
+      "description": "Write done report for the scheduler"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  }
+ ]
+}

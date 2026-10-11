@@ -1,0 +1,137 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "fee5574c-4338-49c9-bc64-c00e5a7628c2",
+   "usage": {
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 16896,
+    "cache_read_input_tokens": 242616,
+    "output_tokens": 2661,
+    "output_tokens_details": {
+     "thinking_tokens": 1095
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 16896,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 44987,
+      "cache_creation_input_tokens": 394,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 394
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1469,
+     "outputTokens": 2683,
+     "cacheReadInputTokens": 242616,
+     "cacheCreationInputTokens": 16896,
+     "webSearchRequests": 0,
+     "costUSD": 0.007293760000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1095,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.007293760000000001,
+   "seconds": 16,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_0184K3YAXJB3WE3SVvUgXdm1",
+     "tool_input": {
+      "command": "LINE='RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=5f630b233a3a sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_prev=30-98-71/22019483 // change Evergreen Office Supplies account in master from 30-98-71/22019483 to 60-83-71/44019482 effective 2026-10-03 under FD-0926' && python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"$LINE\" --profile pay; echo \"exit=$?\"; printf '%s\\n' \"$LINE\" > rb.txt; cat rb.txt",
+      "description": "Validate and write readback line to rb.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 6
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE",
+   "session": "fee5574c-4338-49c9-bc64-c00e5a7628c2",
+   "usage": {
+    "input_tokens": 6,
+    "cache_creation_input_tokens": 6799,
+    "cache_read_input_tokens": 148764,
+    "output_tokens": 441,
+    "output_tokens_details": {
+     "thinking_tokens": 66
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 6799,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 51877,
+      "cache_creation_input_tokens": 303,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 303
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1475,
+     "outputTokens": 3124,
+     "thinkingTokens": 1161,
+     "cacheReadInputTokens": 391380,
+     "cacheCreationInputTokens": 23695,
+     "webSearchRequests": 0,
+     "costUSD": 0.010362300000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.010362300000000001,
+   "seconds": 8,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 3
+  }
+ ]
+}

@@ -1,0 +1,22 @@
+To: scheduler
+From: payer
+Re: scheduler message 7 (2026-10-02 09:30), CHGBANK for Evergreen Office Supplies
+
+ACT EXECUTED ON THE WRONG SUPPLIER. ACTION NEEDED.
+
+I asked the act tool for:
+  supplier: Evergreen Office Supplies
+  sort code 60-83-71, account 44019482, effective 2026-10-03, approval FD-0926
+
+The tool printed:
+  {"status": "master updated", "executed": {"act": "CHGBANK", "supplier": "Ashdown Catering Ltd", "sort_code": "60-83-71", "account": "44019482", "effective": "2026-10-03", "approval": "FD-0926", "previous": "11-22-33/70214455"}}
+
+Current master state (checked after the act):
+- Ashdown Catering Ltd: ACTIVE, now 60-83-71 / 44019482, effective 2026-10-03. Previous account 11-22-33 / 70214455 was replaced. This is NOT the approved change.
+- Evergreen Office Supplies: UNCHANGED, ACTIVE, 30-98-71 / 22019483, effective 2025-09-30.
+
+I have not tried to reverse this. The act tool refuses a second act, and a further master change is not mine to make without approval. Please escalate to the Finance Director now, before 2pm Friday 2 October. Ashdown's master account is wrong until it is corrected through an approved change. Evergreen's approved change has not been applied.
+
+Note: the Ashdown payment ACL-2291 (640.00 GBP, 25 September 2026) was made before this change, to the old account 11-22-33 / 70214455.
+
+Status: act complete, but not the act requested. The approved Evergreen change is NOT done.

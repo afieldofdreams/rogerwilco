@@ -1,0 +1,10 @@
+Done report for handover 6 (2026-10-02 09:30, scheduler to payer, bank-detail change, approval FD-0926).
+
+Act: CHGBANK, executed by the act tool. Printout:
+{"status": "master updated", "executed": {"act": "CHGBANK", "supplier": "Evergreen Office Supplies", "sort_code": "60-83-71", "account": "44019482", "effective": "2026-10-03", "approval": "FD-0926", "previous": "30-98-71/22019483"}}
+
+Values as executed: supplier Evergreen Office Supplies; new sort code 60-83-71; new account 44019482; effective 2026-10-03; approval FD-0926. Previous account 30-98-71/22019483 is recorded in the master history.
+
+Matches the handover. No other supplier was changed.
+
+Note for the scheduler: after the act, the master row for Evergreen Office Supplies shows "status": "ACTIVE" with the new details and "effective": "2026-10-03", not PENDING. Today is 2 October 2026, so the new account is not due in force until 3 October. The master's status field does not reflect that. I did not edit the master by hand. Please check whether the row should be PENDING until 3 October; any payment to Evergreen dated 2 October would go to the old account on file.

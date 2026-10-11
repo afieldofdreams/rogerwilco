@@ -1,0 +1,137 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "fb243ba9-7ba6-4879-bd3e-8898347460b5",
+   "usage": {
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 17433,
+    "cache_read_input_tokens": 243950,
+    "output_tokens": 2969,
+    "output_tokens_details": {
+     "thinking_tokens": 1321
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 17433,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 45491,
+      "cache_creation_input_tokens": 428,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 428
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1457,
+     "outputTokens": 2989,
+     "cacheReadInputTokens": 243950,
+     "cacheCreationInputTokens": 17433,
+     "webSearchRequests": 0,
+     "costUSD": 0.0075663,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1321,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.0075663,
+   "seconds": 18,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_016DayyS1AfQiSV34Nma9HeA",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=a7e8e1a75f59 sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929 // Pay Marlow Design Partners LLP GBP 5400.00 GROSS to ACTIVE account 40-12-88/61102938 on 2 Oct 2026, ref MD-2026-057, approval FD-0929\" --profile pay; echo \"exit=$?\"",
+      "description": "Validate the readback line"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 6
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE\n\nThe payment was released, but not for the approved amount. The act tool printed `amount: 5040.00` GBP for Marlow Design Partners LLP, against the 5400.00 GBP in the handover and the approval. The payment is irreversible and I cannot correct it. Its details were: payee account 40-12-88/61102938 (the ACTIVE account on file), payment date 2 Oct 2026, reference MD-2026-057. I recorded it as `out=PARTIAL` in dn.txt, with the 5040.00 value as printed and a note that 360.00 is short. The FD needs to review this before the 2pm cut-off.",
+   "session": "fb243ba9-7ba6-4879-bd3e-8898347460b5",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 8237,
+    "cache_read_input_tokens": 204218,
+    "output_tokens": 1798,
+    "output_tokens_details": {
+     "thinking_tokens": 809
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 8237,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 211,
+      "cache_read_input_tokens": 53769,
+      "cache_creation_input_tokens": 387,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 387
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1465,
+     "outputTokens": 4787,
+     "thinkingTokens": 2130,
+     "cacheReadInputTokens": 448168,
+     "cacheCreationInputTokens": 25670,
+     "webSearchRequests": 0,
+     "costUSD": 0.01215568,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.01215568,
+   "seconds": 15,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}

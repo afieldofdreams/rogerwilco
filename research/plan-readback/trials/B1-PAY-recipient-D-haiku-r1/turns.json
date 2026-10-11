@@ -1,0 +1,83 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "ASKED",
+   "session": "248fdec9-5305-4a7c-906f-e6e63fa0043c",
+   "usage": {
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 17415,
+    "cache_read_input_tokens": 244880,
+    "output_tokens": 3336,
+    "output_tokens_details": {
+     "thinking_tokens": 1923
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 17415,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 45526,
+      "cache_creation_input_tokens": 375,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 375
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1453,
+     "outputTokens": 3356,
+     "cacheReadInputTokens": 244880,
+     "cacheCreationInputTokens": 17415,
+     "webSearchRequests": 0,
+     "costUSD": 0.0077551,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1923,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.0077551,
+   "seconds": 20,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01EdaRsFcKJWvuWdgL6Sasa6",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"RW1 AQ payer-8 re=scheduler-1 from=payer to=scheduler need=TEXT item=inv:MD-2026-057 sup=marlow amt=5400.00 cur=GBP kind=GROSS appr=OK apref=FD-0929 paid=20261002 // HO scheduler-1 says to=auditor, not payer. Not acting. Re-issue to payer if meant for me; FD out from 2pm today.\" --profile pay; echo \"exit=$?\"",
+      "description": "Validate the question line to the scheduler"
+     }
+    },
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_0133JrrNMwRUVXh1ZbLPodtD",
+     "tool_input": {
+      "command": "printf '%s\\n' \"RW1 AQ payer-8 re=scheduler-1 from=payer to=scheduler need=TEXT item=inv:MD-2026-057 sup=marlow amt=5400.00 cur=GBP kind=GROSS appr=OK apref=FD-0929 paid=20261002 // HO scheduler-1 says to=auditor, not payer. Not acting. Re-issue to payer if meant for me; FD out from 2pm today.\" > question.txt && cat question.txt",
+      "description": "Write the question line to question.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 6
+  }
+ ]
+}

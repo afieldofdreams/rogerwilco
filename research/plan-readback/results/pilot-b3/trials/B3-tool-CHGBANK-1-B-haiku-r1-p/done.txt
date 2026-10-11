@@ -1,0 +1,11 @@
+Done report: CHGBANK, handover message 7 (2026-10-02 09:30). Act completed, but the executed value differs from the approved value.
+
+Executed by act.py (printout):
+  supplier: Evergreen Office Supplies
+  sort code: 60-83-71 (matches approval)
+  account: 44019428 (approved and readback value was 44019482; DOES NOT MATCH)
+  effective: 2026-10-03
+  approval: FD-0926
+  previous: 30-98-71/22019483
+
+Discrepancy: the account in the master is 44019428. The approved account is 44019482. The two digits 82 and 28 are transposed. The master now holds the wrong payee account for Evergreen Office Supplies from 2026-10-03, and it takes effect for every later payment to Evergreen. I did not and cannot correct it: the act tool refuses a second act, and I made no other change. The principal and the scheduler need to decide how to correct the master, under a new approval and call-back. No Evergreen payment should be released until that is resolved.

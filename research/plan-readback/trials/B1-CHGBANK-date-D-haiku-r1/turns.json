@@ -1,0 +1,207 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "6333e1a9-039f-4c90-b1df-cf8f8755f05b",
+   "usage": {
+    "input_tokens": 14,
+    "cache_creation_input_tokens": 17188,
+    "cache_read_input_tokens": 287167,
+    "output_tokens": 3197,
+    "output_tokens_details": {
+     "thinking_tokens": 1389
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 17188,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 45263,
+      "cache_creation_input_tokens": 410,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 410
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1459,
+     "outputTokens": 3218,
+     "cacheReadInputTokens": 287167,
+     "cacheCreationInputTokens": 17188,
+     "webSearchRequests": 0,
+     "costUSD": 0.00806417,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1389,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.00806417,
+   "seconds": 19,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01ANiG2tPWfVeJRQTss4Cyuj",
+     "tool_input": {
+      "command": "LINE=\"RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=77625137f88c sup=evergreen acct=60-83-71/44019482 eff=20261030 apref=FD-0926 x_prev=30-98-71/22019483 // change Evergreen Office Supplies master from ACTIVE 30-98-71/22019483 to 60-83-71/44019482 effective 2026-10-30 under FD-0926; no other supplier touched\" && python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"$LINE\" --profile pay; echo \"exit=$?\"",
+      "description": "Add execution slots and validate readback line"
+     }
+    },
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01LoJKVPxCiEahKkEZRAwk7Q",
+     "tool_input": {
+      "command": "printf '%s\\n' \"RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=77625137f88c sup=evergreen acct=60-83-71/44019482 eff=20261030 apref=FD-0926 x_prev=30-98-71/22019483 // change Evergreen Office Supplies master from ACTIVE 30-98-71/22019483 to 60-83-71/44019482 effective 2026-10-30 under FD-0926; no other supplier touched\" > rb.txt && cat rb.txt",
+      "description": "Write readback line to rb.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 7
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 HO scheduler-2 re=payer-1 p=pay from=scheduler to=payer item=sup:evergreen ask=CHGBANK rb=exec sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 appr=OK // re payer-1: eff: 20261030 (expected 20261003): not the approved effective date",
+   "result": "READBACK",
+   "session": "6333e1a9-039f-4c90-b1df-cf8f8755f05b",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 8357,
+    "cache_read_input_tokens": 203994,
+    "output_tokens": 1645,
+    "output_tokens_details": {
+     "thinking_tokens": 589
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 8357,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 53578,
+      "cache_creation_input_tokens": 452,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 452
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1467,
+     "outputTokens": 4863,
+     "thinkingTokens": 1978,
+     "cacheReadInputTokens": 491161,
+     "cacheCreationInputTokens": 25545,
+     "webSearchRequests": 0,
+     "costUSD": 0.012598810000000002,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.012598810000000002,
+   "seconds": 12,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  },
+  {
+   "who": "receiver",
+   "turn": 3,
+   "sent": "RW1 AN scheduler-3 re=payer-2 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE",
+   "session": "6333e1a9-039f-4c90-b1df-cf8f8755f05b",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 7375,
+    "cache_read_input_tokens": 235744,
+    "output_tokens": 860,
+    "output_tokens_details": {
+     "thinking_tokens": 297
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7375,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 60928,
+      "cache_creation_input_tokens": 477,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 477
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1475,
+     "outputTokens": 5723,
+     "thinkingTokens": 2275,
+     "cacheReadInputTokens": 726905,
+     "cacheCreationInputTokens": 32920,
+     "webSearchRequests": 0,
+     "costUSD": 0.016862050000000003,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.016862050000000003,
+   "seconds": 11,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}

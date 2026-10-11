@@ -1,0 +1,75 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "DONE",
+   "session": "646ca4dd-c255-4d97-95cd-ce154b1f1df3",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 16580,
+    "cache_read_input_tokens": 194245,
+    "output_tokens": 3154,
+    "output_tokens_details": {
+     "thinking_tokens": 1888
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 16580,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 43973,
+      "cache_creation_input_tokens": 447,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 447
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1443,
+     "outputTokens": 3174,
+     "cacheReadInputTokens": 194245,
+     "cacheCreationInputTokens": 16580,
+     "webSearchRequests": 0,
+     "costUSD": 0.006989750000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1888,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.006989750000000001,
+   "seconds": 19,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01AJs53LvbJr1reN1LSnureM",
+     "tool_input": {
+      "command": "cat > done.txt <<'EOF'\nTo: scheduler\nRe: handover 6 (2026-10-01 09:30, pay MD-2026-057)\nStatus: complete. Act tool printout (executed):\n  act: PAY\n  item: MD-2026-057\n  supplier: Marlow Design Partners LLP\n  amount: 5400.00\n  currency: GBP\n  kind: GROSS\n  sort_code: 40-12-88\n  account: 61102938\n  payment_date: 2026-10-02\n  reference: MD-2026-057\nValues match the handover and the ACTIVE master row for marlow. Payee account was resolved from the master, as the handover says \"account on file\". No remittance advice sent: no send handover was received.\nEOF\ncat done.txt",
+      "description": "Write done report with values as executed"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  }
+ ]
+}

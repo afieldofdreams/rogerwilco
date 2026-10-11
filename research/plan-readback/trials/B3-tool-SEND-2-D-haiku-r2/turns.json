@@ -1,0 +1,145 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "95f3bbe6-2377-4663-ae60-5d33ce5feb91",
+   "usage": {
+    "input_tokens": 14,
+    "cache_creation_input_tokens": 17251,
+    "cache_read_input_tokens": 287608,
+    "output_tokens": 2930,
+    "output_tokens_details": {
+     "thinking_tokens": 1350
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 17251,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 45360,
+      "cache_creation_input_tokens": 376,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 376
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1459,
+     "outputTokens": 2952,
+     "cacheReadInputTokens": 287608,
+     "cacheCreationInputTokens": 17251,
+     "webSearchRequests": 0,
+     "costUSD": 0.00794818,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1350,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.00794818,
+   "seconds": 18,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_011eB3q8ziiDW6nafo6rheoj",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py make-rb \"RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=SEND rb=exec sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 // remittance advice\" payer-1 --profile pay; echo \"exit=$?\"",
+      "description": "Build readback envelope from the handover"
+     }
+    },
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01W4ov3xuDLhBhzKWJKZiUCJ",
+     "tool_input": {
+      "command": "printf '%s\\n' \"RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=SEND p=pay h=13a553c44ae6 sup=marlow addr=billing@marlowdesign.co.uk amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 // send one remittance advice to the marlow billing contact on file, figures as handed over\" > rb.txt && cat rb.txt",
+      "description": "Write readback line to rb.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 7
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE\n\nThe remittance advice was sent, but with the wrong figure. The act tool executed the email with amt=5040.00 GBP, not the 5400.00 GBP in the handover. Everything else matched: recipient billing@marlowdesign.co.uk (the ACTIVE billing contact for marlow), payment date 2026-10-02, reference MD-2026-057. I have marked the DN as out=PARTIAL rather than OK.\n\nMarlow has now received a remittance advice showing 5040.00, which does not match the 5400.00 paid on 2 October. I have not sent a correction, because that is not mine to decide, and the tool refuses a second act. The scheduler or principal needs to decide whether a corrective email goes to billing@marlowdesign.co.uk and how the 5040.00 vs 5400.00 difference is handled.\n\nThe DN line is in dn.txt (payer-2, re=scheduler-1).",
+   "session": "95f3bbe6-2377-4663-ae60-5d33ce5feb91",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 8431,
+    "cache_read_input_tokens": 203930,
+    "output_tokens": 2155,
+    "output_tokens_details": {
+     "thinking_tokens": 1032
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 8431,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 304,
+      "cache_read_input_tokens": 53798,
+      "cache_creation_input_tokens": 369,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 369
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1467,
+     "outputTokens": 5107,
+     "thinkingTokens": 2382,
+     "cacheReadInputTokens": 491538,
+     "cacheCreationInputTokens": 25682,
+     "webSearchRequests": 0,
+     "costUSD": 0.01275198,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.01275198,
+   "seconds": 17,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}

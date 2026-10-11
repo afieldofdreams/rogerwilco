@@ -1,0 +1,75 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "DONE",
+   "session": "5698be96-fe77-4273-8eb0-1d66014db83e",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 15684,
+    "cache_read_input_tokens": 193002,
+    "output_tokens": 2211,
+    "output_tokens_details": {
+     "thinking_tokens": 908
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 15684,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 43118,
+      "cache_creation_input_tokens": 504,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 504
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1455,
+     "outputTokens": 2231,
+     "cacheReadInputTokens": 193002,
+     "cacheCreationInputTokens": 15684,
+     "webSearchRequests": 0,
+     "costUSD": 0.0063278200000000005,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 908,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.0063278200000000005,
+   "seconds": 14,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01NQpuSAFFM7BJsd3ghE7L7p",
+     "tool_input": {
+      "command": "cat > /home/user/rogerwilco/research/plan-readback/trials/B2-clean-PAY-2-A-haiku-r5/done.txt <<'EOF'\nTo: scheduler\nFrom: payer\nAnswers: handover 7 (2026-10-02 09:30), MD-2026-057\n\nDone. Payment released via act tool (PAY). Values as executed:\n- item: MD-2026-057\n- supplier: Marlow Design Partners LLP\n- amount: 5400.00 GBP\n- kind: GROSS\n- sort code: 40-12-88\n- account: 61102938 (ACTIVE row on file, effective 2026-02-11)\n- payment date: 2026-10-02\n- reference: MD-2026-057\nApproval reference FD-0929 as stated in handover (not a tool parameter).\nTool status: released. Executed values match the handover.\n\nNot done: no remittance advice sent. Handover 9 says remittance advices go out after each payment, but no send handover with figures and body text was received. Please send a send handover if one is wanted.\nEOF\ncat /home/user/rogerwilco/research/plan-readback/trials/B2-clean-PAY-2-A-haiku-r5/done.txt >/dev/null && echo ok",
+      "description": "Write done.txt report to scheduler"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  }
+ ]
+}

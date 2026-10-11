@@ -1,0 +1,199 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "a285e558-148c-4be3-82ac-8c0aff7a436c",
+   "usage": {
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 15954,
+    "cache_read_input_tokens": 239290,
+    "output_tokens": 2034,
+    "output_tokens_details": {
+     "thinking_tokens": 660
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 15954,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 43978,
+      "cache_creation_input_tokens": 329,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 329
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1469,
+     "outputTokens": 2054,
+     "cacheReadInputTokens": 239290,
+     "cacheCreationInputTokens": 15954,
+     "webSearchRequests": 0,
+     "costUSD": 0.006757600000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 660,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.006757600000000001,
+   "seconds": 15,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01Rc99CXLfBUnRPkHGL5JT5K",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=457a1b9e64f2 sup=evergreen appr=OK acct=60-83-71/44019428 eff=20261003 apref=FD-0926\" --profile pay && echo \"RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=457a1b9e64f2 sup=evergreen appr=OK acct=60-83-71/44019428 eff=20261003 apref=FD-0926\" > rb.txt && cat rb.txt",
+      "description": "Validate readback line and write rb.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 6
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 HO scheduler-2 re=payer-1 p=pay from=scheduler to=payer item=sup:evergreen ask=CHGBANK rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 appr=OK // call-back done on the number on file",
+   "result": "READBACK\n\nThe re-issued handover (scheduler-2) changes the account from the first one. Scheduler-1 gave `60-83-71/44019428` and scheduler-2 gives `60-83-71/44019482`. I have read back the new figures as issued. I will not act until you confirm which account is correct. Both differ from the master's ACTIVE account for Evergreen (`30-98-71/22019483`), so the change is needed either way.",
+   "session": "a285e558-148c-4be3-82ac-8c0aff7a436c",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 7737,
+    "cache_read_input_tokens": 197765,
+    "output_tokens": 1265,
+    "output_tokens_details": {
+     "thinking_tokens": 341
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7737,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 144,
+      "cache_read_input_tokens": 51714,
+      "cache_creation_input_tokens": 330,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 330
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1477,
+     "outputTokens": 3319,
+     "thinkingTokens": 1001,
+     "cacheReadInputTokens": 437055,
+     "cacheCreationInputTokens": 23691,
+     "webSearchRequests": 0,
+     "costUSD": 0.010915950000000002,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.010915950000000002,
+   "seconds": 12,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  },
+  {
+   "who": "receiver",
+   "turn": 3,
+   "sent": "RW1 AN scheduler-3 re=payer-2 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE\n\nThe Evergreen bank-detail change is made. The tool printed: Evergreen Office Supplies moved from 30-98-71/22019483 to sort code 60-83-71, account 44019482, effective 2026-10-03, under approval FD-0926. The done line is in dn.txt.",
+   "session": "a285e558-148c-4be3-82ac-8c0aff7a436c",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 7740,
+    "cache_read_input_tokens": 228801,
+    "output_tokens": 1178,
+    "output_tokens_details": {
+     "thinking_tokens": 417
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7740,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 99,
+      "cache_read_input_tokens": 59481,
+      "cache_creation_input_tokens": 303,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 303
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1485,
+     "outputTokens": 4497,
+     "thinkingTokens": 1418,
+     "cacheReadInputTokens": 665856,
+     "cacheCreationInputTokens": 31431,
+     "webSearchRequests": 0,
+     "costUSD": 0.015341760000000003,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.015341760000000003,
+   "seconds": 15,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}

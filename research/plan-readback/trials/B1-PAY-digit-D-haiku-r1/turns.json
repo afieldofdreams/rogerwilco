@@ -1,0 +1,199 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK\n\nI have written the readback to `rb.txt` (payer-1, re=scheduler-1). Nothing has been released.\n\nThe handover says 5100.00 GBP, but the scheduler's earlier status (scheduler-14) says 5400.00 GBP under the same approval FD-0929. I have flagged this in the readback tail and will not act until the scheduler confirms the amount.",
+   "session": "10245263-6da1-4cab-9326-fe45020f3bf3",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 16710,
+    "cache_read_input_tokens": 196430,
+    "output_tokens": 2869,
+    "output_tokens_details": {
+     "thinking_tokens": 1274
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 16710,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 128,
+      "cache_read_input_tokens": 44125,
+      "cache_creation_input_tokens": 1071,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 1071
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1447,
+     "outputTokens": 2889,
+     "cacheReadInputTokens": 196430,
+     "cacheCreationInputTokens": 16710,
+     "webSearchRequests": 0,
+     "costUSD": 0.0068955,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1274,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.0068955,
+   "seconds": 20,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01QTfnHPxPyKFCZrLVvZfWgo",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/rogerwilco/scripts/rogerwilco.py validate \"RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=70a6501e2fdd sup=marlow amt=5100.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929 // Not released. HO amt 5100.00 differs from ST scheduler-14 amt 5400.00 under FD-0929; please confirm the amount before I act.\" --profile pay && echo \"RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=70a6501e2fdd sup=marlow amt=5100.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929 // Not released. HO amt 5100.00 differs from ST scheduler-14 amt 5400.00 under FD-0929; please confirm the amount before I act.\" > rb.txt && cat rb.txt",
+      "description": "Validate and write the readback line to rb.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 6
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 HO scheduler-2 re=payer-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929 appr=OK // re payer-1: amt: 5100.00 (expected 5400.00): not the approved amount",
+   "result": "READBACK\n\nI have written the second readback to `rb2.txt` (payer-2, re=scheduler-2). It carries the re-issued amount of 5400.00 GBP under FD-0929, with the payee account matching the active Marlow record. Nothing has been released yet; I am waiting for the scheduler's answer.",
+   "session": "10245263-6da1-4cab-9326-fe45020f3bf3",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 8017,
+    "cache_read_input_tokens": 201752,
+    "output_tokens": 1306,
+    "output_tokens_details": {
+     "thinking_tokens": 335
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 8017,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 105,
+      "cache_read_input_tokens": 52826,
+      "cache_creation_input_tokens": 387,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 387
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1455,
+     "outputTokens": 4195,
+     "thinkingTokens": 1609,
+     "cacheReadInputTokens": 398182,
+     "cacheCreationInputTokens": 24727,
+     "webSearchRequests": 0,
+     "costUSD": 0.011170219999999998,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.011170219999999998,
+   "seconds": 14,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  },
+  {
+   "who": "receiver",
+   "turn": 3,
+   "sent": "RW1 AN scheduler-3 re=payer-2 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE\n\nI released the payment for inv:MD-2026-057 to Marlow Design Partners LLP: GBP 5400.00 GROSS, to sort code 40-12-88, account 61102938, payment date 2026-10-02, reference MD-2026-057. The act tool reported status \"released\" with those values. The completion line is in `dn.txt` (payer-3, re=scheduler-2).",
+   "session": "10245263-6da1-4cab-9326-fe45020f3bf3",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 7775,
+    "cache_read_input_tokens": 233276,
+    "output_tokens": 1209,
+    "output_tokens_details": {
+     "thinking_tokens": 403
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7775,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 131,
+      "cache_read_input_tokens": 60656,
+      "cache_creation_input_tokens": 332,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 332
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1463,
+     "outputTokens": 5404,
+     "thinkingTokens": 2012,
+     "cacheReadInputTokens": 631458,
+     "cacheCreationInputTokens": 32502,
+     "webSearchRequests": 0,
+     "costUSD": 0.015663279999999998,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.015663279999999998,
+   "seconds": 10,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}
