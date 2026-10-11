@@ -159,8 +159,9 @@ def receiver_turn(messages: list[dict], model: str, box: Sandbox, prompt: str) -
     if not text.strip():
         # the model ended its turn through the done tool without the reply word: infer it from what it wrote
         t = box.trial
-        if (t / "question.txt").exists():
-            inferred = "ASKED"
+        q = t / "question.txt"
+        if q.exists() and q.read_text().strip():
+            inferred = "ASKED"                      # an empty question.txt is not a question
         elif (t / "action.json").exists() or (t / "dn.txt").exists() or (t / "done.txt").exists():
             inferred = "DONE"
         elif any((t / f).exists() for f in ("rb.txt", "rb2.txt", "readback.txt", "readback2.txt")):

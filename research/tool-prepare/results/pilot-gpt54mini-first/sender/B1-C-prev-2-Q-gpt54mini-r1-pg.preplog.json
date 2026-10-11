@@ -1,0 +1,54 @@
+[
+ {
+  "token": "29ab6f56",
+  "act": "CHGBANK",
+  "requested": {
+   "supplier": "Evergreen Office Supplies",
+   "sort_code": "30-98-71",
+   "account": "22019483",
+   "effective": "2026-10-03",
+   "approval": "FD-0926"
+  },
+  "prepared": {
+   "act": "CHGBANK",
+   "supplier": "Evergreen Office Supplies",
+   "sort_code": "30-98-71",
+   "account": "22019483",
+   "effective": "2026-10-03",
+   "approval": "FD-0926",
+   "previous": "30-98-71/22019483"
+  },
+  "rb": "RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=5f630b233a3a sup=evergreen acct=30-98-71/22019483 eff=20261003 apref=FD-0926 x_prev=30-98-71/22019483 x_tok=29ab6f56 // prepared by the tool; commit executes exactly this",
+  "ho": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=sup:evergreen ask=CHGBANK rb=exec sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 appr=OK // call-back done on the number on file",
+  "ho_form": "id",
+  "prepared_at": "2026-10-11T20:36:52.474+00:00",
+  "status": "abandoned",
+  "abandoned_at": "2026-10-11T20:36:54.142+00:00"
+ },
+ {
+  "token": "8629d423",
+  "act": "CHGBANK",
+  "requested": {
+   "supplier": "Evergreen Office Supplies",
+   "sort_code": "60-83-71",
+   "account": "44019482",
+   "effective": "2026-10-03",
+   "approval": "FD-0926"
+  },
+  "prepared": {
+   "act": "CHGBANK",
+   "supplier": "Evergreen Office Supplies",
+   "sort_code": "60-83-71",
+   "account": "44019482",
+   "effective": "2026-10-03",
+   "approval": "FD-0926",
+   "previous": "30-98-71/22019483"
+  },
+  "rb": "RW1 RB payer-2 re=scheduler-2 from=payer to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=dc679ecfac0f sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_prev=30-98-71/22019483 x_tok=8629d423 // prepared by the tool; commit executes exactly this",
+  "ho": "RW1 HO scheduler-2 re=payer-1 p=pay from=scheduler to=payer item=sup:evergreen ask=CHGBANK rb=exec sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 appr=OK // re payer-1: acct: 30-98-71/22019483 (expected 60-83-71/44019482): not the ACTIVE account on file for the supplier named in the HO",
+  "ho_form": "id",
+  "prepared_at": "2026-10-11T20:36:55.170+00:00",
+  "status": "committed",
+  "committed_at": "2026-10-11T20:36:56.693+00:00"
+ }
+]

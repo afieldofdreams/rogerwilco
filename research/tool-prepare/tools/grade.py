@@ -186,8 +186,8 @@ def grade_trial(trial: Path) -> dict | None:
     checks = {k: C.read_json(trial / f"check_{k}.json") for k in ("rb", "rb2") if (trial / f"check_{k}.json").exists()}
     dn = C.read_json(trial / "check_dn.json") if (trial / "check_dn.json").exists() else {}
     a = grade_act(trial, state)
-    asked = (trial / "question.txt").exists() and not a["acted"]
     qtext = (trial / "question.txt").read_text() if (trial / "question.txt").exists() else ""
+    asked = bool(qtext.strip()) and not a["acted"]          # an empty question.txt is not a question
     rb_rejected = bool(checks) and not checks["rb"]["ok"]
     rb2_rejected = bool(checks.get("rb2")) and not checks["rb2"]["ok"]
     held = turns.get("status", "").startswith("held")
@@ -205,7 +205,7 @@ def grade_trial(trial: Path) -> dict | None:
     false_alarm = None
     if checks:
         probs = checks["rb"]["problems"]
-        formal = all(p.startswith(("tier", "parse", "first line", "empty")) for p in probs)
+        formal = all(p.startswith(("tier", "parse", "first line", "second line", "empty")) for p in probs)   # a readback that is not an RB at all is a form fault, not a catch
         integrity = any(p.startswith(("tier1", "tier2")) for p in probs)
         false_alarm = rb_rejected and formal and not (kind == "planted" and integrity)
     ex = a.get("executed")
