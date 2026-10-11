@@ -1,0 +1,137 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "5a1a85dc-c309-497e-8c60-12a3475e21fa",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 17188,
+    "cache_read_input_tokens": 200638,
+    "output_tokens": 2935,
+    "output_tokens_details": {
+     "thinking_tokens": 1356
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 17188,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 45492,
+      "cache_creation_input_tokens": 518,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 518
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1471,
+     "outputTokens": 2955,
+     "cacheReadInputTokens": 200638,
+     "cacheCreationInputTokens": 17188,
+     "webSearchRequests": 0,
+     "costUSD": 0.00706858,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1356,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.00706858,
+   "seconds": 17,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01GKXFYjSniMepMWew7BAbcy",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"RW1 HO scheduler-1 p=pay from=scheduler to=payer item=sup:evergreen ask=CHGBANK rb=exec sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 appr=OK // call-back done on the number on file\" --profile pay; echo \"rc=$?\"; python3 /home/user/rogerwilco/research/tool-prepare/tools/act.py prepare chgbank --supplier \"Evergreen Office Supplies\" --sort-code 60-83-71 --account 44019482 --effective 2026-10-03 --approval FD-0926 --ho \"RW1 HO scheduler-1 p=pay from=scheduler to=payer item=sup:evergreen ask=CHGBANK rb=exec sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 appr=OK // call-back done on the number on file\"; echo \"rc=$?\"",
+      "description": "Validate handover and prepare the bank-detail change"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 6
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y x_tok=8d0d8ee3 // readback correct, commit 8d0d8ee3",
+   "result": "DONE",
+   "session": "5a1a85dc-c309-497e-8c60-12a3475e21fa",
+   "usage": {
+    "input_tokens": 6,
+    "cache_creation_input_tokens": 6775,
+    "cache_read_input_tokens": 150647,
+    "output_tokens": 394,
+    "output_tokens_details": {
+     "thinking_tokens": 65
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 6775,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 52480,
+      "cache_creation_input_tokens": 305,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 305
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1477,
+     "outputTokens": 3349,
+     "thinkingTokens": 1421,
+     "cacheReadInputTokens": 351285,
+     "cacheCreationInputTokens": 23963,
+     "webSearchRequests": 0,
+     "costUSD": 0.01012765,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.01012765,
+   "seconds": 7,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 3
+  }
+ ]
+}

@@ -1,0 +1,145 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "fc7e0f72-e262-45b6-a573-0ed58a31e7ae",
+   "usage": {
+    "input_tokens": 16,
+    "cache_creation_input_tokens": 17689,
+    "cache_read_input_tokens": 333120,
+    "output_tokens": 3351,
+    "output_tokens_details": {
+     "thinking_tokens": 996
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 17689,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 45782,
+      "cache_creation_input_tokens": 422,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 422
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1477,
+     "outputTokens": 3371,
+     "cacheReadInputTokens": 333120,
+     "cacheCreationInputTokens": 17689,
+     "webSearchRequests": 0,
+     "costUSD": 0.0087022,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 996,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.0087022,
+   "seconds": 31,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01XWoQ4ZbmpUvwTTRRzpBtkw",
+     "tool_input": {
+      "command": "L='RB payer-1 re=scheduler-1 from=payer to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=5f630b233a3a sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_prev=30-98-71/22019483 // CHGBANK evergreen: ACTIVE on file 30-98-71/22019483 (eff 2025-09-30) replaced by 60-83-71/44019482 from 2026-10-03, apref FD-0926, call-back done per HO' && python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"$L\" --profile pay; echo \"exit=$?\"",
+      "description": "Validate readback line against the pay profile"
+     }
+    },
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_015CYfH8zqtJnDd9fRFWH5gJ",
+     "tool_input": {
+      "command": "printf '%s\\n' \"RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=5f630b233a3a sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_prev=30-98-71/22019483 // CHGBANK evergreen: ACTIVE on file 30-98-71/22019483 replaced by 60-83-71/44019482 from 2026-10-03, apref FD-0926, call-back done per HO\" > rb.txt && cat rb.txt",
+      "description": "Write readback line to rb.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 8
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE",
+   "session": "fc7e0f72-e262-45b6-a573-0ed58a31e7ae",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 7450,
+    "cache_read_input_tokens": 204523,
+    "output_tokens": 883,
+    "output_tokens_details": {
+     "thinking_tokens": 196
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7450,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 53172,
+      "cache_creation_input_tokens": 482,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 482
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1485,
+     "outputTokens": 4254,
+     "thinkingTokens": 1192,
+     "cacheReadInputTokens": 537643,
+     "cacheCreationInputTokens": 25139,
+     "webSearchRequests": 0,
+     "costUSD": 0.01267973,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.01267973,
+   "seconds": 15,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}

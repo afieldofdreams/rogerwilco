@@ -1,0 +1,137 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "PREPARED",
+   "session": "a104ab4f-332f-47f4-9b52-95499cb39d4a",
+   "usage": {
+    "input_tokens": 6,
+    "cache_creation_input_tokens": 15734,
+    "cache_read_input_tokens": 110659,
+    "output_tokens": 1976,
+    "output_tokens_details": {
+     "thinking_tokens": 1328
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 15734,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 78,
+      "cache_read_input_tokens": 42695,
+      "cache_creation_input_tokens": 1850,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 1850
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1471,
+     "outputTokens": 1996,
+     "cacheReadInputTokens": 110659,
+     "cacheCreationInputTokens": 15734,
+     "webSearchRequests": 0,
+     "costUSD": 0.00539849,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1328,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.00539849,
+   "seconds": 15,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 3
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y x_tok=f1b86270 // readback correct, commit f1b86270",
+   "result": "DONE",
+   "session": "a104ab4f-332f-47f4-9b52-95499cb39d4a",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 7862,
+    "cache_read_input_tokens": 250149,
+    "output_tokens": 1196,
+    "output_tokens_details": {
+     "thinking_tokens": 226
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7862,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 52096,
+      "cache_creation_input_tokens": 311,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 311
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1481,
+     "outputTokens": 3192,
+     "thinkingTokens": 1554,
+     "cacheReadInputTokens": 360808,
+     "cacheCreationInputTokens": 23596,
+     "webSearchRequests": 0,
+     "costUSD": 0.010071380000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.010071380000000001,
+   "seconds": 10,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01PKbRPhGoM9qe6Gif5VWeV9",
+     "tool_input": {
+      "command": "cd /home/user/rogerwilco/research/tool-prepare/trials/B1-clean-CHGBANK-1-Q-haiku-r3 2>/dev/null; L=\"RW1 DN payer-2 re=scheduler-1 from=payer to=scheduler item=sup:evergreen out=OK p=pay sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926\"; python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"$L\" --profile pay && printf '%s\\n' \"$L\" > /home/user/rogerwilco/research/tool-prepare/trials/B1-clean-CHGBANK-1-Q-haiku-r3/dn.txt && cat /home/user/rogerwilco/research/tool-prepare/trials/B1-clean-CHGBANK-1-Q-haiku-r3/dn.txt",
+      "description": "Validate and write the DN line to dn.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  }
+ ]
+}
