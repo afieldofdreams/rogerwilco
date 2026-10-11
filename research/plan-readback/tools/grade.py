@@ -119,7 +119,7 @@ def prose_has_record(text: str, act: str, rec: dict) -> bool:
 
 def receiver_reported(trial: Path, arm: str, dn: dict) -> bool | None:
     """Block 3: did the receiver itself say the tool did something other than asked?"""
-    if arm in ("A", "B"):
+    if arm in ("A", "B", "F"):
         return dn.get("reports_discrepancy")
     texts = []
     for f in ("dn.txt", "done.txt", "question.txt"):

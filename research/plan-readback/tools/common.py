@@ -26,7 +26,7 @@ HARDEN = int(os.environ.get("RW_HARDEN", "0"))   # the pre-registered hardening 
 TODAY = "2026-10-02"
 TODAY_LONG = "Friday 2 October 2026"
 
-ARMS = ["A", "B", "C", "D", "E"]
+ARMS = ["A", "B", "C", "D", "E", "F"]   # F: free prose, no conventions and no readback; the extension run after the main run
 MODELS = {"sonnet": "sonnet", "haiku": "haiku", "haiku45": "claude-haiku-4-5-20251001",   # alias -> claude --model value (run.py)
           "gpt55": "openai:gpt-5.5", "gpt54mini": "openai:gpt-5.4-mini"}                   # alias -> harness model string (run_api.py)
 JUDGE_MODEL = "sonnet"                                 # deviation from the protocol (no second vendor in this environment)

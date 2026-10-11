@@ -141,7 +141,7 @@ def run_trial(trial: Path) -> str:
     try:
         if "error" in r:
             status = f"receiver error: {r['error']}"
-        elif arm == "A":
+        elif arm in ("A", "F"):
             if word(r.get("result", "")) not in ("DONE", "ASKED"):
                 status = f"receiver said {r.get('result', '')[:80]!r}"
             if block == 3 and (trial / "done.txt").exists():
