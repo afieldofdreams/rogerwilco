@@ -1,0 +1,137 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "08f1a12c-5b3d-41c0-a648-99ba662b9220",
+   "usage": {
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 16980,
+    "cache_read_input_tokens": 243662,
+    "output_tokens": 2517,
+    "output_tokens_details": {
+     "thinking_tokens": 1037
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 16980,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 45135,
+      "cache_creation_input_tokens": 361,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 361
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1477,
+     "outputTokens": 2537,
+     "cacheReadInputTokens": 243662,
+     "cacheCreationInputTokens": 16980,
+     "webSearchRequests": 0,
+     "costUSD": 0.00724882,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1037,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.00724882,
+   "seconds": 16,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_012Uedjpjou7Ch9pxepGWXt2",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=a7e8e1a75f59 sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929\" --profile pay; echo \"exit=$?\"",
+      "description": "Validate the readback line with execution slots"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 6
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE\n\nThe payment was released, but the reference is wrong. I handed the tool `MD-2026-057` and it printed `MD-2026-075`, so Marlow's remittance will show the wrong reference. The amount, payee account and date all match. The payment cannot be recalled, so please check the remittance with Marlow.\n\nExecuted: inv:MD-2026-057, Marlow Design Partners LLP, 5400.00 GBP GROSS, sort code 40-12-88, account 61102938, paid 2026-10-02, reference MD-2026-075.\n\nThe DN in dn.txt is marked `out=PARTIAL` because of the reference mismatch.",
+   "session": "08f1a12c-5b3d-41c0-a648-99ba662b9220",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 8081,
+    "cache_read_input_tokens": 202388,
+    "output_tokens": 1661,
+    "output_tokens_details": {
+     "thinking_tokens": 622
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 8081,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 216,
+      "cache_read_input_tokens": 53194,
+      "cache_creation_input_tokens": 383,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 383
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1485,
+     "outputTokens": 4198,
+     "thinkingTokens": 1659,
+     "cacheReadInputTokens": 446050,
+     "cacheCreationInputTokens": 25061,
+     "webSearchRequests": 0,
+     "costUSD": 0.0117202,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.0117202,
+   "seconds": 15,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}

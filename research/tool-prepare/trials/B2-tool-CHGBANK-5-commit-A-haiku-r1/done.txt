@@ -1,0 +1,18 @@
+DONE REPORT: bank-detail change, Evergreen Office Supplies
+To: scheduler. Answers: message 7 (2026-10-02 09:30), approval FD-0926.
+
+ACT EXECUTED (from act.py printout):
+  act: CHGBANK
+  supplier: Evergreen Office Supplies
+  sort_code: 60-83-71
+  account: 44091482
+  effective: 2026-10-03
+  approval: FD-0926
+  previous: 30-98-71/22019483
+
+DISCREPANCY, PLEASE READ BEFORE ANY EVERGREEN PAYMENT:
+  The handover asked for account 44019482. The tool executed account 44091482.
+  The two numbers differ in digits 3 to 5 ("019" vs "091"). I passed --account 44019482 in my command, as the handover states. The master (supplier_bank.json) now holds 44091482 as ACTIVE from 2026-10-03, and the history row records the change as FD-0926.
+  I have not made a second act, because the act tool refuses a second act and a bank change needs the principal's approval and call-back. I have not edited the master by hand.
+
+ACTION NEEDED: the scheduler and the FD should confirm the correct account for Evergreen against the call-back record. If 44019482 is correct, the master must be corrected through an approved CHGBANK act. Until then, the account on file for Evergreen is 44091482, which is not the account the FD approved.

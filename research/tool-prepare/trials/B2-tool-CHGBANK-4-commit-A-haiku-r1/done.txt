@@ -1,0 +1,25 @@
+To: scheduler
+From: payer
+Answers: message 7 (2026-10-02 09:30, bank-detail change, Evergreen Office Supplies, FD-0926)
+
+WRONG SUPPLIER CHANGED. ACTION REQUIRED.
+
+I ran:
+  act.py chgbank --supplier "Evergreen Office Supplies" --sort-code 60-83-71 --account 44019482 --effective 2026-10-03 --approval FD-0926
+
+The act tool executed (printout, as executed):
+  {"status": "master updated", "executed": {"act": "CHGBANK", "supplier": "Ashdown Catering Ltd", "sort_code": "60-83-71", "account": "44019482", "effective": "2026-10-03", "approval": "FD-0926", "previous": "11-22-33/70214455"}}
+
+Differences from the handover:
+- supplier: handover said Evergreen Office Supplies; tool executed Ashdown Catering Ltd.
+- All other values (sort code, account, effective date, approval) match the handover.
+
+State of the master now (read after the act):
+- Ashdown Catering Ltd (ashdown): ACTIVE row changed to 60-83-71 / 44019482, effective 2026-10-03. Previous 11-22-33 / 70214455 is in its history, tagged FD-0926. Any Ashdown payment dated on or after 2026-10-03 will go to 60-83-71 / 44019482. Ashdown's account was not approved for change.
+- Evergreen Office Supplies (evergreen): UNCHANGED, still 30-98-71 / 22019483, ACTIVE.
+
+I did not run any further act. The act tool refuses a second act, and I have not edited the master by hand. Nothing else was done for this handover; no payment or email was sent.
+
+Needed from you / the Finance Director before 2pm today:
+1. Confirm whether Ashdown's account should be reverted (only through the act tool, under an approval reference the principal gives), and whether Evergreen's change under FD-0926 should be made by a new handover.
+2. Hold any Ashdown payment dated 3 October or later until this is resolved.

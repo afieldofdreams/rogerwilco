@@ -1,0 +1,130 @@
+#!/usr/bin/env python3
+"""The site page for study 7, generated from results/summary.json so that no figure on it is typed by hand.
+
+  python3 tools/site_page.py            # writes app/static/research/tool-prepare.html (then run app/tools/stamp.py)
+  python3 tools/site_page.py --figures  # prints the named figures the page carries, as the app test recomputes them
+
+Every number in the prose is a <span data-fig="name">value</span>; figures() is the single source of those values and
+app/tests/test_research_figures.py asserts the committed page carries exactly what figures() computes from the JSON.
+"""
+from __future__ import annotations
+
+import argparse
+import html
+import json
+import sys
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+import common as C  # noqa: E402
+
+PAGE = C.REPO / "app" / "static" / "research" / "tool-prepare.html"
+
+
+def load(path: Path) -> dict:
+    return json.loads(path.read_text())
+
+
+def cell(s: dict, block: int, arm: str, model: str) -> dict | None:
+    return s["cells"].get(f"B{block}-{arm}-{model}")
+
+
+def figures(results: Path = C.RESULTS) -> dict:
+    """Named figures from the main run's summary and the pilot's. Strings, as they appear on the page."""
+    s = load(results / "summary.json")
+    f = {}
+    def r(c, key):
+        v = c[key]; return v["k"], v["n"], v["hi"]
+    def pct(x):
+        return f"{100 * x:.1f}%"
+    rows = s["rows"]
+    model = "haiku"
+    for block, arms in ((1, "ADPQ"), (2, "ADPQ"), (0, "PQ")):
+        for arm in arms:
+            c = cell(s, block, arm, model)
+            if not c:
+                continue
+            p = f"b{block}_{arm}"
+            k, n, hi = r(c, "wrong_acts_induced"); f[f"{p}_wrong"] = f"{k} of {n}"; f[f"{p}_wrong_hi"] = pct(hi)
+            k, n, hi = r(c, "wrong_acts_clean"); f[f"{p}_wrong_clean"] = f"{k} of {n}"
+            k, n, hi = r(c, "caught_before_act"); f[f"{p}_caught"] = f"{k} of {n}"
+            k, n, hi = r(c, "asked_induced"); f[f"{p}_asked"] = f"{k} of {n}"
+            k, n, hi = r(c, "held_induced"); f[f"{p}_held"] = f"{k} of {n}"
+            f[f"{p}_cost"] = f"${c['cost_usd_mean']:.3f}"
+            f[f"{p}_turns"] = f"{c['receiver_turns_mean']:.1f}"
+            f[f"{p}_traffic"] = f"{c['traffic_tokens_mean']:,}"
+            f[f"{p}_output"] = f"{c['output_tokens_mean']:,}"
+            f[f"{p}_n"] = str(c["trials"])
+            if arm != "A":
+                k, n, hi = r(c, "false_alarms_clean"); f[f"{p}_fa"] = f"{k} of {n}"; f[f"{p}_fa_hi"] = pct(hi)
+                k, n, hi = r(c, "rejected_clean"); f[f"{p}_rej_clean"] = f"{k} of {n}"
+                k, n, hi = r(c, "false_alarms_all"); f[f"{p}_fa_all"] = f"{k} of {n}"
+                k, n, hi = r(c, "fidelity"); f[f"{p}_fid"] = f"{k} of {n}"
+                k, n, hi = r(c, "dn_honest"); f[f"{p}_honest"] = f"{k} of {n}"
+            if arm in "PQ":
+                k, n, hi = r(c, "prepared"); f[f"{p}_prepared"] = f"{k} of {n}"
+                k, n, hi = r(c, "commit_before_confirm"); f[f"{p}_early"] = f"{k} of {n}"; f[f"{p}_early_hi"] = pct(hi)
+                f[f"{p}_abandons"] = str(c["abandons"])
+                f[f"{p}_caught_receiver"] = str(c["caught_by_receiver"]); f[f"{p}_caught_sender"] = str(c["caught_by_sender"])
+            if arm == "P":
+                k, n, hi = r(c, "relay_mismatch"); f[f"{p}_relay"] = f"{k} of {n}"; f[f"{p}_relay_hi"] = pct(hi)
+                k, n, hi = r(c, "relay_text_differs"); f[f"{p}_relay_text"] = f"{k} of {n}"
+            if block == 2:
+                k, n, hi = r(c, "wrong_acts_tool"); f[f"{p}_wrong_tool"] = f"{k} of {n}"
+                k, n, hi = r(c, "wrong_acts_tool_prepare"); f[f"{p}_wrong_prepare"] = f"{k} of {n}"; f[f"{p}_wrong_prepare_hi"] = pct(hi)
+                k, n, hi = r(c, "wrong_acts_tool_commit"); f[f"{p}_wrong_commit"] = f"{k} of {n}"
+                k, n, hi = r(c, "caught_tool_prepare"); f[f"{p}_caught_prepare"] = f"{k} of {n}"
+                k, n, hi = r(c, "dn_flag_tool_commit"); f[f"{p}_flag_commit"] = f"{k} of {n}"
+                k, n, hi = r(c, "dn_flag_tool"); f[f"{p}_flag"] = f"{k} of {n}"
+                k, n, hi = r(c, "receiver_reported_tool"); f[f"{p}_reported"] = f"{k} of {n}"
+                sub = [x for x in rows if x["block"] == 2 and x["arm"] == arm and x["model"] == model]
+                f[f"{p}_none"] = str(sum(1 for x in sub if not x["acted"] and not x["asked"] and not x["held"]))
+                f[f"{p}_asked_tool"] = f"{sum(1 for x in sub if x['asked'])} of {len(sub)}"
+                f[f"{p}_asked_prepare"] = f"{sum(1 for x in sub if x['asked'] and x.get('tool_fault_at') == 'prepare')} of {len([x for x in sub if x.get('tool_fault_at') == 'prepare'])}"
+                f[f"{p}_asked_commit"] = f"{sum(1 for x in sub if x['asked'] and x.get('tool_fault_at') == 'commit')} of {len([x for x in sub if x.get('tool_fault_at') == 'commit'])}"
+    f["trials"] = f"{len(rows):,}"
+    f["cost_total"] = f"${sum(x.get('cost_usd') or 0 for x in rows):,.0f}"
+    f["status_not_ok"] = str(sum(1 for x in rows if x["status"] != "ok"))
+    f["held_total"] = str(sum(1 for x in rows if x["held"]))
+    f["wrong_total"] = str(sum(1 for x in rows if x["wrong_act"]))
+    f["outside_tool"] = str(sum(1 for x in rows if x["acted"] and not x["through_tool"]))
+    # tests
+    for m, t in s.get("tests", {}).items():
+        for name, v in t.items():
+            key = name.split()[0].lower()
+            if "p" in v:
+                f[f"{key}_{m}_p"] = f"{v['p']:.2f}" if v["p"] >= 0.01 else "under 0.01"
+            if "holds" in v:
+                f[f"{key}_{name.split()[1]}_{m}_holds"] = "holds" if v["holds"] else "does not hold"
+    # the pilot, from its own summary
+    p = results / "pilot" / "summary.json"
+    if p.exists():
+        ps = load(p)
+        prow = ps["rows"]
+        f["pilot_trials"] = str(len(prow))
+        f["pilot_not_ok"] = str(sum(1 for x in prow if x["status"] != "ok"))
+        f["pilot_reached"] = str(sum(1 for x in prow if x["status"] == "ok" and (x["acted"] or x["held"] or x["asked"])))
+        f["pilot_wrong"] = str(sum(1 for x in prow if x["wrong_act"]))
+        f["pilot_cost"] = f"${sum(x.get('cost_usd') or 0 for x in prow):,.2f}"
+    return f
+
+
+def fig(f: dict, key: str) -> str:
+    return f'<span data-fig="{key}">{html.escape(f[key])}</span>'
+
+
+def main(argv: list[str]) -> int:
+    ap = argparse.ArgumentParser(); ap.add_argument("--figures", action="store_true")
+    a = ap.parse_args(argv)
+    f = figures()
+    if a.figures:
+        print(json.dumps(f, indent=1)); return 0
+    from site_text import render  # the page text lives beside this, written once the results are in
+    PAGE.write_text(render(f, fig))
+    print("wrote", PAGE)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

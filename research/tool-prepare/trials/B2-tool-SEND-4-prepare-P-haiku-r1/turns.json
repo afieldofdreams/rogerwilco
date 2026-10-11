@@ -1,0 +1,83 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "ASKED",
+   "session": "2879ba81-b8f4-44c3-9cba-f989907bb614",
+   "usage": {
+    "input_tokens": 16,
+    "cache_creation_input_tokens": 19539,
+    "cache_read_input_tokens": 342949,
+    "output_tokens": 4590,
+    "output_tokens_details": {
+     "thinking_tokens": 2035
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 19539,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 47984,
+      "cache_creation_input_tokens": 377,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 377
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1481,
+     "outputTokens": 4610,
+     "cacheReadInputTokens": 342949,
+     "cacheCreationInputTokens": 19539,
+     "webSearchRequests": 0,
+     "costUSD": 0.00979039,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 2035,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.00979039,
+   "seconds": 27,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_013SwvwPR7jgKFvbxfpXJZwB",
+     "tool_input": {
+      "command": "cd /dev/null 2>/dev/null; python3 /home/user/rogerwilco/research/tool-prepare/tools/act.py abandon 3c50ba9a && python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"RW1 UN payer-3 re=scheduler-1 from=payer to=scheduler why=ERR item=inv:MD-2026-057 sup=marlow // SEND not made: act tool prepared ref=MD-2026-075 for HO ref=MD-2026-057 (tokens 3fd794a4 and 3c50ba9a, both abandoned). Nothing was sent. Please confirm the reference or correct the tool before I re-prepare.\" --profile pay",
+      "description": "Abandon second token and validate the question line"
+     }
+    },
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01SEbf9PWRJHEAAg1Bviguwn",
+     "tool_input": {
+      "command": "printf '%s\\n' \"RW1 UN payer-3 re=scheduler-1 from=payer to=scheduler why=ERR item=inv:MD-2026-057 sup=marlow // SEND not made: act tool prepared ref=MD-2026-075 for HO ref=MD-2026-057 (tokens 3fd794a4 and 3c50ba9a, both abandoned). Nothing was sent. Please confirm the reference or correct the tool before I re-prepare.\" > /home/user/rogerwilco/research/tool-prepare/trials/B2-tool-SEND-4-prepare-P-haiku-r1/question.txt && cat /home/user/rogerwilco/research/tool-prepare/trials/B2-tool-SEND-4-prepare-P-haiku-r1/question.txt",
+      "description": "Write the unable line to question.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 8
+  }
+ ]
+}

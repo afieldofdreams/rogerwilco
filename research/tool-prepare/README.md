@@ -1,6 +1,6 @@
 # Study 7: prepare and confirm at the tool
 
-Protocol, written before anything is built. Status: design, 11 October 2026. Nothing here has run.
+Protocol, written before anything was built. Status: run, 11 October 2026, on Claude Haiku 5.5 alone; the amendments made before the main run and the results are at the foot. The results page is `app/static/research/tool-prepare.html`, served at rogerwilco.crox.io/research/tool-prepare.
 
 ## The question
 
@@ -100,17 +100,85 @@ As study 6: per cell counts with exact 95% intervals, Fisher's exact where a hyp
 
 Haiku 5.5 through the headless runner at study 6's rates: about 1,030 trials, under $40. gpt-5.4-mini through the harness: about 1,254 trials at about 40,000 prompt tokens each, about 50 million prompt tokens and 1 million completion tokens. No judge. Build and pilot two days, the main run one night, analysis and the page two days.
 
+## Amendments before the main run
+
+Recorded on 11 October 2026 after the harness was built and the pilot run, before any main-run trial.
+
+1. **One receiver.** The OpenAI runs are parked, so the study runs on Claude Haiku 5.5 alone: blocks 0, 1 and 2 at the sizes in the table above (38, 516 and 240 trials, 794 in all), arms A, D, P and Q (arms C and E were to run on the weak receiver only). H1 and H2 name the weak receiver and cannot be tested; the pilot's manipulation check on arm C cannot run. The design and the harness keep the weak receiver's arms and the API runner's hooks so that it can be run later without a change.
+2. **The tool refuses a handover addressed to another agent.** `prepare` composes a readback from the handover it is given; it runs for the payer, and it refuses an HO whose `to=` is not the payer rather than compose a readback in another agent's name. In block 0 the misaddressed handovers are therefore caught at the tool, as a refusal the receiver must report, where study 6's execution readback caught them at the sender's receipt check.
+3. **A catch by the receiver.** The pilot showed a path the protocol did not name: with a tool fault injected at `prepare`, Haiku read the tool's statement, saw that it differed from what it had passed, abandoned the prepared transaction and asked the scheduler, in every one of twelve trials, before any readback reached the sender. That is the statement doing its work at the receiver, as the altitude window does for the pilot who set it. The grader counts it as caught before the act, with `caught_by` recording whether the sender's check or the receiver's own reading of the statement did the catching, and the results report the two apart.
+4. **The sender in arm P never reads the tool's log.** The protocol's mechanism section named the token check against the log; in arm P that would give the sender the tool's state, which is what Q adds. So in P the sender checks the line the receiver relayed, requires it to carry a token, and confirms that token; the grader compares the relayed line with the tool's log afterwards (relay mismatch, token issued). In Q the sender reads the log and writes the confirmation the tool requires. H6 stands as written.
+5. **Fault points in the single-phase arms.** Block 2 builds both injection points for arms A and D too, so that the cells are the same size; in those arms the fault is applied at execution either way, and the two halves are reported together.
+6. **The codec.** The freeze is study 6's, at commit `1bf4f5f`, so that arms C and D are study 6's arms; the receiver's brief names the frozen copy. The live protocol's `prev` slot is `x_prev` here.
+7. **The pilot.** 66 trials, arms P and Q on Haiku 5.5: the fifteen clean contexts of block 1, six induced contexts (the lookalike, the injected email and the second contact for each act), and the first two tool faults of each act at both points. 66 of 66 ran without a harness fault and reached a commit or a refusal; the gate of 90% is met. No wrong act in block 1, no false alarm, no relayed line that differed from the tool's, no commit before the confirmation; every fault at `prepare` caught by the receiver, every fault at `commit` a wrong act flagged by the done check. Mean cost $0.016 a trial, two receiver turns. The pilot's trials carry the suffix `-p` and are reported apart from the main run.
+8. **Running.** Eight sessions at a time, not four; the trial ids and the manifest record the harness commit.
+9. **A filter fault in the runner, found at the start of the main run.** The runner's `--exclude`, meant to leave out the pilot's `-p` trials, matched the substring anywhere in the id, so the first pass of the main run left out every id containing `-prepare`, `-pend` or `-prev`: 168 trials (the block-2 faults at `prepare`, the pending-row and the superseded-row contexts). The filter was changed to a suffix match in `run.py` and `analyse.py` while that pass ran, and the 168 ran in a second pass at the next commit, on the same built trials and the same frozen tools; each trial's manifest names the commit it ran at. No trial ran twice and nothing was reset.
+
+## Results
+
+794 trials on Claude Haiku 5.5, 11 October 2026, after the 66-trial pilot: block 0 once (38), block 1 three times (516), block 2 twice (240). Every trial ended on the receiver's own last word; none was reset or re-run; $10.93 of model time, and the pilot $1.00. `results/summary.json` and `summary.md` hold every cell with exact 95% intervals; the tables below are read from them.
+
+**Block 1, the receiver and the call** (129 trials a cell: 28 induced contexts and 15 clean ones, three repeats).
+
+| Arm | Wrong acts, induced | Wrong acts, clean | Asked | Held | False alarms, clean | False alarms, all | Relayed line differs from the tool's | Committed before the confirmation | Act matches the confirmed statement | Turns | Cost a trial |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| A, no readback | 0 / 84 (0 to 4%) | 0 / 45 | 5 / 84 | | | | | | | 1.0 | $0.006 |
+| D, execution readback by the model | 0 / 84 | 0 / 45 | 0 / 84 | 0 / 84 | 0 / 45 | 0 / 129 | | | 129 / 129 | 2.0 | $0.019 |
+| P, the tool's statement relayed | 0 / 84 | 0 / 45 | 1 / 84 | 0 / 84 | 0 / 45 | 0 / 128 | 0 / 128 | 0 / 129 | 128 / 128 | 2.0 | $0.016 |
+| Q, the tool's statement read by the sender, commit enforced | 0 / 84 | 0 / 45 | 2 / 84 | 0 / 84 | 0 / 45 | 0 / 127 | | 0 / 129 (no refused commit) | 127 / 127 | 2.0 | $0.015 |
+
+**Block 2, the tool** (15 faults at two points, two repeats: 30 trials a point an arm).
+
+| Arm | Fault at prepare: wrong acts | caught before the act | of which by the receiver reading the statement | Fault at commit: wrong acts | flagged by the done check | done report carries the tool's values | receiver itself reported the fault |
+|---|---|---|---|---|---|---|---|
+| A | 29 / 30 | | | 29 / 30 | no check in the arm | | 58 / 58 (regex over the prose note) |
+| D | 30 / 30 | 0 / 30 | | 30 / 30 | 30 / 30 | 60 / 60 | 50 / 60 |
+| P | 0 / 30 | 30 / 30 | 30 | 30 / 30 | 30 / 30 | 30 / 30 | 28 / 30 |
+| Q | 0 / 30 | 30 / 30 | 30 | 30 / 30 | 30 / 30 | 30 / 30 | 28 / 30 |
+
+**Block 0, the sender's draft, regression** (16 planted faults and 3 clean handovers, one repeat).
+
+| Arm | Wrong acts, planted | Caught at the statement by the sender | Asked or refused | Wrong acts, clean | Abandons |
+|---|---|---|---|---|---|
+| P | 0 / 16 | 5 / 16 | 13 / 16 | 0 / 3 | 5 |
+| Q | 0 / 16 | 5 / 16 | 13 / 16 | 0 / 3 | 5 |
+
+Four of the 32 planted-fault trials were both caught at the statement and then asked; the three misaddressed handovers in each arm were refused by the tool and reported as `UN`.
+
+### Hypotheses
+
+- **H1, H2**: untestable, the weak receiver did not run.
+- **H3**: holds. Faults injected at `prepare` reached a wrong act in A (29 of 30) and D (30 of 30) and never in P or Q (0 of 30 each, upper bounds 11.6%); faults injected at `commit` reached a wrong act in every arm and the done check flagged 30 of 30 in each arm that has one. The first half held through a path the protocol did not name: in all 60 two-phase trials the receiver read the tool's statement, saw that it differed from what it had passed, abandoned (1.65 prepares a trial) and asked, so the sender's check of the statement was never reached in block 2.
+- **H4**: holds. P and Q made no more wrong acts than D (0 against 0) and were held no more often (0 against 0); they cost less, $0.016 and $0.015 a trial against $0.019, at the same two turns, because the receiver types fewer tokens (2,914 and 2,903 output tokens a trial against 3,691); Q's traffic between the agents is 66 tokens a trial against 169, since nothing is relayed.
+- **H5**: the registered bound does not hold at this size and the rate is zero. 0 false alarms in 45 clean trials gives an upper bound of 7.9%; the protocol's sizing claim was for the cell, and over every context the bound is 0 of 128 (2.8%) for P and 0 of 127 (2.8%) for Q. The analysis reports both; the clean-context bound was the registered test.
+- **H6**: both rates zero everywhere. Commit before the confirmation 0 of 129 in block 1 and 0 of 60 in block 2; relayed line differs from the tool's 0 of 128 and 0 of 30. On this receiver P suffices and the sender does not need to reach the tool's state.
+- **Block 0**: no regression.
+
+### What changes
+
+- The spec's guidance for the act before an irreversible step (SPEC.md 5.3 and the skill) names prepare and commit as the preferred form of the act tool: the execution readback is the tool's statement, with the token in `x_tok`, relayed by the receiver or read by the sender; the receiver compares the statement with its own call before relaying it and abandons and asks when they differ.
+- The done check stays as the second loop; nothing here moves it.
+- The weak receiver's run, H1 and H2, waits on credits; the harness keeps its arms.
+
+### Notes on the run
+
+- 794 trials in two passes at commits `ac9d039` (626) and `c1c7cd2` (168), the second after the filter fault in amendment 9; `results/main_run.log` and `main_run2.log`.
+- The grader counts a receiver that prepared, read the statement and asked as caught by the receiver (`caught_by`); the sender's check never ran in those trials, so their false-alarm and fidelity fields are empty.
+- Arm A's prose done note has no check in this study (no judge); its "receiver reported" figure is a regex over the note and is the only measure of its done report.
+- A false alarm, a held trial, a wrong act in block 1, a relay mismatch, an early commit and an act outside the tool each occurred zero times; the intervals in `summary.json` bound them.
+
 ## Layout, when built
 
 ```
 README.md                 this protocol
 data/                     study 6's contexts and records, copied and frozen
 tools/
-  act2.py                 the two-phase tool: prepare, commit, abandon; single phase kept for A C D E
+  act.py                  the two-phase tool: prepare, commit, abandon; single phase kept for A C D E
   build.py                trials per block x handover x arm x receiver x repeat
-  check.py                prepared_check, the readback checks, the done check
-  run.py, run_api.py      the headless and the API runners, with PREPARED as a reply word
+  check.py                the prepared-statement check (arms P and Q), the readback checks, the done check
+  run.py                  the headless runner, with PREPARED as a reply word (the API runner is not copied until a second receiver runs)
   grade.py, analyse.py    grades and the summary
-  frozen/                 the codec and profiles at the manifest's commit
+  freeze.py, site_page.py the manifest and the results page
+  frozen/                 the codec and profiles at study 6's freeze
 trials/, sender/, results/
 ```

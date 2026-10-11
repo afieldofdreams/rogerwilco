@@ -1,0 +1,265 @@
+{
+  "profile": "core",
+  "version": "RW1",
+  "types": {
+    "HO": {
+      "name": "handoff",
+      "required": [
+        "from",
+        "to",
+        "item",
+        "ask"
+      ],
+      "optional": [
+        "re",
+        "due",
+        "pri",
+        "conf",
+        "keep",
+        "art",
+        "ctx",
+        "rb",
+        "acc",
+        "keys"
+      ]
+    },
+    "RB": {
+      "name": "readback",
+      "required": [
+        "re",
+        "from",
+        "to",
+        "item",
+        "ask"
+      ],
+      "optional": [
+        "due",
+        "eta",
+        "h",
+        "do",
+        "acc",
+        "not",
+        "asm"
+      ]
+    },
+    "AQ": {
+      "name": "ask",
+      "required": [
+        "from",
+        "to",
+        "need"
+      ],
+      "optional": [
+        "re",
+        "item",
+        "opts",
+        "by"
+      ]
+    },
+    "AN": {
+      "name": "answer",
+      "required": [
+        "re",
+        "from",
+        "to",
+        "val"
+      ],
+      "optional": [
+        "item"
+      ]
+    },
+    "ST": {
+      "name": "status",
+      "required": [
+        "from",
+        "to",
+        "item"
+      ],
+      "optional": [
+        "re",
+        "pct",
+        "eta",
+        "blk"
+      ]
+    },
+    "DN": {
+      "name": "done",
+      "required": [
+        "re",
+        "from",
+        "to",
+        "item",
+        "out"
+      ],
+      "optional": [
+        "art",
+        "next"
+      ]
+    },
+    "UN": {
+      "name": "unable",
+      "required": [
+        "re",
+        "from",
+        "to",
+        "why"
+      ],
+      "optional": [
+        "item",
+        "alt",
+        "need"
+      ]
+    },
+    "FL": {
+      "name": "fail",
+      "required": [
+        "re",
+        "from",
+        "to",
+        "item",
+        "why"
+      ],
+      "optional": [
+        "art",
+        "retry"
+      ]
+    }
+  },
+  "slots": {
+    "re": "msgid",
+    "from": "agent",
+    "to": "agent",
+    "item": "ref",
+    "ask": "enum:ask",
+    "due": "date",
+    "by": "date",
+    "pri": "int:1-5",
+    "conf": "enum:conf",
+    "keep": "list:agent",
+    "art": "list:ref",
+    "ctx": "list:msgid",
+    "eta": "date",
+    "pct": "int:0-100",
+    "blk": "list:ref",
+    "need": "enum:need",
+    "opts": "list:token",
+    "val": "token",
+    "out": "enum:out",
+    "next": "enum:ask",
+    "why": "enum:why",
+    "alt": "agent",
+    "retry": "bool",
+    "p": "token",
+    "rb": "list:token",
+    "h": "token",
+    "acc": "list:token",
+    "do": "token",
+    "not": "list:token",
+    "asm": "list:token",
+    "keys": "list:token"
+  },
+  "enums": {
+    "ask": {
+      "REVIEW": "review against stated criteria",
+      "DRAFT": "produce a first version",
+      "DECIDE": "choose among options",
+      "RESEARCH": "find out",
+      "BUILD": "implement",
+      "FIX": "repair a named defect",
+      "SUMM": "summarise",
+      "PLAN": "produce a plan",
+      "TEST": "verify",
+      "EXTRACT": "pull structured data out"
+    },
+    "why": {
+      "NOCAP": "no capability",
+      "NOCTX": "missing context",
+      "PERM": "not permitted",
+      "BUSY": "at capacity",
+      "CONFLICT": "item owned by another agent",
+      "DUP": "duplicate of an open handoff",
+      "VER": "unsupported protocol version",
+      "UNK": "unknown code in the message",
+      "SCOPE": "out of scope",
+      "ERR": "runtime error",
+      "TIMEOUT": "ran out of time"
+    },
+    "out": {
+      "OK": "complete",
+      "PARTIAL": "partly complete",
+      "NOOP": "nothing needed doing"
+    },
+    "need": {
+      "ENUM": "one of opts",
+      "TEXT": "free text in the tail",
+      "NUM": "a number",
+      "DATE": "YYYYMMDD",
+      "YESNO": "Y or N"
+    },
+    "conf": {
+      "L": "low",
+      "M": "medium",
+      "H": "high"
+    }
+  },
+  "tail_max_chars": 300,
+  "reserved_agents": [
+    "human"
+  ],
+  "constraint_keys": {
+    "len": "length with unit suffix: 120w words, 800c characters, 2p pages, 10s slides",
+    "fmt": "output format: md, docx, json, csv, html, txt",
+    "lang": "language or spelling variant: uk, us, fr",
+    "tone": "register: plain, formal, casual, technical",
+    "voice": "grammatical person: we, i, you, third",
+    "aud": "audience, one token",
+    "out": "artifact kind: copy, spec, dataset, pr, report",
+    "by": "date YYYYMMDD",
+    "src": "a required source, one token",
+    "scope": "what is in scope, one token per value",
+    "must": "a required element; several allowed",
+    "no": "a prohibited element; several allowed"
+  },
+  "constraint_set_keys": [
+    "must",
+    "no",
+    "scope",
+    "src"
+  ],
+  "value_aliases": {
+    "uk": [
+      "en-gb",
+      "british",
+      "british-english",
+      "uk-english",
+      "gb"
+    ],
+    "us": [
+      "en-us",
+      "american",
+      "american-english",
+      "us-english"
+    ],
+    "md": [
+      "markdown"
+    ],
+    "we": [
+      "first-person-plural",
+      "first-plural",
+      "1pp"
+    ],
+    "i": [
+      "first-person",
+      "first-person-singular",
+      "1ps"
+    ],
+    "plain": [
+      "plain-english",
+      "simple"
+    ],
+    "copy": [
+      "text",
+      "prose"
+    ]
+  }
+}

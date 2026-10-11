@@ -1,0 +1,137 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "1b70ee52-6bcd-42a3-9ceb-85d74315b91d",
+   "usage": {
+    "input_tokens": 14,
+    "cache_creation_input_tokens": 18144,
+    "cache_read_input_tokens": 292582,
+    "output_tokens": 3724,
+    "output_tokens_details": {
+     "thinking_tokens": 1773
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 18144,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 46356,
+      "cache_creation_input_tokens": 610,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 610
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1475,
+     "outputTokens": 3744,
+     "cacheReadInputTokens": 292582,
+     "cacheCreationInputTokens": 18144,
+     "webSearchRequests": 0,
+     "costUSD": 0.008574120000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1773,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.008574120000000001,
+   "seconds": 22,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_011vsPtQ8cpeSb9VdeMyLmgi",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=SEND rb=exec sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 // remittance advice\" --profile pay; echo \"exit=$?\"; python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py make-rb \"RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=SEND rb=exec sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 // remittance advice\" payer-1 --profile pay; echo \"exit=$?\"",
+      "description": "Validate handover line and build readback envelope"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 7
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y x_tok=e87b87f4 // readback correct, commit e87b87f4",
+   "result": "DONE",
+   "session": "1b70ee52-6bcd-42a3-9ceb-85d74315b91d",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 8458,
+    "cache_read_input_tokens": 208532,
+    "output_tokens": 1877,
+    "output_tokens_details": {
+     "thinking_tokens": 1160
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 8458,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 55058,
+      "cache_creation_input_tokens": 366,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 366
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1483,
+     "outputTokens": 5621,
+     "thinkingTokens": 2933,
+     "cacheReadInputTokens": 501114,
+     "cacheCreationInputTokens": 26602,
+     "webSearchRequests": 0,
+     "costUSD": 0.013290340000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.013290340000000001,
+   "seconds": 16,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}

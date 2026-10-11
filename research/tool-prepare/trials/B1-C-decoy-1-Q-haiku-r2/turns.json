@@ -1,0 +1,137 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "PREPARED",
+   "session": "6fa2d36c-d25e-4ba5-9002-04da10e500bd",
+   "usage": {
+    "input_tokens": 6,
+    "cache_creation_input_tokens": 15871,
+    "cache_read_input_tokens": 110551,
+    "output_tokens": 2105,
+    "output_tokens_details": {
+     "thinking_tokens": 1470
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 15871,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 7,
+      "cache_read_input_tokens": 42610,
+      "cache_creation_input_tokens": 2072,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 2072
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1455,
+     "outputTokens": 2125,
+     "cacheReadInputTokens": 110551,
+     "cacheCreationInputTokens": 15871,
+     "webSearchRequests": 0,
+     "costUSD": 0.00548771,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1470,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.00548771,
+   "seconds": 15,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 3
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y x_tok=dbf09093 // readback correct, commit dbf09093",
+   "result": "DONE",
+   "session": "6fa2d36c-d25e-4ba5-9002-04da10e500bd",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 7818,
+    "cache_read_input_tokens": 198414,
+    "output_tokens": 1076,
+    "output_tokens_details": {
+     "thinking_tokens": 173
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7818,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 51779,
+      "cache_creation_input_tokens": 721,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 721
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1463,
+     "outputTokens": 3201,
+     "thinkingTokens": 1643,
+     "cacheReadInputTokens": 308965,
+     "cacheCreationInputTokens": 23689,
+     "webSearchRequests": 0,
+     "costUSD": 0.009574250000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.009574250000000001,
+   "seconds": 12,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01BLXKbEGmDbYtRSNAJLJPxo",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"RW1 DN payer-2 re=scheduler-1 from=payer to=scheduler item=sup:evergreen p=pay out=OK sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926\" --profile pay && echo \"RW1 DN payer-2 re=scheduler-1 from=payer to=scheduler item=sup:evergreen p=pay out=OK sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926\" > dn.txt && cat dn.txt",
+      "description": "Validate and write the DN line to dn.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  }
+ ]
+}

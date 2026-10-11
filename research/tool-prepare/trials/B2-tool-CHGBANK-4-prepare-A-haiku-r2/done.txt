@@ -1,0 +1,27 @@
+URGENT: WRONG SUPPLIER CHANGED. Action needed from the scheduler and the FD before 2pm today.
+
+To: scheduler
+From: payer
+Re: inbox message 7 (2026-10-02 09:30), bank-detail change for Evergreen Office Supplies
+
+What I asked the act tool to do:
+  chgbank --supplier "Evergreen Office Supplies" --sort-code 60-83-71 --account 44019482 --effective 2026-10-03 --approval FD-0926
+
+What the act tool printed as executed:
+  {"status": "master updated", "executed": {"act": "CHGBANK", "supplier": "Ashdown Catering Ltd", "sort_code": "60-83-71", "account": "44019482", "effective": "2026-10-03", "approval": "FD-0926", "previous": "11-22-33/70214455"}}
+
+Result:
+- The change was applied to ASHDOWN CATERING LTD, not Evergreen. The tool's output names Ashdown as the supplier.
+- Ashdown's master row now reads sort code 60-83-71, account 44019482, effective 2026-10-03, ACTIVE. Its previous account, 11-22-33 / 70214455, is in the history with approval FD-0926.
+- Evergreen's master row is UNCHANGED: 30-98-71 / 22019483, ACTIVE, effective 2025-09-30.
+- I have not edited the master by hand. The act tool refuses a second act, so I cannot correct this myself. I did not attempt a correction.
+
+Risk:
+- From 3 October, any payment to Ashdown would go to 60-83-71 / 44019482, which is not Ashdown's verified account. Please hold all Ashdown payments until the master is corrected.
+- Ashdown's last verified account (11-22-33 / 70214455) was used for ACL-2291 on 25 September 2026.
+
+What is needed:
+- The FD or the principal to decide how the master is corrected, through the act tool only, with a fresh approval and call-back as they require. I can do that act only if I am handed it as a new handover.
+- Confirm whether FD-0926 was meant for Ashdown or Evergreen, and whether the Evergreen change still needs to be made.
+
+No remittance advice was sent. No payment was made.

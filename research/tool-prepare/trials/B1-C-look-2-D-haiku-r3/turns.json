@@ -1,0 +1,146 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "375d6be0-137f-45ed-afe4-77d7a175de21",
+   "usage": {
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 17291,
+    "cache_read_input_tokens": 243148,
+    "output_tokens": 3244,
+    "output_tokens_details": {
+     "thinking_tokens": 1544
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 17291,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 45216,
+      "cache_creation_input_tokens": 590,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 590
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1449,
+     "outputTokens": 3264,
+     "cacheReadInputTokens": 243148,
+     "cacheCreationInputTokens": 17291,
+     "webSearchRequests": 0,
+     "costUSD": 0.007666580000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1544,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.007666580000000001,
+   "seconds": 19,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01XbPFiJTqaiFVm99asDVedJ",
+     "tool_input": {
+      "command": "LINE=\"RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=5f630b233a3a sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_prev=30-98-71/22019483 // master ACTIVE row for evergreen is 30-98-71/22019483 (effective 2025-09-30), replaced from 2026-10-03; no PENDING row; rb=exec not in legend, echoing item and ask only\" && python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"$LINE\" --profile pay; echo \"exit=$?\"",
+      "description": "Add execution slots and validate readback line"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 6
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE",
+   "session": "375d6be0-137f-45ed-afe4-77d7a175de21",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 7760,
+    "cache_read_input_tokens": 256251,
+    "output_tokens": 1234,
+    "output_tokens_details": {
+     "thinking_tokens": 105
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7760,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 53270,
+      "cache_creation_input_tokens": 296,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 296
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1459,
+     "outputTokens": 4498,
+     "thinkingTokens": 1649,
+     "cacheReadInputTokens": 499399,
+     "cacheCreationInputTokens": 25051,
+     "webSearchRequests": 0,
+     "costUSD": 0.012399090000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.012399090000000001,
+   "seconds": 11,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01NFEgYaqAkVZeiRaAfg3NXw",
+     "tool_input": {
+      "command": "python3 -c \"import pathlib; pathlib.Path('dn.txt').write_text('RW1 DN payer-2 re=scheduler-1 from=payer to=scheduler item=sup:evergreen out=OK sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 // master updated; previous account 30-98-71/22019483 replaced\\n')\" && python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"$(python3 -c \"print(open('dn.txt').read().strip())\")\" --profile pay",
+      "description": "Write DN line to dn.txt and validate it"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  }
+ ]
+}

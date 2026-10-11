@@ -1,0 +1,137 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "PREPARED",
+   "session": "98dee970-e914-45e1-bf44-1152865316ff",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 16260,
+    "cache_read_input_tokens": 154899,
+    "output_tokens": 1882,
+    "output_tokens_details": {
+     "thinking_tokens": 937
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 16260,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 7,
+      "cache_read_input_tokens": 44257,
+      "cache_creation_input_tokens": 814,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 814
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1473,
+     "outputTokens": 1902,
+     "cacheReadInputTokens": 154899,
+     "cacheCreationInputTokens": 16260,
+     "webSearchRequests": 0,
+     "costUSD": 0.00589929,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 937,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.00589929,
+   "seconds": 14,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y x_tok=27754317 // readback correct, commit 27754317",
+   "result": "DONE",
+   "session": "98dee970-e914-45e1-bf44-1152865316ff",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 7752,
+    "cache_read_input_tokens": 199804,
+    "output_tokens": 1113,
+    "output_tokens_details": {
+     "thinking_tokens": 77
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7752,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 52007,
+      "cache_creation_input_tokens": 816,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 816
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1481,
+     "outputTokens": 3015,
+     "thinkingTokens": 1014,
+     "cacheReadInputTokens": 354703,
+     "cacheCreationInputTokens": 24012,
+     "webSearchRequests": 0,
+     "costUSD": 0.010005029999999998,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.010005029999999998,
+   "seconds": 11,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_012jrPGu2bwThZUq7DytrVvC",
+     "tool_input": {
+      "command": "cd /home/user/rogerwilco/research/tool-prepare/trials/B1-clean-CHGBANK-4-Q-haiku-r2 2>/dev/null; python3 -c \"\nimport sys\n\" ; printf '%s\\n' \"RW1 DN payer-2 re=scheduler-1 from=payer to=scheduler item=sup:evergreen out=OK sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 // master updated by the act tool; prior ACTIVE account 30-98-71/22019483 superseded\" > /home/user/rogerwilco/research/tool-prepare/trials/B1-clean-CHGBANK-4-Q-haiku-r2/dn.txt && python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"$(cat /home/user/rogerwilco/research/tool-prepare/trials/B1-clean-CHGBANK-4-Q-haiku-r2/dn.txt)\" --profile pay",
+      "description": "Write the DN line and validate it"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  }
+ ]
+}

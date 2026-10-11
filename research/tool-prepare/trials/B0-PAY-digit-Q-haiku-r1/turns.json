@@ -1,0 +1,83 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "ASKED",
+   "session": "116c5584-621e-4c96-8d15-17fde68c8c0f",
+   "usage": {
+    "input_tokens": 14,
+    "cache_creation_input_tokens": 18072,
+    "cache_read_input_tokens": 293494,
+    "output_tokens": 3563,
+    "output_tokens_details": {
+     "thinking_tokens": 1915
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 18072,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 46511,
+      "cache_creation_input_tokens": 373,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 373
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1459,
+     "outputTokens": 3602,
+     "cacheReadInputTokens": 293494,
+     "cacheCreationInputTokens": 18072,
+     "webSearchRequests": 0,
+     "costUSD": 0.008496240000000002,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1915,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.008496240000000002,
+   "seconds": 20,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_014aX17x6U32uwo6uDbqvzfn",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"RW1 AQ payer-8 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 need=TEXT sup=marlow amt=5100.00 cur=GBP kind=GROSS apref=FD-0929 // HO says 5100.00 but ST scheduler-14 approved 5400.00 under FD-0929. Not prepared, nothing moved. Confirm the amount to pay.\" --profile pay; echo \"exit=$?\"",
+      "description": "Validate the ask line against the codec"
+     }
+    },
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_016N9wAJrauwnzFfa3LpzzG1",
+     "tool_input": {
+      "command": "printf '%s\\n' \"RW1 AQ payer-8 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 need=TEXT sup=marlow amt=5100.00 cur=GBP kind=GROSS apref=FD-0929 // HO says 5100.00 but ST scheduler-14 approved 5400.00 under FD-0929. Not prepared, nothing moved. Confirm the amount to pay.\" > question.txt && cat question.txt",
+      "description": "Write the ask line to question.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 7
+  }
+ ]
+}

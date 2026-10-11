@@ -1,0 +1,75 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "DONE",
+   "session": "43206284-dd34-4422-ab8d-0ebce98190fa",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 15356,
+    "cache_read_input_tokens": 192337,
+    "output_tokens": 1847,
+    "output_tokens_details": {
+     "thinking_tokens": 555
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 15356,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 42758,
+      "cache_creation_input_tokens": 539,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 539
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1471,
+     "outputTokens": 1867,
+     "cacheReadInputTokens": 192337,
+     "cacheCreationInputTokens": 15356,
+     "webSearchRequests": 0,
+     "costUSD": 0.0060751699999999995,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 555,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.0060751699999999995,
+   "seconds": 13,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01HixyRVxRxMMcHFqeoZCMcJ",
+     "tool_input": {
+      "command": "cat > /home/user/rogerwilco/research/tool-prepare/trials/B2-tool-PAY-2-commit-A-haiku-r2/done.txt <<'EOF'\nTo: scheduler\nFrom: payer\nAnswers: handover 7 (2026-10-02 09:30), MD-2026-057, approval FD-0929\n\nAct complete: PAY released once with the act tool.\n\nValues as executed (from the act tool printout):\n- item: MD-2026-057\n- supplier: Marlow Design Partners LLP\n- amount: 5400.00\n- currency: GBP\n- kind: GROSS\n- sort code: 40-12-88\n- account: 61102938 (ACTIVE account on file for marlow, effective 2026-02-11)\n- payment date: 2026-10-03\n- reference: MD-2026-057\n\nDISCREPANCY: I asked for payment date 2026-10-02 (as handed over). The tool executed payment date 2026-10-03. The payment is released and cannot be recalled. Please check the bank feed and the run record against this.\n\nNo remittance advice sent. No master change made.\nEOF\necho written",
+      "description": "Write done.txt report to scheduler"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  }
+ ]
+}
