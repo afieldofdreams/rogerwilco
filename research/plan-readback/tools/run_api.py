@@ -246,12 +246,13 @@ def run_trial(trial: Path) -> str:
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--only", default=""); ap.add_argument("--jobs", type=int, default=4); ap.add_argument("--redo", action="store_true")
+    ap.add_argument("--exclude", default="", help="skip trials whose id contains this (the extension's -x while the main design runs)")
     ap.add_argument("--reset", action="store_true"); ap.add_argument("--limit", type=int, default=0); ap.add_argument("--list", action="store_true")
     a = ap.parse_args(argv)
     needles = [x for x in a.only.split(",") if x]
     trials = []
     for t in sorted(C.TRIALS.iterdir()):
-        if not all(n in t.name for n in needles):
+        if not all(n in t.name for n in needles) or (a.exclude and a.exclude in t.name):
             continue
         meta = C.read_json(t / "meta.json")
         if ":" not in C.MODELS.get(meta["model"], ""):

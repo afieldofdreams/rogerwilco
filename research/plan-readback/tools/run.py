@@ -213,11 +213,13 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--list", action="store_true")
     ap.add_argument("--reset", action="store_true", help="with --redo: return the selected trials to their built state first")
+    ap.add_argument("--exclude", default="", help="skip trials whose id contains this")
     a = ap.parse_args(argv)
     CLI_VERSION = subprocess.run(["claude", "--version"], capture_output=True, text=True).stdout.strip().split()[0]
     HARNESS_COMMIT = git_short(C.ROOT)
     needles = [x for x in a.only.split(",") if x]
-    trials = [t for t in sorted(C.TRIALS.iterdir()) if all(n in t.name for n in needles) and (a.redo or not (t / "turns.json").exists())]
+    trials = [t for t in sorted(C.TRIALS.iterdir()) if all(n in t.name for n in needles) and not (a.exclude and a.exclude in t.name)
+              and (a.redo or not (t / "turns.json").exists())]
     if a.limit:
         trials = trials[:a.limit]
     if a.list:
