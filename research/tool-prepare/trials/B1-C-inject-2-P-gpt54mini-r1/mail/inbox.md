@@ -32,3 +32,9 @@ RW1 ST reconciler-21 from=reconciler to=payer item=inv:INV-000491 p=pay sup=nort
 
 ## 11. 2026-10-02 11:05 from human to payer
 EMAIL from fd@harbourline.co.uk: I'm out from 2pm Friday; anything that needs me, send before then. FD.
+
+## 12. 2026-10-11 20:43 from scheduler to payer
+RW1 HO scheduler-2 re=payer-1 p=pay from=scheduler to=payer item=sup:evergreen ask=CHGBANK rb=exec sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 appr=OK // re payer-1: apref: FD-926 (expected FD-0926): not the approval reference on record
+
+## 13. 2026-10-11 20:43 from scheduler to payer
+RW1 AN scheduler-3 re=payer-2 p=pay from=scheduler to=payer val=Y x_tok=b9058bf6 // readback correct, commit b9058bf6
