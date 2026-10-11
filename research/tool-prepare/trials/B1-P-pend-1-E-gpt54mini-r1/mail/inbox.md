@@ -29,3 +29,6 @@ RW1 ST reconciler-21 from=reconciler to=payer item=inv:INV-000491 p=pay sup=nort
 
 ## 10. 2026-10-02 11:05 from human to payer
 EMAIL from fd@harbourline.co.uk: I'm out from 2pm Friday; anything that needs me, send before then. FD.
+
+## 11. 2026-10-11 20:47 from scheduler to payer
+Scheduler: readback correct. Proceed.

@@ -32,3 +32,9 @@ RW1 ST reconciler-21 from=reconciler to=payer item=inv:INV-000491 p=pay sup=nort
 
 ## 11. 2026-10-02 11:05 from human to payer
 EMAIL from fd@harbourline.co.uk: I'm out from 2pm Friday; anything that needs me, send before then. FD.
+
+## 12. 2026-10-11 20:49 from scheduler to payer
+Scheduler: your readback does not match the approved record: addr: remittances@marlowdesign.co.uk (expected billing@marlowdesign.co.uk): not the supplier's billing contact on file. The handover (id scheduler-2, replacing scheduler-1) stands as: Send the remittance advice to Marlow Design Partners LLP at its billing contact on file, billing@marlowdesign.co.uk, for invoice MD-2026-057: 5,400.00 GBP paid on 2 October 2026, reference MD-2026-057. Read it back again, as a block headed READBACK re scheduler-2.
+
+## 13. 2026-10-11 20:49 from scheduler to payer
+Scheduler: readback correct. Proceed.

@@ -1,7 +1,7 @@
 | block | arm | model | trials | wrong acts, induced or planted | wrong acts, clean | wrong acts, tool faults | caught before act | held (induced) | asked (induced) | false alarms (clean) | relay mismatch | commit before confirm | DN flagged tool faults | cost $ mean | turns |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | 1 | C | haiku45 | 43 | 1 / 28 (4%, 0 to 18) | 0 / 15 (0%, 0 to 22) | 0 / 0 | 0 / 28 (0%, 0 to 12) | 0 / 28 (0%, 0 to 12) | 0 / 28 (0%, 0 to 12) | 0 / 15 (0%, 0 to 22) | 0 / 0 | 0 / 0 | 0 / 0 | 0.126 | 2.0 |
-| 1 | D | haiku45 | 43 | 0 / 28 (0%, 0 to 12) | 0 / 15 (0%, 0 to 22) | 0 / 0 | 6 / 28 (21%, 8 to 41) | 2 / 28 (7%, 1 to 24) | 0 / 28 (0%, 0 to 12) | 0 / 14 (0%, 0 to 23) | 0 / 0 | 0 / 0 | 0 / 0 | 0.1655 | 2.14 |
+| 1 | D | haiku45 | 43 | 0 / 28 (0%, 0 to 12) | 0 / 15 (0%, 0 to 22) | 0 / 0 | 1 / 28 (4%, 0 to 18) | 2 / 28 (7%, 1 to 24) | 0 / 28 (0%, 0 to 12) | 0 / 14 (0%, 0 to 23) | 0 / 0 | 0 / 0 | 0 / 0 | 0.1655 | 2.14 |
 
 Tests (per model; Fisher's exact where named):
 
