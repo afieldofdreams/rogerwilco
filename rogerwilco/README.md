@@ -8,7 +8,7 @@ RW1 RB writer-01 re=research-01 from=writer to=research item=gh:crox/site#42 ask
 RW1 DN writer-03 re=research-01 from=writer to=research item=gh:crox/site#42 out=OK art=sha256:9f3e1c // v1, 118 words
 ```
 
-Agents hand work to each other in prose today. Prose hides state, can't be validated, and gets misread silently. Most of the cost is fixed by discipline (facts once, files by reference, deltas only, closed options for the human), which the skill states in English first; the syntax exists so that code can check the discipline is being kept. rogerwilco puts the facts in slots, keeps reasoning in a bounded tail, and makes the receiver read the handoff back before it owns the work. The sender checks the readback in code across four tiers: receipt, integrity, echo, and comprehension, where the receiver derives the acceptance criteria from the brief and the sender compares them with the ones it kept to itself. ATC phraseology for the envelope, teach-back for the instruction.
+Agents hand work to each other in prose today. Prose hides state, can't be validated, and gets misread silently. Most of the cost is fixed by discipline (facts once, files by reference, deltas only, closed options for the human), which the skill states in English first; the syntax exists so that code can check the discipline is being kept. rogerwilco puts the facts in slots, keeps reasoning in a bounded tail, and makes the receiver read the handoff back before it owns the work. The sender checks the readback in code across five tiers: receipt, integrity, echo, comprehension, where the receiver derives the acceptance criteria from the brief and the sender compares them with the ones it kept to itself, and execution, where before an irreversible act the receiver reads back the values it will act with and, afterwards, reports the values the tool executed. ATC phraseology for the envelope, teach-back for the instruction.
 
 The name is the radio call. *Roger*: received. *Wilco*: understood, and will comply. Those are two different claims, and the protocol makes the receiver prove both before the sender lets go of the work: the receipt tier is roger, the comprehension tier is wilco. A handoff whose readback passes is said to be wilco.
 
@@ -27,11 +27,11 @@ This repo is an [Agent Skill](https://docs.claude.com/en/docs/agents-and-tools/a
 | Path | What |
 |---|---|
 | `SKILL.md` | The instructions Claude follows. Short by design. |
-| `references/SPEC.md` | The protocol, version RW1 v0.1: grammar, eight message types, slots, codes, five rules, the four-tier readback, JSON form, profiles. |
-| `scripts/rogerwilco.py` | Reference codec, standard library only: validate, encode, JSON twin, `make-rb`, `check-rb`, digest, legend, lint. |
+| `references/SPEC.md` | The protocol, version RW1 v0.1: grammar, eight message types, slots, codes, five rules, the five-tier readback, the checks before and after an irreversible act, JSON form, profiles. |
+| `scripts/rogerwilco.py` | Reference codec, standard library only: validate, encode, JSON twin, `make-rb`, `check-rb`, `check-ho`, `check-dn`, digest, legend, lint. |
 | `profiles/core.json` | The core vocabulary. |
-| `profiles/pform.json` | An example domain profile (a knowledge-graph workflow). Copy it to make your own. |
-| `tests/conformance.jsonl` | 53 codec cases plus 6 agent-behaviour cases. |
+| `profiles/pform.json` | An example domain profile (a knowledge-graph workflow). Copy it to make your own. `pay.json` (accounts payable, with execution slots) and `clin.json` (clinical assertions) are the profiles the studies used. |
+| `tests/conformance.jsonl` | 80 codec cases (parse, readback, presend, done, digest) plus 6 agent-behaviour cases. |
 | `tests/test_conformance.py` | Runner. An implementation is conformant when it passes. |
 
 ## The eight types
@@ -48,7 +48,7 @@ This repo is an [Agent Skill](https://docs.claude.com/en/docs/agents-and-tools/a
 
 ## Why these choices
 
-They come from a 240-message study of five wire formats and from reading real agent logs (September 2026). Keyed form beat positional because a small model miscounted positional columns in one run of two. Three-letter codes beat glyphs because glyph savings were tokenizer-dependent and the legend cost 1.7x more. Readback exists because every error observed was a misread of a neighbouring field, which an echo catches at the boundary. The tail is bounded because real agent logs were 50% process narration and 26% narrated field changes. Details in `references/SPEC.md` section 10.
+They come from a 240-message study of five wire formats and from reading real agent logs (September 2026). Keyed form beat positional because a small model miscounted positional columns in one run of two. Three-letter codes beat glyphs because glyph savings were tokenizer-dependent and the legend cost 1.7x more. Readback exists because every error observed was a misread of a neighbouring field, which an echo catches at the boundary. The execution level and the done check exist because the execution readback study found faults in the sender's draft and in the tool, and none in the receiver's reading on current models. The tail is bounded because real agent logs were 50% process narration and 26% narrated field changes. Details in `references/SPEC.md` section 10.
 
 ## Conformance
 

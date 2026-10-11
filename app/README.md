@@ -57,6 +57,8 @@ JSON in, JSON out, CORS open. A line that fails validation is a normal answer (`
 | `GET /healthz` | | `{"ok": true, "version": "RW1", "commit": "..."}` |
 | `POST /validate` | `{"line", "profile"}` | `{"ok", "message", "errors", "warnings"}` |
 | `POST /check-rb` | `{"ho", "rb", "profile", "expect_acc"}` | `{"ok", "problems", "notes"}` |
+| `POST /check-ho` | `{"ho", "record", "profile"}` | `{"ok", "problems", "notes"}`: the HO against the record it was built from, before it is sent |
+| `POST /check-dn` | `{"ho", "dn", "profile", "rb"}` | `{"ok", "problems", "notes"}`: the done report against the plan, after the act |
 | `POST /make-rb` | `{"ho", "id", "profile", "acc", "do", "hash"}` | `{"rb"}` |
 | `POST /to-json` | `{"line", "profile"}` | `{"message"}` |
 | `POST /from-json` | `{"message", "profile"}` | `{"line"}` |
@@ -88,7 +90,9 @@ It is built on the official [`mcp`](https://pypi.org/project/mcp/) Python SDK, p
 |---|---|---|
 | `validate` | `line`, `profile` | Checks one line. Returns `ok`, `message`, `errors`, `warnings`. |
 | `gate` | `lines`, `profile`, `document`, `doc_id` | Checks lines against the source document they state facts from. A failed gate is a result with `ok: false`, not a tool error. |
-| `check_rb` | `ho`, `rb`, `profile`, `expect_acc` | Sender-side check of a readback across the four tiers. |
+| `check_rb` | `ho`, `rb`, `profile`, `expect_acc` | Sender-side check of a readback across the five tiers. |
+| `check_ho` | `ho`, `record`, `profile` | Before an irreversible act: the HO against the record it was built from. |
+| `check_dn` | `ho`, `dn`, `profile`, `rb` | After it: the done report against the plan. |
 | `make_rb` | `ho`, `id`, `profile`, `acc`, `do`, `hash` | Builds a correct readback for an HO. |
 | `legend` | `profile` | The legend to paste into another agent's prompt. |
 | `to_json` | `line`, `profile` | The line's JSON form. |
@@ -173,7 +177,7 @@ pip install pytest httpx
 python -m pytest app/tests
 ```
 
-The tests cover every endpoint, the four readback tiers, the MCP handshake and tools, and how the app starts. They also run the lines shown on the home page and the quickstart through the API, so the pages cannot drift from the codec.
+The tests cover every endpoint, the five readback tiers, the checks before and after an irreversible act, the MCP handshake and tools, and how the app starts. They also run the lines shown on the home page and the quickstart through the API, so the pages cannot drift from the codec.
 
 ## The site
 

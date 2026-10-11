@@ -56,26 +56,26 @@
     <div class="loop">
       <div class="step">
         <h2>1. Hand over <span>scheduler to payer</span></h2>
-        <p class="says">"Pay invoice MD-2026-057: 5,400.00 pounds, gross, to account 40-12-88 / 61102938, on 2 October. Read it all back before you do anything."</p>
-        <pre class="line">RW1 <b>HO</b> scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=<b>PAY</b> rb=all sup=marlow amt=<b>5400.00</b> cur=GBP kind=GROSS acct=<b>40-12-88/61102938</b> paid=<b>20261002</b> ref=MD-2026-057</pre>
+        <p class="says">"Pay invoice MD-2026-057: 5,400.00 pounds, gross, to account 40-12-88 / 61102938, on 2 October, under approval FD-0929. Read back what you will do before you do anything."</p>
+        <pre class="line">RW1 <b>HO</b> scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=<b>PAY</b> rb=exec sup=marlow amt=<b>5400.00</b> cur=GBP kind=GROSS acct=<b>40-12-88/61102938</b> paid=<b>20261002</b> ref=MD-2026-057 apref=FD-0929</pre>
       </div>
       <div class="step">
         <h2>2. Read back <span>payer to scheduler</span></h2>
-        <p class="says">"Paying invoice MD-2026-057, 5,400.00 pounds, gross, to 40-12-88 / 61102938, on 2 October."</p>
-        <pre class="line">RW1 <b>RB</b> payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay <b>h=a6cf98835d6c</b> sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057</pre>
-        <p class="check"><span class="badge">check</span><span>A program compares this line with the first one, label by label. <code>h=</code> is a fingerprint of the message as it arrived, so a digit changed on the way shows up too. If anything differs, the payment waits and the scheduler sends the instruction again. If it all matches: roger, wilco.</span></p>
+        <p class="says">"Paying invoice MD-2026-057, 5,400.00 pounds, gross, to 40-12-88 / 61102938, the account on file for Marlow, on 2 October, under FD-0929."</p>
+        <pre class="line">RW1 <b>RB</b> payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay <b>h=a7a82de76607</b> sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929</pre>
+        <p class="check"><span class="badge">check</span><span>A program compares this line with the first one, label by label. The values are the ones the payer will act with, the account read from its own master, so an instruction that named the wrong account shows up here. <code>h=</code> is a fingerprint of the message as it arrived, so a digit changed on the way shows up too. If anything differs, the payment waits and the scheduler sends the instruction again. If it all matches: roger, wilco.</span></p>
       </div>
       <div class="step">
         <h2>3. Done <span>payer to scheduler</span></h2>
-        <p class="says">"Paid 5,400.00 pounds to 40-12-88 / 61102938 on 2 October, reference MD-2026-057."</p>
-        <pre class="line">RW1 <b>DN</b> payer-2 re=scheduler-1 p=pay from=payer to=scheduler item=inv:MD-2026-057 out=OK amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057</pre>
-        <p class="check"><span class="badge">check</span><span>The done message carries the values as they were actually used, not as they were asked for, so a program can check those against the instruction too. That is the second loop: not just "I understood", but "here is what I did". In our fifth study that check ran on every done message; writing it into the rulebook is the next change.</span></p>
+        <p class="says">"Paid 5,400.00 pounds to 40-12-88 / 61102938 on 2 October, reference MD-2026-057, under FD-0929."</p>
+        <pre class="line">RW1 <b>DN</b> payer-2 re=scheduler-1 p=pay from=payer to=scheduler item=inv:MD-2026-057 out=OK sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929</pre>
+        <p class="check"><span class="badge">check</span><span>The done message carries the values as they were actually used, not as they were asked for, so a program can check those against the instruction too. That is the second loop: not just "I understood", but "here is what I did". In our sixth study it was the one check that caught a tool doing something other than what it was told, and it is in the rulebook: <code>check-dn</code>.</span></p>
       </div>
     </div>
     </div>
     <div class="proof">
       <p class="num">9 of 16, then 0</p>
-      <p>Does it carry over? We planted sixteen faults in handovers between agents just before a payment, a bank-detail change and a supplier email: a wrong digit, the wrong account, the wrong date, a message meant for someone else. Without a readback, nine of the sixteen became a wrong act that could not be undone (fourteen with a smaller model). With the line read back and checked by a program, none did, on either model, and no correct handover was wrongly held up. Five small studies so far, so this is an indication rather than proof, and every log is in the open. <a href="/research/readback">What we did and what happened</a>, and <a href="/research">the four studies before it</a>, including the one that found that with a strong model the lines do not save money. What they save is mistakes.</p>
+      <p>Does it carry over? We planted sixteen faults in handovers between agents just before a payment, a bank-detail change and a supplier email: a wrong digit, the wrong account, the wrong date, a message meant for someone else. Without a readback, nine of the sixteen became a wrong act that could not be undone (fourteen with a smaller model). With the line read back and checked by a program, none did, on either model, and no correct handover was wrongly held up. Six small studies so far, so this is an indication rather than proof, and every log is in the open. <a href="/research/readback">What we did and what happened</a>, and <a href="/research">the four studies before it</a>, including the one that found that with a strong model the lines do not save money. What they save is mistakes.</p>
     </div>
     <h2 class="section-h">Start in two minutes</h2>
     <div class="starts">

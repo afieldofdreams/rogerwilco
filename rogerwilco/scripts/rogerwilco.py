@@ -4,9 +4,13 @@
 Usage:
   rogerwilco.py validate "<line>" [--profile NAME] [--strict]
   rogerwilco.py check-rb "<HO line>" "<RB line>" [--profile NAME] [--expect-acc "len:120w+no:em-dash"]
-                                                    # four-tier readback check; --expect-acc is the sender's withheld criteria
+                                                    # five-tier readback check; --expect-acc is the sender's withheld criteria
   rogerwilco.py make-rb "<HO line>" <rb-id> [--profile NAME] [--no-hash] [--acc "k:v+k:v"] [--do copy]
                                                     # build a readback; acc/do are the receiver's derived interpretation
+  rogerwilco.py check-ho "<HO line>" '<record json>' [--profile NAME]
+                                                    # before sending: the HO against the record it was built from
+  rogerwilco.py check-dn "<HO line>" "<DN line>" [--profile NAME] [--rb "<RB line>"]
+                                                    # after the act: the done report against the plan
   rogerwilco.py digest "<line>" [--profile NAME]                     # h= value for a line
   rogerwilco.py to-json "<line>" [--profile NAME]
   rogerwilco.py from-json '<json>' [--profile NAME]
@@ -90,6 +94,8 @@ def load_profile(name: str | None) -> dict:
         spec["item_kinds"] = dict(p["item_kinds"])
     if p.get("asks_used"):
         spec["asks_used"] = list(p["asks_used"])
+    if p.get("exec"):
+        spec["exec"] = {k: list(v) for k, v in p["exec"].items()}
     return spec
 
 
@@ -322,7 +328,7 @@ def digest(line_or_msg, profile: str | None = None) -> str:
 # ---------------------------------------------------------------- readback
 
 DEFAULT_RB = ["item", "ask", "due"]
-RB_LEVELS = {"echo", "all", "acc", "plan"}
+RB_LEVELS = {"echo", "all", "acc", "plan", "exec"}
 
 
 def _split_constraint(tok: str) -> tuple[str, str]:
@@ -414,7 +420,7 @@ def compare_acc(expected: list[str], derived: list[str], keys: list[str] | None 
 
 def check_rb_full(ho_line: str, rb_line: str, profile: str | None = None,
                   expect_acc: list[str] | None = None) -> tuple[list[str], list[str]]:
-    """Rule 1, four tiers. Returns (problems, notes); no problems means the readback passes and ownership transfers.
+    """Rule 1, five tiers. Returns (problems, notes); no problems means the readback passes and ownership transfers.
 
     Tier 1 receipt:        RB.re == HO.id, and RB travels from HO.to back to HO.from.
     Tier 2 integrity:      if RB carries h=, it must equal digest(HO). Only code can produce it.
@@ -422,6 +428,10 @@ def check_rb_full(ho_line: str, rb_line: str, profile: str | None = None,
     Tier 4 comprehension:  when the HO asked rb=acc or rb=plan, the RB must carry acc= derived from the brief, and it is
                            compared by key with the sender's criteria (expect_acc, withheld, or acc= on the HO if sent).
                            rb=plan additionally requires do=.
+    Tier 5 execution:      when the HO asked rb=exec, the RB must carry every execution slot the profile names for the
+                           HO's ask, with the values the receiver will use; a slot the HO carries must match it, a slot the
+                           receiver resolved for itself (the account on file) is present here and compared with the
+                           sender's record by the sender's own code, which holds that record.
     """
     ho, e1, _ = parse(ho_line, profile)
     rb, e2, _ = parse(rb_line, profile)
@@ -481,6 +491,19 @@ def check_rb_full(ho_line: str, rb_line: str, profile: str | None = None,
         for t in rb["slots"].get("not") or []:
             if any(_same_value(t, v, aliases) == 1 for v in exp_must):
                 problems.append(f"tier4 comprehension: receiver excludes {t} which the sender requires")
+    # tier 5
+    if "exec" in levels:
+        spec = load_profile(profile)
+        ask = str(ho["slots"].get("ask") or "")
+        exec_slots = (spec.get("exec") or {}).get(ask)
+        if not exec_slots:
+            notes.append(f"tier5 execution: the profile names no execution slots for ask {ask or '?'}; nothing checked beyond the echo")
+        else:
+            for k in exec_slots:
+                if k not in rb_flat:
+                    problems.append(f"tier5 execution: RB does not carry {k}, which the act needs")
+                elif k in ho_flat and rb_flat[k] != ho_flat[k]:
+                    problems.append(f"tier5 execution: {k} mismatch: HO {_show(ho_flat[k])} vs RB {_show(rb_flat[k])}")
     return problems, notes
 
 
@@ -500,7 +523,9 @@ def _show(v):
 
 def make_rb(ho_line: str, rb_id: str, profile: str | None = None, with_hash: bool = True, eta: str | None = None,
             acc: list[str] | None = None, do: str | None = None) -> str:
-    """Build a correct readback for an HO. What a code-side receiver should send."""
+    """Build a correct readback for an HO. What a code-side receiver should send. Under rb=exec the envelope and the
+    execution slots the HO carries are copied; the slots the receiver must resolve for itself (an account on file) are
+    not in the HO and the receiver adds them before sending."""
     ho, errors, _ = parse(ho_line, profile)
     if errors:
         raise FormError("; ".join(errors))
@@ -508,6 +533,10 @@ def make_rb(ho_line: str, rb_id: str, profile: str | None = None, with_hash: boo
     ho_flat = {"item": ho["item"], **ho["slots"]}
     if "all" in rbset:
         keys = [k for k in ho_flat if k not in ("rb", "acc")]
+    elif "exec" in rbset:
+        spec = load_profile(profile)
+        exec_slots = (spec.get("exec") or {}).get(str(ho["slots"].get("ask") or ""), [])
+        keys = list(DEFAULT_RB) + [k for k in exec_slots if k in ho_flat and k not in DEFAULT_RB] + [k for k in rbset if k not in DEFAULT_RB and k not in RB_LEVELS]
     else:
         keys = list(DEFAULT_RB) + [k for k in rbset if k not in DEFAULT_RB and k not in RB_LEVELS]
     slots = {k: ho_flat[k] for k in keys if k in ho_flat and k != "item"}
@@ -524,6 +553,112 @@ def make_rb(ho_line: str, rb_id: str, profile: str | None = None, with_hash: boo
     msg = {"v": VERSION, "type": "RB", "id": rb_id, "re": ho["id"], "from": ho["to"], "to": ho["from"],
            "item": ho["item"], "slots": slots, "tail": None}
     return encode(msg, profile)
+
+
+def _exec_slots(spec: dict, ask) -> list[str]:
+    """The execution slots a profile names for an ask: the values an irreversible act is done with."""
+    return list((spec.get("exec") or {}).get(str(ask or "")) or [])
+
+
+_RB_OWN = ("h", "eta", "acc", "do", "not", "asm", "p")   # what an RB adds for itself; never part of the plan
+
+
+def check_ho(ho_line: str, record: dict, profile: str | None = None) -> tuple[list[str], list[str]]:
+    """The check before sending. Before an irreversible act the HO is built from the record by code or, where it was
+    drafted, compared with the record before it goes: every value the record holds appears in the HO unchanged, and
+    the HO asks rb=exec where the profile names execution slots for its ask. record maps slot names (and to, item,
+    ask) to values written as they are on the line. Returns (problems, notes); no problems means the HO may be sent."""
+    ho, errors, _ = parse(ho_line, profile)
+    problems = [f"HO: {e}" for e in errors]
+    notes: list[str] = []
+    if problems:
+        return problems, notes
+    if ho["type"] != "HO":
+        return [f"first line is {ho['type']}, expected HO"], notes
+    flat = {"from": ho["from"], "to": ho["to"], "item": ho["item"], **ho["slots"]}
+    for k, v in record.items():
+        want = "+".join(str(x) for x in v) if isinstance(v, list) else _show(v)
+        if k not in flat:
+            problems.append(f"record: HO does not carry {k} (record has {k}={want})")
+        elif _show(flat[k]) != want:
+            problems.append(f"record: {k} mismatch: record {want} vs HO {_show(flat[k])}")
+    spec = load_profile(profile)
+    exec_slots = _exec_slots(spec, ho["slots"].get("ask"))
+    if exec_slots:
+        levels = {str(x).lower() for x in (ho["slots"].get("rb") or [])} & RB_LEVELS
+        if "exec" not in levels:
+            problems.append(f"ask {ho['slots']['ask']} is an irreversible act under profile {spec.get('profile')}: "
+                            "the HO must ask rb=exec")
+        for k in exec_slots:
+            if k in flat and k not in record:
+                notes.append(f"{k}={_show(flat[k])} has no value in the record to check against")
+            elif k not in flat and k not in record:
+                notes.append(f"{k} is in neither the HO nor the record; the receiver resolves it and the readback carries it")
+    return problems, notes
+
+
+def check_dn(ho_line: str, dn_line: str, profile: str | None = None,
+             rb_line: str | None = None) -> tuple[list[str], list[str]]:
+    """The second loop: the done report checked against the plan. The DN answers the HO (receipt), and for an ask the
+    profile names execution slots for, it carries every one of them with the value as executed. Each must equal the
+    value the plan held: the HO's, or the readback's where the HO left the slot to the receiver and the readback
+    passed. out=NOOP carries no execution slots, since nothing was executed; out=PARTIAL carries the ones that were,
+    and a missing one is noted rather than refused. Returns (problems, notes)."""
+    ho, e1, _ = parse(ho_line, profile)
+    dn, e2, _ = parse(dn_line, profile)
+    problems = [f"HO: {e}" for e in e1] + [f"DN: {e}" for e in e2]
+    notes: list[str] = []
+    if problems:
+        return problems, notes
+    if ho["type"] != "HO":
+        problems.append(f"first line is {ho['type']}, expected HO")
+    if dn["type"] != "DN":
+        problems.append(f"second line is {dn['type']}, expected DN")
+    if problems:
+        return problems, notes
+    if dn["re"] != ho["id"]:
+        problems.append(f"receipt: DN re={dn['re']} does not point at HO id {ho['id']}")
+    if dn["from"] != ho["to"] or dn["to"] != ho["from"]:
+        problems.append(f"receipt: DN must come from {ho['to']} to {ho['from']}; got from={dn['from']} to={dn['to']}")
+    if dn["item"] != ho["item"]:
+        problems.append(f"receipt: DN item {dn['item']} is not the HO's {ho['item']}")
+    plan = {k: v for k, v in ho["slots"].items() if k not in ("rb", "acc", "keys", "p")}
+    if rb_line:
+        rb, e3, _ = parse(rb_line, profile)
+        if e3:
+            return problems + [f"RB: {e}" for e in e3], notes
+        if rb["type"] != "RB":
+            return problems + [f"third line is {rb['type']}, expected RB"], notes
+        failed, _ = check_rb_full(ho_line, rb_line, profile)
+        if failed:
+            problems.append("the readback did not pass the sender's check, so it is not the plan: " + failed[0])
+            return problems, notes
+        plan.update({k: v for k, v in rb["slots"].items() if k not in _RB_OWN})
+    spec = load_profile(profile)
+    exec_slots = _exec_slots(spec, ho["slots"].get("ask"))
+    done = dn["slots"]
+    out = done.get("out")
+    if not exec_slots:
+        notes.append(f"the profile names no execution slots for ask {ho['slots'].get('ask') or '?'}; "
+                     "only the slots the DN carries are compared")
+        keys = [k for k in done if k in plan]
+    else:
+        keys = exec_slots
+    for k in keys:
+        if k not in done:
+            if out == "OK":
+                problems.append(f"executed: DN does not carry {k}, which the act used")
+            elif out == "PARTIAL":
+                notes.append(f"executed: DN does not carry {k}")
+        elif k in plan:
+            if plan[k] != done[k]:
+                problems.append(f"executed: {k} mismatch: plan {_show(plan[k])} vs DN {_show(done[k])}")
+        else:
+            notes.append(f"executed: {k}={_show(done[k])} was resolved by the receiver and is not in the plan; "
+                         "check it against the record")
+    if out == "NOOP" and any(k in done for k in exec_slots):
+        notes.append("out=NOOP but the DN carries execution values")
+    return problems, notes
 
 
 # ---------------------------------------------------------------- legend
@@ -559,7 +694,11 @@ def legend(profile: str | None = None, lean: bool = False) -> str:
     core = load_core()
     if not lean:
         out.append("acc= constraint keys (closed set): " + "; ".join(f"{k}={v}" for k, v in core["constraint_keys"].items()) + ". Values: no spaces, lowercase, e.g. len:120w lang:uk must:monday-problem no:em-dash.")
-    out.append("Message ids are <yourname>-<n>, unique in the conversation. Readback level is set per handoff by the sender: rb=all before an irreversible act (a payment release, a payee change, anything external); the default envelope echo otherwise.")
+    out.append("Message ids are <yourname>-<n>, unique in the conversation. Readback level is set per handoff by the sender: rb=exec before an irreversible act (a payment release, a payee change, anything external) where the profile names execution slots, rb=all where it does not; the default envelope echo otherwise.")
+    if spec.get("exec"):
+        out.append("rb=exec: the RB carries the execution slots for the ask with the values you will actually use, resolved from your own records where the HO does not give them (" +
+                   "; ".join(f"{k}: {' '.join(v)}" for k, v in spec["exec"].items()) +
+                   "). The sender checks them against its record and only an AN val=Y clears the act. After the act, the DN carries the same slots with the values as executed, taken from the tool's result, not from your intention; the sender checks that too.")
     if spec.get("profile"):
         line = f"Profile {spec['profile']}: messages carry p={spec['profile']}."
         if spec.get("agents"):
@@ -598,6 +737,9 @@ def _main(argv: list[str]) -> int:
         i = rest.index("--acc"); acc = rest[i + 1].split("+"); del rest[i:i + 2]
     if "--do" in rest:
         i = rest.index("--do"); do = rest[i + 1]; del rest[i:i + 2]
+    rb_given = None
+    if "--rb" in rest:
+        i = rest.index("--rb"); rb_given = rest[i + 1]; del rest[i:i + 2]
     try:
         if cmd == "validate":
             msg, errors, warnings = parse(rest[0], profile)
@@ -610,6 +752,21 @@ def _main(argv: list[str]) -> int:
             for p in problems: print("MISMATCH:", p)
             for n_ in notes: print("NOTE:", n_)
             if not problems: print("OK readback passes; ownership transfers")
+            return 1 if problems else 0
+        if cmd == "check-ho":
+            record = json.loads(rest[1])
+            if not isinstance(record, dict):
+                raise FormError("the record is a JSON object of slot values as written on the line")
+            problems, notes = check_ho(rest[0], record, profile)
+            for p in problems: print("MISMATCH:", p)
+            for n_ in notes: print("NOTE:", n_)
+            if not problems: print("OK the HO matches the record; send it")
+            return 1 if problems else 0
+        if cmd == "check-dn":
+            problems, notes = check_dn(rest[0], rest[1], profile, rb_line=rb_given)
+            for p in problems: print("MISMATCH:", p)
+            for n_ in notes: print("NOTE:", n_)
+            if not problems: print("OK the done report matches the plan")
             return 1 if problems else 0
         if cmd == "digest":
             print(digest(rest[0], profile)); return 0

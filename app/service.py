@@ -115,6 +115,32 @@ def check_rb(ho, rb, profile=None, expect_acc=None) -> dict:
     return {"ok": not problems, "problems": problems, "notes": notes}
 
 
+def check_ho(ho, record, profile=None) -> dict:
+    if not isinstance(record, dict):
+        raise FormError("record must be a JSON object of slot values as they are written on the line")
+    if len(record) > 64:
+        raise FormError(f"record has {len(record)} keys; the limit is 64")
+    for k, v in record.items():
+        if not isinstance(k, str) or not k:
+            raise FormError("record keys are slot names")
+        if isinstance(v, list):
+            if len(v) > 64 or not all(isinstance(x, (str, int, float, bool)) for x in v):
+                raise FormError(f"record value for {k} must be a list of simple values")
+        elif not isinstance(v, (str, int, float, bool)):
+            raise FormError(f"record value for {k} must be a string, number, boolean or list")
+        _text(k, "+".join(str(x) for x in v) if isinstance(v, list) else str(v), MAX_FIELD)
+    problems, notes = rw.check_ho(_text("ho", ho, MAX_LINE), record, profile_arg(profile))
+    return {"ok": not problems, "problems": problems, "notes": notes}
+
+
+def check_dn(ho, dn, profile=None, rb=None) -> dict:
+    problems, notes = rw.check_dn(
+        _text("ho", ho, MAX_LINE), _text("dn", dn, MAX_LINE), profile_arg(profile),
+        rb_line=_text("rb", rb, MAX_LINE) if rb else None,
+    )
+    return {"ok": not problems, "problems": problems, "notes": notes}
+
+
 def make_rb(ho, id, profile=None, acc=None, do=None, hash=True) -> dict:  # noqa: A002  names match the REST body
     prof = profile_arg(profile)
     msg, errors, _ = rw.parse(_text("ho", ho, MAX_LINE), prof)

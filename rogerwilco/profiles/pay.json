@@ -329,6 +329,16 @@
         "DN"
       ],
       "required": false
+    },
+    {
+      "key": "prev",
+      "type": "token",
+      "on": [
+        "RB",
+        "DN"
+      ],
+      "required": false,
+      "desc": "the account on file that a bank change replaces, as sortcode/number"
     }
   ],
   "agents": [
@@ -357,6 +367,33 @@
     "SEND"
   ],
   "translation": {
-    "note": "When lines are the artefact: every ST about a source document carries src=; an invoice line carries amt cur kind; if net and vat are given with kind=GROSS then net + vat must equal amt (checked in code)."
+    "note": "When lines are the artefact: every ST about a source document carries src=; an invoice line carries amt cur kind; if net and vat are given with kind=GROSS then net + vat must equal amt (checked in code). Before an irreversible act (PAY, CHGBANK, SEND) the HO is built from the approval record by code or checked against it before it is sent, asks rb=exec, and the RB and the DN carry the execution slots listed under exec."
+  },
+  "exec": {
+    "PAY": [
+      "sup",
+      "amt",
+      "cur",
+      "kind",
+      "acct",
+      "paid",
+      "ref",
+      "apref"
+    ],
+    "CHGBANK": [
+      "sup",
+      "acct",
+      "eff",
+      "apref",
+      "prev"
+    ],
+    "SEND": [
+      "sup",
+      "addr",
+      "amt",
+      "cur",
+      "paid",
+      "ref"
+    ]
   }
 }

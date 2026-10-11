@@ -33,30 +33,31 @@
     <h2 id="api">API</h2>
     <p>Plain HTTPS, JSON in, JSON out. No key.</p>
     <ol>
-      <li>Check a line. This is the hand-over from the front page: pay invoice MD-2026-057, 5,400.00 pounds, to the account on file, on 2 October.
+      <li>Check a line. This is the hand-over from the front page: pay invoice MD-2026-057, 5,400.00 pounds, to the account on file, on 2 October, under approval FD-0929.
 <pre>curl -s https://rogerwilco.crox.io/validate \
   -H 'content-type: application/json' \
-  -d '{"line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057", "profile": "pay"}'</pre>
+  -d '{"line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929", "profile": "pay"}'</pre>
 <pre class="reply">{"ok": true,
  "message": {"v": "RW1", "type": "HO", "id": "scheduler-1", "re": null, "from": "scheduler", "to": "payer",
              "item": "inv:MD-2026-057",
-             "slots": {"p": "pay", "ask": "PAY", "rb": ["all"], "sup": "marlow", "amt": "5400.00", "cur": "GBP",
-                       "kind": "GROSS", "acct": "40-12-88/61102938", "paid": "20261002", "ref": "MD-2026-057"},
+             "slots": {"p": "pay", "ask": "PAY", "rb": ["exec"], "sup": "marlow", "amt": "5400.00", "cur": "GBP",
+                       "kind": "GROSS", "acct": "40-12-88/61102938", "paid": "20261002", "ref": "MD-2026-057",
+                       "apref": "FD-0929"},
              "tail": null},
  "errors": [], "warnings": []}</pre></li>
       <li>Check a readback. Send the hand-over you sent and the read-back that came back. Here the other agent read 5,100.00 instead of 5,400.00.
 <pre>curl -s https://rogerwilco.crox.io/check-rb \
   -H 'content-type: application/json' \
-  -d '{"ho": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057",
-       "rb": "RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=a6cf98835d6c sup=marlow amt=5100.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057",
+  -d '{"ho": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929",
+       "rb": "RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=a7a82de76607 sup=marlow amt=5100.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929",
        "profile": "pay"}'</pre>
-<pre class="reply">{"ok": false, "problems": ["tier3 echo: amt mismatch: HO 5400.00 vs RB 5100.00"], "notes": []}</pre>
+<pre class="reply">{"ok": false, "problems": ["tier5 execution: amt mismatch: HO 5400.00 vs RB 5100.00"], "notes": []}</pre>
 <p class="muted"><code>ok: false</code> means the job does not change hands. Send the instruction again. With the right amount in the read-back the reply is <code>{"ok": true, "problems": [], "notes": []}</code>: roger, wilco.</p></li>
-      <li>Build the readback for the other side, if that agent runs code. It echoes every fact and adds <code>h=</code>, the fingerprint of the message as received.
+      <li>Build the readback for the other side, if that agent runs code. It carries the values the act will use and adds <code>h=</code>, the fingerprint of the message as received; a value the hand-over leaves to the receiver, such as the account on file, the receiver adds itself.
 <pre>curl -s https://rogerwilco.crox.io/make-rb \
   -H 'content-type: application/json' \
-  -d '{"ho": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057", "id": "payer-1", "profile": "pay"}'</pre>
-<pre class="reply">{"rb": "RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=a6cf98835d6c sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057"}</pre></li>
+  -d '{"ho": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929", "id": "payer-1", "profile": "pay"}'</pre>
+<pre class="reply">{"rb": "RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=a7a82de76607 sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929"}</pre></li>
     </ol>
     <p class="muted">Every endpoint, with its inputs and outputs: <a href="/docs">the API reference</a>. The gate, which checks lines against the document they came from, is <code>POST /gate</code>.</p>
 
@@ -69,7 +70,7 @@
       <li>Build a readback and check it.
 <pre>import rogerwilco as rw
 
-ho = "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057"
+ho = "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929"
 
 # the receiving agent sends this back before it does anything
 rb = rw.make_rb(ho, "payer-1", "pay")
@@ -90,7 +91,7 @@ print(problems)</pre>
     <ol>
       <li>Claude Code: add the tools in one line, then ask the agent to use rogerwilco when it hands work to a subagent.
 <pre>claude mcp add --transport http rogerwilco https://rogerwilco.crox.io/mcp</pre>
-<p class="muted">Six tools arrive: <code>validate</code>, <code>gate</code>, <code>check_rb</code>, <code>make_rb</code>, <code>legend</code>, <code>to_json</code>. Any other MCP client takes the same URL.</p></li>
+<p class="muted">Eight tools arrive: <code>validate</code>, <code>gate</code>, <code>check_rb</code>, <code>make_rb</code>, <code>check_ho</code>, <code>check_dn</code>, <code>legend</code>, <code>to_json</code>. Any other MCP client takes the same URL.</p></li>
       <li>Or copy the skill folder into your project, so the agent reads it on its own.
 <pre>git clone https://github.com/afieldofdreams/rogerwilco
 cp -r rogerwilco/rogerwilco .claude/skills/rogerwilco</pre></li>

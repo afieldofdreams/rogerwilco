@@ -49,11 +49,11 @@ Extension keys begin with `x_` and may carry anything a profile has not defined.
 | Type | Meaning | Required slots | Optional slots |
 |---|---|---|---|
 | `HO` | Handoff: here is work, do this with it | `from to item ask` | `re due pri conf keep art ctx rb acc` |
-| `RB` | Readback: I received the handoff, here is what I understood, and I will act on it | `re from to item ask` (+ `due` if the HO had one, + anything the HO's `rb=` names, + `acc` when the HO asked `rb=acc` or `rb=plan`, + `do` for `rb=plan`) | `h eta not asm` |
+| `RB` | Readback: I received the handoff, here is what I understood, and I will act on it | `re from to item ask` (+ `due` if the HO had one, + anything the HO's `rb=` names, + `acc` when the HO asked `rb=acc` or `rb=plan`, + `do` for `rb=plan`, + the profile's execution slots for the ask when the HO asked `rb=exec`) | `h eta not asm` |
 | `AQ` | Ask: a bounded question | `from to need` (+ `opts` when `need=ENUM`) | `re item by` |
 | `AN` | Answer to an AQ | `re from to val` | `item` |
 | `ST` | Status: state changed on an item, no handover | `from to item` | `re pct eta blk` (+ profile state slots) |
-| `DN` | Done: the handed-off work is complete | `re from to item out` | `art next` |
+| `DN` | Done: the handed-off work is complete | `re from to item out` (+ the profile's execution slots, with the values as executed, after an act the HO asked `rb=exec` for) | `art next` |
 | `UN` | Unable: I will not or cannot take this | `re from to why` | `item alt need` |
 | `FL` | Fail: I took it and it failed | `re from to item why` | `art retry` |
 
@@ -83,7 +83,7 @@ Extension keys begin with `x_` and may carry anything a profile has not defined.
 | `alt` | agent | Suggested alternative receiver on UN. |
 | `retry` | `Y` `N` | Whether a retry is sensible on FL. |
 | `keys` | list of constraint keys | On an HO with `rb=acc` or `rb=plan`: the dimensions the sender will check (`keys=len+lang+must+no`). Never carries values. |
-| `rb` | list | On an HO: the readback level and any extra slots to echo. Levels: `echo` (default: `item ask due`), `all` (every slot), `acc` (derived acceptance criteria, section 5.2), `plan` (`acc` plus `do`). Slot names add to the echo set: `rb=acc+pri`. |
+| `rb` | list | On an HO: the readback level and any extra slots to echo. Levels: `echo` (default: `item ask due`), `all` (every slot), `acc` (derived acceptance criteria, section 5.2), `plan` (`acc` plus `do`), `exec` (the execution slots the profile names for the ask, with the values the receiver will use, section 5.3). Slot names add to the echo set: `rb=acc+pri`. |
 | `h` | 12 hex chars | On an RB: SHA-256 digest of the HO's canonical JSON form (section 5.1). Produced only by code. |
 | `acc` | list of constraints | Acceptance criteria as `key:value` tokens (section 5.2). On an HO: criteria the sender chooses to send. On an RB: criteria the receiver derived from the brief. |
 | `do` | token | On an RB: what the receiver will produce (`copy`, `spec`, `dataset`, `pr`). Required when the HO asked `rb=plan`. |
@@ -106,7 +106,7 @@ Profiles may extend any of these lists. They may not redefine a core code.
 
 ## 5. Rules
 
-1. **No handover without readback.** An HO transfers ownership only when the receiver sends an RB that passes the sender's check (section 5.1). Until then the sender owns the item. The sender sets the level per handoff with `rb=`: the default envelope echo (`item`, `ask`, `due`) where a misread is cheap to catch later; `rb=all` where the receiver's next act is irreversible (a payment release, a payee change, anything external), and in that regime every `ST` or `AN` the receiver will act on is echoed back before it acts; `rb=acc` where the instruction lives in a brief. The month-end study measured full readback at 1.6x the traffic of envelope echo with nothing caught in three clean runs, which is why the level belongs to the handoff and not to the team. An RB that does not pass is void; the sender re-issues the HO with `re=` pointing at the void RB. The owner of an item is the `to` of the most recent HO that received a passing RB. No RB within the sender's deadline: the sender re-issues the same HO with `re=` pointing at the original; a receiver that already read it back replies `UN why=DUP`, so a retry cannot create two owners.
+1. **No handover without readback.** An HO transfers ownership only when the receiver sends an RB that passes the sender's check (section 5.1). Until then the sender owns the item. The sender sets the level per handoff with `rb=`: the default envelope echo (`item`, `ask`, `due`) where a misread is cheap to catch later; `rb=exec` where the receiver's next act is irreversible (a payment release, a payee change, anything external) and the profile names execution slots for the ask, `rb=all` where it does not, and in that regime every `ST` or `AN` the receiver will act on is echoed back before it acts; `rb=acc` where the instruction lives in a brief. Before an irreversible act the HO is built from the record by code, or checked against it before it is sent (`check-ho`), and after the act the receiver's DN carries the values as executed, which the sender checks against the plan (`check-dn`, section 5.3). The month-end study measured full readback at 1.6x the traffic of envelope echo with nothing caught in three clean runs, which is why the level belongs to the handoff and not to the team. An RB that does not pass is void; the sender re-issues the HO with `re=` pointing at the void RB. The owner of an item is the `to` of the most recent HO that received a passing RB. No RB within the sender's deadline: the sender re-issues the same HO with `re=` pointing at the original; a receiver that already read it back replies `UN why=DUP`, so a retry cannot create two owners.
 2. **Never guess.** A receiver that meets an unknown version token, type, or enum value replies `UN why=UNK` (or `why=VER`) naming the offending code in the tail. It does not infer a meaning, and it does not substitute a nearby reason such as `NOCAP` or `SCOPE`: those describe the receiver, `UNK` describes the message. An AQ is answered with an AN or refused with UN; it is never left unanswered because the receiver is busy.
 3. **Every reply carries `re=`.** RB, AN, DN, UN and FL always do. Threads are reconstructed from ids.
 4. **Facts in slots, reasoning in the tail.** A fact that has a slot goes in the slot, never only in the tail. The tail is at most 300 characters; longer content is an artifact referenced by `art=`.
@@ -114,7 +114,7 @@ Profiles may extend any of these lists. They may not redefine a core code.
 
 ### 5.1 What a readback proves, and how the sender checks it
 
-"Did you get it" means three different things, and the RB carries all three. In radio terms, tiers 1 and 2 are *roger* (received, intact) and tiers 3 and 4 are *wilco* (understood, will comply); a handoff whose readback passes every tier the sender asked for is wilco, and only then does ownership transfer. The sender verifies them in code (`scripts/rogerwilco.py check-rb`); a model-only sender applies the same checks by reading.
+"Did you get it" means three different things, and the RB carries all three. In radio terms, tiers 1 and 2 are *roger* (received, intact) and tiers 3 to 5 are *wilco* (understood, will comply); a handoff whose readback passes every tier the sender asked for is wilco, and only then does ownership transfer. The sender verifies them in code (`scripts/rogerwilco.py check-rb`); a model-only sender applies the same checks by reading.
 
 | Tier | Proves | Carried by | Who can produce it |
 |---|---|---|---|
@@ -122,12 +122,13 @@ Profiles may extend any of these lists. They may not redefine a core code.
 | 2 Integrity | The receiver holds exactly the message that was sent | `h=` digest of the HO's canonical form | code only |
 | 3 Echo | The receiver decoded the envelope the same way the sender encoded it | echo of the readback set, as decoded values | anyone, including model-only receivers |
 | 4 Comprehension | The receiver's working picture of the task matches the sender's | `acc=` derived by the receiver from the brief, compared by key with the sender's own criteria | anyone; the check is code on the sender's side |
+| 5 Execution | The values the receiver will act with are the ones the sender approved | the profile's execution slots for the ask, with the values the receiver will use, resolved from its own records where the HO does not give them | anyone; the check is code on the sender's side, against the HO and the sender's record |
 
 Tier 3 catches a misread of the envelope: a receiver can hold the right bytes and still read the wrong column. Tier 2 is optional and only meaningful where the receiver runs code, since a model cannot compute a hash.
 
 Tier 3 alone is recall, not comprehension. In ATC the numbers are the instruction, so echoing them verifies the instruction. Between agents the envelope is the address and the instruction lives in the tail and the artifacts, so an echo verifies the wrong thing. Tier 4 is teach-back: the receiver states what it understood in typed form, and the sender checks it against what it meant.
 
-The readback level is set by the sender with `rb=` on the HO: `echo` (default) echoes `item ask due`; `all` echoes every slot, an equality of two decoded messages; `acc` requires the receiver to derive the acceptance criteria and send them as `acc=`; `plan` requires `acc` plus `do`. Slot names add to the echo set (`rb=acc+pri`). Use `all` when the envelope carries the stakes, `acc` or `plan` whenever the instruction lives in prose.
+The readback level is set by the sender with `rb=` on the HO: `echo` (default) echoes `item ask due`; `all` echoes every slot, an equality of two decoded messages; `acc` requires the receiver to derive the acceptance criteria and send them as `acc=`; `plan` requires `acc` plus `do`; `exec` requires the execution slots the profile names for the ask, with the values the receiver will act with. Slot names add to the echo set (`rb=acc+pri`). Use `exec` before an irreversible act under a profile that names execution slots, `all` when the envelope carries the stakes and the profile names none, `acc` or `plan` whenever the instruction lives in prose.
 
 ### 5.2 The comprehension check
 
@@ -160,6 +161,18 @@ Canonical form for the digest: the JSON form of section 6 serialised with keys s
 
 No third leg is needed. A passing RB transfers ownership; a failing one is answered by a re-issued HO; a ledger records which happened. That is the controller's silence after a correct readback, made explicit and checked by code rather than by attention.
 
+### 5.3 Before and after an irreversible act
+
+A handoff before an irreversible act has three checks, and the readback is the middle one.
+
+**Before sending.** The HO is built from the approval record by code, or compared with it before it goes: `check-ho` takes the line and the record as slot values and refuses a line that differs from the record in any value, omits a value the record holds, or does not ask `rb=exec` where the profile names execution slots for the ask. The execution readback study found the sender's drafting to be the locus where readbacks catch faults, and a check before sending catches the same faults without the round trip.
+
+**The execution readback.** Under `rb=exec` the RB carries every execution slot the profile names for the ask, with the values the receiver will actually use. Where the HO carries a value, the RB's must equal it (tier 5). Where the HO does not, because the receiver resolves it from its own records (the account on file, the account a bank change replaces), the RB carries the resolved value and the sender checks it against its record in its own code. That is a readback of the plan, not an echo of the message: a receiver that resolves the account for itself and finds the handover's account is not the one on file stops and asks, and a sender that sees a resolved value its record contradicts refuses the readback. Only a passing readback, answered with `AN val=Y` where the receiver waits for one, clears the act.
+
+**The done report.** After the act the DN carries the same execution slots with the values as executed, taken from the tool's result, not from the receiver's intention. The sender checks it against the plan with `check-dn`: the DN answers the HO (receipt), and every execution slot it carries equals the HO's value, or the readback's where the HO left the slot to the receiver and the readback passed; a slot missing from an `out=OK` report fails; `out=NOOP` carries none, since nothing was executed; `out=PARTIAL` carries the ones that were. This is the loop that catches what no readback can: a tool that did something other than what it was told. It only works when the receiver reports what the tool printed, so a legend or a brief says so in those words.
+
+The execution slots are a profile's: an `exec` map from ask to slot list (section 7). An ask the profile does not list under `exec` gets no tier 5 and no done check beyond the receipt, and `check-rb` says so in a note.
+
 ## 6. JSON form
 
 ```json
@@ -191,6 +204,8 @@ A profile may also close the answer vocabulary. If it defines an enum `ans`, eve
 
 Slots a profile adds may carry `desc`, which the legend prints.
 
+A profile may name execution slots: an `exec` object mapping an ask to the slots an act is done with. The pay profile names `sup amt cur kind acct paid ref apref` for `PAY`, `sup acct eff apref prev` for `CHGBANK` and `sup addr amt cur paid ref` for `SEND`, and adds `prev` (the account on file that a bank change replaces) on `RB` and `DN`, so that a readback before a bank change says which account is being replaced. `rb=exec`, tier 5 and `check-dn` are defined over this map (section 5.3).
+
 A profile may make the lines the record. The pay profile adds `src` (`list:token`: `email:7`, `bank:20260918`, `po:PO-1044`), `net` and `vat`, and a `translation` note that a channel enforces: every `ST` about a source document carries `src=`, an invoice line carries `amt cur kind`, and net plus VAT must equal the amount when all three are given. Under that rule the agent at the edge translates each source document once into one line, every fact in a slot and a pointer back to the evidence, and no agent writes a working file to restate what the lines already carry. In the month-end study this cut the files the agents pointed each other at from 22k tokens a run to under 2k, with the extractor's lines carrying every checked fact and the outcome unchanged.
 
 The `clin` profile applies the same rule to clinical documents: one `ST` line per statement, `item=<kind>:<concept>`, `act pol cert subj time` required, values in typed slots, one `src=doc:<id>#l<n>` and the verbatim quote as the tail, checked against the document by the channel. The translation study (research/translation) measures it: a strong model found 99.7% of the gold assertions with 99% citing the exact words; the record costs about 60 tokens an assertion, of which the per-line envelope is 28%, so a record form that states the envelope once per block is the next revision.
@@ -217,6 +232,17 @@ RW1 RB writer-01 re=research-01 from=writer to=research item=gh:crox/site#42 ask
 ```
 
 `check-rb --expect-acc` passes and notes `fmt:md` as an assumption to confirm. Had the receiver sent `len:150w`, the readback would fail on a contradiction before any copy was written.
+
+Before an irreversible act, under the pay profile (the HO was checked against the approval record with `check-ho` before it went; the readback carries the execution slots; the done report carries the values the payment tool returned):
+
+```
+RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929
+RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=a7a82de76607 sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929
+RW1 AN scheduler-2 re=payer-1 p=pay from=scheduler to=payer val=Y // readback matches the approved run; proceed
+RW1 DN payer-2 re=scheduler-1 p=pay from=payer to=scheduler item=inv:MD-2026-057 out=OK sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929 // as executed, from the payment tool
+```
+
+`check-rb --profile pay` passes all five tiers; had the payer read back `amt=5100.00`, tier 5 would fail on the amount, and had it left out `acct`, tier 5 would fail on the missing slot. `check-dn --profile pay` passes; had the tool paid 5,100.00 and the payer reported it, the done check would fail on the amount, which is the fault no readback can see.
 
 Refusal with an alternative:
 
@@ -245,4 +271,4 @@ rogerwilco is content, not transport. It rides inside an A2A message part, an MC
 
 ## 10. Evidence
 
-The format choices come from a 240-message study (September 2026). Keyed form rather than positional because a small model miscounted positional columns in one run of two while reading keyed form at 90–100%. Three-letter codes rather than glyphs because glyph savings were tokenizer-dependent and the legend cost 1.7x more. Readback because the errors observed were misreads of a neighbouring field, which an echo catches at the boundary. The comprehension tier because an envelope echo is recall, and between agents the instruction lives in prose the envelope does not carry. The closed constraint key set and `keys=` because the first end-to-end test (two sender agents, four receiver agents, one brief) showed every receiver understanding the brief while the comparator reported four to ten false gaps from key naming alone; with the closed set and `keys=`, three of four pairs passed clean and the fourth reported one real omission (the receiver had dropped "without naming clients"). In the same test, receivers given a tail that said "short paragraph" and an artifact that said 150 words reported `len:150w`, so a sender who believed 120 words was caught by a contradiction before any work was done. Free text confined to a bounded tail because real agent logs were 50% process narration and 26% narrated field changes.
+The format choices come from a 240-message study (September 2026). Keyed form rather than positional because a small model miscounted positional columns in one run of two while reading keyed form at 90–100%. Three-letter codes rather than glyphs because glyph savings were tokenizer-dependent and the legend cost 1.7x more. Readback because the errors observed were misreads of a neighbouring field, which an echo catches at the boundary. The comprehension tier because an envelope echo is recall, and between agents the instruction lives in prose the envelope does not carry. The closed constraint key set and `keys=` because the first end-to-end test (two sender agents, four receiver agents, one brief) showed every receiver understanding the brief while the comparator reported four to ten false gaps from key naming alone; with the closed set and `keys=`, three of four pairs passed clean and the fourth reported one real omission (the receiver had dropped "without naming clients"). In the same test, receivers given a tail that said "short paragraph" and an artifact that said 150 words reported `len:150w`, so a sender who believed 120 words was caught by a contradiction before any work was done. Free text confined to a bounded tail because real agent logs were 50% process narration and 26% narrated field changes. The execution level, the check before sending and the done check come from the execution readback study (research/plan-readback, 2,762 trials, October 2026): against a correct handover and a context built to mislead, Sonnet 5.5 and Haiku 5.5 made no wrong irreversible act with or without a readback (0 of 140 induced trials per cell), so the readback at the receiver's locus is insurance with a measured price of one turn and no false alarms in 75 clean readbacks; against planted faults in the sender's draft, no readback let 17 of 48 on Sonnet and 14 of 48 on Haiku through to a wrong act, the echo and the execution readback caught 48 of 48 each, and a check before sending refused all 16 planted handovers; against a tool that executed something other than what it was told, the sender's check of a done report that carried the tool's values caught 45 of 45 per receiver.

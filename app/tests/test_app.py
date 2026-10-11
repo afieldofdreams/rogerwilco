@@ -182,6 +182,72 @@ def test_check_rb_comprehension(client):
     assert unchecked["ok"] is True and "not compared" in unchecked["notes"][0]
 
 
+# ------------------------------------------------------------------ check-ho and check-dn: before and after an irreversible act
+
+PAY_EXEC_HO = ("RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec sup=marlow amt=5400.00 "
+               "cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929")
+PAY_RECORD = {"to": "payer", "item": "inv:MD-2026-057", "ask": "PAY", "sup": "marlow", "amt": "5400.00", "cur": "GBP",
+              "kind": "GROSS", "acct": "40-12-88/61102938", "paid": "20261002", "ref": "MD-2026-057", "apref": "FD-0929"}
+PAY_DN = ("RW1 DN payer-2 re=scheduler-1 p=pay from=payer to=scheduler item=inv:MD-2026-057 out=OK sup=marlow amt=5400.00 "
+          "cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929 // as executed, from the payment tool")
+
+
+def test_check_ho(client):
+    assert post(client, "/check-ho", ho=PAY_EXEC_HO, record=PAY_RECORD, profile="pay").json() == {"ok": True, "problems": [], "notes": []}
+    digit = post(client, "/check-ho", ho=PAY_EXEC_HO.replace("61102938", "61102983"), record=PAY_RECORD, profile="pay").json()
+    assert digit["ok"] is False and digit["problems"] == ["record: acct mismatch: record 40-12-88/61102938 vs HO 40-12-88/61102983"]
+    level = post(client, "/check-ho", ho=PAY_EXEC_HO.replace("rb=exec", "rb=all"), record=PAY_RECORD, profile="pay").json()
+    assert level["problems"] == ["ask PAY is an irreversible act under profile pay: the HO must ask rb=exec"]
+    missing = post(client, "/check-ho", ho=PAY_EXEC_HO.replace(" apref=FD-0929", ""), record=PAY_RECORD, profile="pay").json()
+    assert missing["problems"] == ["record: HO does not carry apref (record has apref=FD-0929)"]
+    partial = post(client, "/check-ho", ho=PAY_EXEC_HO, record={"amt": "5400.00"}, profile="pay").json()
+    assert partial["ok"] is True and any(n.startswith("acct=") for n in partial["notes"])
+
+
+@pytest.mark.parametrize("body, needle", [
+    ({"ho": PAY_EXEC_HO, "record": "amt=5400.00", "profile": "pay"}, "record"),
+    ({"ho": PAY_EXEC_HO, "record": {"amt": {"x": 1}}, "profile": "pay"}, "record value"),
+])
+def test_check_ho_refuses_bad_requests(client, body, needle):
+    r = client.post("/check-ho", json=body)
+    assert r.status_code in (400, 422), r.text
+    assert needle in r.text
+    # an HO that does not parse is a result, not a request error, as it is for check-rb
+    body = post(client, "/check-ho", ho="RW1 HO a-1 from=a to=b", record={}, profile="pay").json()
+    assert body["ok"] is False and body["problems"][0].startswith("HO:")
+
+
+def test_check_dn(client):
+    assert post(client, "/check-dn", ho=PAY_EXEC_HO, dn=PAY_DN, profile="pay").json() == {"ok": True, "problems": [], "notes": []}
+    wrong = post(client, "/check-dn", ho=PAY_EXEC_HO, dn=PAY_DN.replace("amt=5400.00", "amt=5100.00"), profile="pay").json()
+    assert wrong["problems"] == ["executed: amt mismatch: plan 5400.00 vs DN 5100.00"]
+    gone = post(client, "/check-dn", ho=PAY_EXEC_HO, dn=PAY_DN.replace(" acct=40-12-88/61102938", ""), profile="pay").json()
+    assert gone["problems"] == ["executed: DN does not carry acct, which the act used"]
+    noop = post(client, "/check-dn", ho=PAY_EXEC_HO, profile="pay",
+                dn="RW1 DN payer-2 re=scheduler-1 p=pay from=payer to=scheduler item=inv:MD-2026-057 out=NOOP // already paid").json()
+    assert noop == {"ok": True, "problems": [], "notes": []}
+    # a bank change: the account being replaced is resolved by the receiver, read back, and then reported as executed
+    ho = ("RW1 HO scheduler-1 p=pay from=scheduler to=payer item=sup:evergreen ask=CHGBANK rb=exec sup=evergreen "
+          "acct=60-83-71/44019482 eff=20261003 apref=FD-0926")
+    rb = post(client, "/make-rb", ho=ho, id="payer-1", profile="pay").json()["rb"] + " prev=30-98-71/22019483"
+    assert post(client, "/check-rb", ho=ho, rb=rb, profile="pay").json()["ok"] is True
+    dn = ("RW1 DN payer-2 re=scheduler-1 p=pay from=payer to=scheduler item=sup:evergreen out=OK sup=evergreen "
+          "acct=60-83-71/44019482 eff=20261003 apref=FD-0926 prev=30-98-71/22019483")
+    assert post(client, "/check-dn", ho=ho, dn=dn, rb=rb, profile="pay").json() == {"ok": True, "problems": [], "notes": []}
+    other = post(client, "/check-dn", ho=ho, dn=dn.replace("22019483", "22019484"), rb=rb, profile="pay").json()
+    assert other["problems"] == ["executed: prev mismatch: plan 30-98-71/22019483 vs DN 30-98-71/22019484"]
+    without = post(client, "/check-dn", ho=ho, dn=dn, profile="pay").json()
+    assert without["ok"] is True and without["notes"] and "prev=" in without["notes"][0]
+    unparsed = post(client, "/check-dn", ho=ho, dn=dn, rb=rb.replace("h=", "h=0"), profile="pay").json()
+    assert unparsed["ok"] is False and "did not pass" in unparsed["problems"][0]
+
+
+def test_check_ho_and_dn_via_mcp(client):
+    assert call_tool(client, "check_ho", {"ho": PAY_EXEC_HO, "record": PAY_RECORD, "profile": "pay"})["structuredContent"]["ok"] is True
+    res = call_tool(client, "check_dn", {"ho": PAY_EXEC_HO, "dn": PAY_DN.replace("amt=5400.00", "amt=5100.00"), "profile": "pay"})
+    assert res["structuredContent"]["problems"] == ["executed: amt mismatch: plan 5400.00 vs DN 5100.00"]
+
+
 # ------------------------------------------------------------------ make-rb, digest, JSON
 
 def test_make_rb(client):
@@ -277,8 +343,8 @@ def test_spec_and_skill(client):
 
 def test_openapi_and_docs(client):
     paths = client.get("/openapi.json").json()["paths"]
-    for path in ("/healthz", "/validate", "/check-rb", "/make-rb", "/to-json", "/from-json", "/digest", "/legend",
-                 "/profiles", "/spec", "/skill"):
+    for path in ("/healthz", "/validate", "/check-rb", "/check-ho", "/check-dn", "/make-rb", "/to-json", "/from-json",
+                 "/digest", "/legend", "/profiles", "/spec", "/skill"):
         assert path in paths
     assert client.get("/docs").status_code == 200
 
@@ -338,15 +404,17 @@ def test_profiles_page_and_list_share_a_path(client):
 
 def test_quickstart_replies_are_real(client):
     """The requests on the quickstart page answer exactly what the page shows."""
-    ho = ("RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=all sup=marlow amt=5400.00 cur=GBP "
-          "kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057")
+    ho = ("RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec sup=marlow amt=5400.00 cur=GBP "
+          "kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929")
     rb = post(client, "/make-rb", ho=ho, id="payer-1", profile="pay").json()["rb"]
-    assert "h=a6cf98835d6c" in rb                                                      # the fingerprint printed on the page
+    assert "h=a7a82de76607" in rb                                                      # the fingerprint printed on the page
     assert post(client, "/check-rb", ho=ho, rb=rb, profile="pay").json() == {"ok": True, "problems": [], "notes": []}
     bad = post(client, "/check-rb", ho=ho, rb=rb.replace("amt=5400.00", "amt=5100.00"), profile="pay").json()
-    assert bad == {"ok": False, "problems": ["tier3 echo: amt mismatch: HO 5400.00 vs RB 5100.00"], "notes": []}
+    assert bad == {"ok": False, "problems": ["tier5 execution: amt mismatch: HO 5400.00 vs RB 5100.00"], "notes": []}
     page = client.get("/quickstart").text
-    assert "tier3 echo: amt mismatch: HO 5400.00 vs RB 5100.00" in page and rb in page
+    assert "tier5 execution: amt mismatch: HO 5400.00 vs RB 5100.00" in page and rb in page
+    body = post(client, "/validate", line=ho, profile="pay").json()
+    assert body["message"]["slots"]["rb"] == ["exec"] and body["message"]["slots"]["apref"] == "FD-0929"
 
 
 # ------------------------------------------------------------------ the gate: lines as the record
@@ -584,7 +652,9 @@ def call_tool(client, name, arguments):
 
 def test_mcp_tools_list(client):
     tools = {t["name"]: t for t in rpc(client, "tools/list")["result"]["tools"]}
-    assert set(tools) == {"validate", "gate", "check_rb", "make_rb", "legend", "to_json"}
+    assert set(tools) == {"validate", "gate", "check_rb", "make_rb", "check_ho", "check_dn", "legend", "to_json"}
+    assert tools["check_ho"]["inputSchema"]["required"] == ["ho", "record"]
+    assert tools["check_dn"]["inputSchema"]["required"] == ["ho", "dn"]
     for tool in tools.values():
         assert tool["description"] and "\n" not in tool["description"] and tool["inputSchema"]["type"] == "object"
         assert all("description" in p for p in tool["inputSchema"]["properties"].values())
@@ -616,7 +686,7 @@ def test_mcp_works_behind_a_real_domain(client):
     # The SDK's default would answer 421 to any Host other than localhost.
     headers = {**MCP_HEADERS, "Host": "rogerwilco.example.com", "Origin": "https://claude.ai"}
     r = client.post("/mcp", json={"jsonrpc": "2.0", "id": 1, "method": "tools/list"}, headers=headers)
-    assert r.status_code == 200 and len(r.json()["result"]["tools"]) == 6
+    assert r.status_code == 200 and len(r.json()["result"]["tools"]) == 8
 
 
 def test_mcp_tools_call(client):
