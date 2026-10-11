@@ -23,6 +23,7 @@ RESULTS = ROOT / "results"
 CODEC = REPO / "rogerwilco" / "scripts" / "rogerwilco.py"
 import os
 HARDEN = int(os.environ.get("RW_HARDEN", "0"))   # the pre-registered hardening ladder: 0 as built, 1 two confusers, 2 ordering, 3 no status field
+MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
 TODAY = "2026-10-02"
 TODAY_LONG = "Friday 2 October 2026"
 

@@ -137,6 +137,30 @@ def figures(results: Path = C.RESULTS) -> dict:
                     f[f"api_{key}_{model}_p"] = f"{v['p']:.2f}" if v["p"] >= 0.01 else "under 0.01"
                 if "holds" in v:
                     f[f"api_{key}_{model}_holds"] = "holds" if v["holds"] else "does not hold"
+    # the extension after the main run: free prose (F) in blocks 1 and 2, the judged prose readback (B) in block 1
+    ext = results / "extension" / "summary.json"
+    if ext.exists():
+        e = load(ext)
+        erows = e["rows"]
+        f["ext_trials"] = f"{len(erows):,}"
+        f["ext_status_not_ok"] = str(sum(1 for x in erows if x["status"] != "ok"))
+        f["ext_cost_total"] = f"${sum(x.get('cost_usd') or 0 for x in erows):,.0f}"
+        for model in ("sonnet", "gpt54mini"):
+            for block, arms in ((1, "FB"), (2, "F")):
+                for arm in arms:
+                    c = cell(e, block, arm, model)
+                    if not c:
+                        continue
+                    k, n, hi = r(c, "wrong_acts_induced"); f[f"ext_b{block}_{arm}_{model}_wrong"] = f"{k} of {n}"; f[f"ext_b{block}_{arm}_{model}_wrong_hi"] = f"{100 * hi:.1f}%"
+                    k, n, hi = r(c, "asked_induced"); f[f"ext_b{block}_{arm}_{model}_asked"] = f"{k} of {n}"
+                    k, n, hi = r(c, "caught_before_act"); f[f"ext_b{block}_{arm}_{model}_caught"] = f"{k} of {n}"
+                    held = [x for x in erows if x["block"] == block and x["arm"] == arm and x["model"] == model]
+                    f[f"ext_b{block}_{arm}_{model}_held"] = f"{sum(1 for x in held if x['held'])} of {len(held)}"
+                    f[f"ext_b{block}_{arm}_{model}_turns"] = f"{c['receiver_turns_mean']:.1f}"
+                    f[f"ext_b{block}_{arm}_{model}_cost"] = f"${c['cost_usd_mean']:.2f}"
+                    if arm == "B":
+                        k, n, hi = r(c, "false_alarms_all"); f[f"ext_b{block}_{arm}_{model}_fa_all"] = f"{k} of {n}"
+                        k, n, hi = r(c, "false_alarms_clean"); f[f"ext_b{block}_{arm}_{model}_fa"] = f"{k} of {n}"
     # tests
     for model, t in s.get("tests", {}).items():
         for name, v in t.items():
