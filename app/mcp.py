@@ -1,4 +1,4 @@
-"""MCP server for rogerwilco, over Streamable HTTP. Tools: validate, gate, check_rb, make_rb, legend, to_json.
+"""MCP server for rogerwilco, over Streamable HTTP. Tools: validate, gate, check_rb, make_rb, check_ho, check_dn, legend, to_json.
 
 Built on the official SDK (pip install "mcp<2"; the 2.x line renamed FastMCP and moved the transport options). The
 server is stateless and answers with plain JSON, so any client can call it with a single POST and no session.
@@ -36,9 +36,11 @@ INSTRUCTIONS = (
     "rogerwilco (RW1) is a one-line typed message format for handing work between agents, with a readback the sender "
     "verifies. A fact that came from a document crosses as a line that points back at it (src=). Call legend to get "
     "the format in a few lines. Use validate on every line you send or receive, make_rb to build the readback for an "
-    "HO you received, and check_rb to verify a readback before you treat a handoff as accepted. When lines state facts "
-    "from a source document (profile clin or pay), send the document and the lines to gate and fix every error before "
-    "anyone acts on them. to_json converts a line to its JSON form."
+    "HO you received, and check_rb to verify a readback before you treat a handoff as accepted. Before an irreversible "
+    "act, check_ho compares the HO with the record it was built from before it is sent, and afterwards check_dn "
+    "compares the done report with the plan. When lines state facts from a source document (profile clin or pay), send "
+    "the document and the lines to gate and fix every error before anyone acts on them. to_json converts a line to its "
+    "JSON form."
 )
 
 Line = Annotated[str, Field(description="One rogerwilco message on one line, starting RW1.")]
@@ -61,10 +63,42 @@ def check_rb(
         "joined by +, for example len:120w+tone:plain+no:em-dash. Compared with the RB's acc=."))] = "",
 ) -> dict[str, Any]:
     """Sender-side check of a readback. Returns {ok, problems, notes}. ok is true only when receipt (tier 1),
-    integrity (tier 2, when the RB carries h=), echo (tier 3) and, if the HO asked for rb=acc or rb=plan,
-    comprehension (tier 4) all pass. Only then does the receiver own the item; otherwise re-send the HO with re=
-    pointing at the bad RB. notes lists assumptions to confirm."""
+    integrity (tier 2, when the RB carries h=), echo (tier 3), if the HO asked for rb=acc or rb=plan comprehension
+    (tier 4), and if it asked for rb=exec execution (tier 5: the profile's execution slots for the ask, with the
+    values the receiver will act with) all pass. Only then does the receiver own the item; otherwise re-send the HO
+    with re= pointing at the bad RB. notes lists assumptions to confirm."""
     return svc.check_rb(ho, rb, profile, expect_acc)
+
+
+def check_ho(
+    ho: Annotated[str, Field(description="The HO line about to be sent.")],
+    record: Annotated[dict[str, Any], Field(description=(
+        "The record the HO was built from: slot names (and to, item, ask) to values written as they are on the line, "
+        "for example {\"to\": \"payer\", \"amt\": \"5400.00\", \"acct\": \"40-12-88/61102938\"}."))],
+    profile: Profile = "",
+) -> dict[str, Any]:
+    """The check before sending a handoff for an irreversible act (a payment, a payee change, anything external).
+    Compares the HO with the record it should have been built from: every value in the record must appear in the HO
+    unchanged, and under a profile that names execution slots for the ask the HO must say rb=exec. Returns {ok,
+    problems, notes}. Send the HO only when ok is true; a note names a value in the HO that the record cannot vouch
+    for."""
+    return svc.check_ho(ho, record, profile)
+
+
+def check_dn(
+    ho: Annotated[str, Field(description="The HO line the sender sent.")],
+    dn: Annotated[str, Field(description="The DN line that came back after the act.")],
+    profile: Profile = "",
+    rb: Annotated[str, Field(description=(
+        "Optional. The RB that passed check_rb, when the receiver read back values the HO did not carry (the account "
+        "it found on file); those values are then part of the plan the DN is checked against."))] = "",
+) -> dict[str, Any]:
+    """The second loop: check a done report against the plan after an irreversible act. The DN must answer the HO,
+    and under a profile that names execution slots for the ask it must carry every one of them with the value as
+    executed, equal to the HO's value or to the readback's where the HO left the slot to the receiver. out=NOOP
+    carries none; out=PARTIAL carries the ones that were executed. Returns {ok, problems, notes}. A problem here
+    means the tool did something other than what was agreed, which no readback can catch."""
+    return svc.check_dn(ho, dn, profile, rb or None)
 
 
 def make_rb(
@@ -122,6 +156,8 @@ TOOLS = (
     (gate, "Check lines against their source", None),
     (check_rb, "Check a readback", None),
     (make_rb, "Make a readback", None),
+    (check_ho, "Check a handoff against the record", None),
+    (check_dn, "Check a done report", None),
     (legend, "Get the legend", False),     # plain text, not a JSON object
     (to_json, "Convert a line to JSON", None),
 )

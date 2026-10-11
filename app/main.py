@@ -38,6 +38,21 @@ class CheckRBBody(BaseModel):
         default=None, description="The criteria the sender kept back, compared with the RB's acc=. " + ACC_HELP)
 
 
+class CheckHOBody(BaseModel):
+    ho: str = Field(description="The HO line about to be sent.")
+    record: dict = Field(description="The record the HO was built from: slot names (and to, item, ask) to values as "
+                                     "they are written on the line, for example {\"amt\": \"5400.00\"}.")
+    profile: str | None = Field(default=None, description=PROFILE_HELP)
+
+
+class CheckDNBody(BaseModel):
+    ho: str = Field(description="The HO line the sender sent.")
+    dn: str = Field(description="The DN line that came back after the act.")
+    profile: str | None = Field(default=None, description=PROFILE_HELP)
+    rb: str | None = Field(default=None, description="The RB that passed the sender's check, when the receiver resolved "
+                                                     "values the HO did not carry; its values are then the plan.")
+
+
 class MakeRBBody(BaseModel):
     ho: str = Field(description="The HO line to read back.", examples=[EXAMPLE_HO])
     id: str = Field(description="Message id for the RB, for example writer-01.")
@@ -121,6 +136,16 @@ def validate(body: LineBody):
 @router.post("/check-rb", summary="Check a readback against the HO it answers")
 def check_rb(body: CheckRBBody):
     return svc.check_rb(body.ho, body.rb, body.profile, body.expect_acc)
+
+
+@router.post("/check-ho", summary="Check an HO against the record before it is sent")
+def check_ho(body: CheckHOBody):
+    return svc.check_ho(body.ho, body.record, body.profile)
+
+
+@router.post("/check-dn", summary="Check a done report against the plan")
+def check_dn(body: CheckDNBody):
+    return svc.check_dn(body.ho, body.dn, body.profile, body.rb)
 
 
 @router.post("/make-rb", summary="Build a readback for an HO")

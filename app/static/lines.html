@@ -42,13 +42,13 @@
 
     <div class="box">
       <h3>HO: hand over</h3>
-      <p>"Here is a job. Do this." It names the item, what to do (<code>ask=</code>) and every fact the receiver needs. <code>rb=all</code> means "read all of it back before you start".</p>
-      <pre>RW1 <b>HO</b> scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 <b>ask=PAY</b> <b>rb=all</b> sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057</pre>
+      <p>"Here is a job. Do this." It names the item, what to do (<code>ask=</code>) and every fact the receiver needs. <code>rb=exec</code> means "read back what you will do, with the values you will use, before you start".</p>
+      <pre>RW1 <b>HO</b> scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 <b>ask=PAY</b> <b>rb=exec</b> sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929</pre>
     </div>
     <div class="box">
       <h3>RB: read back</h3>
-      <p>"Here is what I understood." The receiver repeats the facts, and adds <code>h=</code>, a fingerprint of the hand-over as it arrived. The sender's program compares the two before letting go of the job.</p>
-      <pre>RW1 <b>RB</b> payer-1 <b>re=scheduler-1</b> from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay <b>h=a6cf98835d6c</b> sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057</pre>
+      <p>"Here is what I understood, and what I will do." The receiver gives the values it will act with, the account read from its own master, and adds <code>h=</code>, a fingerprint of the hand-over as it arrived. The sender's program compares the two before letting go of the job.</p>
+      <pre>RW1 <b>RB</b> payer-1 <b>re=scheduler-1</b> from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay <b>h=a7a82de76607</b> sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929</pre>
     </div>
     <div class="box">
       <h3>AQ: ask</h3>
@@ -67,8 +67,8 @@
     </div>
     <div class="box">
       <h3>DN: done</h3>
-      <p>"I did it, and here is exactly what I did." The values as they were actually used, not as they were asked for, so the sender's program can check them against the instruction. This is the second loop. The fifth study ran that check on every done message; writing it into the spec is the next change.</p>
-      <pre>RW1 <b>DN</b> payer-2 re=scheduler-1 p=pay from=payer to=scheduler item=inv:MD-2026-057 <b>out=OK</b> amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057</pre>
+      <p>"I did it, and here is exactly what I did." The values as they were actually used, not as they were asked for, so the sender's program can check them against the instruction. This is the second loop. The sixth study found it the one check that catches a tool doing something other than what it was told; the spec has it as <code>check-dn</code>.</p>
+      <pre>RW1 <b>DN</b> payer-2 re=scheduler-1 p=pay from=payer to=scheduler item=inv:MD-2026-057 <b>out=OK</b> sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929</pre>
     </div>
     <div class="box">
       <h3>UN: unable</h3>
@@ -89,7 +89,7 @@
       <li>Numbers, dates, money and lists are in the one shape allowed, so <code>5400.00</code> and <code>5,400</code> cannot both be in play.</li>
       <li>The id matches the sender. A readback as <code>payer-1</code> to a message addressed to <code>auditor</code> is refused: wrong aircraft on the frequency.</li>
     </ol>
-    <p>And for a readback, four more, in order. Receipt: the reply answers the right message from the right agent. Integrity: the fingerprint matches, so nothing changed on the way. Echo: the facts come back with the same values (the item, the ask and the due date always; every fact when the hand-over said <code>rb=all</code>). Comprehension, when the sender asked for it: the criteria the receiver worked out from the brief, written as <code>acc=</code>, match the ones the sender kept to itself. The first two are roger. The last two are wilco.</p>
+    <p>And for a readback, five more, in order. Receipt: the reply answers the right message from the right agent. Integrity: the fingerprint matches, so nothing changed on the way. Echo: the facts come back with the same values (the item, the ask and the due date always; every fact when the hand-over said <code>rb=all</code>). Comprehension, when the sender asked for it: the criteria the receiver worked out from the brief, written as <code>acc=</code>, match the ones the sender kept to itself. Execution, before an irreversible act (<code>rb=exec</code>): the values the receiver will act with, including the ones it looked up for itself, are all there and match the instruction. The first two are roger. The last three are wilco. And after the act, one more: the done message carries the values as executed, and they match the plan.</p>
 
     <h2>Where the words come from</h2>
     <p>There is one basic list for any kind of work (the eight message types, the <code>ask</code> words like DRAFT, REVIEW and FIX, the reasons for UN and FL). Then a <b>profile</b> adds the words for one kind of work. The <code>pay</code> profile adds PAY, CHGBANK and SEND, amounts, currencies, accounts and the five answers a finance director may give (approve, decline, hold, reject, call back). The <code>clin</code> profile adds the words for a clinical note. A message using a profile says so with <code>p=pay</code>. A profile can add words; it may not change what a basic one means.</p>

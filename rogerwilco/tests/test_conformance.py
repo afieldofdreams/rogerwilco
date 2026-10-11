@@ -5,8 +5,8 @@
   python3 tests/test_conformance.py --agent FILE    # also score an agent's replies (JSONL: {"id": "a01", "reply": "<line>"})
 
 An implementation is conformant when every parse case gives the expected verdict and JSON,
-every readback case gives the expected verdict, every valid line round-trips through JSON,
-and (for agents) every reply has the expected type and slots.
+every readback, presend and done case gives the expected verdict, every valid line round-trips
+through JSON, and (for agents) every reply has the expected type and slots.
 """
 import json, sys
 from pathlib import Path
@@ -39,7 +39,7 @@ for c in cases:
     elif c["kind"] == "readback":
         n += 1
         exp = c["expect_acc"].split("+") if c.get("expect_acc") else None
-        problems, notes = fc.check_rb_full(c["ho"], c["rb"], expect_acc=exp)
+        problems, notes = fc.check_rb_full(c["ho"], c["rb"], c.get("profile"), expect_acc=exp)
         ok = (not problems) if c["expect"] == "match" else bool(problems)
         if not ok:
             fails.append(f"{c['id']}: expected {c['expect']}, problems={problems}")
@@ -49,6 +49,25 @@ for c in cases:
         for needle in c.get("notes_contain", []):
             if not any(needle in p for p in notes):
                 fails.append(f"{c['id']}: expected a note containing {needle!r}, got {notes}")
+
+    elif c["kind"] == "presend":
+        n += 1
+        problems, notes = fc.check_ho(c["ho"], c["record"], c.get("profile"))
+        ok = (not problems) if c["expect"] == "match" else bool(problems)
+        if not ok:
+            fails.append(f"{c['id']}: expected {c['expect']}, problems={problems}")
+        for needle in c.get("problems_contain", []):
+            if not any(needle in p for p in problems):
+                fails.append(f"{c['id']}: expected a problem containing {needle!r}, got {problems}")
+    elif c["kind"] == "done":
+        n += 1
+        problems, notes = fc.check_dn(c["ho"], c["dn"], c.get("profile"), rb_line=c.get("rb"))
+        ok = (not problems) if c["expect"] == "match" else bool(problems)
+        if not ok:
+            fails.append(f"{c['id']}: expected {c['expect']}, problems={problems}")
+        for needle in c.get("problems_contain", []):
+            if not any(needle in p for p in problems):
+                fails.append(f"{c['id']}: expected a problem containing {needle!r}, got {problems}")
 
 for c in cases:
     if c["kind"] == "digest":
