@@ -9,6 +9,7 @@ Single phase, as study 6's tool (arms A and D): validates, executes once, prints
 Two phase (arms P and Q): the tool states exactly what it will execute, freezes it under a token, and executes that
 statement and nothing else.
   python3 act.py prepare pay|chgbank|send <the same arguments> --ho "<the HO line exactly as received>"
+  python3 act.py prepare pay|chgbank|send <the same arguments> --ho-id <id>      (the tool reads the HO from mail/inbox.md itself)
       validates and resolves the arguments, writes the prepared transaction with a token, prints it as JSON together with
       the readback line it composed from the handover: the envelope, h=, the execution slots with the prepared values, x_tok.
   python3 act.py commit <token>      executes the prepared transaction (in arm Q only once the scheduler has confirmed it)
@@ -141,6 +142,18 @@ def finish_act(t: Path, tid: str, act: str, requested: dict, executed: dict, fau
     return out
 
 
+def inbox_line(t: Path, ho_id: str) -> str:
+    """The HO with this id, exactly as it stands in the inbox: the tool reads the handover from the transport, so that the
+    receiver never retypes it and the digest is of the message as delivered."""
+    inbox = t / "mail" / "inbox.md"
+    if not inbox.exists():
+        refuse("no inbox in this folder")
+    found = [l.strip() for l in inbox.read_text().splitlines() if l.strip().startswith(f"RW1 HO {ho_id} ")]
+    if not found:
+        refuse(f"no HO with id {ho_id!r} in the inbox; nothing prepared")
+    return found[-1]
+
+
 def rb_line(t: Path, ho: str, prepared: dict, act: str, token: str, n: int) -> str:
     """The readback the tool composes: the envelope and digest from the handover as received, the execution slots from the
     prepared values (the supplier as the master row the prepared legal name resolves to), and the token."""
@@ -184,7 +197,9 @@ def main(argv: list[str]) -> int:
         q = psub.add_parser(name)
         for a in ARGS[name]:
             q.add_argument("--" + a, required=True)
-        q.add_argument("--ho", required=True, help="the HO line exactly as received")
+        g = q.add_mutually_exclusive_group(required=True)
+        g.add_argument("--ho", help="the HO line exactly as received")
+        g.add_argument("--ho-id", help="the id of the HO in your inbox; the tool reads the line itself")
     p = sub.add_parser("commit"); p.add_argument("token")
     p = sub.add_parser("abandon"); p.add_argument("token")
     a = ap.parse_args(argv)
@@ -218,7 +233,8 @@ def main(argv: list[str]) -> int:
             refuse("this regime uses the single-step tool: pay, chgbank or send")
         if prepared_path.exists():
             refuse("a transaction is already prepared; commit it with its token or abandon it first")
-        requested = {k.replace("-", "_"): v for k, v in vars(a).items() if k not in ("verb", "act_name", "ho")}
+        requested = {k.replace("-", "_"): v for k, v in vars(a).items() if k not in ("verb", "act_name", "ho", "ho_id")}
+        ho_text = a.ho if a.ho else inbox_line(t, a.ho_id)
         act = a.act_name.upper()
         if act != expected_act:
             refuse(f"this handover is a {expected_act} act; the tool was called for {act}")
@@ -231,9 +247,10 @@ def main(argv: list[str]) -> int:
             prepared["previous"] = f"{row.get('sort_code')}/{row.get('account')}"
         token = secrets.token_hex(4)
         hist = C.read_json(preplog_path) if preplog_path.exists() else []
-        line = rb_line(t, a.ho, prepared, act, token, len(hist) + 1)
+        line = rb_line(t, ho_text, prepared, act, token, len(hist) + 1)
         shown = {k: v for k, v in prepared.items() if k not in ("body", "subject")}
-        entry = {"token": token, "act": act, "requested": requested, "prepared": {"act": act, **prepared}, "rb": line, "ho": a.ho,
+        entry = {"token": token, "act": act, "requested": requested, "prepared": {"act": act, **prepared}, "rb": line, "ho": ho_text,
+                 "ho_form": "id" if a.ho_id else "text",
                  "prepared_at": now(), "status": "prepared"}
         C.write_json(prepared_path, entry)
         C.SENDER.mkdir(exist_ok=True)
