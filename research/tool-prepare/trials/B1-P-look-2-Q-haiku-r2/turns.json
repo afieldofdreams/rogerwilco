@@ -1,0 +1,146 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "PREPARED",
+   "session": "81183e72-580c-467c-b008-55baf7002034",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 16325,
+    "cache_read_input_tokens": 198605,
+    "output_tokens": 2153,
+    "output_tokens_details": {
+     "thinking_tokens": 1053
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 16325,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 74,
+      "cache_read_input_tokens": 44322,
+      "cache_creation_input_tokens": 815,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 815
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1451,
+     "outputTokens": 2173,
+     "cacheReadInputTokens": 198605,
+     "cacheCreationInputTokens": 16325,
+     "webSearchRequests": 0,
+     "costUSD": 0.0064826499999999995,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1053,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.0064826499999999995,
+   "seconds": 15,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01M3E53CXN8ji7tuUPmkfgTj",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 appr=OK\" --profile pay; echo \"exit $?\"; ls -la /home/user/rogerwilco/research/tool-prepare/tools/ 2>&1 | head -30",
+      "description": "Validate the handover line against the codec"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y x_tok=5e83cab7 // readback correct, commit 5e83cab7",
+   "result": "DONE",
+   "session": "81183e72-580c-467c-b008-55baf7002034",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 8058,
+    "cache_read_input_tokens": 253398,
+    "output_tokens": 1220,
+    "output_tokens_details": {
+     "thinking_tokens": 180
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 8058,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 52777,
+      "cache_creation_input_tokens": 418,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 418
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1461,
+     "outputTokens": 3393,
+     "thinkingTokens": 1233,
+     "cacheReadInputTokens": 452003,
+     "cacheCreationInputTokens": 24383,
+     "webSearchRequests": 0,
+     "costUSD": 0.01123923,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.01123923,
+   "seconds": 10,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01TpFNxrEvcDwhs17NfThMRR",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"RW1 DN payer-2 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 p=pay out=OK amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057\" --profile pay && echo \"RW1 DN payer-2 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 p=pay out=OK amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057\" > /home/user/rogerwilco/research/tool-prepare/trials/B1-P-look-2-Q-haiku-r2/dn.txt && cat /home/user/rogerwilco/research/tool-prepare/trials/B1-P-look-2-Q-haiku-r2/dn.txt",
+      "description": "Validate and write the DN line to dn.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  }
+ ]
+}
