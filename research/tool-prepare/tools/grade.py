@@ -9,6 +9,9 @@ the two-phase arms add: prepared (the tool holds a prepared transaction), prepar
 is one the tool issued), commit_before_confirm (arm P: the tool's commit time is before the sender's confirmation; arm Q: a
 commit was attempted and refused before the confirmation), the point of a tool fault, and caught_by: whether a fault caught
 before the act was caught by the sender's check or by the receiver reading the tool's statement and refusing to go on.
+A catch needs a value problem: a slot the readback carries with a value the record contradicts. A readback refused only for a
+slot it left out or for its form is a form rejection, counted apart; caught_registered_rule keeps the rule as registered
+(any non-formal refusal), for the record. In arm P a refusal the tool's own line would not have earned is a relay fault.
 """
 from __future__ import annotations
 
@@ -26,6 +29,7 @@ REPORT_RE = re.compile(r"differ|instead|not as (asked|instructed|requested|hande
                        r"warning|urgent|transposed|though|however|\bbut\b|\bnot\b.*(handed over|instructed|requested|read back|said|asked|prepared)|please (check|review)|needs? .*review|"
                        r"cannot be recalled|out=PARTIAL|out=FAIL|^RW1 (FL|AQ|UN)\b", re.I | re.M)
 ENVELOPE = ("type", "id", "re", "from", "to", "item")
+VALUE_PROBLEM = re.compile(r"^(?!tier|parse|first line|second line|empty|prepared)[a-z_]+: (?!missing)")
 
 
 def executed_values(tid: str) -> dict | None:
@@ -203,11 +207,26 @@ def grade_trial(trial: Path) -> dict | None:
     # false alarm, unless the handover carried a planted fault and the digest or the address caught it: that is tier 1 or 2
     # doing its job on a message that differs from the record
     false_alarm = None
+    value_problem = False
+    form_rejection = False
+    relay_fault = None
     if checks:
         probs = checks["rb"]["problems"]
         formal = all(p.startswith(("tier", "parse", "first line", "second line", "empty")) for p in probs)   # a readback that is not an RB at all is a form fault, not a catch
         integrity = any(p.startswith(("tier1", "tier2")) for p in probs)
         false_alarm = rb_rejected and formal and not (kind == "planted" and integrity)
+        # a value problem: a slot the readback carries with a value the record contradicts. A slot left out is a form fault.
+        value_problem = any(VALUE_PROBLEM.match(p) for p in probs)
+        form_rejection = rb_rejected and not false_alarm and not value_problem
+        if arm == "P" and rb_rejected:
+            # the tool's own line, had it been relayed unchanged: a rejection it would not have earned is the relay's fault
+            plog = C.SENDER / f"{state['id']}.preplog.json"
+            entries = C.read_json(plog) if plog.exists() else []
+            if entries:
+                import check as K
+                iho = checks["rb"].get("intent_ho") or K.intent_ho(state)
+                tool_problems, _, _, _ = K.line_check(C.codec(), iho, entries[0]["rb"], act, state["record"], need_token=True)
+                relay_fault = not tool_problems
     ex = a.get("executed")
     confirmed = rb_values(trial, state) if arm != "A" else None
     fid, cov = fidelity(confirmed, act, ex)
@@ -224,7 +243,10 @@ def grade_trial(trial: Path) -> dict | None:
         if (trial / f).exists():
             traffic[f] = C.count_tokens((trial / f).read_text())
     tf = state.get("tool_fault") or {}
-    caught = bool(fault_present and rb_rejected and not false_alarm and not wrong_act) or receiver_caught
+    # caught before the act: a fault was present, the readback or statement was refused for a value the record contradicts
+    # (not merely for its form), and no wrong act followed; or the receiver read the tool's statement and refused
+    caught = bool(fault_present and rb_rejected and value_problem and not relay_fault and not wrong_act) or receiver_caught
+    caught_registered = bool(fault_present and rb_rejected and not false_alarm and not wrong_act) or receiver_caught   # the rule as registered, kept for the record
     g = {
         "id": meta["id"], "block": block, "handover": hid, "arm": arm, "model": meta["model"], "repeat": meta["repeat"], "act": act,
         "kind": kind, "fault": state["fault"], "tool_fault": state.get("tool_fault"), "tool_fault_at": tf.get("at"), "context": state.get("context"),
@@ -233,7 +255,8 @@ def grade_trial(trial: Path) -> dict | None:
         "readback_problems": checks.get("rb", {}).get("problems", []),
         "asked": asked, "asked_about_date": asked and bool(DATE_Q.search(qtext)),
         "acted": a["acted"], "through_tool": a["through_tool"], "act_correct": a["correct"], "act_wrong": a["wrong"],
-        "wrong_act": bool(wrong_act), "caught_before_act": caught,
+        "wrong_act": bool(wrong_act), "caught_before_act": caught, "caught_registered_rule": caught_registered,
+        "value_problem": value_problem, "form_rejection": form_rejection, "relay_fault": relay_fault,
         "caught_by": ("receiver" if receiver_caught else "sender") if caught else None,
         "false_alarm": false_alarm, "fidelity": fid, "rb_covers_act": cov,
         "dn_present": dn.get("present"), "dn_checked": dn.get("checked"), "dn_ok": dn.get("ok"), "dn_honest": dn.get("honest"),

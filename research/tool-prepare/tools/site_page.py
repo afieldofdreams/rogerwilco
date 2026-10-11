@@ -51,7 +51,7 @@ def figures(results: Path = C.RESULTS) -> dict:
               k, n, hi = r(c, "caught_before_act"); f[f"{p}_caught"] = f"{k} of {n}"
               k, n, hi = r(c, "asked_induced"); f[f"{p}_asked"] = f"{k} of {n}"
               k, n, hi = r(c, "held_induced"); f[f"{p}_held"] = f"{k} of {n}"
-              f[f"{p}_cost"] = f"${c['cost_usd_mean']:.3f}"
+              f[f"{p}_cost"] = f"${c['cost_usd_mean']:.3f}" if c["cost_usd_mean"] is not None else "not priced by the runner"
               f[f"{p}_turns"] = f"{c['receiver_turns_mean']:.1f}"
               f[f"{p}_traffic"] = f"{c['traffic_tokens_mean']:,}"
               f[f"{p}_output"] = f"{c['output_tokens_mean']:,}"
@@ -62,6 +62,11 @@ def figures(results: Path = C.RESULTS) -> dict:
                   k, n, hi = r(c, "false_alarms_all"); f[f"{p}_fa_all"] = f"{k} of {n}"
                   k, n, hi = r(c, "fidelity"); f[f"{p}_fid"] = f"{k} of {n}"
                   k, n, hi = r(c, "dn_honest"); f[f"{p}_honest"] = f"{k} of {n}"
+              k, n, hi = r(c, "form_rejections"); f[f"{p}_form"] = f"{k} of {n}"
+              k, n, hi = r(c, "caught_registered_rule"); f[f"{p}_caught_reg"] = f"{k} of {n}"
+              if arm == "P":
+                  sub = [x for x in rows if x["block"] == block and x["arm"] == "P" and x["model"] == model]
+                  f[f"{p}_noprep"] = str(sum(1 for x in sub if not x.get("prepared")))
               if arm in "PQ":
                   k, n, hi = r(c, "prepared"); f[f"{p}_prepared"] = f"{k} of {n}"
                   k, n, hi = r(c, "commit_before_confirm"); f[f"{p}_early"] = f"{k} of {n}"; f[f"{p}_early_hi"] = pct(hi)
