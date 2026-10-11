@@ -1,0 +1,137 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "eb32b0e9-52b4-4550-9c29-949e27eb41ae",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 15648,
+    "cache_read_input_tokens": 154629,
+    "output_tokens": 1661,
+    "output_tokens_details": {
+     "thinking_tokens": 788
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 15648,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 43957,
+      "cache_creation_input_tokens": 514,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 514
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1469,
+     "outputTokens": 1681,
+     "cacheReadInputTokens": 154629,
+     "cacheCreationInputTokens": 15648,
+     "webSearchRequests": 0,
+     "costUSD": 0.005663290000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 788,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.005663290000000001,
+   "seconds": 13,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y x_tok=9c524487 // readback correct, commit 9c524487",
+   "result": "DONE\n\nThe payment was released, but not for the amount in the handover. The commit printout shows **5040.00 GBP**, and HO scheduler-1 asked for **5400.00 GBP**. The readback I sent said 5400.00 and the scheduler confirmed it, so the mismatch happened inside the act tool, not in the readback. The difference is 360.00 GBP.\n\nWhat was executed: Marlow Design Partners LLP, inv:MD-2026-057, 5040.00 GBP GROSS, to sort code 40-12-88, account 61102938 (the ACTIVE master row), paid 2026-10-02, reference MD-2026-057.\n\nI have recorded this in dn.txt as out=PARTIAL, with the executed amount and a note of the 360.00 difference, rather than out=OK. I have not taken any further action. Money released cannot be recalled, so the FD needs to decide how to handle the 360.00 shortfall with Marlow, and the tool's amount handling should be checked before the next run.",
+   "session": "eb32b0e9-52b4-4550-9c29-949e27eb41ae",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 8922,
+    "cache_read_input_tokens": 251481,
+    "output_tokens": 2537,
+    "output_tokens_details": {
+     "thinking_tokens": 1171
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 8922,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 333,
+      "cache_read_input_tokens": 53008,
+      "cache_creation_input_tokens": 385,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 385
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1479,
+     "outputTokens": 4218,
+     "thinkingTokens": 1959,
+     "cacheReadInputTokens": 406110,
+     "cacheCreationInputTokens": 24570,
+     "webSearchRequests": 0,
+     "costUSD": 0.011232000000000002,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.011232000000000002,
+   "seconds": 19,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01Uw3t7cfLHKRgt81Z3fXG83",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"RW1 DN payer-2 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 out=PARTIAL sup=marlow amt=5040.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 // released 5040.00 GBP, handover said 5400.00 GBP; difference 360.00 not explained by the handover; commit printout is authoritative\" --profile pay; echo \"exit=$?\"",
+      "description": "Validate the DN line against the codec"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  }
+ ]
+}

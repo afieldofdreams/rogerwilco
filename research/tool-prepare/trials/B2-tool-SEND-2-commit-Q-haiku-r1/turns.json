@@ -1,0 +1,137 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "PREPARED",
+   "session": "1d7bce50-608b-4286-9dd4-ce80bc032037",
+   "usage": {
+    "input_tokens": 6,
+    "cache_creation_input_tokens": 16272,
+    "cache_read_input_tokens": 110973,
+    "output_tokens": 2068,
+    "output_tokens_details": {
+     "thinking_tokens": 1390
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 16272,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 7,
+      "cache_read_input_tokens": 43010,
+      "cache_creation_input_tokens": 2073,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 2073
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1471,
+     "outputTokens": 2088,
+     "cacheReadInputTokens": 110973,
+     "cacheCreationInputTokens": 16272,
+     "webSearchRequests": 0,
+     "costUSD": 0.00555523,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1390,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.00555523,
+   "seconds": 14,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y x_tok=e95fd5bc // readback correct, commit e95fd5bc",
+   "result": "DONE, but the result is wrong. The remittance advice was sent with the wrong figure.\n\n- **Handed over:** HO scheduler-1, remittance advice for MD-2026-057 to Marlow, GBP 5400.00.\n- **Prepared and approved:** token e95fd5bc, to billing@marlowdesign.co.uk, GBP 5400.00.\n- **Commit printout:** sent to billing@marlowdesign.co.uk with **GBP 5040.00**, payment date 2026-10-02, reference MD-2026-057.\n\nI can't recall the email and haven't sent a correction, since that needs your instruction. The scheduler should decide whether a corrected remittance goes to Marlow, and why the commit executed 5040.00 when the prepared transaction said 5400.00. The DN in dn.txt (payer-9, out=PARTIAL) records the executed figure and this mismatch.",
+   "session": "1d7bce50-608b-4286-9dd4-ce80bc032037",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 9553,
+    "cache_read_input_tokens": 255758,
+    "output_tokens": 3044,
+    "output_tokens_details": {
+     "thinking_tokens": 1554
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 9553,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 301,
+      "cache_read_input_tokens": 54241,
+      "cache_creation_input_tokens": 395,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 395
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1481,
+     "outputTokens": 5132,
+     "thinkingTokens": 2944,
+     "cacheReadInputTokens": 366731,
+     "cacheCreationInputTokens": 25825,
+     "webSearchRequests": 0,
+     "costUSD": 0.011546409999999998,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.011546409999999998,
+   "seconds": 22,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_019PSDFZz7yKrd2tX5NSb6Cn",
+     "tool_input": {
+      "command": "printf '%s\\n' \"RW1 DN payer-9 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 out=PARTIAL sup=marlow addr=billing@marlowdesign.co.uk amt=5040.00 cur=GBP paid=20261002 ref=MD-2026-057 // executed amt 5040.00, handover said 5400.00; remittance email sent to billing@marlowdesign.co.uk with 5040.00; not corrected, awaiting instruction\" > /home/user/rogerwilco/research/tool-prepare/trials/B2-tool-SEND-2-commit-Q-haiku-r1/dn.txt && cat /home/user/rogerwilco/research/tool-prepare/trials/B2-tool-SEND-2-commit-Q-haiku-r1/dn.txt",
+      "description": "Write the DN line to dn.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  }
+ ]
+}

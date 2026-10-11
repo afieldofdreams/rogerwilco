@@ -1,0 +1,137 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "d5bd2d55-6424-424d-8555-5bda55d02e05",
+   "usage": {
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 17233,
+    "cache_read_input_tokens": 243711,
+    "output_tokens": 3153,
+    "output_tokens_details": {
+     "thinking_tokens": 1821
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 17233,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 45300,
+      "cache_creation_input_tokens": 448,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 448
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1485,
+     "outputTokens": 3178,
+     "cacheReadInputTokens": 243711,
+     "cacheCreationInputTokens": 17233,
+     "webSearchRequests": 0,
+     "costUSD": 0.007621210000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1821,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.007621210000000001,
+   "seconds": 19,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_0188EugYvfnf7RsWvE1A7MVW",
+     "tool_input": {
+      "command": "CODEC=/home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py; LINE='RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=5f630b233a3a sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_prev=30-98-71/22019483 // Change Evergreen Office Supplies payee account in master from 30-98-71/22019483 to 60-83-71/44019482, effective 3 Oct 2026, under FD-0926; nothing else changed.'; python3 $CODEC validate \"$LINE\" --profile pay; echo \"exit=$?\"",
+      "description": "Validate the readback line"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 6
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE\n\nThe act ran, but the account it wrote is not the one you approved, so please check it before any Evergreen payment goes out.\n\n- **Approved (scheduler-1 / readback payer-1):** Evergreen Office Supplies, sort code 60-83-71, account 44019482, effective 2026-10-03, approval FD-0926.\n- **Executed (tool printout):** the master now holds 60-83-71 / **44091482**. The tool printed that account, not 44019482. The digits differ.\n- **Previous account on file:** 30-98-71 / 22019483, now superseded.\n\nI did not run the act again, since the tool refuses a second act and I was not asked to correct anything. The master will apply the wrong account to every later Evergreen payment from 3 October. The correction needs a new approved CHGBANK, which only the scheduler and principal can raise. I have written the line as executed with out=PARTIAL in dn.txt.",
+   "session": "d5bd2d55-6424-424d-8555-5bda55d02e05",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 8088,
+    "cache_read_input_tokens": 203387,
+    "output_tokens": 1793,
+    "output_tokens_details": {
+     "thinking_tokens": 765
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 8088,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 304,
+      "cache_read_input_tokens": 53451,
+      "cache_creation_input_tokens": 385,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 385
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1493,
+     "outputTokens": 4971,
+     "thinkingTokens": 2586,
+     "cacheReadInputTokens": 447098,
+     "cacheCreationInputTokens": 25321,
+     "webSearchRequests": 0,
+     "costUSD": 0.012169980000000002,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.012169980000000002,
+   "seconds": 15,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}

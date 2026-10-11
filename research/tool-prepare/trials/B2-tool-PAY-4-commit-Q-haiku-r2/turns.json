@@ -1,0 +1,128 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "PREPARED",
+   "session": "f800d9ae-d965-4cbc-a160-01d98029b0c6",
+   "usage": {
+    "input_tokens": 6,
+    "cache_creation_input_tokens": 15554,
+    "cache_read_input_tokens": 110827,
+    "output_tokens": 1506,
+    "output_tokens_details": {
+     "thinking_tokens": 865
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 15554,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 52,
+      "cache_read_input_tokens": 42861,
+      "cache_creation_input_tokens": 1505,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 1505
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1471,
+     "outputTokens": 1526,
+     "cacheReadInputTokens": 110827,
+     "cacheCreationInputTokens": 15554,
+     "webSearchRequests": 0,
+     "costUSD": 0.00512917,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 865,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.00512917,
+   "seconds": 12,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y x_tok=6a52334f // readback correct, commit 6a52334f",
+   "result": "DONE\n\nThe payment was released, but not to the account that was prepared. The commit printout shows sort code **40-12-98**, while the prepared transaction and the master's ACTIVE row for Marlow are both **40-12-88** (account 61102938 matched in both). The account number matches, so the error is in the sort code alone. I can't tell from here whether the tool or the commit introduced it, and I can't reverse the release.\n\nWhat was executed, as printed: PAY inv MD-2026-057, Marlow Design Partners LLP, GBP 5400.00 GROSS, acct 40-12-98/61102938, paid 2026-10-02, ref MD-2026-057.\n\nI wrote dn.txt with the values exactly as executed and flagged the mismatch in its tail. Please have someone check with Marlow's bank whether the funds arrived, and check the payment-tool output before any further commits. I did not send a remittance advice, since the handover did not ask for one in this step.",
+   "session": "f800d9ae-d965-4cbc-a160-01d98029b0c6",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 8327,
+    "cache_read_input_tokens": 198098,
+    "output_tokens": 1943,
+    "output_tokens_details": {
+     "thinking_tokens": 799
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 8327,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 314,
+      "cache_read_input_tokens": 52306,
+      "cache_creation_input_tokens": 387,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 387
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1479,
+     "outputTokens": 3469,
+     "thinkingTokens": 1664,
+     "cacheReadInputTokens": 308925,
+     "cacheCreationInputTokens": 23881,
+     "webSearchRequests": 0,
+     "costUSD": 0.009747849999999999,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.009747849999999999,
+   "seconds": 16,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}

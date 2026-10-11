@@ -1,0 +1,146 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "723e27dc-a626-4d5f-954c-8fdb99ec8ea8",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 16430,
+    "cache_read_input_tokens": 199862,
+    "output_tokens": 2282,
+    "output_tokens_details": {
+     "thinking_tokens": 1029
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 16430,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 44866,
+      "cache_creation_input_tokens": 386,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 386
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1483,
+     "outputTokens": 2302,
+     "cacheReadInputTokens": 199862,
+     "cacheCreationInputTokens": 16430,
+     "webSearchRequests": 0,
+     "costUSD": 0.00658392,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1029,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.00658392,
+   "seconds": 25,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01JsLqGZBr4Xw286eSCPJUBQ",
+     "tool_input": {
+      "command": "printf '%s\\n' \"RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=5f630b233a3a sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_prev=30-98-71/22019483 x_tok=e6864c6a // prepared by the tool; commit executes exactly this\" > rb.txt && cat rb.txt",
+      "description": "Write the readback line to rb.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y x_tok=e6864c6a // readback correct, commit e6864c6a",
+   "result": "DONE",
+   "session": "723e27dc-a626-4d5f-954c-8fdb99ec8ea8",
+   "usage": {
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 10302,
+    "cache_read_input_tokens": 310627,
+    "output_tokens": 3160,
+    "output_tokens_details": {
+     "thinking_tokens": 1492
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 10302,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 54704,
+      "cache_creation_input_tokens": 850,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 850
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1495,
+     "outputTokens": 5462,
+     "thinkingTokens": 2521,
+     "cacheReadInputTokens": 510489,
+     "cacheCreationInputTokens": 26732,
+     "webSearchRequests": 0,
+     "costUSD": 0.013331790000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.013331790000000001,
+   "seconds": 46,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_013AdTv7QpHZs2b3afWjcGdg",
+     "tool_input": {
+      "command": "cd /home/user/rogerwilco/rogerwilco/scripts 2>/dev/null; python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"RW1 DN payer-2 re=scheduler-1 from=payer to=scheduler item=sup:evergreen out=PARTIAL sup=evergreen acct=60-83-71/44019428 eff=20261003 apref=FD-0926 // CHGBANK executed; master now 60-83-71/44019428, approved was 60-83-71/44019482: account mismatch, see question.txt\" --profile pay",
+      "description": "Validate the DN line with the codec"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 7
+  }
+ ]
+}
