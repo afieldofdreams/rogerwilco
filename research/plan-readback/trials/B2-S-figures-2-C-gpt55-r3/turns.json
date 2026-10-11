@@ -1,0 +1,68 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "inferred_reply": null,
+   "usage": {
+    "input_tokens": 5272,
+    "cache_read_input_tokens": 14848,
+    "cache_creation_input_tokens": 0,
+    "output_tokens": 481,
+    "reasoning_tokens": 86,
+    "estimated": false
+   },
+   "models": {
+    "openai:gpt-5.5": {
+     "calls": 4,
+     "prompt_tokens": 20120,
+     "completion_tokens": 481
+    }
+   },
+   "cost": null,
+   "calls": 5,
+   "ended": "text",
+   "seconds": 7,
+   "denials": [],
+   "is_error": false
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE",
+   "inferred_reply": null,
+   "usage": {
+    "input_tokens": 3882,
+    "cache_read_input_tokens": 26752,
+    "cache_creation_input_tokens": 0,
+    "output_tokens": 1387,
+    "reasoning_tokens": 918,
+    "estimated": false
+   },
+   "models": {
+    "openai:gpt-5.5": {
+     "calls": 5,
+     "prompt_tokens": 30634,
+     "completion_tokens": 1387
+    }
+   },
+   "cost": null,
+   "calls": 4,
+   "ended": "text",
+   "seconds": 16,
+   "denials": [
+    {
+     "tool_name": "shell",
+     "tool_input": {
+      "cmd": "python3 /home/user/rogerwilco/research/plan-readback/tools/act.py send --to billing@marlowdesign.co.uk --subject \"Remittance advice MD-2026-057\" --amount 5400.00 --currency GBP --payment-date 2026-10-02 --reference MD-2026-057 --body \"Amount: 5400.00 GBP; Payment date: 2026-10-02; Reference: MD-2026-057\""
+     },
+     "reason": "no pipes, redirects or chaining: one command"
+    }
+   ],
+   "is_error": false
+  }
+ ]
+}
