@@ -88,12 +88,17 @@ def index():
                         headers={"Cache-Control": "no-cache"})
 
 
-PAGES = {"quickstart": "quickstart.html", "lines": "lines.html", "profiles": "profiles.html", "about": "about.html"}
+PAGES = {"quickstart": "quickstart.html", "demo": "demo.html", "lines": "lines.html", "profiles": "profiles.html", "about": "about.html"}
 
 
 @router.get("/quickstart", include_in_schema=False)
 def quickstart():
     return FileResponse(svc.APP_DIR / "static" / PAGES["quickstart"], media_type="text/html", headers={"Cache-Control": "no-cache"})
+
+
+@router.get("/demo", include_in_schema=False)
+def demo():
+    return FileResponse(svc.APP_DIR / "static" / PAGES["demo"], media_type="text/html", headers={"Cache-Control": "no-cache"})
 
 
 @router.get("/lines", include_in_schema=False)

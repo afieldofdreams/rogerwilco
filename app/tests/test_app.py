@@ -371,7 +371,7 @@ def test_home_page_lines_are_real(client):
 
 
 def test_every_page_carries_the_same_header(client):
-    pages = ["/", "/quickstart", "/lines", "/about", "/research", "/research/readback"]
+    pages = ["/", "/quickstart", "/demo", "/lines", "/about", "/research", "/research/readback"]
     heads = []
     for path in pages:
         text = client.get(path, headers={"Accept": "text/html"}).text
@@ -380,6 +380,28 @@ def test_every_page_carries_the_same_header(client):
         assert '<footer class="site-foot">' in text, path
     assert len(set(heads)) == 1
     assert client.get("/about").status_code == 200 and client.get("/static/site.css").headers["content-type"].startswith("text/css")
+
+
+def test_demo_page_and_its_lines(client):
+    """The demo page is served with its script, and the scripted exchange it plays passes the service's checks."""
+    r = client.get("/demo")
+    assert r.status_code == 200 and "Say it back" in r.text and '/static/demo.js' in r.text
+    assert client.get("/static/demo.js").status_code == 200
+    ho = ("RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec sup=marlow amt=5400.00 cur=GBP "
+          "kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929 // approved run, 2 October")
+    record = {"to": "payer", "item": "inv:MD-2026-057", "ask": "PAY", "sup": "marlow", "amt": "5400.00", "cur": "GBP", "kind": "GROSS",
+              "acct": "40-12-88/61102938", "paid": "20261002", "ref": "MD-2026-057", "apref": "FD-0929"}
+    assert post(client, "/check-ho", ho=ho, record=record, profile="pay").json()["ok"] is True
+    assert post(client, "/check-ho", ho=ho.replace("61102938", "61102983"), record=record, profile="pay").json()["ok"] is False
+    h = post(client, "/digest", line=ho, profile="pay").json()["digest"]
+    rb = ("RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay sup=marlow amt=5400.00 cur=GBP "
+          f"kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929 h={h}")
+    assert post(client, "/check-rb", ho=ho, rb=rb, profile="pay").json()["ok"] is True
+    dn = ("RW1 DN payer-3 re=scheduler-1 p=pay from=payer to=scheduler item=inv:MD-2026-057 out=OK sup=marlow amt=5400.00 cur=GBP "
+          "kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929 // as executed, from the payment tool")
+    assert post(client, "/check-dn", ho=ho, dn=dn, rb=rb, profile="pay").json()["ok"] is True
+    bad = post(client, "/check-dn", ho=ho, dn=dn.replace("amt=5400.00", "amt=5100.00"), rb=rb, profile="pay").json()
+    assert bad["ok"] is False and bad["problems"] == ["executed: amt mismatch: plan 5400.00 vs DN 5100.00"]
 
 
 def test_quickstart_and_lines_pages(client):
