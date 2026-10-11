@@ -1,0 +1,137 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "0acd6e91-783c-4cfd-9579-987efbf88bb6",
+   "usage": {
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 16583,
+    "cache_read_input_tokens": 241216,
+    "output_tokens": 2270,
+    "output_tokens_details": {
+     "thinking_tokens": 507
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 16583,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 44395,
+      "cache_creation_input_tokens": 704,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 704
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1453,
+     "outputTokens": 2290,
+     "cacheReadInputTokens": 241216,
+     "cacheCreationInputTokens": 16583,
+     "webSearchRequests": 0,
+     "costUSD": 0.007019060000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 507,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.007019060000000001,
+   "seconds": 14,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_012y9vRffga2ybNqCvL9xi39",
+     "tool_input": {
+      "command": "cd_line='RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=a7e8e1a75f59 sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929 // readback: PAY inv:MD-2026-057 to marlow 5400.00 GBP GROSS to 40-12-88/61102938 on 2026-10-02 ref MD-2026-057 approval FD-0929; ACTIVE master row used, PENDING row 61109382 (eff 2026-10-05) not used'; python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"$cd_line\" --profile pay && printf '%s\\n' \"$cd_line\" > /home/user/rogerwilco/research/tool-prepare/trials/B1-P-pend-1-D-haiku-r3/rb.txt && cat /home/user/rogerwilco/research/tool-prepare/trials/B1-P-pend-1-D-haiku-r3/rb.txt",
+      "description": "Validate and write readback line to rb.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 7
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE",
+   "session": "0acd6e91-783c-4cfd-9579-987efbf88bb6",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 8167,
+    "cache_read_input_tokens": 201271,
+    "output_tokens": 1503,
+    "output_tokens_details": {
+     "thinking_tokens": 612
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 8167,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 52859,
+      "cache_creation_input_tokens": 407,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 407
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1461,
+     "outputTokens": 3793,
+     "thinkingTokens": 1119,
+     "cacheReadInputTokens": 442487,
+     "cacheCreationInputTokens": 24750,
+     "webSearchRequests": 0,
+     "costUSD": 0.011417470000000002,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.011417470000000002,
+   "seconds": 12,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}

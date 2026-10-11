@@ -160,7 +160,8 @@ def tests(cells: dict, models: list[str]) -> dict:
         for arm in "PQ":
             if b1[arm]:
                 f = b1[arm]["false_alarms_clean"]
-                t[f"H5 {arm} false alarms on clean, block 1 (upper bound under 5%)"] = {arm: fmt(f), "holds": f["hi"] < 0.05}
+                t[f"H5 {arm} false alarms on clean, block 1 (upper bound under 5%)"] = {arm: fmt(f), "holds": f["hi"] < 0.05,
+                                                                                     "all contexts": fmt(b1[arm]["false_alarms_all"]), "all contexts bound under 5%": b1[arm]["false_alarms_all"]["hi"] < 0.05}
         if b1["P"]:
             t["H6 P: discipline against enforcement, block 1"] = {"commit before confirm": fmt(b1["P"]["commit_before_confirm"]), "relay mismatch": fmt(b1["P"]["relay_mismatch"]),
                                                                "relay text differs": fmt(b1["P"]["relay_text_differs"])}
