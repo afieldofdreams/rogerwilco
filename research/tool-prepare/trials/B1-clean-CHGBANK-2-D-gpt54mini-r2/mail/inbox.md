@@ -32,3 +32,6 @@ RW1 ST reconciler-21 from=reconciler to=payer item=inv:INV-000491 p=pay sup=nort
 
 ## 11. 2026-10-02 11:05 from human to payer
 EMAIL from fd@harbourline.co.uk: I'm out from 2pm Friday; anything that needs me, send before then. FD.
+
+## 12. 2026-10-11 20:52 from scheduler to payer
+RW1 HO scheduler-2 re=scheduler-1 p=pay from=scheduler to=payer item=sup:evergreen ask=CHGBANK rb=exec sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 appr=OK // re scheduler-1: second line is HO, expected RB; x_prev: missing (expected 30-98-71/22019483): not the account on file that this change replaces
