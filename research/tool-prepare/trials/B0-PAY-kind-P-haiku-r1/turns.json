@@ -1,0 +1,83 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "ASKED",
+   "session": "95029dae-6049-41b1-85a8-266fafc2ea18",
+   "usage": {
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 16949,
+    "cache_read_input_tokens": 244878,
+    "output_tokens": 3032,
+    "output_tokens_details": {
+     "thinking_tokens": 1449
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 16949,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 45371,
+      "cache_creation_input_tokens": 401,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 401
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1453,
+     "outputTokens": 3052,
+     "cacheReadInputTokens": 244878,
+     "cacheCreationInputTokens": 16949,
+     "webSearchRequests": 0,
+     "costUSD": 0.007509880000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1449,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.007509880000000001,
+   "seconds": 18,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01EL1XmJVJo3VznPGJB2smPG",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"RW1 AQ payer-8 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 need=TEXT sup=marlow amt=5400.00 cur=GBP kind=NET appr=OK apref=FD-0929 acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 // HO scheduler-1 says kind=NET; scheduler-14 approval said kind=GROSS for the same 5400.00. Which is it before I release? Holding; not prepared, nothing moved.\" --profile pay; echo \"exit $?\"",
+      "description": "Validate the question line against the codec"
+     }
+    },
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01TBvNfmUZNLyU2LuddF5Jdj",
+     "tool_input": {
+      "command": "printf '%s\\n' \"RW1 AQ payer-8 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 need=TEXT sup=marlow amt=5400.00 cur=GBP kind=NET appr=OK apref=FD-0929 acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 // HO scheduler-1 says kind=NET; scheduler-14 approval said kind=GROSS for the same 5400.00. Which is it before I release? Holding; not prepared, nothing moved.\" > question.txt && cat question.txt",
+      "description": "Write the question line to question.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 6
+  }
+ ]
+}
