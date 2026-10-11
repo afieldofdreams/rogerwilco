@@ -120,6 +120,7 @@ def figures(results: Path = C.RESULTS) -> dict:
                     k, n, hi = r(c, "caught_before_act"); f[f"api_b{block}_{arm}_{model}_caught"] = f"{k} of {n}"
                     held = [x for x in arows if x["block"] == block and x["arm"] == arm and x["model"] == model]
                     f[f"api_b{block}_{arm}_{model}_held"] = f"{sum(1 for x in held if x['held'])} of {len(held)}"
+                    f[f"api_b{block}_{arm}_{model}_none"] = f"{sum(1 for x in held if not x['acted'] and not x['asked'] and not x['held'])} of {len(held)}"
                     f[f"api_b{block}_{arm}_{model}_turns"] = f"{c['receiver_turns_mean']:.1f}"
                     if arm != "A":
                         k, n, hi = r(c, "false_alarms_clean"); f[f"api_b{block}_{arm}_{model}_fa"] = f"{k} of {n}"
