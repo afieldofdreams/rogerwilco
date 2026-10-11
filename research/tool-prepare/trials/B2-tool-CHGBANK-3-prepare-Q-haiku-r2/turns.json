@@ -1,0 +1,83 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "ASKED",
+   "session": "33ded9fb-a459-4998-a63e-03cb98cf6ba9",
+   "usage": {
+    "input_tokens": 20,
+    "cache_creation_input_tokens": 19426,
+    "cache_read_input_tokens": 432047,
+    "output_tokens": 4435,
+    "output_tokens_details": {
+     "thinking_tokens": 1947
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 19426,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 47903,
+      "cache_creation_input_tokens": 334,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 334
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1501,
+     "outputTokens": 4684,
+     "cacheReadInputTokens": 432047,
+     "cacheCreationInputTokens": 19426,
+     "webSearchRequests": 0,
+     "costUSD": 0.01069777,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 2171,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.01069777,
+   "seconds": 25,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_0119kPR47RonmaQy3zfhga8F",
+     "tool_input": {
+      "command": "HO='RW1 HO scheduler-1 p=pay from=scheduler to=payer item=sup:evergreen ask=CHGBANK rb=exec sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 appr=OK // call-back done on the number on file' && python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"$HO\" --profile pay; echo \"rc=$?\"; python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py make-rb \"$HO\" payer-1 --profile pay; echo \"rc=$?\"",
+      "description": "Validate handover line and build readback envelope"
+     }
+    },
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_012YGFcvktcSGhoj5EUM2wN2",
+     "tool_input": {
+      "command": "printf '%s\\n' 'RW1 UN payer-3 re=scheduler-1 from=payer to=scheduler item=sup:evergreen why=ERR sup=evergreen // prepare returned sort code 60-83-17 for HO sort code 60-83-71 (twice); not committed, no prepared transaction held; asking' > question.txt && cat question.txt",
+      "description": "Write UN question to question.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 10
+  }
+ ]
+}

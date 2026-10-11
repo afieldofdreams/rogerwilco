@@ -1,0 +1,75 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "ASKED",
+   "session": "f2785db7-14ff-46e4-b6c1-883f44afd184",
+   "usage": {
+    "input_tokens": 16,
+    "cache_creation_input_tokens": 19196,
+    "cache_read_input_tokens": 342161,
+    "output_tokens": 4510,
+    "output_tokens_details": {
+     "thinking_tokens": 2288
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 19196,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 47689,
+      "cache_creation_input_tokens": 329,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 329
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1493,
+     "outputTokens": 4530,
+     "cacheReadInputTokens": 342161,
+     "cacheCreationInputTokens": 19196,
+     "webSearchRequests": 0,
+     "costUSD": 0.009675109999999999,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 2288,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.009675109999999999,
+   "seconds": 27,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01SJnXq1dZQeZvW1Car4n3Aq",
+     "tool_input": {
+      "command": "cd /home/user/rogerwilco/research/tool-prepare/trials/B2-tool-CHGBANK-5-prepare-P-haiku-r2 2>/dev/null; python3 /home/user/rogerwilco/research/tool-prepare/tools/act.py abandon 1ccba395; echo; python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"UN payer-3 re=scheduler-1 from=payer to=scheduler item=sup:evergreen why=ERR sup=evergreen // prepare returned acct 44091482 for HO acct 44019482 on two tries; nothing committed, no master change made; please confirm the account\" --profile pay; echo \"exit $?\"",
+      "description": "Abandon second token and validate the UN message"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 9
+  }
+ ]
+}

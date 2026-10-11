@@ -1,0 +1,137 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "91f73cb6-0b9b-43f1-b4f1-73b38137dcf5",
+   "usage": {
+    "input_tokens": 14,
+    "cache_creation_input_tokens": 17780,
+    "cache_read_input_tokens": 290500,
+    "output_tokens": 3100,
+    "output_tokens_details": {
+     "thinking_tokens": 1439
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 17780,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 45948,
+      "cache_creation_input_tokens": 347,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 347
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1491,
+     "outputTokens": 3120,
+     "cacheReadInputTokens": 290500,
+     "cacheCreationInputTokens": 17780,
+     "webSearchRequests": 0,
+     "costUSD": 0.008170100000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1439,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.008170100000000001,
+   "seconds": 20,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_011SsBXkPfA4ZkTF9Ctq3ehJ",
+     "tool_input": {
+      "command": "LINE=\"RB payer-1 re=scheduler-1 from=payer to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=5f630b233a3a sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_prev=30-98-71/22019483\" && python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"$LINE\" --profile pay; echo \"exit=$?\"; printf '%s\\n' \"$LINE\" > rb.txt && cat rb.txt",
+      "description": "Validate execution readback line and write rb.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 7
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE\n\nThe change ran, but the effective date did not match the handover. I asked for 2026-10-03 and the tool executed 2026-10-04. The master is now updated, so the new Evergreen account takes effect a day later than the approval states. The DN records the executed value and flags the mismatch. The scheduler and the FD should confirm which date is correct, because the tool refuses a second act and any correction needs a new approved handover.",
+   "session": "91f73cb6-0b9b-43f1-b4f1-73b38137dcf5",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 7649,
+    "cache_read_input_tokens": 205184,
+    "output_tokens": 1214,
+    "output_tokens_details": {
+     "thinking_tokens": 397
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7649,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 137,
+      "cache_read_input_tokens": 53586,
+      "cache_creation_input_tokens": 358,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 358
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1499,
+     "outputTokens": 4334,
+     "thinkingTokens": 1836,
+     "cacheReadInputTokens": 495684,
+     "cacheCreationInputTokens": 25429,
+     "webSearchRequests": 0,
+     "costUSD": 0.01235954,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.01235954,
+   "seconds": 12,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}
