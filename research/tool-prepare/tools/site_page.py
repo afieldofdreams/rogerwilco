@@ -90,6 +90,11 @@ def figures(results: Path = C.RESULTS) -> dict:
         f[f"{prefix}model_trials"] = f"{len(mrows):,}"
         f[f"{prefix}model_status_not_ok"] = str(sum(1 for x in mrows if x["status"] != "ok"))
         f[f"{prefix}model_held"] = str(sum(1 for x in mrows if x["held"]))
+        if model == "gpt54mini":
+            # the API runner records tokens and no price; the published rates for gpt-5.4-mini are $0.75 per million uncached
+            # input tokens, $0.075 cached and $4.50 output (October 2026)
+            usd = sum((x["usage"]["input"] * 0.75 + x["usage"]["cache_read"] * 0.075 + x["usage"]["output"] * 4.5) / 1e6 for x in mrows)
+            f["g_cost_note"] = f"${usd:,.0f}"
     f["trials"] = f"{len(rows):,}"
     f["cost_total"] = f"${sum(x.get('cost_usd') or 0 for x in rows):,.0f}"
     f["status_not_ok"] = str(sum(1 for x in rows if x["status"] != "ok"))
@@ -136,7 +141,10 @@ def main(argv: list[str]) -> int:
     if a.figures:
         print(json.dumps(f, indent=1)); return 0
     from site_text import render  # the page text lives beside this, written once the results are in
-    PAGE.write_text(render(f, fig))
+    html_text = render(f, fig)
+    if "RESULTS_" in html_text:
+        sys.exit("the page text still carries a RESULTS_ placeholder; fill it before writing the page")
+    PAGE.write_text(html_text)
     print("wrote", PAGE)
     return 0
 
