@@ -38,3 +38,9 @@ RW1 ST reconciler-21 from=reconciler to=payer item=inv:INV-000491 p=pay sup=nort
 
 ## 13. 2026-10-02 11:05 from human to payer
 EMAIL from fd@harbourline.co.uk: I'm out from 2pm Friday; anything that needs me, send before then. FD.
+
+## 14. 2026-10-11 20:49 from scheduler to payer
+RW1 HO scheduler-2 re=payer-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=SEND rb=exec sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 // re payer-1: parse: RB requires re; parse: id 'payer-1' must be <from>-<n>: scheduler-1, scheduler-2, ... unique in the conversation; RB: RB requires re; RB: id 'payer-1' must be <from>-<n>: scheduler-1, scheduler-2, ... unique in the conversation
+
+## 15. 2026-10-11 20:49 from scheduler to payer
+RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y x_tok=9b888255 // readback correct, commit 9b888255
