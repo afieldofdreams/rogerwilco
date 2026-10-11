@@ -20,14 +20,17 @@ DATA = ROOT / "data"
 TRIALS = ROOT / "trials"
 SENDER = ROOT / "sender"                              # the sender's private state per trial: record, tool fault, act log
 RESULTS = ROOT / "results"
-CODEC = REPO / "rogerwilco" / "scripts" / "rogerwilco.py"
+CODEC = REPO / "rogerwilco" / "scripts" / "rogerwilco.py"            # what the receiver's brief names and runs
+FROZEN_CODEC = ROOT / "tools" / "frozen" / "scripts" / "rogerwilco.py"           # what the sender checks with: the codec at the frozen commit
 import os
 HARDEN = int(os.environ.get("RW_HARDEN", "0"))   # the pre-registered hardening ladder: 0 as built, 1 two confusers, 2 ordering, 3 no status field
+MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
 TODAY = "2026-10-02"
 TODAY_LONG = "Friday 2 October 2026"
 
-ARMS = ["A", "B", "C", "D", "E"]
-MODELS = {"sonnet": "sonnet", "haiku": "haiku", "haiku45": "claude-haiku-4-5-20251001"}   # alias asked for -> claude --model value; the id returned is recorded
+ARMS = ["A", "B", "C", "D", "E", "F"]   # F: free prose, no conventions and no readback; the extension run after the main run
+MODELS = {"sonnet": "sonnet", "haiku": "haiku", "haiku45": "claude-haiku-4-5-20251001",   # alias -> claude --model value (run.py)
+          "gpt55": "openai:gpt-5.5", "gpt54mini": "openai:gpt-5.4-mini"}                   # alias -> harness model string (run_api.py)
 JUDGE_MODEL = "sonnet"                                 # deviation from the protocol (no second vendor in this environment)
 
 # ----------------------------------------------------------------------------------------------------- the records
@@ -553,7 +556,7 @@ _codec = None
 def codec():
     global _codec
     if _codec is None:
-        spec = importlib.util.spec_from_file_location("rogerwilco", CODEC)
+        spec = importlib.util.spec_from_file_location("rogerwilco", FROZEN_CODEC)
         _codec = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(_codec)
     return _codec

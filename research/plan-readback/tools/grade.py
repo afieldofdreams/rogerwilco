@@ -101,6 +101,25 @@ def fidelity(values: dict | None, act: str, ex: dict | None) -> tuple[bool | Non
     return ok, len(carried) == len(FIDELITY_SLOTS[act])
 
 
+def prose_carries_fault(text: str, sent: dict, rec: dict) -> bool:
+    """Does the prose readback repeat a planted value, one the handover carried and the record does not?"""
+    t = text.lower().replace(",", "")
+    digits = re.sub(r"\D", "", t)
+    for k, v in sent.items():
+        if k not in rec or str(v) == str(rec[k]):
+            continue
+        v = str(v).lower().replace(",", "")
+        if v in t:
+            return True
+        d = re.sub(r"\D", "", v)
+        if len(d) >= 6 and d in digits:
+            return True
+        m = re.fullmatch(r"(\d{4})-(\d{2})-(\d{2})", v)
+        if m and f"{int(m.group(3))} {C.MONTHS[int(m.group(2)) - 1]}" in t:
+            return True
+    return False
+
+
 def prose_has_record(text: str, act: str, rec: dict) -> bool:
     """Arm B false-alarm screen: does the prose readback contain every figure of the record? (Hand review confirms.)"""
     t = text.lower().replace(",", "")
@@ -119,7 +138,7 @@ def prose_has_record(text: str, act: str, rec: dict) -> bool:
 
 def receiver_reported(trial: Path, arm: str, dn: dict) -> bool | None:
     """Block 3: did the receiver itself say the tool did something other than asked?"""
-    if arm in ("A", "B"):
+    if arm in ("A", "B", "F"):
         return dn.get("reports_discrepancy")
     texts = []
     for f in ("dn.txt", "done.txt", "question.txt"):
@@ -167,6 +186,10 @@ def grade_trial(trial: Path) -> dict | None:
         elif arm == "B":
             txt = (trial / "readback.txt").read_text() if (trial / "readback.txt").exists() else ""
             false_alarm = rb_rejected and prose_has_record(txt, act, state["record"])
+            # a planted fault (the extension's block 1): a rejected readback that carries the faulty value is the judge
+            # catching the fault, not a false alarm, whatever else the paragraph also mentions
+            if false_alarm and kind == "planted" and prose_carries_fault(txt, state["fields_sent"], state["record"]):
+                false_alarm = False
     ex = a.get("executed")
     confirmed = rb_values(trial, state) if arm in ("C", "D", "E") else None
     fid, cov = fidelity(confirmed, act, ex)

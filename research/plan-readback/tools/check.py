@@ -184,7 +184,7 @@ def dn_check(trial: Path) -> dict:
     log = C.SENDER / f"{meta['id']}.actlog.json"
     executed = C.read_json(log)["executed"] if log.exists() else None
     out = trial / "check_dn.json"
-    if arm == "A" and meta["block"] != 3:
+    if arm in ("A", "F") and meta["block"] != 3:
         res = {"present": (trial / "done.txt").exists(), "checked": False}
         C.write_json(out, res); return res
     if arm in ("A", "B"):

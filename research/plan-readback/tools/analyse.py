@@ -128,11 +128,11 @@ def tests(cells: dict, models: list[str]) -> dict:
     return out
 
 
-def analyse(tag: str | None, only: str = "", level: int | None = None) -> None:
+def analyse(tag: str | None, only: str = "", level: int | None = None, exclude: str = "") -> None:
     rows = []
     for trial in sorted(C.TRIALS.iterdir()):
         g = trial / "grade.json"
-        if g.exists() and only in trial.name:
+        if g.exists() and only in trial.name and not (exclude and exclude in trial.name):
             r = C.read_json(g)
             if level is None or r.get("harden", 0) == level:
                 rows.append(r)
@@ -189,8 +189,9 @@ def analyse(tag: str | None, only: str = "", level: int | None = None) -> None:
 
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(); ap.add_argument("--tag", default=None); ap.add_argument("--only", default=""); ap.add_argument("--level", type=int, default=None)
+    ap.add_argument("--exclude", default="", help="skip trials whose id contains this (the extension's -x)")
     a = ap.parse_args(argv)
-    analyse(a.tag, a.only, a.level)
+    analyse(a.tag, a.only, a.level, a.exclude)
     return 0
 
 

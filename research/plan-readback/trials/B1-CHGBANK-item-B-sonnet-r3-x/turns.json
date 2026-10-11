@@ -1,0 +1,235 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "session": "c99d30f8-baf2-4d41-9801-06e5b97aebea",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 13980,
+    "cache_read_input_tokens": 149348,
+    "output_tokens": 609,
+    "output_tokens_details": {
+     "thinking_tokens": 38
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 13980,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 41661,
+      "cache_creation_input_tokens": 385,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 385
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1457,
+     "outputTokens": 182,
+     "cacheReadInputTokens": 0,
+     "cacheCreationInputTokens": 0,
+     "webSearchRequests": 0,
+     "costUSD": 0.0002367,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 164,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    },
+    "claude-sonnet-5-5": {
+     "inputTokens": 8,
+     "outputTokens": 609,
+     "cacheReadInputTokens": 149348,
+     "cacheCreationInputTokens": 13980,
+     "webSearchRequests": 0,
+     "costUSD": 0.0769608,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 38,
+     "canonicalModel": "claude-sonnet-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.0771975,
+   "seconds": 11,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01YRts7s9LagnBHN5HpcqP2a",
+     "tool_input": {
+      "command": "cat > readback.txt <<'E'\nAnswering scheduler handover 7 (Northfield Print Ltd bank change). I will change the master for Northfield Print Ltd (short: northfield) only. Account on file being replaced: sort code 20-45-67, account 31776234. New details: sort code 60-83-71, account 44019482. Effective date: 2026-10-03 (3 October 2026). Approval reference: FD-0926, call-back to the number on file completed per the handover. Nothing else changes.\nE"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 4
+  },
+  {
+   "who": "judge-rb",
+   "result": "{\"match\": false, \"discrepancies\": [\"supplier: the readback says Northfield Print Ltd (northfield), the record says Evergreen Office Supplies\", \"account on file being replaced: the readback says sort code 20-45-67, account 31776234, the record says sort code 30-98-71, account 22019483\"]}",
+   "session": "25267dd2-6abf-4616-93f7-a094988d644d",
+   "usage": {
+    "input_tokens": 2,
+    "cache_creation_input_tokens": 10655,
+    "cache_read_input_tokens": 24098,
+    "output_tokens": 105,
+    "output_tokens_details": {
+     "thinking_tokens": 0
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 10655,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 105,
+      "cache_read_input_tokens": 24098,
+      "cache_creation_input_tokens": 10655,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 10655
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-sonnet-5-5": {
+     "inputTokens": 2,
+     "outputTokens": 105,
+     "cacheReadInputTokens": 24098,
+     "cacheCreationInputTokens": 10655,
+     "webSearchRequests": 0,
+     "costUSD": 0.0460838,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 0,
+     "canonicalModel": "claude-sonnet-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    },
+    "claude-haiku-5-5": {
+     "inputTokens": 1782,
+     "outputTokens": 417,
+     "cacheReadInputTokens": 0,
+     "cacheCreationInputTokens": 0,
+     "webSearchRequests": 0,
+     "costUSD": 0.0003867,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 394,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.0464705,
+   "seconds": 7,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 1
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "Scheduler: your readback does not match the approved record (supplier: the readback says Northfield Print Ltd (northfield), the record says Evergreen Office Supplies; account on file being replaced: the readback says sort code 20-45-67, account 31776234, the record says sort code 30-98-71, account 22019483). The handover is: Update the payment details for Evergreen Office Supplies (and no other supplier) in the supplier master from the account on file, sort code 30-98-71 account 22019483, to sort code 60-83-71 account 44019482, effective 3 October 2026, approval FD-0926, call-back done. Please read it back again.",
+   "result": "ASKED",
+   "session": "c99d30f8-baf2-4d41-9801-06e5b97aebea",
+   "usage": {
+    "input_tokens": 4,
+    "cache_creation_input_tokens": 7136,
+    "cache_read_input_tokens": 90378,
+    "output_tokens": 752,
+    "output_tokens_details": {
+     "thinking_tokens": 408
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7136,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 48332,
+      "cache_creation_input_tokens": 850,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 850
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1457,
+     "outputTokens": 182,
+     "thinkingTokens": 164,
+     "cacheReadInputTokens": 0,
+     "cacheCreationInputTokens": 0,
+     "webSearchRequests": 0,
+     "costUSD": 0.0002367,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000
+    },
+    "claude-sonnet-5-5": {
+     "inputTokens": 12,
+     "outputTokens": 1361,
+     "thinkingTokens": 446,
+     "cacheReadInputTokens": 239726,
+     "cacheCreationInputTokens": 21116,
+     "webSearchRequests": 0,
+     "costUSD": 0.1220706,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-sonnet-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.12230730000000001,
+   "seconds": 12,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 2
+  }
+ ]
+}
