@@ -180,7 +180,7 @@ def analyse(tag: str | None, only: str = "", exclude: str = "") -> None:
     rows = []
     for trial in sorted(C.TRIALS.iterdir()):
         g = trial / "grade.json"
-        if g.exists() and only in trial.name and not (exclude and trial.name.endswith(exclude)):
+        if g.exists() and only in trial.name and not any(trial.name.endswith(x) for x in exclude.split(",") if x):
             rows.append(C.read_json(g))
     out_dir = C.RESULTS / tag if tag else C.RESULTS
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -234,7 +234,7 @@ def analyse(tag: str | None, only: str = "", exclude: str = "") -> None:
 
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(); ap.add_argument("--tag", default=None); ap.add_argument("--only", default="")
-    ap.add_argument("--exclude", default="", help="skip trials whose id ends with this (the pilot's -p)")
+    ap.add_argument("--exclude", default="", help="skip trials whose id ends with any of these, comma-separated (the pilot's -p, the Haiku 4.5 check's -w)")
     a = ap.parse_args(argv)
     analyse(a.tag, a.only, a.exclude)
     return 0
