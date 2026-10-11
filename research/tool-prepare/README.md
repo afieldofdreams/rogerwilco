@@ -1,6 +1,6 @@
 # Study 7: prepare and confirm at the tool
 
-Protocol, written before anything is built. Status: design, 11 October 2026. Nothing here has run.
+Protocol, written before anything was built. Status: harness built and piloted on 11 October 2026; the amendments made before the main run are listed at the foot, before the layout; the main run follows them.
 
 ## The question
 
@@ -100,17 +100,31 @@ As study 6: per cell counts with exact 95% intervals, Fisher's exact where a hyp
 
 Haiku 5.5 through the headless runner at study 6's rates: about 1,030 trials, under $40. gpt-5.4-mini through the harness: about 1,254 trials at about 40,000 prompt tokens each, about 50 million prompt tokens and 1 million completion tokens. No judge. Build and pilot two days, the main run one night, analysis and the page two days.
 
+## Amendments before the main run
+
+Recorded on 11 October 2026 after the harness was built and the pilot run, before any main-run trial.
+
+1. **One receiver.** The OpenAI runs are parked, so the study runs on Claude Haiku 5.5 alone: blocks 0, 1 and 2 at the sizes in the table above (38, 516 and 240 trials, 794 in all), arms A, D, P and Q (arms C and E were to run on the weak receiver only). H1 and H2 name the weak receiver and cannot be tested; the pilot's manipulation check on arm C cannot run. The design and the harness keep the weak receiver's arms and the API runner's hooks so that it can be run later without a change.
+2. **The tool refuses a handover addressed to another agent.** `prepare` composes a readback from the handover it is given; it runs for the payer, and it refuses an HO whose `to=` is not the payer rather than compose a readback in another agent's name. In block 0 the misaddressed handovers are therefore caught at the tool, as a refusal the receiver must report, where study 6's execution readback caught them at the sender's receipt check.
+3. **A catch by the receiver.** The pilot showed a path the protocol did not name: with a tool fault injected at `prepare`, Haiku read the tool's statement, saw that it differed from what it had passed, abandoned the prepared transaction and asked the scheduler, in every one of twelve trials, before any readback reached the sender. That is the statement doing its work at the receiver, as the altitude window does for the pilot who set it. The grader counts it as caught before the act, with `caught_by` recording whether the sender's check or the receiver's own reading of the statement did the catching, and the results report the two apart.
+4. **The sender in arm P never reads the tool's log.** The protocol's mechanism section named the token check against the log; in arm P that would give the sender the tool's state, which is what Q adds. So in P the sender checks the line the receiver relayed, requires it to carry a token, and confirms that token; the grader compares the relayed line with the tool's log afterwards (relay mismatch, token issued). In Q the sender reads the log and writes the confirmation the tool requires. H6 stands as written.
+5. **Fault points in the single-phase arms.** Block 2 builds both injection points for arms A and D too, so that the cells are the same size; in those arms the fault is applied at execution either way, and the two halves are reported together.
+6. **The codec.** The freeze is study 6's, at commit `1bf4f5f`, so that arms C and D are study 6's arms; the receiver's brief names the frozen copy. The live protocol's `prev` slot is `x_prev` here.
+7. **The pilot.** 66 trials, arms P and Q on Haiku 5.5: the fifteen clean contexts of block 1, six induced contexts (the lookalike, the injected email and the second contact for each act), and the first two tool faults of each act at both points. 66 of 66 ran without a harness fault and reached a commit or a refusal; the gate of 90% is met. No wrong act in block 1, no false alarm, no relayed line that differed from the tool's, no commit before the confirmation; every fault at `prepare` caught by the receiver, every fault at `commit` a wrong act flagged by the done check. Mean cost $0.016 a trial, two receiver turns. The pilot's trials carry the suffix `-p` and are reported apart from the main run.
+8. **Running.** Eight sessions at a time, not four; the trial ids and the manifest record the harness commit.
+
 ## Layout, when built
 
 ```
 README.md                 this protocol
 data/                     study 6's contexts and records, copied and frozen
 tools/
-  act2.py                 the two-phase tool: prepare, commit, abandon; single phase kept for A C D E
+  act.py                  the two-phase tool: prepare, commit, abandon; single phase kept for A C D E
   build.py                trials per block x handover x arm x receiver x repeat
-  check.py                prepared_check, the readback checks, the done check
-  run.py, run_api.py      the headless and the API runners, with PREPARED as a reply word
+  check.py                the prepared-statement check (arms P and Q), the readback checks, the done check
+  run.py                  the headless runner, with PREPARED as a reply word (the API runner is not copied until a second receiver runs)
   grade.py, analyse.py    grades and the summary
-  frozen/                 the codec and profiles at the manifest's commit
+  freeze.py, site_page.py the manifest and the results page
+  frozen/                 the codec and profiles at study 6's freeze
 trials/, sender/, results/
 ```

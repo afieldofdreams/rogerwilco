@@ -1,0 +1,144 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "PREPARED",
+   "session": "8766d205-500a-4f69-9127-fc41869a1638",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 21323,
+    "cache_read_input_tokens": 194462,
+    "output_tokens": 2329,
+    "output_tokens_details": {
+     "thinking_tokens": 1349
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 21323,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 7,
+      "cache_read_input_tokens": 44543,
+      "cache_creation_input_tokens": 720,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 720
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1467,
+     "outputTokens": 2351,
+     "cacheReadInputTokens": 194462,
+     "cacheCreationInputTokens": 21323,
+     "webSearchRequests": 0,
+     "costUSD": 0.0075314200000000005,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1349,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.0075314200000000005,
+   "seconds": 16,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_016q2dsNM9yigEHFMQQ5CuNm",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=SEND rb=exec sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 // remittance advice\" --profile pay; echo \"exit=$?\"; ls /home/user/rogerwilco/research/tool-prepare/trials/B1-S-contacts-1-Q-haiku-r1-p"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 6
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y x_tok=9121a9de // readback correct, commit 9121a9de",
+   "result": "DONE",
+   "session": "8766d205-500a-4f69-9127-fc41869a1638",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 7391,
+    "cache_read_input_tokens": 200637,
+    "output_tokens": 847,
+    "output_tokens_details": {
+     "thinking_tokens": 163
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7391,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 52308,
+      "cache_creation_input_tokens": 346,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 346
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1475,
+     "outputTokens": 3198,
+     "thinkingTokens": 1512,
+     "cacheReadInputTokens": 395099,
+     "cacheCreationInputTokens": 28714,
+     "webSearchRequests": 0,
+     "costUSD": 0.01144029,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.01144029,
+   "seconds": 10,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01EJKnc1BLmFUMwv6vTsJmXG",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"RW1 DN payer-2 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 out=OK addr=billing@marlowdesign.co.uk amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057\" --profile pay && printf '%s\\n' \"RW1 DN payer-2 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 out=OK addr=billing@marlowdesign.co.uk amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057\" > /home/user/rogerwilco/research/tool-prepare/trials/B1-S-contacts-1-Q-haiku-r1-p/dn.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 4
+  }
+ ]
+}
