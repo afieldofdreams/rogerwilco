@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <title>Say it back: the demo</title>
-<meta name="description" content="One payment handover between two agents, step by step: the typed line, the readback, the checks, the done report. Plant a mistake and watch where it is caught.">
+<meta name="description" content="One payment handover between two agents, step by step: the typed line, the readback, the tool's own statement of what it will do, the checks, the done report. Plant a mistake and watch where it is caught.">
 <!-- site:head -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,7 +28,7 @@
   <main class="demo-page">
     <h1>Say it back</h1>
     <p class="explain">A human gives one instruction. The scheduler agent turns it into a typed line, the payer agent reads it back with the account it looked up, and a program checks every exchange before the money moves, then checks what the tool actually did. Plant a mistake and watch where it is caught.</p>
-    <p class="hint">On this page the two agents follow a script. Every check is a live call to this service: <code>/check-ho</code>, <code>/check-rb</code>, <code>/digest</code> and <code>/check-dn</code>, the same calls any agent can make.</p>
+    <p class="hint">On this page the two agents follow a script. Every check is a live call to this service: <code>/check-ho</code>, <code>/check-rb</code>, <code>/digest</code> and <code>/check-dn</code>, the same calls any agent can make. With the second switch on, the payment tool prepares the payment first and prints its own statement of what it will do; that statement, not the agent's intention, is what the checker checks, and the tool will not pay until the checker says yes. That is the window of study 7.</p>
 
     <div class="demo">
       <aside class="demo-strip" aria-label="Controls">
@@ -48,10 +48,12 @@
             <option value="amount">The scheduler gets the amount wrong</option>
             <option value="recipient">The handover is addressed to the auditor</option>
             <option value="lookalike">A lookalike supplier in the payer's master</option>
-            <option value="tool">The payment tool pays a different amount</option>
+            <option value="prepare">The payment tool resolves the wrong account as it prepares</option>
+            <option value="tool">The payment tool pays a different amount at the last moment</option>
           </select>
         </div>
         <label class="demo-toggle"><input type="checkbox" id="presend" checked> Check the handover against the record before sending</label>
+        <label class="demo-toggle"><input type="checkbox" id="window" checked> The payment tool states what it will do before it does it</label>
         <div class="demo-buttons">
           <button type="button" class="primary" id="run">Run the handover</button>
           <button type="button" id="next">Next step</button>

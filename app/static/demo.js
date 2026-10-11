@@ -1,6 +1,8 @@
 /* rogerwilco: the demo at /demo. Two scripted agents hand a payment over in RW1 lines; every check is a live call to
    this service's own API (/check-ho, /check-rb, /digest, /check-dn). The page parses lines only to put them into plain
-   English and to write the scripted replies; nothing here decides a verdict. */
+   English and to write the scripted replies; nothing here decides a verdict. With the window switch on, the payment tool
+   prepares the payment first and prints the readback line itself (study 7): the checker checks the tool's statement, the
+   confirmation names its token, and commit runs exactly what was stated. */
 (function () {
   "use strict";
 
@@ -45,9 +47,10 @@
   function gloss(m) {
     var s = m.slots, who = m.from + " to " + m.to;
     if (m.type === "HO") return who + ": pay " + (s.sup || "?") + " invoice " + String(m.item || "").replace("inv:", "") + ", " + money(s.amt) + " " + (s.cur || "") + (s.kind === "GROSS" ? " gross" : s.kind === "NET" ? " net" : "") + (s.acct ? ", to " + acctWords(s.acct) : ", to the account on file") + ", on " + dateWords(s.paid) + ", approval " + (s.apref || "none") + ". Read back what you will do before you act.";
+    if (m.type === "RB" && s.x_tok) return "the payment tool, via " + m.from + ": I will pay " + money(s.amt) + " " + (s.cur || "") + (s.kind === "GROSS" ? " gross" : "") + " to " + acctWords(s.acct) + " on " + dateWords(s.paid) + ", reference " + s.ref + ". Frozen under token " + s.x_tok + "; commit runs exactly this and nothing else.";
     if (m.type === "RB") return who + ": I will pay " + money(s.amt) + " " + (s.cur || "") + (s.kind === "GROSS" ? " gross" : "") + " to " + acctWords(s.acct) + " on " + dateWords(s.paid) + ", reference " + s.ref + (s.h ? ", and here is my fingerprint of what I received." : ".");
     if (m.type === "DN") return who + ": paid " + money(s.amt) + " " + (s.cur || "") + " to " + acctWords(s.acct) + " on " + dateWords(s.paid) + ", reference " + s.ref + ". These are the values the tool reported.";
-    if (m.type === "AN") return who + ": " + (s.val === "Y" ? "confirmed, go ahead." : "no.");
+    if (m.type === "AN") return who + ": " + (s.val === "Y" ? (s.x_tok ? "confirmed; commit " + s.x_tok + "." : "confirmed, go ahead.") : "no.");
     if (m.type === "UN") return who + ": I will not take this (" + s.why + ").";
     return who;
   }
@@ -75,7 +78,25 @@
     var executed = {act: "PAY", item: args.item, sup: args.sup, amount: args.amt, currency: args.cur, kind: args.kind, sort_code: sc[0], account: sc[1],
                     payment_date: args.paid.slice(0, 4) + "-" + args.paid.slice(4, 6) + "-" + args.paid.slice(6, 8), reference: args.ref, approval: args.apref};
     if (fault === "tool") executed.amount = "5100.00";
+    if (fault === "prepare") executed.account = "61102983";      // the one-step tool resolves the wrong account as it executes
     return {status: "payment released", executed: executed};
+  }
+  // the two-phase tool: prepare states and freezes exactly what will run, and prints the readback line itself; commit runs that and nothing else
+  function prepareTool(args, fault, ho, hoDigest, n) {
+    if (!/^\d{2}-\d{2}-\d{2}\/\d{8}$/.test(args.acct || "")) return {error: "acct must be sortcode/number, e.g. 40-12-88/61102938"};
+    if (!/^\d+\.\d{2}$/.test(args.amt || "")) return {error: "amt must have two decimals"};
+    var prepared = {}; Object.keys(args).forEach(function (k) { prepared[k] = args[k]; });
+    if (fault === "prepare") prepared.acct = "40-12-88/61102983";   // the tool resolves the wrong account as it prepares, and its statement says so
+    var token = Math.floor(Math.random() * 0xffffffff).toString(16); while (token.length < 8) token = "0" + token;
+    var line = "RW1 RB payer-" + n + " re=" + ho.id + " from=payer to=scheduler item=" + ho.item + " ask=PAY p=pay h=" + hoDigest + " sup=" + prepared.sup + " amt=" + prepared.amt + " cur=" + prepared.cur + " kind=" + prepared.kind + " acct=" + prepared.acct + " paid=" + prepared.paid + " ref=" + prepared.ref + " apref=" + prepared.apref + " x_tok=" + token + " // prepared by the tool; commit executes exactly this";
+    return {token: token, prepared: prepared, line: line};
+  }
+  function commitTool(prep, fault) {
+    var p = prep.prepared, sc = p.acct.split("/");
+    var executed = {act: "PAY", item: p.item, sup: p.sup, amount: p.amt, currency: p.cur, kind: p.kind, sort_code: sc[0], account: sc[1],
+                    payment_date: p.paid.slice(0, 4) + "-" + p.paid.slice(4, 6) + "-" + p.paid.slice(6, 8), reference: p.ref, approval: p.apref};
+    if (fault === "tool") executed.amount = "5100.00";             // a fault at the moment of paying: the statement was right, the act is not
+    return {status: "payment released", token: prep.token, executed: executed};
   }
   function plant(hoLine, mistake) {
     var edits = {
@@ -84,6 +105,8 @@
       recipient: [function (l) { return l.replace("to=payer", "to=auditor"); }, "Mistake planted: the handover is addressed to the auditor, not the payer."],
       lookalike: [function (l) { return l.replace(/ acct=[^ ]+/, ""); }, "The scheduler leaves the account to the payer, and the payer's master holds a lookalike supplier with a near-identical account."]
     };
+    if (mistake === "prepare") return {line: hoLine, note: "Mistake planted in the tool: when it prepares the payment it will resolve the account to 61102983, not the one it was given."};
+    if (mistake === "tool") return {line: hoLine, note: "Mistake planted in the tool: at the moment of paying it will pay 5,100.00, whatever it said it would do."};
     if (!edits[mistake]) return {line: hoLine, note: null};
     return {line: edits[mistake][0](hoLine), note: edits[mistake][1]};
   }
@@ -150,6 +173,8 @@
     var instruction = el("instruction").value.trim();
     var mistake = el("mistake").value;
     var presend = el("presend").checked;
+    var windowOn = el("window").checked;
+    var prep = null, checkedLine, checked;
     var master = mistake === "lookalike" ? [LOOKALIKE].concat(MASTER) : MASTER;
     var presendRecord = mistake === "lookalike" ? RECORD_NO_ACCT : RECORD;
     var fired = [];
@@ -195,56 +220,78 @@
         throw {stop: "The payer refused the handover, so nothing was paid. A message addressed to someone else is not acted on."};
       }
       rb.slots.h = hoDigest; rbLine = encode(rb); rb = parse(rbLine);
-      card({callsign: "payer", who: attempt === 1 ? "agent: the readback, with the account it looked up and the fingerprint its codec adds" : "agent: the second readback", agent: true, kind: "agent", line: rbLine, gloss: gloss(rb),
-            inputs: "The handover: " + hoLine + "\n\nThe supplier master: " + JSON.stringify(master, null, 1)});
+      if (windowOn) {
+        // the payer does not send its own readback: it hands the values to the tool, and the tool's statement is the readback
+        var s0 = rb.slots;
+        var pr = prepareTool({item: rb.item, sup: s0.sup, amt: s0.amt, cur: s0.cur, kind: s0.kind, acct: s0.acct, paid: s0.paid, ref: s0.ref, apref: s0.apref}, mistake, ho, hoDigest, attempt);
+        if (pr.error) { card({callsign: "tool", who: "code: the payment tool refused to prepare the call", kind: "fail", verdict: pr.error}); throw {stop: "The payment tool refused the call, so nothing was prepared and nothing was paid."}; }
+        prep = pr; checkedLine = pr.line; checked = parse(checkedLine);
+        card({callsign: "tool", who: attempt === 1 ? "code: prepare. The tool freezes what it will do under a token and prints the readback line itself; the payer passes it on" : "code: prepare again, from the re-issued handover", kind: "agent", line: checkedLine, gloss: gloss(checked),
+              planted: mistake === "prepare" ? "The fault shows in the statement: the tool says it will pay 61102983." : null,
+              inputs: "The payer called: prepare pay --account " + s0.acct + " --amount " + s0.amt + " ... (the values from its own reading of the handover and the master)\n\nThe tool answered: " + JSON.stringify({status: "prepared", token: pr.token, prepared: pr.prepared}, null, 1)});
+      } else {
+        checkedLine = rbLine; checked = rb;
+        card({callsign: "payer", who: attempt === 1 ? "agent: the readback, with the account it looked up and the fingerprint its codec adds" : "agent: the second readback", agent: true, kind: "agent", line: rbLine, gloss: gloss(rb),
+              inputs: "The handover: " + hoLine + "\n\nThe supplier master: " + JSON.stringify(master, null, 1)});
+      }
       return pause().then(function () {
-        return api("/check-rb", {ho: hoLine, rb: rbLine, profile: "pay"});
+        return api("/check-rb", {ho: hoLine, rb: checkedLine, profile: "pay"});
       }).then(function (r) {
-        var recordProblems = recordCheck(rb);
+        var recordProblems = recordCheck(checked);
         var problems = r.problems.concat(recordProblems);
+        var what = windowOn ? "the tool's statement" : "the readback";
         if (!problems.length) {
-          card({callsign: "checker", who: "code: POST /check-rb, the readback against the handover, then against the record", kind: "pass", verdict: "Roger, wilco. Every value the payer will act with matches the record.", notes: r.notes});
+          card({callsign: "checker", who: "code: POST /check-rb, " + what + " against the handover, then against the record", kind: "pass", verdict: windowOn ? "Roger, wilco. Every value the tool will run with matches the record." : "Roger, wilco. Every value the payer will act with matches the record.", notes: r.notes});
           return pause().then(function () {
-            var an = "RW1 AN scheduler-" + nextSched() + " re=" + rb.id + " p=pay from=scheduler to=payer val=Y // readback matches the approved run; proceed";
-            card({callsign: "scheduler", who: "code: the confirmation that clears the act", line: an, gloss: gloss(parse(an))});
+            var an = "RW1 AN scheduler-" + nextSched() + " re=" + checked.id + " p=pay from=scheduler to=payer val=Y" + (windowOn ? " x_tok=" + prep.token + " // statement matches the approved run; commit " + prep.token : " // readback matches the approved run; proceed");
+            card({callsign: "scheduler", who: windowOn ? "code: the confirmation, naming the token the tool may commit" : "code: the confirmation that clears the act", line: an, gloss: gloss(parse(an))});
             return pause();
           });
         }
-        fired.push(attempt === 1 ? "the readback check caught a mismatch before the act" : "the second readback was refused too");
-        var verdict = (r.problems.length && !recordProblems.length) ? "Refused. The readback differs from the handover but matches the record, so the handover was wrong. The payment waits." : "Refused. The payment waits.";
-        card({callsign: "checker", who: "code: POST /check-rb, the readback against the handover, then against the record", kind: "fail", verdict: verdict, problems: problems});
-        if (attempt === 2) throw {stop: "Two readbacks were refused, so the payer never acted. The payment is held for a human."};
+        fired.push(windowOn ? (attempt === 1 ? "the check of the tool's statement caught a mismatch before the act" : "the tool's second statement was refused too")
+                            : (attempt === 1 ? "the readback check caught a mismatch before the act" : "the second readback was refused too"));
+        var verdict = (r.problems.length && !recordProblems.length) ? "Refused. " + (windowOn ? "The statement" : "The readback") + " differs from the handover but matches the record, so the handover was wrong. The payment waits." : "Refused. The payment waits.";
+        card({callsign: "checker", who: "code: POST /check-rb, " + what + " against the handover, then against the record", kind: "fail", verdict: verdict, problems: problems});
+        if (attempt === 2) throw {stop: windowOn ? "The tool's statement was refused twice, so nothing was ever committed. The payment is held for a human, and the fault is in the tool, not the agent." : "Two readbacks were refused, so the payer never acted. The payment is held for a human."};
         return pause().then(function () {
           var n2 = nextSched();
-          hoLine = scriptedHO(n2).replace("scheduler-" + n2, "scheduler-" + n2 + " re=" + rb.id).replace("// approved run, 2 October", "// re " + rb.id + ": " + problems[0].slice(0, 120));
+          hoLine = scriptedHO(n2).replace("scheduler-" + n2, "scheduler-" + n2 + " re=" + checked.id).replace("// approved run, 2 October", "// re " + checked.id + ": " + problems[0].slice(0, 120));
           ho = parse(hoLine);
-          card({callsign: "scheduler", who: "code: re-issues the handover from the record, pointing at the refused readback", line: hoLine, gloss: gloss(ho)});
+          card({callsign: "scheduler", who: "code: re-issues the handover from the record, pointing at the refused " + (windowOn ? "statement" : "readback"), line: hoLine, gloss: gloss(ho)});
+          if (windowOn) card({callsign: "tool", who: "code: abandon " + prep.token + ". The prepared payment is discarded; nothing ran", kind: "note", verdict: "Abandoned. The payer will prepare again from the re-issued handover."});
           return api("/digest", {line: hoLine, profile: "pay"}).then(function (d) { hoDigest = d.digest; }).then(pause).then(readback);
         });
       });
     }).then(function () {
       // 4. the act, through the tool
-      var s = rb.slots;
-      var result = payTool({item: rb.item, sup: s.sup, amt: s.amt, cur: s.cur, kind: s.kind, acct: s.acct, paid: s.paid, ref: s.ref, apref: s.apref}, mistake);
+      var s = rb.slots, result;
+      if (windowOn) {
+        result = commitTool(prep, mistake);
+      } else {
+        result = payTool({item: rb.item, sup: s.sup, amt: s.amt, cur: s.cur, kind: s.kind, acct: s.acct, paid: s.paid, ref: s.ref, apref: s.apref}, mistake);
+      }
       if (result.error) { card({callsign: "tool", who: "code: the payment tool refused the call", kind: "fail", verdict: result.error}); throw {stop: "The payment tool refused the call, so nothing was paid."}; }
       var ex = result.executed;
-      card({callsign: "tool", who: "code: the payment tool executes the confirmed values and prints what it did", line: JSON.stringify(ex), gloss: "Released " + money(ex.amount) + " " + ex.currency + " to " + ex.sort_code + " / " + ex.account + ", reference " + ex.reference + ".",
-            planted: mistake === "tool" ? "Mistake planted: the tool paid 5,100.00 instead of the 5,400.00 it was told." : null});
+      card({callsign: "tool", who: windowOn ? "code: commit " + prep.token + ". The tool executes the statement it froze, and prints what it did" : "code: the payment tool executes the confirmed values and prints what it did", line: JSON.stringify(ex), gloss: "Released " + money(ex.amount) + " " + ex.currency + " to " + ex.sort_code + " / " + ex.account + ", reference " + ex.reference + ".",
+            planted: mistake === "tool" ? "Mistake planted: the tool paid 5,100.00 instead of the 5,400.00 it said it would." : mistake === "prepare" && !windowOn ? "Mistake planted: the tool paid account 61102983 instead of the one it was told. With no statement to check, nothing could see this before the money moved." : null});
       return pause().then(function () {
         // 5. the done report, from the tool's printout, and the second loop
         var dnLine = scriptedDN(ho.id, ex), dn = parse(dnLine);
         card({callsign: "payer", who: "agent: the done report, from what the tool printed, not what it meant", agent: true, kind: "agent", line: dnLine, gloss: gloss(dn), inputs: "The tool printed: " + JSON.stringify(ex, null, 1)});
-        return pause().then(function () { return api("/check-dn", {ho: hoLine, dn: dnLine, rb: rbLine, profile: "pay"}); });
+        return pause().then(function () { return api("/check-dn", {ho: hoLine, dn: dnLine, rb: checkedLine, profile: "pay"}); });
       }).then(function (r) {
         if (r.ok) {
           card({callsign: "checker", who: "code: POST /check-dn, the done report against the plan", kind: "pass", verdict: "The payment went out exactly as agreed.", notes: r.notes});
           finish(fired, fired.length ? "A mistake was caught before the money moved, the handover was corrected from the record, and the payment then went out as agreed."
+                        : windowOn && mistake === "none" ? "Everything matched at every step. The tool said what it would do, the checker agreed, and the tool did exactly that."
                         : mistake === "lookalike" ? "The payer picked the right account despite the lookalike, so there was nothing to catch, and the payment went out as agreed."
                         : "Everything matched at every step.");
         } else {
           fired.push("the done check flagged a difference between the plan and what the tool did");
           card({callsign: "checker", who: "code: POST /check-dn, the done report against the plan", kind: "fail", verdict: "Flagged. The tool did something other than what was agreed. Recall the payment.", problems: r.problems});
-          finish(fired, "The money has already moved. The done check is the only check that can see a tool fault, and it sees it within one message.");
+          finish(fired, windowOn ? "The money has already moved. The tool's statement was right and the tool did something else at the last moment; nothing before the act can see that, and the done check saw it within one message."
+                        : mistake === "prepare" ? "The money has already moved to the wrong account. With the window on, the tool's statement would have shown this account before anything was paid; run it again with the second switch on."
+                        : "The money has already moved. The done check is the only check that can see a tool fault, and it sees it within one message.");
         }
       });
     }).catch(function (e) {
