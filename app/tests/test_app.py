@@ -774,3 +774,16 @@ def test_research_index_and_pages(client):
         assert '<meta charset="utf-8">' in page.text and '<main class="report">' in page.text, slug
         assert 'class="site-head"' in page.text and '/static/site.css' in page.text, slug   # the shared chrome
     assert client.get("/research/nope").status_code == 404
+
+
+def test_every_research_page_is_served(client):
+    """Every study page under static/research is routed: a page the index links to must not 404."""
+    from app import main as m
+    pages = sorted(f.stem for f in m.RESEARCH_DIR.glob("*.html") if f.stem != "index")
+    assert set(pages) == m.RESEARCH_PAGES, f"pages on disk {pages} differ from the routed set {sorted(m.RESEARCH_PAGES)}"
+    assert client.get("/research").status_code == 200
+    for slug in pages:
+        r = client.get(f"/research/{slug}")
+        assert r.status_code == 200, slug
+        assert "<main" in r.text
+    assert client.get("/research/no-such-study").status_code == 404
