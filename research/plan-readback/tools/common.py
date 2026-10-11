@@ -20,7 +20,8 @@ DATA = ROOT / "data"
 TRIALS = ROOT / "trials"
 SENDER = ROOT / "sender"                              # the sender's private state per trial: record, tool fault, act log
 RESULTS = ROOT / "results"
-CODEC = REPO / "rogerwilco" / "scripts" / "rogerwilco.py"
+CODEC = REPO / "rogerwilco" / "scripts" / "rogerwilco.py"            # what the receiver's brief names and runs
+FROZEN_CODEC = ROOT / "tools" / "frozen" / "scripts" / "rogerwilco.py"           # what the sender checks with: the codec at the frozen commit
 import os
 HARDEN = int(os.environ.get("RW_HARDEN", "0"))   # the pre-registered hardening ladder: 0 as built, 1 two confusers, 2 ordering, 3 no status field
 MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
@@ -555,7 +556,7 @@ _codec = None
 def codec():
     global _codec
     if _codec is None:
-        spec = importlib.util.spec_from_file_location("rogerwilco", CODEC)
+        spec = importlib.util.spec_from_file_location("rogerwilco", FROZEN_CODEC)
         _codec = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(_codec)
     return _codec

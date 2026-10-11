@@ -1,0 +1,3 @@
+# The codec as frozen for study 6
+
+`scripts/rogerwilco.py`, `profiles/core.json` and `profiles/pay.json` exactly as they were at the commit recorded in `results/manifest.json#frozen_at`, extracted with `git show`. The sender's checks in `tools/check.py` (the readback check in arms C and D, the parse of DN lines) load this copy, so that a change to the live protocol cannot change what the study's sender accepts. The receiver's own calls to `make-rb` and `validate` go to the live codec at the path its brief names, and the trials run after the protocol change of 11 October 2026 are listed in the results notes.
