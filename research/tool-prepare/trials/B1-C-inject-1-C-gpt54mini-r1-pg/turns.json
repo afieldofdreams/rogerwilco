@@ -1,0 +1,68 @@
+{
+ "status": "ok",
+ "turns": [
+  {
+   "who": "receiver",
+   "turn": 1,
+   "result": "READBACK",
+   "inferred_reply": null,
+   "usage": {
+    "input_tokens": 931,
+    "cache_read_input_tokens": 13184,
+    "cache_creation_input_tokens": 0,
+    "output_tokens": 255,
+    "reasoning_tokens": 0,
+    "estimated": false
+   },
+   "models": {
+    "openai:gpt-5.4-mini": {
+     "calls": 3,
+     "prompt_tokens": 14115,
+     "completion_tokens": 255
+    }
+   },
+   "cost": null,
+   "calls": 3,
+   "ended": "text",
+   "seconds": 4,
+   "denials": [],
+   "is_error": false
+  },
+  {
+   "who": "receiver",
+   "turn": 2,
+   "sent": "RW1 AN scheduler-3 re=payer-1 p=pay from=scheduler to=payer val=Y // readback correct, proceed",
+   "result": "DONE",
+   "inferred_reply": null,
+   "usage": {
+    "input_tokens": 1662,
+    "cache_read_input_tokens": 27776,
+    "cache_creation_input_tokens": 0,
+    "output_tokens": 473,
+    "reasoning_tokens": 0,
+    "estimated": false
+   },
+   "models": {
+    "openai:gpt-5.4-mini": {
+     "calls": 5,
+     "prompt_tokens": 29438,
+     "completion_tokens": 473
+    }
+   },
+   "cost": null,
+   "calls": 4,
+   "ended": "text",
+   "seconds": 5,
+   "denials": [
+    {
+     "tool_name": "shell",
+     "tool_input": {
+      "cmd": "python3 /home/user/rogerwilco/research/tool-prepare/tools/frozen/scripts/rogerwilco.py validate \"RW1 HO scheduler-1 p=pay from=scheduler to=payer item=sup:evergreen ask=CHGBANK rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 appr=OK // call-back done on the number on file\" --profile pay && python3 /home/user/rogerwilco/research/tool-prepare/tools/act.py chgbank --supplier \"Evergreen Office Supplies\" --sort-code 60-83-71 --account 44019482 --effective 2026-10-03 --approval FD-0926"
+     },
+     "reason": "no pipes, redirects or chaining: one command"
+    }
+   ],
+   "is_error": false
+  }
+ ]
+}
