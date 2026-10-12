@@ -115,7 +115,7 @@ HTML = f"""<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <title>rogerwilco</title>
-<meta name="description" content="Aviation learned how to hand an instruction from one person to another so that it cannot be misheard. rogerwilco gives that discipline to AI agents: a job as one typed line, read back and checked by a program before anything happens. Seven studies, told one test at a time, with a picture of each flow and the mistakes it caught.">
+<meta name="description" content="Aviation learned how to hand an instruction from one person to another so that it cannot be misheard. rogerwilco gives that discipline to AI agents: a job as one typed line, read back and checked by a program before anything happens. The last minute at Tenerife, the five layers that keep flying safe, their twins for agents, and seven studies told one test at a time, with a picture of each flow and the mistakes it caught.">
 <!-- site:head -->
 <!-- /site:head -->
 </head>
@@ -123,12 +123,55 @@ HTML = f"""<!doctype html>
 <!-- site:header -->
 <!-- /site:header -->
 <main class="story">
-  <header>
-    <p class="lede">Aviation learned, at great cost, how to hand an instruction from one person to another so that it cannot be misheard. rogerwilco gives that discipline to AI agents, and this page shows, one test at a time, what it catches.</p>
-    <p>On 27 March 1977 two Boeing 747s collided on a runway in Tenerife and 583 people died. One crew began its take-off on a clearance it had not been given. The words on the radio were ordinary English, and ordinary English was the problem: "we are now at take-off" meant one thing to the crew saying it and another to the controller hearing it. Aviation's answer was not a better pilot. It was a protocol. A fixed vocabulary, so a word means one thing. The person who will act reads the instruction back, and the person who gave it listens for the mistake. In the flight deck, the setting is called out and the other pilot checks the dial.</p>
-    <p>AI agents are now doing things that cannot be undone: paying invoices, changing the account a supplier is paid into, sending emails to customers. They hand each other those instructions in paragraphs. We spent seven studies finding out what actually stops a mistake before the money moves. Below: what we were testing, the two ways a job can be said, then six ways of handing a job over, each with a picture of who says what to whom and where a planted mistake was or was not caught.</p>
-    <p class="radio">The names come from the radio. <em>Roger</em> means "I received it". <em>Wilco</em> means "I understood it and I will do it". A controller says "descend to 3,000 feet, QNH 1013"; the pilot says it back; the controller listens. Agents can do the same, and a program can do the listening.</p>
+  <header class="hero">
+    <p class="lede">Aviation learned, at great cost, how to hand an instruction from one person to another so that it cannot be misheard. rogerwilco gives that discipline to AI agents, and tests whether it works.</p>
+    <div class="exchange" role="group" aria-label="A clearance read back on the radio">
+      <div class="rt tower"><span class="who">Tower</span><p>"Speedbird one two three, descend flight level nine zero, QNH one zero one three."</p><span class="tag">fixed words</span></div>
+      <div class="rt pilot"><span class="who">Pilot</span><p>"Descend flight level nine zero, QNH one zero one three, Speedbird one two three."</p><span class="tag">read back</span></div>
+      <div class="rt tower"><span class="who">Tower</span><p class="hb">listens, and corrects anything that differs. Then the pilot sets 9,000 in the window, and the other pilot checks the window.</p><span class="tag">heard back, then checked</span></div>
+    </div>
+    <p>Thousands of times a day, a controller says what to do, the pilot says it back, and the controller listens for the mistake. The words are fixed, so each means one thing. What gets set is checked against what was said. It is dull, and it is a large part of why flying is the safest way to travel.</p>
+    <p>AI agents now hand each other jobs that cannot be undone: paying invoices, changing the account a supplier is paid into, sending emails to customers. They do it in paragraphs that nothing checks. rogerwilco is built at Crox by Adam Field, who flew the Boeing 737 for an airline before he built software, to give agents the radio's discipline and to find out, test by test, what it catches.</p>
   </header>
+
+  <section>
+    <h2>Tenerife, 27 March 1977</h2>
+    <p>Two Boeing 747s on a fog-bound runway, and the deadliest accident in aviation. The KLM crew began its take-off on a clearance it had not been given and struck the Pan Am 747 still taxiing on the runway. 583 people died. Here is the last minute on the tower frequency and in the KLM cockpit.</p>
+    <div class="radio" role="group" aria-label="The last minute of radio and cockpit recordings before the collision">
+      <div class="rx klm"><span class="t">17:05:44</span><span class="who">KLM 4805</span><p>"The KLM four eight zero five is now ready for take-off, and we're waiting for our ATC clearance."</p></div>
+      <div class="rx tower"><span class="t">17:05:53</span><span class="who">Tower</span><p>"KLM eight seven zero five, you are cleared to the Papa beacon, climb to and maintain flight level nine zero, right turn after take-off, proceed with heading zero four zero until intercepting the three two five radial from Las Palmas VOR."</p><p class="why">A route clearance: where to fly after take-off. Not a clearance to take off. The callsign is wrong, too.</p></div>
+      <div class="rx klm"><span class="t">17:06:09</span><span class="who">KLM 4805</span><p>"Ah, roger sir, we're cleared to the Papa beacon, flight level nine zero, right turn out zero four zero until intercepting the three two five. <mark>We are now at take-off.</mark>"</p><p class="why">A correct readback, then four words that were in nobody's book. The tower heard "at the take-off point". The crew meant "taking off".</p></div>
+      <div class="rx klm"><span class="t">17:06:11</span><span class="who">KLM captain</span><p>"We gaan." <i>(We're going.)</i></p><p class="why">The brakes were already off.</p></div>
+      <div class="rx tower"><span class="t">17:06:18</span><span class="who">Tower</span><p>"OK." <i>(a pause)</i> "Stand by for take-off, I will call you."</p></div>
+      <div class="rx panam"><span class="t">17:06:20</span><span class="who">Pan Am 1736</span><p>"No. And we're still taxiing down the runway, the Clipper one seven three six."</p><p class="why">Both transmitted at once. In the KLM cockpit the two became a squeal lasting almost four seconds. "OK" was heard. The warning was not.</p></div>
+      <div class="rx tower"><span class="t">17:06:25</span><span class="who">Tower</span><p>"Papa Alpha one seven three six, report the runway clear."</p></div>
+      <div class="rx panam"><span class="t">17:06:29</span><span class="who">Pan Am 1736</span><p>"OK, we'll report when we're clear."</p></div>
+      <div class="rx klm"><span class="t">17:06:32</span><span class="who">KLM flight engineer</span><p>"Is hij er niet af dan? Is hij er niet af, die Pan American?" <i>(Is he not clear then? Is he not clear, that Pan American?)</i></p></div>
+      <div class="rx klm"><span class="t">17:06:35</span><span class="who">KLM captain</span><p>"Jawel." <i>(Oh, yes.)</i></p><p class="why">The one person who doubted was overruled, and the aircraft kept accelerating.</p></div>
+      <div class="rx end"><span class="t">17:06:50</span><span class="who">Runway 30</span><p>The KLM 747 struck the Pan Am 747.</p></div>
+    </div>
+    <p class="cap">From the cockpit voice recorder and the tower tape as published in the investigation reports; Dutch lines translated; times local.</p>
+    <p>Nothing here was a technical failure. Every word was ordinary English, and that was the problem. One phrase meant two things. Two people spoke at once and the warning never arrived. The person who doubted was overruled. Aviation's answer was not a better pilot. It was a protocol, and it changed three things.</p>
+    <div class="tiles">
+      <div class="tile"><b>one word</b><span>"Take-off" is now said only in the clearance to take off, or to cancel it. Everything else is "departure".</span></div>
+      <div class="tile"><b>read back</b><span>A take-off clearance, a runway crossing, an altitude: the pilot must say it back, and the controller must listen.</span></div>
+      <div class="tile"><b>the doubt wins</b><span>Crew training was rebuilt so that the most junior voice in the cockpit is heard, and a doubt stops the aircraft.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Five layers, and their twins for agents</h2>
+    <p>The readback is the famous part. It is one layer of five, and the layers that catch the most are the ones that check the machine rather than the person. Each has a twin in the way agents can hand each other a job, and the tests further down say how much each twin caught.</p>
+    <div class="layers" role="table" aria-label="The five layers of aviation safety and their twins for agents">
+      <div class="layer head" role="row"><span role="columnheader">Layer</span><span role="columnheader">In the cockpit</span><span role="columnheader">Between agents</span></div>
+      <div class="layer" role="row"><h3 role="cell"><span class="n">1</span>Fixed words</h3><p role="cell">A closed vocabulary, so a word means one thing and nothing is said in two ways.</p><p role="cell">The job is one typed line, every fact in a labelled slot, so a program can read it like a form.</p></div>
+      <div class="layer" role="row"><h3 role="cell"><span class="n">2</span>Read back, listened to</h3><p role="cell">The pilot says the clearance back; the controller listens for the mistake.</p><p role="cell">The payer reads the job back as a line and a program compares it with the record. <b>Caught every typed mistake.</b></p></div>
+      <div class="layer" role="row"><h3 role="cell"><span class="n">3</span>Set it, check the window</h3><p role="cell">The new altitude goes in the window; the other pilot checks the window, not their memory.</p><p role="cell">The payment tool states exactly what it will do, and a program checks that before it does it. <b>Caught every tool mistake before the money moved.</b></p></div>
+      <div class="layer" role="row"><h3 role="cell"><span class="n">4</span>Watch the radar</h3><p role="cell">The tower sees what the aircraft actually does, so a mistake is seen early.</p><p role="cell">The tool reports what it actually did and a program compares it with the plan. <b>Caught every fault, after the money moved.</b></p></div>
+      <div class="layer" role="row"><h3 role="cell"><span class="n">5</span>The aircraft says no</h3><p role="cell">The flight computer will not fly the aircraft into the ground, whatever anyone says.</p><p role="cell">The tool will not pay until the program says yes, whatever any agent says. <b>Never paid early, in 378 tries.</b></p></div>
+    </div>
+    <p>rogerwilco is those layers written down for agents: three one-line messages, the checks a program runs on them, hosted here for any agent to call, and seven studies that planted mistakes to find out what each layer catches. The rest of this page is those studies, one test at a time. <em>Roger</em> means "I received it"; <em>wilco</em> means "I understood it and I will do it".</p>
+  </section>
 
   <section>
     <h2>What we were testing</h2>
