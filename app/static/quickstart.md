@@ -10,7 +10,7 @@ rogerwilco puts three checks, run by a program, around anything an AI agent does
 pip install rogerwilco
 ```
 
-Python 3.10 or later, standard library only, no dependencies. Until the first release is on PyPI: `pip install git+https://github.com/afieldofdreams/rogerwilco`. The same package gives you a command line, `rogerwilco`, and every function is also a hosted [HTTP endpoint](#http) for other languages.
+Python 3.10 or later, standard library only, no dependencies. The package is [rogerwilco on PyPI](https://pypi.org/project/rogerwilco/); the source is on [GitHub](https://github.com/afieldofdreams/rogerwilco). The same package gives you a command line, `rogerwilco`, and every function is also a hosted [HTTP endpoint](#http) for other languages.
 
 ## Where the checks go
 

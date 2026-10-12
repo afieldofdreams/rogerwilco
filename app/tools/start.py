@@ -127,8 +127,7 @@ G: list[tuple] = [
              "protocol in one file. The prompt under [Hand it to your coding agent](#agent) is a complete brief."),
     ("h2", "Install", "install"),
     ("code", "sh", "pip install rogerwilco"),
-    ("p", "Python 3.10 or later, standard library only, no dependencies. Until the first release is on PyPI: "
-          "`pip install git+https://github.com/afieldofdreams/rogerwilco`. The same package gives you a command line, "
+    ("p", "Python 3.10 or later, standard library only, no dependencies. The package is [rogerwilco on PyPI](https://pypi.org/project/rogerwilco/); the source is on [GitHub](https://github.com/afieldofdreams/rogerwilco). The same package gives you a command line, "
           "`rogerwilco`, and every function is also a hosted [HTTP endpoint](#http) for other languages."),
     ("h2", "Where the checks go", "where"),
     ("table", [["Check", "Runs", "Catches", "Function"],
