@@ -371,7 +371,7 @@ def test_home_page_lines_are_real(client):
 
 
 def test_every_page_carries_the_same_header(client):
-    pages = ["/", "/quickstart", "/demo", "/lines", "/about", "/research", "/research/readback"]
+    pages = ["/", "/quickstart", "/demo", "/explained", "/lines", "/about", "/research", "/research/readback"]
     heads = []
     for path in pages:
         text = client.get(path, headers={"Accept": "text/html"}).text
@@ -402,6 +402,21 @@ def test_demo_page_and_its_lines(client):
     assert post(client, "/check-dn", ho=ho, dn=dn, rb=rb, profile="pay").json()["ok"] is True
     bad = post(client, "/check-dn", ho=ho, dn=dn.replace("amt=5400.00", "amt=5100.00"), rb=rb, profile="pay").json()
     assert bad["ok"] is False and bad["problems"] == ["executed: amt mismatch: plan 5400.00 vs DN 5100.00"]
+
+
+def test_explained_page(client):
+    """The walk-through is served, tells the six tests in order, and its example line is a real one."""
+    r = client.get("/explained")
+    assert r.status_code == 200 and r.headers["content-type"].startswith("text/html")
+    text = r.text
+    assert "Say it back, explained" in text and 'href="/research"' in text and 'href="/demo"' in text
+    assert text.count("<figure class=\"flow\">") == 8 and text.count('role="img"') == 8
+    tests = [text.index(f"Test {n}</p>") for n in range(1, 7)]
+    assert tests == sorted(tests)
+    lines = [re.sub(r"<[^>]+>", "", m) for m in re.findall(r'<pre class="line">(.*?)</pre>', text, re.S)]
+    assert len(lines) == 1 and lines[0].split()[1] == "HO"
+    assert post(client, "/validate", line=lines[0], profile="pay").json()["ok"] is True
+    assert "\u2014" not in text
 
 
 def test_quickstart_and_lines_pages(client):
@@ -592,7 +607,15 @@ def test_index_page_numbers_match_the_studies():
         assert cells["A-sonnet"]["fault_reached_act"] == 9 and cells["A-haiku"]["fault_reached_act"] == 14
         assert cells["C-sonnet"]["fault_reached_act"] == 0 and cells["C-haiku"]["fault_reached_act"] == 0
         assert all(cells[k]["false_alarms"] == 0 for k in cells)
-    assert "9 of 16, then 0" in html and "fourteen with a smaller model" in html and "9 and 14 of 16" in research
+    assert "9 and 14 of 16" in research
+    tp = root / "tool-prepare" / "results" / "summary.json"
+    if tp.is_file():   # the landing page's headline: tool faults at prepare on Haiku 5.5, one-step tool against two-phase
+        rows = json.loads(tp.read_text(encoding="utf-8"))["rows"]
+        prep = [r for r in rows if r["model"] == "haiku" and r["block"] == 2 and r.get("tool_fault_at") == "prepare"]
+        one_step = [r for r in prep if r["arm"] in "AD"]
+        two_phase = [r for r in prep if r["arm"] in "PQ"]
+        assert len(one_step) == 60 and sum(r["wrong_act"] for r in one_step) == 59 and sum(r["wrong_act"] for r in two_phase) == 0
+    assert "59 of 60, then 0" in html and 'href="/explained"' in html
     tr = (root / "translation" / "results" / "summary.md").read_text(encoding="utf-8")
     sonnet = [c.strip() for c in [l for l in tr.splitlines() if l.startswith("| L-sonnet")][0].strip("|").split("|")]
     assert sonnet[2].startswith("0.997") and "99.7%" in research              # recall

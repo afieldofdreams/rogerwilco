@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Say it back, explained</title>
+<meta name="description" content="What we tested, test by test: prose with nothing checking, prose judged by an AI, lines echoed back, lines with the values the payer will use, the report afterwards, and the tool's own statement before it acts. With a diagram of each flow and the mistakes it caught.">
+<!-- site:head -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=DM+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/static/site.css?v=635c432a">
+<script src="/static/site.js?v=635c432a" defer></script>
+<noscript><style>.site-nav{display:flex!important}.nav-toggle{display:none!important}</style></noscript>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23B8402A'/%3E%3Cpath d='M8 17l5 5 11-12' fill='none' stroke='%23fff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<!-- /site:head -->
+</head>
+<body>
+<!-- site:header -->
+<header class="site-head">
+  <p class="mark"><a href="/"><span class="roger">roger</span><span class="wilco">wilco</span></a><span class="ver">RW1</span></p>
+  <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Menu"><svg viewBox="0 0 24 24" aria-hidden="true"><line class="l1" x1="4" y1="6" x2="20" y2="6"/><line class="l2" x1="4" y1="12" x2="20" y2="12"/><line class="l3" x1="4" y1="18" x2="20" y2="18"/></svg></button>
+  <nav class="site-nav" id="site-nav" aria-label="Site"><a href="/quickstart">start</a> <a href="/demo">demo</a> <a href="/explained" aria-current="page">explained</a> <a href="/lines">what a line is</a> <a href="/profiles">profiles</a> <a href="/research">research</a> <a href="/about">about</a> <a href="/docs">api</a> <a class="lab" href="https://crox.io">Crox</a></nav>
+</header>
+<!-- /site:header -->
+<main class="explained">
+  <header>
+    <p class="eyebrow">Seven studies · October 2026</p>
+    <h1>Say it back, explained</h1>
+    <p class="lede">AI agents hand jobs to each other, like "pay this bill". We tested six ways of doing that, planted mistakes on purpose, and counted which mistakes got caught before the money moved. This page tells the story one test at a time: what we were testing, the two ways a job can be said, then each test with a picture of who said what to whom and where the mistake was or was not caught.</p>
+  </header>
+
+  <section>
+    <h2>What we were testing</h2>
+    <p>Three agents and a tool. The boss says what to pay. The scheduler agent writes the job. The payer agent reads it and looks up the bank account. The payment tool moves the money. A mistake can enter at three places, and once the money has moved it cannot be undone.</p>
+    <figure class="flow"><div class="scroll"><svg viewBox="0 0 746 150" role="img" aria-label="The three places a mistake can come from" style="width:746px;max-width:100%;min-width:640px;height:auto">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" style="fill:currentColor"/></marker></defs>
+<rect x="12" y="64" width="146" height="46" rx="8" style="fill:var(--surface);stroke:var(--ink);stroke-width:1.5"/>
+<text x="85.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--ink)">The boss</text>
+<text x="85.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--ink);opacity:.85">says what to pay</text>
+<line x1="161" y1="87.0" x2="200" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="180.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">the job</text>
+<rect x="204" y="64" width="146" height="46" rx="8" style="fill:var(--well);stroke:var(--muted);stroke-width:1.5"/>
+<text x="277.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--ink)">Scheduler agent</text>
+<text x="277.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--ink);opacity:.85">writes the job</text>
+<line x1="353" y1="87.0" x2="392" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="372.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">the job</text>
+<rect x="396" y="64" width="146" height="46" rx="8" style="fill:var(--well);stroke:var(--muted);stroke-width:1.5"/>
+<text x="469.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--ink)">Payer agent</text>
+<text x="469.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--ink);opacity:.85">reads it, looks up account</text>
+<line x1="545" y1="87.0" x2="584" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="564.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">pay</text>
+<rect x="588" y="64" width="146" height="46" rx="8" style="fill:var(--ink);stroke:var(--ink);stroke-width:1.5"/>
+<text x="661.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--paper)">The payment tool</text>
+<text x="661.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--paper);opacity:.85">moves the money</text>
+<circle cx="277.0" cy="26" r="11" style="fill:var(--bad)"/>
+<text x="277.0" y="30.5" text-anchor="middle" font-size="13" font-weight="700" style="fill:var(--paper)">✗</text>
+<text x="277.0" y="50" text-anchor="middle" font-size="10.5" font-weight="600" style="fill:var(--bad)">1. typed it wrong</text>
+<line x1="277.0" y1="54" x2="277.0" y2="61" style="stroke:var(--bad);stroke-width:1;stroke-dasharray:2 3"/>
+<circle cx="469.0" cy="26" r="11" style="fill:var(--bad)"/>
+<text x="469.0" y="30.5" text-anchor="middle" font-size="13" font-weight="700" style="fill:var(--paper)">✗</text>
+<text x="469.0" y="50" text-anchor="middle" font-size="10.5" font-weight="600" style="fill:var(--bad)">2. read it wrong</text>
+<line x1="469.0" y1="54" x2="469.0" y2="61" style="stroke:var(--bad);stroke-width:1;stroke-dasharray:2 3"/>
+<circle cx="661.0" cy="26" r="11" style="fill:var(--bad)"/>
+<text x="661.0" y="30.5" text-anchor="middle" font-size="13" font-weight="700" style="fill:var(--paper)">✗</text>
+<text x="661.0" y="50" text-anchor="middle" font-size="10.5" font-weight="600" style="fill:var(--bad)">3. did the wrong thing</text>
+<line x1="661.0" y1="54" x2="661.0" y2="61" style="stroke:var(--bad);stroke-width:1;stroke-dasharray:2 3"/>
+</svg></div><figcaption>The three places a mistake can come from. We planted mistakes in each one, thousands of times, and counted which got caught.</figcaption></figure>
+    <p>The setting was a made-up company with a made-up month of bills, so no real money was ever at risk. We used four AI models from two companies: three strong ones and one weaker, cheaper one.</p>
+  </section>
+
+  <section>
+    <h2>Two ways to say a job</h2>
+    <p>Everything turns on this. A job can be a sentence, or it can be a <b>line</b>: the same facts in fixed slots, each with a label. A person can read both. Only the line can be checked by a program, because a program can find <code>amt=</code> and compare it with the record, and it cannot find "five thousand four hundred" in a sentence reliably.</p>
+    <div class="vs">
+      <div><span class="lbl">A sentence (prose)</span><p class="said">"Hi payer, please release the payment for Marlow Design Partners, invoice MD-2026-057: 5,400.00 GBP gross, to the account on file, on 2 October. Approved by the FD under FD-0929."</p></div>
+      <div><span class="lbl">A line</span><pre class="line">RW1 <b>HO</b> scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=<b>PAY</b> rb=exec sup=marlow <b>amt=5400.00</b> cur=GBP kind=GROSS <b>acct=40-12-88/61102938</b> paid=20261002 ref=MD-2026-057 apref=FD-0929</pre></div>
+    </div>
+    <p>"Say it back" means the payer repeats the job before acting, the way a pilot repeats a clearance before flying it. The question we kept asking: who does the repeating, what do they repeat, and who checks it? <a href="/lines">What a line is</a> explains every message type with one example each.</p>
+  </section>
+
+  <section>
+    <p class="eyebrow">Test 1</p>
+    <h2>Just prose, nothing checks</h2>
+    <p>The agents talk in ordinary sentences and act on them. This is how most agent systems work today.</p>
+    <figure class="flow"><div class="scroll"><svg viewBox="0 0 746 150" role="img" aria-label="Test 1: prose, nothing checks" style="width:746px;max-width:100%;min-width:640px;height:auto">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" style="fill:currentColor"/></marker></defs>
+<rect x="12" y="64" width="146" height="46" rx="8" style="fill:var(--surface);stroke:var(--ink);stroke-width:1.5"/>
+<text x="85.0" y="92.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--ink)">The boss</text>
+<line x1="161" y1="87.0" x2="200" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<rect x="204" y="64" width="146" height="46" rx="8" style="fill:var(--well);stroke:var(--muted);stroke-width:1.5"/>
+<text x="277.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--ink)">Scheduler</text>
+<text x="277.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--ink);opacity:.85">writes a paragraph</text>
+<line x1="353" y1="87.0" x2="392" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="372.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">a paragraph</text>
+<rect x="396" y="64" width="146" height="46" rx="8" style="fill:var(--well);stroke:var(--muted);stroke-width:1.5"/>
+<text x="469.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--ink)">Payer</text>
+<text x="469.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--ink);opacity:.85">reads it</text>
+<line x1="545" y1="87.0" x2="584" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="564.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">pay</text>
+<rect x="588" y="64" width="146" height="46" rx="8" style="fill:var(--ink);stroke:var(--ink);stroke-width:1.5"/>
+<text x="661.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--paper)">Tool</text>
+<text x="661.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--paper);opacity:.85">pays</text>
+<circle cx="469.0" cy="26" r="11" style="fill:var(--bad)"/>
+<text x="469.0" y="30.5" text-anchor="middle" font-size="13" font-weight="700" style="fill:var(--paper)">✗</text>
+<text x="469.0" y="50" text-anchor="middle" font-size="10.5" font-weight="600" style="fill:var(--bad)">nothing checks</text>
+<line x1="469.0" y1="54" x2="469.0" y2="61" style="stroke:var(--bad);stroke-width:1;stroke-dasharray:2 3"/>
+</svg></div><figcaption>Test 1. The agents talk in ordinary sentences and nobody checks anything. A typed mistake sails straight through.</figcaption></figure>
+    <div class="tiles">
+      <div class="tile"><b>15 of 48</b><span>typed mistakes became wrong payments on Sonnet, 14 of 48 on Haiku and 29 of 48 on each OpenAI model.</span></div>
+      <div class="tile"><b>0 of 140</b><span>wrong payments on strong models when the job was right but the payer's files were full of traps. They did not fall for them.</span></div>
+    </div>
+    <p class="outcome is-bad"><span class="dot"></span>Did not work. Between a third and two thirds of typed mistakes went out as money. Strong models read well, so the danger is the sender's typing and the tool, not the reading.</p>
+  </section>
+
+  <section>
+    <p class="eyebrow">Test 2</p>
+    <h2>Prose, said back, judged by another AI</h2>
+    <p>The payer writes back, in words, what it is about to do. A second AI reads that and the approved record and says whether they match.</p>
+    <figure class="flow"><div class="scroll"><svg viewBox="0 0 746 150" role="img" aria-label="Test 2: prose, read back, judged by another AI" style="width:746px;max-width:100%;min-width:640px;height:auto">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" style="fill:currentColor"/></marker></defs>
+<rect x="12" y="64" width="146" height="46" rx="8" style="fill:var(--well);stroke:var(--muted);stroke-width:1.5"/>
+<text x="85.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--ink)">Scheduler</text>
+<text x="85.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--ink);opacity:.85">writes a paragraph</text>
+<line x1="161" y1="87.0" x2="200" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="180.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">a paragraph</text>
+<rect x="204" y="64" width="146" height="46" rx="8" style="fill:var(--well);stroke:var(--muted);stroke-width:1.5"/>
+<text x="277.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--ink)">Payer</text>
+<text x="277.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--ink);opacity:.85">says it back in words</text>
+<line x1="353" y1="87.0" x2="392" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="372.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">the readback</text>
+<rect x="396" y="64" width="146" height="46" rx="8" style="fill:var(--well);stroke:var(--muted);stroke-width:1.5"/>
+<text x="469.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--ink)">A second AI</text>
+<text x="469.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--ink);opacity:.85">judges the words</text>
+<line x1="545" y1="87.0" x2="584" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="564.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">yes, go</text>
+<rect x="588" y="64" width="146" height="46" rx="8" style="fill:var(--ink);stroke:var(--ink);stroke-width:1.5"/>
+<text x="661.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--paper)">Tool</text>
+<text x="661.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--paper);opacity:.85">pays</text>
+<circle cx="469.0" cy="26" r="11" style="fill:var(--warn)"/>
+<text x="469.0" y="30.5" text-anchor="middle" font-size="13" font-weight="700" style="fill:var(--paper)">!</text>
+<text x="469.0" y="50" text-anchor="middle" font-size="10.5" font-weight="600" style="fill:var(--warn)">it checks what it is asked</text>
+<line x1="469.0" y1="54" x2="469.0" y2="61" style="stroke:var(--warn);stroke-width:1;stroke-dasharray:2 3"/>
+</svg></div><figcaption>Test 2. The payer says the job back in words and a second AI judges whether it matches the record. Better, but the judge waved through jobs addressed to the wrong agent because the numbers matched.</figcaption></figure>
+    <div class="tiles">
+      <div class="tile"><b>8 of 48</b><span>typed mistakes still went out. Every one was a job addressed to the wrong agent; the numbers matched, so the judge said yes.</span></div>
+      <div class="tile"><b>38 of 190</b><span>correct readbacks the judge wrongly refused on the weak model, over details the record did not mention; 10 of 186 on gpt-5.5 and 1 of 215 on each Claude model.</span></div>
+    </div>
+    <p class="outcome is-warn"><span class="dot"></span>Partly worked. An AI judge checks what it is asked to check, and it gets tired of details a program never misses.</p>
+  </section>
+
+  <section>
+    <p class="eyebrow">Test 3</p>
+    <h2>Lines, echoed back, a program compares</h2>
+    <p>Now the job is a line. The payer echoes it back word for word, adds a fingerprint of what it received, and a program compares the echo with the original.</p>
+    <figure class="flow"><div class="scroll"><svg viewBox="0 0 746 150" role="img" aria-label="Test 3: lines, echoed back, a program compares" style="width:746px;max-width:100%;min-width:640px;height:auto">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" style="fill:currentColor"/></marker></defs>
+<rect x="12" y="64" width="146" height="46" rx="8" style="fill:var(--well);stroke:var(--muted);stroke-width:1.5"/>
+<text x="85.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--ink)">Scheduler</text>
+<text x="85.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--ink);opacity:.85">writes a line</text>
+<line x1="161" y1="87.0" x2="200" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="180.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">the line</text>
+<rect x="204" y="64" width="146" height="46" rx="8" style="fill:var(--well);stroke:var(--muted);stroke-width:1.5"/>
+<text x="277.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--ink)">Payer</text>
+<text x="277.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--ink);opacity:.85">echoes the line back</text>
+<line x1="353" y1="87.0" x2="392" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="372.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">the echo</text>
+<rect x="396" y="64" width="146" height="46" rx="23" style="fill:var(--good);stroke:var(--good);stroke-width:1.5"/>
+<text x="469.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--paper)">Program compares</text>
+<text x="469.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--paper);opacity:.85">line with line</text>
+<line x1="545" y1="87.0" x2="584" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="564.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">yes, go</text>
+<rect x="588" y="64" width="146" height="46" rx="8" style="fill:var(--ink);stroke:var(--ink);stroke-width:1.5"/>
+<text x="661.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--paper)">Tool</text>
+<text x="661.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--paper);opacity:.85">pays</text>
+<circle cx="469.0" cy="26" r="11" style="fill:var(--good)"/>
+<text x="469.0" y="30.5" text-anchor="middle" font-size="13" font-weight="700" style="fill:var(--paper)">✓</text>
+<text x="469.0" y="50" text-anchor="middle" font-size="10.5" font-weight="600" style="fill:var(--good)">typed mistakes: caught</text>
+<line x1="469.0" y1="54" x2="469.0" y2="61" style="stroke:var(--good);stroke-width:1;stroke-dasharray:2 3"/>
+<circle cx="277.0" cy="26" r="11" style="fill:var(--bad)"/>
+<text x="277.0" y="30.5" text-anchor="middle" font-size="13" font-weight="700" style="fill:var(--paper)">✗</text>
+<text x="277.0" y="50" text-anchor="middle" font-size="10.5" font-weight="600" style="fill:var(--bad)">its own mistake: invisible</text>
+<line x1="277.0" y1="54" x2="277.0" y2="61" style="stroke:var(--bad);stroke-width:1;stroke-dasharray:2 3"/>
+</svg></div><figcaption>Test 3. The job is a typed line and the payer echoes it back word for word. A program compares the two. Every typed mistake was caught. But the echo does not carry the account the payer looked up, so when the payer itself picked the wrong account, nothing saw it.</figcaption></figure>
+    <div class="tiles">
+      <div class="tile"><b>0 of 48</b><span>typed mistakes got through on the strong models, and 1 of 48 on the weak one. A changed digit or a wrong address shows up in the comparison.</span></div>
+      <div class="tile"><b>14 of 129</b><span>wrong payments on the weak model, because it picked the wrong account itself. The echo does not carry the account it looked up, so the check could not see it.</span></div>
+    </div>
+    <p class="outcome is-warn"><span class="dot"></span>Worked for the sender's typing. Blind to the payer's own mistakes, and on the weak model the extra round made it worse than nothing.</p>
+  </section>
+
+  <section>
+    <p class="eyebrow">Test 4</p>
+    <h2>Lines, with the values the payer will actually use</h2>
+    <p>Instead of an echo, the payer reads back the real values it will use, including the account it looked up in its own files. The program compares those with the approved record.</p>
+    <figure class="flow"><div class="scroll"><svg viewBox="0 0 746 150" role="img" aria-label="Test 4: lines, the payer reads back the values it will use" style="width:746px;max-width:100%;min-width:640px;height:auto">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" style="fill:currentColor"/></marker></defs>
+<rect x="12" y="64" width="146" height="46" rx="8" style="fill:var(--well);stroke:var(--muted);stroke-width:1.5"/>
+<text x="85.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--ink)">Scheduler</text>
+<text x="85.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--ink);opacity:.85">writes a line</text>
+<line x1="161" y1="87.0" x2="200" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="180.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">the line</text>
+<rect x="204" y="64" width="146" height="46" rx="8" style="fill:var(--well);stroke:var(--muted);stroke-width:1.5"/>
+<text x="277.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--ink)">Payer</text>
+<text x="277.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--ink);opacity:.85">reads back its values</text>
+<line x1="353" y1="87.0" x2="392" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="372.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">the readback</text>
+<rect x="396" y="64" width="146" height="46" rx="23" style="fill:var(--good);stroke:var(--good);stroke-width:1.5"/>
+<text x="469.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--paper)">Program compares</text>
+<text x="469.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--paper);opacity:.85">with the record</text>
+<line x1="545" y1="87.0" x2="584" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="564.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">yes, go</text>
+<rect x="588" y="64" width="146" height="46" rx="8" style="fill:var(--ink);stroke:var(--ink);stroke-width:1.5"/>
+<text x="661.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--paper)">Tool</text>
+<text x="661.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--paper);opacity:.85">pays</text>
+<circle cx="469.0" cy="26" r="11" style="fill:var(--good)"/>
+<text x="469.0" y="30.5" text-anchor="middle" font-size="13" font-weight="700" style="fill:var(--paper)">✓</text>
+<text x="469.0" y="50" text-anchor="middle" font-size="10.5" font-weight="600" style="fill:var(--good)">strong models: nothing to catch</text>
+<line x1="469.0" y1="54" x2="469.0" y2="61" style="stroke:var(--good);stroke-width:1;stroke-dasharray:2 3"/>
+<circle cx="277.0" cy="26" r="11" style="fill:var(--warn)"/>
+<text x="277.0" y="30.5" text-anchor="middle" font-size="13" font-weight="700" style="fill:var(--paper)">!</text>
+<text x="277.0" y="50" text-anchor="middle" font-size="10.5" font-weight="600" style="fill:var(--warn)">weak model: stalls</text>
+<line x1="277.0" y1="54" x2="277.0" y2="61" style="stroke:var(--warn);stroke-width:1;stroke-dasharray:2 3"/>
+</svg></div><figcaption>Test 4. The payer reads back the actual values it will use, the account it looked up included, and a program compares them with the approved record. Strong models never needed it. The weak model could not write the line and stalled, until we let it fill in a short English form instead.</figcaption></figure>
+    <div class="tiles">
+      <div class="tile"><b>0 of 129</b><span>wrong payments on both models. On the strong models there was nothing to catch; they had already looked up the right account.</span></div>
+      <div class="tile"><b>52 of 129</b><span>times the weak model got stuck: it could not write the line properly, so the program kept refusing it and nothing got paid.</span></div>
+    </div>
+    <p class="outcome is-warn"><span class="dot"></span>Safe but awkward. Letting the weak model fill in a short English form instead of a line fixed the stalling: 0 wrong payments and 0 stalls in 129 trials.</p>
+  </section>
+
+  <section>
+    <p class="eyebrow">Test 5</p>
+    <h2>The report afterwards</h2>
+    <p>After paying, the tool prints what it actually did. The payer reports that, not what it meant to do, and a program compares the report with the plan.</p>
+    <figure class="flow"><div class="scroll"><svg viewBox="0 0 746 150" role="img" aria-label="Test 5: the report afterwards" style="width:746px;max-width:100%;min-width:640px;height:auto">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" style="fill:currentColor"/></marker></defs>
+<rect x="12" y="64" width="146" height="46" rx="23" style="fill:var(--good);stroke:var(--good);stroke-width:1.5"/>
+<text x="85.0" y="92.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--paper)">Program says yes</text>
+<line x1="161" y1="87.0" x2="200" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="180.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">go</text>
+<rect x="204" y="64" width="146" height="46" rx="8" style="fill:var(--ink);stroke:var(--ink);stroke-width:1.5"/>
+<text x="277.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--paper)">Tool</text>
+<text x="277.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--paper);opacity:.85">pays</text>
+<line x1="353" y1="87.0" x2="392" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="372.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">what it did</text>
+<rect x="396" y="64" width="146" height="46" rx="8" style="fill:var(--well);stroke:var(--muted);stroke-width:1.5"/>
+<text x="469.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--ink)">Payer</text>
+<text x="469.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--ink);opacity:.85">reports what the tool did</text>
+<line x1="545" y1="87.0" x2="584" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="564.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">the report</text>
+<rect x="588" y="64" width="146" height="46" rx="23" style="fill:var(--good);stroke:var(--good);stroke-width:1.5"/>
+<text x="661.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--paper)">Program compares</text>
+<text x="661.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--paper);opacity:.85">with the plan</text>
+<circle cx="661.0" cy="26" r="11" style="fill:var(--good)"/>
+<text x="661.0" y="30.5" text-anchor="middle" font-size="13" font-weight="700" style="fill:var(--paper)">✓</text>
+<text x="661.0" y="50" text-anchor="middle" font-size="10.5" font-weight="600" style="fill:var(--good)">tool faults flagged</text>
+<line x1="661.0" y1="54" x2="661.0" y2="61" style="stroke:var(--good);stroke-width:1;stroke-dasharray:2 3"/>
+<circle cx="277.0" cy="26" r="11" style="fill:var(--bad)"/>
+<text x="277.0" y="30.5" text-anchor="middle" font-size="13" font-weight="700" style="fill:var(--paper)">✗</text>
+<text x="277.0" y="50" text-anchor="middle" font-size="10.5" font-weight="600" style="fill:var(--bad)">but the money has moved</text>
+<line x1="277.0" y1="54" x2="277.0" y2="61" style="stroke:var(--bad);stroke-width:1;stroke-dasharray:2 3"/>
+</svg></div><figcaption>Test 5. After paying, the tool prints what it actually did and the payer reports that, not what it meant. A program compares the report with the plan. It flagged every tool fault on the Claude models, and 25 of 27 on the weak one, but only after the money had moved.</figcaption></figure>
+    <div class="tiles">
+      <div class="tile"><b>45 of 45</b><span>tool faults flagged on Sonnet and on Haiku: a transposed digit, a date a day late, another supplier's account. The weak model's report flagged 25 of 27 in the later test.</span></div>
+      <div class="tile"><b>after</b><span>the money had moved. This check can only recall a payment, not stop one.</span></div>
+    </div>
+    <p class="outcome is-good"><span class="dot"></span>Worked, late. The only check that sees a tool doing something other than it was told.</p>
+  </section>
+
+  <section>
+    <p class="eyebrow">Test 6</p>
+    <h2>The window: the tool states what it will do first</h2>
+    <p>In a cockpit the pilot sets the new altitude in a little window, and the other pilot checks the window, not their memory. We gave the payment tool a window. It prepares the payment, freezes exactly what it will do under a ticket number, and prints that as the readback itself. A program checks the statement against the record. Only then does the tool get a yes, and it refuses to pay without one.</p>
+    <figure class="flow"><div class="scroll"><svg viewBox="0 0 938 150" role="img" aria-label="Test 6: the window" style="width:938px;max-width:100%;min-width:640px;height:auto">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" style="fill:currentColor"/></marker></defs>
+<rect x="12" y="64" width="146" height="46" rx="8" style="fill:var(--well);stroke:var(--muted);stroke-width:1.5"/>
+<text x="85.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--ink)">Payer</text>
+<text x="85.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--ink);opacity:.85">hands over the values</text>
+<line x1="161" y1="87.0" x2="200" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="180.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">prepare</text>
+<rect x="204" y="64" width="146" height="46" rx="8" style="fill:var(--ink);stroke:var(--ink);stroke-width:1.5"/>
+<text x="277.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--paper)">Tool prepares</text>
+<text x="277.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--paper);opacity:.85">states what it will do</text>
+<line x1="353" y1="87.0" x2="392" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="372.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">the statement</text>
+<rect x="396" y="64" width="146" height="46" rx="23" style="fill:var(--good);stroke:var(--good);stroke-width:1.5"/>
+<text x="469.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--paper)">Program compares</text>
+<text x="469.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--paper);opacity:.85">statement vs record</text>
+<line x1="545" y1="87.0" x2="584" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="564.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">yes + ticket</text>
+<rect x="588" y="64" width="146" height="46" rx="8" style="fill:var(--ink);stroke:var(--ink);stroke-width:1.5"/>
+<text x="661.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--paper)">Tool commits</text>
+<text x="661.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--paper);opacity:.85">pays exactly as stated</text>
+<line x1="737" y1="87.0" x2="776" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="756.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">the report</text>
+<rect x="780" y="64" width="146" height="46" rx="23" style="fill:var(--good);stroke:var(--good);stroke-width:1.5"/>
+<text x="853.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--paper)">Program checks</text>
+<text x="853.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--paper);opacity:.85">the report</text>
+<circle cx="469.0" cy="26" r="11" style="fill:var(--good)"/>
+<text x="469.0" y="30.5" text-anchor="middle" font-size="13" font-weight="700" style="fill:var(--paper)">✓</text>
+<text x="469.0" y="50" text-anchor="middle" font-size="10.5" font-weight="600" style="fill:var(--good)">tool mistakes: caught before paying</text>
+<line x1="469.0" y1="54" x2="469.0" y2="61" style="stroke:var(--good);stroke-width:1;stroke-dasharray:2 3"/>
+<circle cx="661.0" cy="26" r="11" style="fill:var(--good)"/>
+<text x="661.0" y="30.5" text-anchor="middle" font-size="13" font-weight="700" style="fill:var(--paper)">✓</text>
+<text x="661.0" y="50" text-anchor="middle" font-size="10.5" font-weight="600" style="fill:var(--good)">will not pay without a yes</text>
+<line x1="661.0" y1="54" x2="661.0" y2="61" style="stroke:var(--good);stroke-width:1;stroke-dasharray:2 3"/>
+</svg></div><figcaption>Test 6, the window. The tool states exactly what it is about to do and freezes it under a ticket number. A program checks that statement against the record. Only then does the tool get a yes, and it will not pay without one. The report afterwards still runs.</figcaption></figure>
+    <div class="tiles">
+      <div class="tile"><b>59 to 0</b><span>of 60 wrong accounts and dates the tool picked that became wrong payments on Haiku: 59 with the old tool, readback or not, and 0 with the window. On the weak model, 32 of 60 fell to 0 of 60.</span></div>
+      <div class="tile"><b>14 to 0</b><span>of 129 wrong payments on the weak model: 14 with the echo, 0 with the window, which caught the old account and a fake address.</span></div>
+      <div class="tile"><b>52 to 7</b><span>stalls on the weak model, because the tool writes the line and the model only hands it the values.</span></div>
+      <div class="tile"><b>0 of 378</b><span>payments made before the program said yes. But the weak model garbled the tool's words 51 times in 129 when passing them on, so the program reads the tool directly.</span></div>
+    </div>
+    <p class="outcome is-good"><span class="dot"></span>Worked best of all. A tool that lies at the very last moment still gets through, and the report afterwards still catches that: 30 of 30 on Haiku, 25 of 27 on the weak model.</p>
+  </section>
+
+  <section>
+    <h2>The scorecard</h2>
+    <div class="tw"><table>
+      <thead><tr><th>How the agents worked</th><th>The sender typed it wrong</th><th>The payer read it wrong (weak model)</th><th>The tool picked the wrong account</th><th>The tool lied at the last moment</th></tr></thead>
+      <tbody>
+        <tr><td>1. Prose, nothing checks</td><td class="no">15 of 48 paid wrong</td><td class="no">not caught</td><td class="no">not caught</td><td class="no">not caught</td></tr>
+        <tr><td>2. Prose, judged by an AI</td><td class="part">8 of 48 paid wrong</td><td class="part">4 of 140 paid wrong</td><td class="no">not caught</td><td class="no">not caught</td></tr>
+        <tr><td>3. Lines, echoed back</td><td class="yes">0 of 48 (weak model 1 of 48)</td><td class="no">14 of 129 paid wrong</td><td class="no">not caught</td><td class="no">not caught</td></tr>
+        <tr><td>4. Lines, values read back</td><td class="yes">0 of 48</td><td class="part">0 wrong, 52 stalls</td><td class="no">not caught</td><td class="no">not caught</td></tr>
+        <tr><td>5. The report afterwards</td><td></td><td></td><td class="part">caught after paying</td><td class="part">caught after paying</td></tr>
+        <tr><td>6. The window, plus the report</td><td class="yes">0 of 19</td><td class="yes">0 of 129, 7 stalls</td><td class="yes">0 of 60 paid wrong</td><td class="part">caught after paying</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">The check before sending, a program comparing the line with the record before it goes, catches the sender's typing on its own, with no round trip. It sits in front of every row from 3 down.</p>
+  </section>
+
+  <section>
+    <h2>The flow that works</h2>
+    <figure class="flow"><div class="scroll"><svg viewBox="0 0 1130 150" role="img" aria-label="The flow that works: three program checks" style="width:1130px;max-width:100%;min-width:640px;height:auto">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" style="fill:currentColor"/></marker></defs>
+<rect x="12" y="64" width="146" height="46" rx="8" style="fill:var(--well);stroke:var(--muted);stroke-width:1.5"/>
+<text x="85.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--ink)">Scheduler</text>
+<text x="85.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--ink);opacity:.85">writes the line</text>
+<line x1="161" y1="87.0" x2="200" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="180.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">before sending</text>
+<rect x="204" y="64" width="146" height="46" rx="23" style="fill:var(--good);stroke:var(--good);stroke-width:1.5"/>
+<text x="277.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--paper)">Check 1</text>
+<text x="277.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--paper);opacity:.85">line vs record</text>
+<line x1="353" y1="87.0" x2="392" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="372.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">the values</text>
+<rect x="396" y="64" width="146" height="46" rx="8" style="fill:var(--ink);stroke:var(--ink);stroke-width:1.5"/>
+<text x="469.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--paper)">Tool prepares</text>
+<text x="469.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--paper);opacity:.85">its statement</text>
+<line x1="545" y1="87.0" x2="584" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="564.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">yes + ticket</text>
+<rect x="588" y="64" width="146" height="46" rx="23" style="fill:var(--good);stroke:var(--good);stroke-width:1.5"/>
+<text x="661.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--paper)">Check 2</text>
+<text x="661.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--paper);opacity:.85">statement vs record</text>
+<line x1="737" y1="87.0" x2="776" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<text x="756.5" y="128" text-anchor="middle" font-size="10.5" style="fill:var(--muted)">the report</text>
+<rect x="780" y="64" width="146" height="46" rx="8" style="fill:var(--ink);stroke:var(--ink);stroke-width:1.5"/>
+<text x="853.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--paper)">Tool commits</text>
+<text x="853.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--paper);opacity:.85">on a yes</text>
+<line x1="929" y1="87.0" x2="968" y2="87.0" style="stroke:currentColor;stroke-width:1.5" marker-end="url(#ah)"/>
+<rect x="972" y="64" width="146" height="46" rx="23" style="fill:var(--good);stroke:var(--good);stroke-width:1.5"/>
+<text x="1045.0" y="88.0" text-anchor="middle" font-size="12.5" font-weight="600" style="fill:var(--paper)">Check 3</text>
+<text x="1045.0" y="102.0" text-anchor="middle" font-size="11" style="fill:var(--paper);opacity:.85">report vs plan</text>
+<circle cx="277.0" cy="26" r="11" style="fill:var(--good)"/>
+<text x="277.0" y="30.5" text-anchor="middle" font-size="13" font-weight="700" style="fill:var(--paper)">✓</text>
+<text x="277.0" y="50" text-anchor="middle" font-size="10.5" font-weight="600" style="fill:var(--good)">typed mistakes</text>
+<line x1="277.0" y1="54" x2="277.0" y2="61" style="stroke:var(--good);stroke-width:1;stroke-dasharray:2 3"/>
+<circle cx="661.0" cy="26" r="11" style="fill:var(--good)"/>
+<text x="661.0" y="30.5" text-anchor="middle" font-size="13" font-weight="700" style="fill:var(--paper)">✓</text>
+<text x="661.0" y="50" text-anchor="middle" font-size="10.5" font-weight="600" style="fill:var(--good)">wrong account, wrong date</text>
+<line x1="661.0" y1="54" x2="661.0" y2="61" style="stroke:var(--good);stroke-width:1;stroke-dasharray:2 3"/>
+<circle cx="1045.0" cy="26" r="11" style="fill:var(--good)"/>
+<text x="1045.0" y="30.5" text-anchor="middle" font-size="13" font-weight="700" style="fill:var(--paper)">✓</text>
+<text x="1045.0" y="50" text-anchor="middle" font-size="10.5" font-weight="600" style="fill:var(--good)">a tool that lies at the end</text>
+<line x1="1045.0" y1="54" x2="1045.0" y2="61" style="stroke:var(--good);stroke-width:1;stroke-dasharray:2 3"/>
+</svg></div><figcaption>The flow that works. Three program checks, at the three places mistakes come from. The agents still talk; the checks are what stop the money.</figcaption></figure>
+    <p>Three checks, three places, all done by a program on typed lines. The agents still do the thinking and the talking. The checks are what stop the money.</p>
+  </section>
+
+  <section>
+    <h2>How to use this</h2>
+    <ol>
+      <li><b>Write the job as a line.</b> Every fact in its own slot: amount, currency, account, date, reference, approval. The line is what makes everything else possible.</li>
+      <li><b>Check the line against the approved record before sending it.</b> A program does this in a millisecond. A wrong digit stops here.</li>
+      <li><b>Make the tool prepare first.</b> It states exactly what it will do and freezes it under a ticket number. It reads the job itself, by its id, so no agent retypes it.</li>
+      <li><b>Check that statement against the record.</b> If anything differs, send the job again from the record and let the tool prepare again.</li>
+      <li><b>Say yes, naming the ticket.</b> The tool pays exactly what it stated, and refuses to pay without the yes.</li>
+      <li><b>Check the report afterwards.</b> The tool prints what it did; the program compares that with the plan. A difference means recall the payment.</li>
+      <li><b>With a small or cheap model, let the program read the tool directly.</b> Do not have the model carry the tool's statement to the checker; the weak one changed it 51 times out of 129.</li>
+    </ol>
+    <p>All of it is live here: the checks are <a href="/quickstart">web calls any agent can make</a>, the <a href="/demo">demo</a> walks through one payment with a mistake of your choosing, and the <a href="/spec">spec</a> says exactly what each check compares.</p>
+  </section>
+
+  <section>
+    <h2>What not to do</h2>
+    <ul>
+      <li><b>Do not treat "the agent said it back" as the safety net.</b> On strong models it caught almost nothing, because they read well. On the weak model the echo was worse than nothing.</li>
+      <li><b>Do not use another AI to judge a prose readback before a payment.</b> It passed jobs addressed to the wrong agent because the numbers matched, and raised alarms over details that did not matter.</li>
+      <li><b>Do not let an agent retype or hand-copy what the tool said.</b> Give the tool the job by its id, and let the program read the tool.</li>
+      <li><b>Do not skip the report afterwards.</b> It is the only thing that catches a tool that says one thing and does another at the last moment.</li>
+      <li><b>Do not switch to lines to save money.</b> They save little. Switch because a program can check them.</li>
+      <li><b>Do not call this proof.</b> One made-up company, three strong models and one weak one, one person writing both the traps and the marking, a few hundred dollars of model time. It tells you where to put the checks. A month of real payments with the checks on and off would tell you what they are worth.</li>
+    </ul>
+  </section>
+
+  <p class="foot">Every study, log and grade is public in the <a href="https://github.com/afieldofdreams/rogerwilco">rogerwilco repository</a>, and <a href="/research">the research pages</a> carry every figure with its interval. Numbers above are from studies 6 and 7; the strong models were Claude Sonnet 5.5, Claude Haiku 5.5 and gpt-5.5, the weak one gpt-5.4-mini.</p>
+</main>
+<!-- site:footer -->
+<footer class="site-foot">
+  <span>Protocol RW1</span>
+  <span>Tools for agents: <code id="mcp-url">https://rogerwilco.crox.io/mcp</code></span>
+  <span><a href="https://github.com/afieldofdreams/rogerwilco">Source</a></span>
+  <span>A <a href="https://crox.io">Crox</a> lab. London.</span>
+</footer>
+<!-- /site:footer -->
+</body>
+</html>
