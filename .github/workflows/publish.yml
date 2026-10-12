@@ -1,0 +1,27 @@
+# Publishes the rogerwilco package to PyPI when a version tag (v0.2.0, ...) is pushed. Uses PyPI trusted publishing:
+# no token is stored. One-time setup on pypi.org: add a pending publisher for project "rogerwilco", owner
+# "afieldofdreams", repository "rogerwilco", workflow "publish.yml", environment "pypi".
+name: publish
+on:
+  push:
+    tags: ["v*"]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: python rogerwilco/tests/test_conformance.py
+      - run: pip install build && python -m build
+      - uses: actions/upload-artifact@v4
+        with: {name: dist, path: dist/}
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions: {id-token: write}
+    steps:
+      - uses: actions/download-artifact@v4
+        with: {name: dist, path: dist/}
+      - uses: pypa/gh-action-pypi-publish@release/v1

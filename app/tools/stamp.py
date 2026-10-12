@@ -11,6 +11,8 @@ step at deploy time: the stamped HTML is what is committed and served.
 from __future__ import annotations
 
 import hashlib
+import html
+import json
 import re
 import sys
 from pathlib import Path
@@ -27,9 +29,34 @@ def version() -> str:
     return h.hexdigest()[:8]
 
 
-def head() -> str:
+SITE = "https://rogerwilco.crox.io"
+
+
+def meta(page: str, path: str) -> str:
+    """Canonical URL, Open Graph and Twitter tags from the page's own title and description; JSON-LD on the home page."""
+    title = re.search(r"<title>(.*?)</title>", page, re.S)
+    desc = re.search(r'<meta name="description" content="(.*?)">', page, re.S)
+    t = title.group(1).strip() if title else "rogerwilco"
+    d = desc.group(1).strip() if desc else ""
+    url = SITE + path
+    out = [f'<link rel="canonical" href="{url}">',
+           '<meta property="og:type" content="website">', '<meta property="og:site_name" content="rogerwilco">',
+           f'<meta property="og:title" content="{t}">', f'<meta property="og:description" content="{d}">',
+           f'<meta property="og:url" content="{url}">', '<meta name="twitter:card" content="summary">',
+           '<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">']
+    if path == "/":
+        ld = {"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "rogerwilco",
+              "description": html.unescape(d), "url": SITE, "codeRepository": "https://github.com/afieldofdreams/rogerwilco",
+              "programmingLanguage": "Python", "license": "https://opensource.org/licenses/MIT",
+              "author": {"@type": "Organization", "name": "Crox", "url": "https://crox.io"},
+              "runtimePlatform": "Python 3.10+", "keywords": "AI agents, agent handoff, readback, MCP, payments, guardrails"}
+        out.append('<script type="application/ld+json">' + json.dumps(ld) + "</script>")
+    return "\n".join(out)
+
+
+def head(page: str = "", path: str = "/") -> str:
     v = version()
-    return ('<link rel="preconnect" href="https://fonts.googleapis.com">\n'
+    return meta(page, path) + "\n" + ('<link rel="preconnect" href="https://fonts.googleapis.com">\n'
             '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
             '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=DM+Mono:wght@400;500&display=swap">\n'
             f'<link rel="stylesheet" href="/static/site.css?v={v}">\n'
@@ -58,7 +85,8 @@ def header(current: str) -> str:
 
 FOOTER = ('<footer class="site-foot">\n'
           '  <span>Protocol RW1</span>\n'
-          '  <span>Tools for agents: <code id="mcp-url">https://rogerwilco.crox.io/mcp</code></span>\n'
+          '  <span><code>pip install rogerwilco</code></span>\n'
+          '  <span><a href="/quickstart">Integrate</a> · <a href="/llms.txt">llms.txt</a></span>\n'
           '  <span><a href="https://github.com/afieldofdreams/rogerwilco">Source</a></span>\n'
           '  <span>A <a href="https://crox.io">Crox</a> lab. London.</span>\n'
           '</footer>')
@@ -88,7 +116,7 @@ def stamp(file: Path) -> bool:
     s = file.read_text(encoding="utf-8")
     if HEAD_MARK[0] not in s or HEADER_MARK[0] not in s or FOOTER_MARK[0] not in s:
         return False
-    out = between(s, HEAD_MARK, head())
+    out = between(s, HEAD_MARK, head(s, page_path(file)))
     out = between(out, HEADER_MARK, header(page_path(file)))
     out = between(out, FOOTER_MARK, FOOTER)
     if out != s:

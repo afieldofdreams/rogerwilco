@@ -92,6 +92,40 @@ def index():
 PAGES = {"quickstart": "quickstart.html", "demo": "demo.html", "lines": "lines.html", "profiles": "profiles.html", "about": "about.html"}
 
 
+TEXT_FILES = {"robots.txt": "text/plain", "llms.txt": "text/plain", "llms-full.txt": "text/plain",
+              "sitemap.xml": "application/xml", "quickstart.md": "text/markdown"}
+
+
+def _text_file(name: str):
+    return FileResponse(svc.APP_DIR / "static" / name, media_type=f"{TEXT_FILES[name]}; charset=utf-8",
+                        headers={"Cache-Control": "no-cache"})
+
+
+@router.get("/robots.txt", include_in_schema=False)
+def robots():
+    return _text_file("robots.txt")
+
+
+@router.get("/sitemap.xml", include_in_schema=False)
+def sitemap():
+    return _text_file("sitemap.xml")
+
+
+@router.get("/llms.txt", include_in_schema=False)
+def llms():
+    return _text_file("llms.txt")
+
+
+@router.get("/llms-full.txt", include_in_schema=False)
+def llms_full():
+    return _text_file("llms-full.txt")
+
+
+@router.get("/quickstart.md", include_in_schema=False)
+def quickstart_md():
+    return _text_file("quickstart.md")
+
+
 @router.get("/quickstart", include_in_schema=False)
 def quickstart():
     return FileResponse(svc.APP_DIR / "static" / PAGES["quickstart"], media_type="text/html", headers={"Cache-Control": "no-cache"})
