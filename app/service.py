@@ -141,6 +141,28 @@ def check_dn(ho, dn, profile=None, rb=None) -> dict:
     return {"ok": not problems, "problems": problems, "notes": notes}
 
 
+def check_thread(lines, profile=None, now=None) -> dict:
+    """Every handoff in a conversation closes: DN, UN, FL or an acknowledged CX. lines is the conversation, one
+    message per row, in the order sent (a string, or a list of strings). now is YYYYMMDDTHHMMZ; default the clock."""
+    if isinstance(lines, list):
+        if not all(isinstance(x, str) for x in lines):
+            raise FormError("lines must be strings")
+        lines = "\n".join(lines)
+    rows = _text("lines", lines, MAX_BATCH).splitlines()
+    if len([r for r in rows if r.strip()]) > MAX_ROWS:
+        raise FormError(f"lines has more than {MAX_ROWS} rows")
+    for r in rows:
+        if len(r) > MAX_LINE:
+            raise FormError(f"a line is {len(r)} characters; the limit is {MAX_LINE}")
+    clock = None
+    if now:
+        clock = _text("now", now, 32).strip()
+        if not rw.TIME_RE.match(clock):
+            raise FormError("now is YYYYMMDDTHHMMZ in UTC, e.g. 20261012T1405Z")
+    problems, notes = rw.check_thread(rows, profile_arg(profile), clock)
+    return {"ok": not problems, "problems": problems, "notes": notes}
+
+
 def make_rb(ho, id, profile=None, acc=None, do=None, hash=True) -> dict:  # noqa: A002  names match the REST body
     prof = profile_arg(profile)
     msg, errors, _ = rw.parse(_text("ho", ho, MAX_LINE), prof)
@@ -387,7 +409,7 @@ def gate(lines, profile, document=None, doc_id=None) -> dict:
 
 
 CORE_DESCRIPTION = (
-    "The core vocabulary: eight message types, the ask, why, out, need and conf codes, and the acc constraint keys. "
+    "The core vocabulary: nine message types, the ask, why, out, need and conf codes, and the acc constraint keys. "
     "No domain codes."
 )
 

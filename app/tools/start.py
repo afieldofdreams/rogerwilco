@@ -57,7 +57,8 @@ CHECK_DN_BAD = rw.check_dn(HO, DN_BAD, P, rb_line=STATEMENT)[0]
 MAKE_RB = rw.make_rb(HO, "payer-1", P)
 assert not rw.check_ho(HO, RECORD, P)[0] and not rw.check_rb_full(HO, STATEMENT, P)[0]
 assert not rw.check_dn(HO, DN, P, rb_line=STATEMENT)[0] and CHECK_HO_BAD and CHECK_RB_BAD and CHECK_DN_BAD
-RUN_OK, RUN_FAULT = run_example(), run_example("--fault")
+RUN_OK, RUN_FAULT, RUN_CANCEL = run_example(), run_example("--fault"), run_example("--cancel")
+assert RUN_CANCEL.startswith("cancelled:")
 assert RUN_OK.startswith("roger, wilco") and RUN_FAULT.startswith("held:")
 LEGEND_HEAD = "\n".join(rw.legend(P).splitlines()[:3]) + "\n..."
 
@@ -168,6 +169,16 @@ G: list[tuple] = [
     ("code", "python", EXAMPLE),
     ("code", "sh", "python examples/payment.py\npython examples/payment.py --fault"),
     ("out", RUN_OK + "\n" + RUN_FAULT),
+    ("h2", "Cancel, expiry, and nothing left open", "cancel"),
+    ("p", "A handoff must end. Every job closes exactly once: done, unable or failed from the receiver, or a cancel, `CX`, "
+          "from the sender. If the approval is withdrawn before the tool commits, send a `CX`; the tool abandons what it prepared "
+          "and acknowledges. If the act already ran, the receiver answers with the done report instead, and a mismatch is "
+          "reversed with a new job, `ask=UNDO`. The tool's statement also carries `exp=`, the end of its window, and `commit` "
+          "refuses after it, so a confirmation that arrives late cannot pay against a world that has moved. "
+          "`rw.check_thread(lines, profile)` takes a conversation and reports any job left open past its time, closed twice, "
+          "or acted on after a cancel."),
+    ("code", "sh", "python examples/payment.py --cancel"),
+    ("out", RUN_CANCEL),
     ("h2", "Teach the receiving model the format", "legend"),
     ("p", "A model that has to read or write lines needs about 400 tokens of legend in its prompt and nothing installed. "
           "Pass the profile so it gets the domain's codes."),
@@ -207,6 +218,7 @@ G: list[tuple] = [
                ["`check_dn(ho, dn, profile, rb_line=)`", "check 3: what was done against the plan", "`(problems, notes)`"],
                ["`make_rb(ho, id, profile)`", "a correct readback, for a receiver that runs code", "the RB line"],
                ["`digest(line, profile)`", "the fingerprint `h=` of a line", "12 hex characters"],
+               ["`check_thread(lines, profile)`", "every job closed: done, unable, failed or cancelled; none open past its time", "`(problems, notes)`"],
                ["`legend(profile)`", "the prompt text another model needs", "text"]]),
     ("p", "No problems means go. Anything in problems means stop: re-send the job from the record, or, after the act, reverse it. "
           "Notes are assumptions worth logging. [What a line is](/lines) explains every message type; the [spec](/spec) is the "
@@ -319,7 +331,7 @@ Use it when an agent pays, changes bank details, sends an external email, delete
 
 ## Reference
 
-- [Protocol spec]({SITE}/spec): grammar, the eight message types, slots, the five-tier readback, checks before and after an irreversible act, profiles
+- [Protocol spec]({SITE}/spec): grammar, the nine message types, cancel and expiry, slots, the five-tier readback, checks before and after an irreversible act, profiles
 - [Skill]({SITE}/skill): the instructions an agent follows to use rogerwilco
 - [Legend]({SITE}/legend?profile=pay): the text to put in a receiving model's prompt
 - [HTTP API]({SITE}/openapi.json): OpenAPI for the hosted checks, no key

@@ -113,12 +113,14 @@ A tool that states one thing and does another at the last moment is caught here,
     pip install rogerwilco
     python examples/payment.py            # roger, wilco: the payment goes out
     python examples/payment.py --fault    # the tool resolves the wrong account; the check stops it before any money moves
+    python examples/payment.py --cancel   # the approval is withdrawn before confirmation; the sender cancels, nothing is paid
 
 The scheduler hands the job over as a line; the line is checked against the approved record before it is sent.
 The payment tool prepares the payment and states, as a readback line, exactly what it will execute; the scheduler
 checks that statement and only then confirms. The tool commits what it stated and nothing else, and its done report
 is checked against the plan afterwards.
 """
+import datetime as dt
 import secrets
 import sys
 
@@ -160,26 +162,48 @@ class PaymentTool:
         if self.fault:
             values["acct"] = "40-12-88/61102983"   # the tool resolves a lookalike account
         token = secrets.token_hex(4)
-        self.pending[token] = values
+        # the statement is good for five minutes; a confirmation after that finds a world that may have moved
+        exp = (dt.datetime.now(dt.timezone.utc) + dt.timedelta(minutes=5)).strftime("%Y%m%dT%H%MZ")
+        self.pending[token] = {"values": values, "exp": exp, "ho": ho["id"]}
         statement = rw.encode({"type": "RB", "id": "payer-1", "re": ho["id"], "from": "payer", "to": ho["from"],
                                "item": ho["item"], "slots": {"p": PROFILE, "ask": "PAY", "h": rw.digest(ho_line, PROFILE),
-                                                             **values}}, PROFILE)
+                                                             "exp": exp, **values}}, PROFILE)
         return token, statement
+
+    def cancel(self, cx_line: str) -> str:
+        """A CX from the sender: abandon anything prepared for that handoff, and acknowledge."""
+        cx, errors, _ = rw.parse(cx_line, PROFILE)
+        if errors or cx["type"] != "CX":
+            raise ValueError(f"refused: {errors or 'not a CX'}")
+        for token in [t for t, p in self.pending.items() if p["ho"] == cx["re"]]:
+            del self.pending[token]
+        return rw.encode({"type": "AN", "id": "payer-3", "re": cx["id"], "from": "payer", "to": cx["from"],
+                          "slots": {"p": PROFILE, "val": "Y"}, "tail": "statement abandoned; nothing paid"}, PROFILE)
 
     def commit(self, token: str, confirmed: bool) -> str:
         if not confirmed or token not in self.pending:
             raise PermissionError("no confirmation for this token: nothing is paid")
-        values = self.pending.pop(token)
+        if rw.now_utc() >= self.pending[token]["exp"]:
+            del self.pending[token]
+            raise PermissionError("the statement expired before it was confirmed: prepare again")
+        values = self.pending.pop(token)["values"]
         # ... call your bank here with `values`, and nothing else ...
         return rw.encode({"type": "DN", "id": "payer-2", "re": "scheduler-1", "from": "payer", "to": "scheduler",
                           "item": RECORD["item"], "slots": {"p": PROFILE, "out": "OK", **values}}, PROFILE)
 
 
 # ---------------------------------------------------------------- the flow
-def main(fault: bool) -> int:
+def main(fault: bool, cancel: bool = False) -> int:
     ho = hand_over()                                                  # check 1: the line against the record
     tool = PaymentTool(fault)
     token, statement = tool.prepare(ho)
+    if cancel:                                                        # the approval is withdrawn before confirmation
+        cx = rw.encode({"type": "CX", "id": "scheduler-2", "re": "scheduler-1", "from": "scheduler", "to": "payer",
+                        "item": RECORD["item"], "slots": {"p": PROFILE, "why": "REVOKED"}}, PROFILE)
+        ack = tool.cancel(cx)
+        problems, _notes = rw.check_thread([ho, statement, cx, ack], PROFILE)   # every handoff closed
+        print("cancelled:" if not problems else "open:", problems or ack)
+        return 1 if problems else 0
     problems, _notes = rw.check_rb_full(ho, statement, PROFILE)       # check 2: the tool's statement against the plan
     if problems:
         print("held:", problems)
@@ -191,7 +215,7 @@ def main(fault: bool) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main("--fault" in sys.argv))
+    sys.exit(main("--fault" in sys.argv, "--cancel" in sys.argv))
 
 ```
 
@@ -205,6 +229,18 @@ roger, wilco: RW1 DN payer-2 re=scheduler-1 from=payer to=scheduler item=inv:MD-
 held: ['tier5 execution: acct mismatch: HO 40-12-88/61102938 vs RB 40-12-88/61102983']
 ```
 
+## Cancel, expiry, and nothing left open
+
+A handoff must end. Every job closes exactly once: done, unable or failed from the receiver, or a cancel, `CX`, from the sender. If the approval is withdrawn before the tool commits, send a `CX`; the tool abandons what it prepared and acknowledges. If the act already ran, the receiver answers with the done report instead, and a mismatch is reversed with a new job, `ask=UNDO`. The tool's statement also carries `exp=`, the end of its window, and `commit` refuses after it, so a confirmation that arrives late cannot pay against a world that has moved. `rw.check_thread(lines, profile)` takes a conversation and reports any job left open past its time, closed twice, or acted on after a cancel.
+
+```sh
+python examples/payment.py --cancel
+```
+
+```
+cancelled: RW1 AN payer-3 re=scheduler-2 from=payer to=scheduler val=Y p=pay // statement abandoned; nothing paid
+```
+
 ## Teach the receiving model the format
 
 A model that has to read or write lines needs about 400 tokens of legend in its prompt and nothing installed. Pass the profile so it gets the domain's codes.
@@ -215,8 +251,8 @@ system_prompt += rw.legend("pay")
 
 ```
 rogerwilco RW1. One line per message: RW1 <TYPE> <id> [re=<id>] from=<agent> to=<agent> [item=<ref>] key=value ... [// tail]. No spaces in values; lists join with +; dates YYYYMMDD; tail is free text, 300 chars max.
-HO handoff: requires from to item ask; optional re due pri conf keep art ctx rb acc keys sup po amt cur kind dec flag appr var n src net vat acct paid ref eff apref addr
-RB readback: requires re from to item ask; optional due eta h do acc not asm sup po amt cur kind dec flag appr var n src net vat acct paid ref eff apref addr prev
+HO handoff: requires from to item ask; optional re due pri conf keep art ctx rb acc keys exp sup po amt cur kind dec flag appr var n src net vat acct paid ref eff apref addr
+RB readback: requires re from to item ask; optional due eta h do acc not asm exp sup po amt cur kind dec flag appr var n src net vat acct paid ref eff apref addr prev
 ...
 ```
 
@@ -280,6 +316,7 @@ The same checks are exposed as MCP tools, so you can try the format from Claude 
 | `check_dn(ho, dn, profile, rb_line=)` | check 3: what was done against the plan | `(problems, notes)` |
 | `make_rb(ho, id, profile)` | a correct readback, for a receiver that runs code | the RB line |
 | `digest(line, profile)` | the fingerprint `h=` of a line | 12 hex characters |
+| `check_thread(lines, profile)` | every job closed: done, unable, failed or cancelled; none open past its time | `(problems, notes)` |
 | `legend(profile)` | the prompt text another model needs | text |
 
 No problems means go. Anything in problems means stop: re-send the job from the record, or, after the act, reverse it. Notes are assumptions worth logging. [What a line is](https://rogerwilco.crox.io/lines) explains every message type; the [spec](https://rogerwilco.crox.io/spec) is the rulebook; the [skill](https://rogerwilco.crox.io/skill) is the file an agent reads.
@@ -332,7 +369,7 @@ RW1 <TYPE> <id> [re=<id>] from=<agent> to=<agent> [item=<ref>] [key=value ...] [
 - `item` is a reference to the thing under discussion: `gh:owner/repo#42`, `pensive:4102`, `url:...`, `file:...`, `sha256:...`.
 - `to=human` escalates to the human principal.
 
-## Eight types
+## Nine types
 
 | Type | Use | Required |
 |---|---|---|
@@ -344,13 +381,14 @@ RW1 <TYPE> <id> [re=<id>] from=<agent> to=<agent> [item=<ref>] [key=value ...] [
 | `DN` | done | `re from to item out`, and after an act asked with `rb=exec` the execution slots with the values as executed |
 | `UN` | unable, will not take it | `re from to why` |
 | `FL` | took it and it failed | `re from to item why` |
+| `CX` | the sender withdraws a handoff | `re from to item`, and `why` (`REVOKED` `SUPERSEDED` `EXPIRED` `TIMEOUT`) |
 
-Optional slots: `rb` readback level on an HO: `echo` (default), `all`, `acc`, `plan`, `exec`, plus slot names to echo (`rb=acc+pri`) · `keys` on an HO: the constraint keys the sender will check (`keys=len+lang+must+no`), so the receiver reports those dimensions · `acc` acceptance criteria as `key:value` tokens (`len:120w+lang:uk+must:monday-problem+no:em-dash`) · `do` what you will produce · `not` what you exclude · `asm` assumptions you are making · `h` digest of the HO, code-side receivers only · `due` `by` (dates) · `pri` 1–5, 1 highest · `conf` L/M/H · `keep` agents staying involved · `art` artifact refs · `ctx` earlier message ids · `eta` · `pct` 0–100 · `blk` blockers · `alt` alternative agent · `next` suggested next ask · `retry` Y/N.
+Optional slots: `rb` readback level on an HO: `echo` (default), `all`, `acc`, `plan`, `exec`, plus slot names to echo (`rb=acc+pri`) · `keys` on an HO: the constraint keys the sender will check (`keys=len+lang+must+no`), so the receiver reports those dimensions · `acc` acceptance criteria as `key:value` tokens (`len:120w+lang:uk+must:monday-problem+no:em-dash`) · `do` what you will produce · `not` what you exclude · `asm` assumptions you are making · `h` digest of the HO, code-side receivers only · `due` `by` (dates) · `exp` the latest moment to act or confirm, `YYYYMMDDTHHMMZ` UTC · `pri` 1–5, 1 highest · `conf` L/M/H · `keep` agents staying involved · `art` artifact refs · `ctx` earlier message ids · `eta` · `pct` 0–100 · `blk` blockers · `alt` alternative agent · `next` suggested next ask · `retry` Y/N.
 
 ## Codes
 
-- `ask`: `REVIEW` `DRAFT` `DECIDE` `RESEARCH` `BUILD` `FIX` `SUMM` `PLAN` `TEST` `EXTRACT`
-- `why`: `NOCAP` no capability · `NOCTX` missing context · `PERM` not permitted · `BUSY` · `CONFLICT` owned elsewhere · `DUP` · `VER` bad version · `UNK` unknown code · `SCOPE` · `ERR` · `TIMEOUT`
+- `ask`: `REVIEW` `DRAFT` `DECIDE` `RESEARCH` `BUILD` `FIX` `SUMM` `PLAN` `TEST` `EXTRACT` `UNDO` (reverse the act named in `ctx`)
+- `why`: `NOCAP` no capability · `NOCTX` missing context · `PERM` not permitted · `BUSY` · `CONFLICT` owned elsewhere · `DUP` · `VER` bad version · `UNK` unknown code · `SCOPE` · `ERR` · `TIMEOUT` · `REVOKED` approval withdrawn · `SUPERSEDED` · `EXPIRED`
 - `out`: `OK` `PARTIAL` `NOOP`
 - `need`: `ENUM` `TEXT` `NUM` `DATE` `YESNO`. For `TEXT`, reply `val=tail` and put the answer in the tail.
 
@@ -364,7 +402,7 @@ A profile adds domain codes and slots; a message using one carries `p=<profile>`
    **Before an irreversible act, three checks.** Build the HO from the record by code, or check it against the record before you send it (`check-ho`): a value that differs from the record, a value the record holds that the line omits, or a missing `rb=exec` stops the line going out. When you receive an HO with `rb=exec`, read back the execution slots with the values you will actually use, resolved from your own records where the HO does not give them (the account on file; for a bank change, the account you are replacing in `prev=`); if a value you resolved contradicts the HO, ask instead of acting. As the sender, check a resolved value against your record, and clear the act with `AN val=Y` only when the readback passes. After the act, report what the tool did, not what you meant: the DN carries the same slots with the values from the tool's result, and the sender checks it against the plan (`check-dn`). That done check is the only loop that catches a tool doing something other than what it was told. Where the act tool can prepare before it commits, the readback is the tool's prepared statement, not your own values: relay the line the tool printed unchanged, compare it first with the call you made and abandon and ask if they differ, and commit only the token the sender confirmed.
    **Readback is comprehension, not recall.** Echoing slots proves you saw them. When the HO says `rb=acc` or `rb=plan`, read the brief and any `art=` it points at, derive the acceptance criteria yourself, and send them as `acc=` (`len:120w+tone:plain+no:em-dash+must:monday-problem`); add `do=` for `plan`; put anything you are excluding in `not=` and anything the brief left open in `asm=`; paraphrase the task in the tail. The sender compares your `acc=` by key with criteria it kept to itself: a different value is a contradiction and a missing key is a gap, both fail the readback; an extra key is an assumption the sender will confirm. When you send an HO whose instruction lives in the tail or an artifact, ask for `rb=acc`, name the keys you will check with `keys=` (dimensions only, never the values), and write your criteria down first using the closed key set.
 2. **Never guess.** Unknown version, type or code: reply `UN why=UNK` (or `why=VER`) and name the code in the tail. `UNK` describes the message; do not substitute `NOCAP` or `SCOPE`, which describe you. An AQ always gets an AN (or a UN); never leave a question unanswered because you are busy.
-3. **Every reply carries `re=`.** RB, AN, DN, UN, FL always. Reconstruct threads from ids, not from position.
+3. **Every reply carries `re=`.** RB, AN, DN, UN, FL, CX always. Reconstruct threads from ids, not from position. **Every HO closes exactly once**: DN, UN or FL from you as receiver, or a CX from the sender. On a CX, abandon anything prepared for it and answer `AN val=Y`; if the act already ran, send its DN instead. Never act on an HO, or confirm a tool's statement, past its `exp=`. As a sender, close a handoff you are holding with a CX rather than leaving it, and reverse a DN that did not match the plan with a new HO `ask=UNDO ctx=<DN id>`. `check-thread` finds any handoff left open.
 4. **Facts in slots, reasoning in the tail.** If a fact has a slot, it goes in the slot. Tail is 300 characters max.
 5. **One message, two forms.** The line and its JSON twin are equivalent (see SPEC §6). Use whichever your side handles better; the codec maps between them.
 
@@ -421,7 +459,7 @@ Put the output of `legend` (or this file) in the other agent's system prompt. Th
 
 ---
 
-# rogerwilco protocol, version RW1 (v0.1)
+# rogerwilco protocol, version RW1 (v0.2)
 
 A one-line, typed, closed-vocabulary message format for handing work between agents and asking them bounded questions. Any agent that can read a line of text can use it. Facts go in slots. Reasoning goes in the tail.
 
@@ -446,7 +484,7 @@ Tokens are separated by single spaces. The first three are positional; everythin
 | Element | Rule |
 |---|---|
 | `RW1` | Protocol version token. Required, always first. |
-| `TYPE` | One of the eight message types in section 3. Uppercase. |
+| `TYPE` | One of the nine message types in section 3. Uppercase. |
 | `id` | Message id: `<from>-<n>`, the sending agent's name, a hyphen and a number, e.g. `writer-07`, unique within the conversation. The validator refuses any other shape, so a receiver can tell who a message came from and which of theirs it is from the id alone. |
 | `key=value` | Keys are lowercase `[a-z][a-z0-9_]*`. Values contain no spaces. Lists join with `+`. Dates are `YYYYMMDD`. Booleans are `Y` or `N`. |
 | `// tail` | Free text after ` // `. At most 300 characters. Anything longer becomes an artifact and is referenced with `art=`. |
@@ -471,14 +509,15 @@ Extension keys begin with `x_` and may carry anything a profile has not defined.
 
 | Type | Meaning | Required slots | Optional slots |
 |---|---|---|---|
-| `HO` | Handoff: here is work, do this with it | `from to item ask` | `re due pri conf keep art ctx rb acc` |
-| `RB` | Readback: I received the handoff, here is what I understood, and I will act on it | `re from to item ask` (+ `due` if the HO had one, + anything the HO's `rb=` names, + `acc` when the HO asked `rb=acc` or `rb=plan`, + `do` for `rb=plan`, + the profile's execution slots for the ask when the HO asked `rb=exec`) | `h eta not asm` |
+| `HO` | Handoff: here is work, do this with it | `from to item ask` | `re due pri conf keep art ctx rb acc exp` |
+| `RB` | Readback: I received the handoff, here is what I understood, and I will act on it | `re from to item ask` (+ `due` if the HO had one, + anything the HO's `rb=` names, + `acc` when the HO asked `rb=acc` or `rb=plan`, + `do` for `rb=plan`, + the profile's execution slots for the ask when the HO asked `rb=exec`) | `h eta not asm exp` |
 | `AQ` | Ask: a bounded question | `from to need` (+ `opts` when `need=ENUM`) | `re item by` |
 | `AN` | Answer to an AQ | `re from to val` | `item` |
 | `ST` | Status: state changed on an item, no handover | `from to item` | `re pct eta blk` (+ profile state slots) |
 | `DN` | Done: the handed-off work is complete | `re from to item out` (+ the profile's execution slots, with the values as executed, after an act the HO asked `rb=exec` for) | `art next` |
 | `UN` | Unable: I will not or cannot take this | `re from to why` | `item alt need` |
 | `FL` | Fail: I took it and it failed | `re from to item why` | `art retry` |
+| `CX` | Cancel: the sender withdraws a handoff | `re from to item` | `why` |
 
 ### 3.1 Slot definitions
 
@@ -489,6 +528,7 @@ Extension keys begin with `x_` and may carry anything a profile has not defined.
 | `ask` | enum `ask` | What the receiver should do. Core set in section 4; profiles extend it. |
 | `due` | date | When the work is needed. |
 | `by` | date | When an answer is needed. |
+| `exp` | time | The latest moment to act, or to confirm a prepared statement: `YYYYMMDDTHHMMZ` in UTC (`20261002T1405Z`). On an HO, nothing may be done on it after; on an RB, the statement cannot be confirmed after, and it may not outlive the HO's. Never echoed, never part of the plan. |
 | `pri` | int 1–5 | Priority, 1 highest. |
 | `conf` | `L` `M` `H` | Sender's confidence in the brief and the state it describes. |
 | `keep` | list of agents | Agents that stay involved after the handoff. |
@@ -502,7 +542,7 @@ Extension keys begin with `x_` and may carry anything a profile has not defined.
 | `val` | value | The answer. For `need=TEXT`, `val=tail` and the answer is the tail. |
 | `out` | enum `out` | Outcome of a DN: `OK` `PARTIAL` `NOOP`. |
 | `next` | enum `ask` | Suggested next ask. |
-| `why` | enum `why` | Reason code on UN or FL. |
+| `why` | enum `why` | Reason code on UN, FL or CX. |
 | `alt` | agent | Suggested alternative receiver on UN. |
 | `retry` | `Y` `N` | Whether a retry is sensible on FL. |
 | `keys` | list of constraint keys | On an HO with `rb=acc` or `rb=plan`: the dimensions the sender will check (`keys=len+lang+must+no`). Never carries values. |
@@ -517,9 +557,9 @@ Extension keys begin with `x_` and may carry anything a profile has not defined.
 
 Profiles may extend any of these lists. They may not redefine a core code.
 
-**ask**: `REVIEW` review against stated criteria · `DRAFT` produce a first version · `DECIDE` choose among options · `RESEARCH` find out · `BUILD` implement · `FIX` repair a named defect · `SUMM` summarise · `PLAN` produce a plan · `TEST` verify · `EXTRACT` pull structured data out
+**ask**: `REVIEW` review against stated criteria · `DRAFT` produce a first version · `DECIDE` choose among options · `RESEARCH` find out · `BUILD` implement · `FIX` repair a named defect · `SUMM` summarise · `PLAN` produce a plan · `TEST` verify · `EXTRACT` pull structured data out · `UNDO` reverse a completed act named in `ctx`
 
-**why**: `NOCAP` no capability · `NOCTX` missing context · `PERM` not permitted · `BUSY` at capacity · `CONFLICT` item owned by another agent · `DUP` duplicate of an open handoff · `VER` unsupported protocol version · `UNK` unknown code in the message · `SCOPE` out of scope · `ERR` runtime error · `TIMEOUT` ran out of time
+**why**: `NOCAP` no capability · `NOCTX` missing context · `PERM` not permitted · `BUSY` at capacity · `CONFLICT` item owned by another agent · `DUP` duplicate of an open handoff · `VER` unsupported protocol version · `UNK` unknown code in the message · `SCOPE` out of scope · `ERR` runtime error · `TIMEOUT` ran out of time · `REVOKED` approval withdrawn · `SUPERSEDED` replaced by a newer handoff · `EXPIRED` past its expiry
 
 **out**: `OK` · `PARTIAL` · `NOOP`
 
@@ -531,7 +571,7 @@ Profiles may extend any of these lists. They may not redefine a core code.
 
 1. **No handover without readback.** An HO transfers ownership only when the receiver sends an RB that passes the sender's check (section 5.1). Until then the sender owns the item. The sender sets the level per handoff with `rb=`: the default envelope echo (`item`, `ask`, `due`) where a misread is cheap to catch later; `rb=exec` where the receiver's next act is irreversible (a payment release, a payee change, anything external) and the profile names execution slots for the ask, `rb=all` where it does not, and in that regime every `ST` or `AN` the receiver will act on is echoed back before it acts; `rb=acc` where the instruction lives in a brief. Before an irreversible act the HO is built from the record by code, or checked against it before it is sent (`check-ho`), and after the act the receiver's DN carries the values as executed, which the sender checks against the plan (`check-dn`, section 5.3). The month-end study measured full readback at 1.6x the traffic of envelope echo with nothing caught in three clean runs, which is why the level belongs to the handoff and not to the team. An RB that does not pass is void; the sender re-issues the HO with `re=` pointing at the void RB. The owner of an item is the `to` of the most recent HO that received a passing RB. No RB within the sender's deadline: the sender re-issues the same HO with `re=` pointing at the original; a receiver that already read it back replies `UN why=DUP`, so a retry cannot create two owners.
 2. **Never guess.** A receiver that meets an unknown version token, type, or enum value replies `UN why=UNK` (or `why=VER`) naming the offending code in the tail. It does not infer a meaning, and it does not substitute a nearby reason such as `NOCAP` or `SCOPE`: those describe the receiver, `UNK` describes the message. An AQ is answered with an AN or refused with UN; it is never left unanswered because the receiver is busy.
-3. **Every reply carries `re=`.** RB, AN, DN, UN and FL always do. Threads are reconstructed from ids.
+3. **Every reply carries `re=`.** RB, AN, DN, UN, FL and CX always do. Threads are reconstructed from ids, and every HO closes exactly once (section 5.4).
 4. **Facts in slots, reasoning in the tail.** A fact that has a slot goes in the slot, never only in the tail. The tail is at most 300 characters; longer content is an artifact referenced by `art=`.
 5. **Two forms, one message.** Every line has a canonical JSON form (section 6). An implementation is conformant when it round-trips the conformance suite in both directions and produces the expected replies.
 
@@ -596,7 +636,28 @@ A handoff before an irreversible act has three checks, and the readback is the m
 
 **The done report.** After the act the DN carries the same execution slots with the values as executed, taken from the tool's result, not from the receiver's intention. The sender checks it against the plan with `check-dn`: the DN answers the HO (receipt), and every execution slot it carries equals the HO's value, or the readback's where the HO left the slot to the receiver and the readback passed; a slot missing from an `out=OK` report fails; `out=NOOP` carries none, since nothing was executed; `out=PARTIAL` carries the ones that were. This is the loop that catches what no readback can: a tool that did something other than what it was told. It only works when the receiver reports what the tool printed, so a legend or a brief says so in those words.
 
+The tool's statement carries `exp=`, the end of its window for confirmation, and `commit` refuses after it: a confirmation that arrives late finds the world it was checked against may have moved (an account closed, an invoice paid elsewhere), so the statement is prepared again instead. A CX for the handoff makes the tool abandon any statement prepared for it.
+
 The execution slots are a profile's: an `exec` map from ask to slot list (section 7). An ask the profile does not list under `exec` gets no tier 5 and no done check beyond the receipt, and `check-rb` says so in a note.
+
+### 5.4 Every handoff closes
+
+A handoff that nobody closes is the protocol's black hole: the sender believes it is in hand, the receiver believes it is held, and a prepared statement waits for a confirmation that may come hours later. So every HO ends exactly once, with one of four messages:
+
+- `DN`, `UN` or `FL` from the receiver; or
+- `CX` from the sender, which withdraws the handoff (`why=REVOKED` when the approval was withdrawn, `SUPERSEDED` when a newer HO replaces it, `EXPIRED` when its window passed, `TIMEOUT` when no readback came). The receiver abandons anything prepared for it and answers `AN re=<CX id> val=Y`. If the act had already run, it answers with the act's DN instead: a cancel cannot unsay an act, and the sender then decides whether to reverse it.
+
+A held handoff, one whose readback failed and was not re-sent, is closed by the sender with a CX, never left. An HO with `exp=` that is still open after it is orphaned, as is one open after its `due=` date. A DN whose values do not match the plan (section 5.3) is reversed with a new HO, `ask=UNDO ctx=<the DN's id>`, which carries its own readback and checks.
+
+`check-thread` takes a conversation in the order it was sent and reports: an HO still open past its `exp=` or `due=`, an HO closed more than once, a DN reporting the act done after a CX (`out=NOOP`, nothing ran, is the correct answer to a cancel that arrived first), and a CX that does not come from the HO's sender to its receiver. A CX not yet acknowledged, or an HO open and in time, is a note.
+
+```
+RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec ... exp=20261002T1700Z
+RW1 CX scheduler-2 re=scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 why=REVOKED // FD-0929 withdrawn
+RW1 AN payer-3 re=scheduler-2 p=pay from=payer to=scheduler val=Y // statement abandoned; nothing paid
+```
+
+The cancel, the expiry and the closing rule came from a reader's point after study 7 was published: the two-phase tool held its statement indefinitely and the protocol gave the sender no way to withdraw a handoff. They are design, with conformance cases; no study has measured them yet.
 
 ## 6. JSON form
 

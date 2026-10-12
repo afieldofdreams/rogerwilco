@@ -8,11 +8,11 @@ The reference codec lives in scripts/rogerwilco.py (standard library only) and i
 """
 from .scripts.rogerwilco import (  # noqa: F401
     VERSION, PROFILES, FormError, load_core, load_profile, parse, validate, encode, to_json, from_json,
-    canonical, digest, compare_acc, check_rb_full, check_rb, check_ho, check_dn, make_rb, legend,
+    canonical, digest, compare_acc, check_rb_full, check_rb, check_ho, check_dn, check_thread, now_utc, make_rb, legend,
 )
 
 __all__ = [
     "VERSION", "PROFILES", "FormError", "load_core", "load_profile", "parse", "validate", "encode", "to_json",
-    "from_json", "canonical", "digest", "compare_acc", "check_rb_full", "check_rb", "check_ho", "check_dn", "make_rb",
+    "from_json", "canonical", "digest", "compare_acc", "check_rb_full", "check_rb", "check_ho", "check_dn", "check_thread", "now_utc", "make_rb",
     "legend",
 ]

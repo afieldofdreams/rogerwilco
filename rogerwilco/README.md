@@ -47,22 +47,24 @@ This repo is an [Agent Skill](https://docs.claude.com/en/docs/agents-and-tools/a
 | Path | What |
 |---|---|
 | `SKILL.md` | The instructions Claude follows. Short by design. |
-| `references/SPEC.md` | The protocol, version RW1 v0.1: grammar, eight message types, slots, codes, five rules, the five-tier readback, the checks before and after an irreversible act, JSON form, profiles. |
+| `references/SPEC.md` | The protocol, version RW1 v0.1: grammar, nine message types, slots, codes, five rules, the five-tier readback, the checks before and after an irreversible act, JSON form, profiles. |
 | `scripts/rogerwilco.py` | Reference codec, standard library only: validate, encode, JSON twin, `make-rb`, `check-rb`, `check-ho`, `check-dn`, digest, legend, lint. |
 | `profiles/core.json` | The core vocabulary. |
 | `profiles/pform.json` | An example domain profile (a knowledge-graph workflow). Copy it to make your own. `pay.json` (accounts payable, with execution slots) and `clin.json` (clinical assertions) are the profiles the studies used. |
-| `tests/conformance.jsonl` | 80 codec cases (parse, readback, presend, done, digest) plus 6 agent-behaviour cases. |
+| `tests/conformance.jsonl` | 99 codec cases (parse, readback, presend, done, thread, digest) plus 6 agent-behaviour cases. |
 | `tests/test_conformance.py` | Runner. An implementation is conformant when it passes. |
 
-## The eight types
+## The nine types
 
-`HO` handoff · `RB` readback · `AQ` ask · `AN` answer · `ST` status · `DN` done · `UN` unable · `FL` fail
+`HO` handoff · `RB` readback · `AQ` ask · `AN` answer · `ST` status · `DN` done · `UN` unable · `FL` fail · `CX` cancel
+
+Every handoff closes exactly once: DN, UN or FL from the receiver, or CX from the sender. `exp=` bounds how long a handoff, or a tool's prepared statement, can wait.
 
 ## The five rules
 
 1. No handover without readback.
 2. Never guess: unknown code, reply `UN why=UNK`.
-3. Every reply carries `re=`.
+3. Every reply carries `re=`, and every handoff closes.
 4. Facts in slots, reasoning in the tail.
 5. The line and its JSON form are the same message.
 

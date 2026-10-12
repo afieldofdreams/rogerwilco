@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <title>What a line is</title>
-<meta name="description" content="A rogerwilco message is one line of text with labelled facts. The eight kinds of message, with one example each, and what a program checks.">
+<meta name="description" content="A rogerwilco message is one line of text with labelled facts. The nine kinds of message, with one example each, and what a program checks.">
 <!-- site:head -->
 <link rel="canonical" href="https://rogerwilco.crox.io/lines">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="rogerwilco">
 <meta property="og:title" content="What a line is">
-<meta property="og:description" content="A rogerwilco message is one line of text with labelled facts. The eight kinds of message, with one example each, and what a program checks.">
+<meta property="og:description" content="A rogerwilco message is one line of text with labelled facts. The nine kinds of message, with one example each, and what a program checks.">
 <meta property="og:url" content="https://rogerwilco.crox.io/lines">
 <meta name="twitter:card" content="summary">
 <link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
@@ -39,13 +39,13 @@
     <pre>RW1 &lt;TYPE&gt; &lt;id&gt; from=&lt;who&gt; to=&lt;who&gt; item=&lt;what&gt; label=value label=value ... // a short note</pre>
     <ul>
       <li><b>RW1</b> is the version. If it ever changes, old programs know to stop.</li>
-      <li><b>TYPE</b> is one of eight two-letter words, listed below.</li>
+      <li><b>TYPE</b> is one of nine two-letter words, listed below.</li>
       <li><b>id</b> is the sender's name and a number: <code>payer-1</code>, <code>payer-2</code>. Every reply names the id it answers with <code>re=</code>, so a thread can be rebuilt from the ids alone.</li>
       <li><b>label=value</b> pairs are the facts. No spaces inside a value. Lists join with <code>+</code>. Dates are <code>YYYYMMDD</code>. Money is digits with two decimals.</li>
       <li><b>// note</b> is free text, at most 300 characters. It is for people and for reasons, never for facts. If a fact has a label, it goes in the label.</li>
     </ul>
 
-    <h2>The eight kinds of message</h2>
+    <h2>The nine kinds of message</h2>
     <p>Seven of the eight use the payments example from the front page: a scheduler hands a payment to a payer. The status line is from earlier in the same month-end: the agent reading the emails records an invoice.</p>
 
     <div class="box">
@@ -88,6 +88,12 @@
       <p>"I took it and it broke." With a reason, and whether it is worth trying again.</p>
       <pre>RW1 <b>FL</b> payer-4 re=scheduler-1 p=pay from=payer to=scheduler item=inv:MD-2026-057 <b>why=ERR</b> <b>retry=Y</b> // the bank API timed out; nothing was sent</pre>
     </div>
+    <div class="box">
+      <h3>CX: cancel</h3>
+      <p>"Stop. Don't do that job." The sender withdraws a handoff it sent, with a reason: the approval was withdrawn, a newer job replaces it, or its time ran out. The receiver abandons anything it prepared and answers <code>AN val=Y</code>; if the act already ran, it sends the done report instead, and the sender decides whether to reverse it with a new job, <code>ask=UNDO</code>.</p>
+      <pre>RW1 <b>CX</b> scheduler-2 <b>re=scheduler-1</b> p=pay from=scheduler to=payer item=inv:MD-2026-057 <b>why=REVOKED</b> // approval FD-0929 withdrawn</pre>
+      <p>Every handoff ends exactly once: done, unable, failed or cancelled. A job can also carry <code>exp=</code>, the latest moment it may be acted on, written <code>20261002T1700Z</code>; a tool's prepared statement carries its own, and the tool refuses to commit after it. <code>check-thread</code> finds any handoff left open past its time.</p>
+    </div>
 
     <h2>What the program checks</h2>
     <p>Every line, every time:</p>
@@ -100,7 +106,7 @@
     <p>And for a readback, five more, in order. Receipt: the reply answers the right message from the right agent. Integrity: the fingerprint matches, so nothing changed on the way. Echo: the facts come back with the same values (the item, the ask and the due date always; every fact when the hand-over said <code>rb=all</code>). Comprehension, when the sender asked for it: the criteria the receiver worked out from the brief, written as <code>acc=</code>, match the ones the sender kept to itself. Execution, before an irreversible act (<code>rb=exec</code>): the values the receiver will act with, including the ones it looked up for itself, are all there and match the instruction. The first two are roger. The last three are wilco. And after the act, one more: the done message carries the values as executed, and they match the plan.</p>
 
     <h2>Where the words come from</h2>
-    <p>There is one basic list for any kind of work (the eight message types, the <code>ask</code> words like DRAFT, REVIEW and FIX, the reasons for UN and FL). Then a <b>profile</b> adds the words for one kind of work. The <code>pay</code> profile adds PAY, CHGBANK and SEND, amounts, currencies, accounts and the five answers a finance director may give (approve, decline, hold, reject, call back). The <code>clin</code> profile adds the words for a clinical note. A message using a profile says so with <code>p=pay</code>. A profile can add words; it may not change what a basic one means.</p>
+    <p>There is one basic list for any kind of work (the nine message types, the <code>ask</code> words like DRAFT, REVIEW and FIX, the reasons for UN and FL). Then a <b>profile</b> adds the words for one kind of work. The <code>pay</code> profile adds PAY, CHGBANK and SEND, amounts, currencies, accounts and the five answers a finance director may give (approve, decline, hold, reject, call back). The <code>clin</code> profile adds the words for a clinical note. A message using a profile says so with <code>p=pay</code>. A profile can add words; it may not change what a basic one means.</p>
 
     <h2>Seven habits that do most of the work</h2>
     <p>The lines make these checkable, but the habits are worth having even in plain English. In the month-end study, prose written this way cut the chatter between agents to a third and what the human had to read to 40%, before any line was used.</p>

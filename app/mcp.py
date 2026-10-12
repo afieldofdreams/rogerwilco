@@ -1,4 +1,4 @@
-"""MCP server for rogerwilco, over Streamable HTTP. Tools: validate, gate, check_rb, make_rb, check_ho, check_dn, legend, to_json.
+"""MCP server for rogerwilco, over Streamable HTTP. Tools: validate, gate, check_rb, make_rb, check_ho, check_dn, check_thread, legend, to_json.
 
 Built on the official SDK (pip install "mcp<2"; the 2.x line renamed FastMCP and moved the transport options). The
 server is stateless and answers with plain JSON, so any client can call it with a single POST and no session.
@@ -101,6 +101,18 @@ def check_dn(
     return svc.check_dn(ho, dn, profile, rb or None)
 
 
+def check_thread(
+    lines: Annotated[str, Field(description="The conversation, one rogerwilco message per row, in the order sent.")],
+    profile: Profile = "",
+    now: Annotated[str, Field(description="Optional. The time to judge expiry at, YYYYMMDDTHHMMZ in UTC.")] = "",
+) -> dict[str, Any]:
+    """Check that every handoff closed. Each HO must end exactly once: DN, UN or FL from its receiver, or a CX from
+    its sender that the receiver acknowledged with AN val=Y. Flags a handoff still open past its exp= or due=
+    (orphaned), a DN after a CX (the act ran although cancelled), a handoff closed twice, and a CX from the wrong
+    agent. Returns {ok, problems, notes}; notes list handoffs still open and in time."""
+    return svc.check_thread(lines, profile, now or None)
+
+
 def make_rb(
     ho: Annotated[str, Field(description="The HO line you received.")],
     id: Annotated[str, Field(description="Your message id for the RB, for example writer-01.")],
@@ -158,6 +170,7 @@ TOOLS = (
     (make_rb, "Make a readback", None),
     (check_ho, "Check a handoff against the record", None),
     (check_dn, "Check a done report", None),
+    (check_thread, "Check that every handoff closed", None),
     (legend, "Get the legend", False),     # plain text, not a JSON object
     (to_json, "Convert a line to JSON", None),
 )

@@ -709,7 +709,7 @@ def call_tool(client, name, arguments):
 
 def test_mcp_tools_list(client):
     tools = {t["name"]: t for t in rpc(client, "tools/list")["result"]["tools"]}
-    assert set(tools) == {"validate", "gate", "check_rb", "make_rb", "check_ho", "check_dn", "legend", "to_json"}
+    assert set(tools) == {"validate", "gate", "check_rb", "make_rb", "check_ho", "check_dn", "check_thread", "legend", "to_json"}
     assert tools["check_ho"]["inputSchema"]["required"] == ["ho", "record"]
     assert tools["check_dn"]["inputSchema"]["required"] == ["ho", "dn"]
     for tool in tools.values():
@@ -743,7 +743,7 @@ def test_mcp_works_behind_a_real_domain(client):
     # The SDK's default would answer 421 to any Host other than localhost.
     headers = {**MCP_HEADERS, "Host": "rogerwilco.example.com", "Origin": "https://claude.ai"}
     r = client.post("/mcp", json={"jsonrpc": "2.0", "id": 1, "method": "tools/list"}, headers=headers)
-    assert r.status_code == 200 and len(r.json()["result"]["tools"]) == 8
+    assert r.status_code == 200 and len(r.json()["result"]["tools"]) == 9
 
 
 def test_mcp_tools_call(client):
@@ -857,3 +857,15 @@ def test_gate_bounds_one_citation():
     assert not r["ok"] and "at most 100 lines" in r["errors"][0]
     ok = svc.gate(row.replace("#l1-300", "#l2-3"), "clin", doc, "d")
     assert ok["ok"], ok["errors"]
+
+
+def test_check_thread(client):
+    ho = "RW1 HO scheduler-1 from=scheduler to=payer item=inv:MD-2026-057 ask=DRAFT exp=20261012T0900Z"
+    r = post(client, "/check-thread", lines=[ho], now="20261012T1000Z").json()
+    assert r["ok"] is False and "orphaned" in r["problems"][0]
+    cx = "RW1 CX scheduler-2 re=scheduler-1 from=scheduler to=payer item=inv:MD-2026-057 why=REVOKED"
+    an = "RW1 AN payer-1 re=scheduler-2 from=payer to=scheduler val=Y"
+    r = post(client, "/check-thread", lines="\n".join([ho, cx, an]), now="20261012T1000Z").json()
+    assert r == {"ok": True, "problems": [], "notes": []}
+    assert post(client, "/check-thread", lines=[ho], now="tomorrow").status_code == 400
+    assert post(client, "/validate", line=cx).json()["ok"] is True
