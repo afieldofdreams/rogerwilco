@@ -2,6 +2,7 @@
 
 Run from the repo root:  uvicorn app.main:app --reload
 """
+import json
 from contextlib import asynccontextmanager
 
 from fastapi import APIRouter, FastAPI, HTTPException, Query, Request
@@ -211,6 +212,77 @@ def skill(request: Request):
     return _markdown(request, "skill")
 
 
+# The largest request the API needs is the gate's: 200,000 characters of document and 60,000 of lines, which JSON
+# escaping can grow. Anything bigger is refused before it is read into memory, so one request cannot exhaust the box.
+MAX_BODY = 1_000_000
+
+# The site loads its own script and stylesheet and Google Fonts, and uses inline styles; it has no inline script. The
+# interactive API docs at /docs load Swagger UI from a CDN with an inline script, so they are left without the policy.
+CSP = ("default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+       "font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; "
+       "base-uri 'self'; form-action 'self'; frame-ancestors 'none'")
+SECURITY_HEADERS = [(b"x-content-type-options", b"nosniff"), (b"referrer-policy", b"strict-origin-when-cross-origin"),
+                    (b"x-frame-options", b"DENY"), (b"permissions-policy", b"camera=(), microphone=(), geolocation=()")]
+
+
+class Guard:
+    """ASGI middleware: refuses a request body over MAX_BODY with 413 (by its Content-Length, or as it streams in
+    when it has none), and adds security headers to every response, with the content policy on the site's pages."""
+
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            return await self.app(scope, receive, send)
+        path = scope.get("path", "")
+        declared = dict(scope.get("headers") or []).get(b"content-length")
+        if declared is not None and (not declared.isdigit() or int(declared) > MAX_BODY):
+            return await _too_large(send)
+        seen = 0
+        refused = False
+
+        async def capped_receive():
+            # FastAPI turns an exception raised while it reads a body into a 400, so an oversized stream is answered
+            # here with the 413, and the app is told the client went away; whatever it sends after is dropped.
+            nonlocal seen, refused
+            if refused:
+                return {"type": "http.disconnect"}
+            message = await receive()
+            if message["type"] == "http.request":
+                seen += len(message.get("body", b""))
+                if seen > MAX_BODY:
+                    refused = True
+                    await _too_large(send)
+                    return {"type": "http.disconnect"}
+            return message
+
+        async def send_with_headers(message):
+            if refused:
+                return
+            if message["type"] == "http.response.start":
+                headers = list(message.get("headers", []))
+                headers += SECURITY_HEADERS
+                ctype = dict(headers).get(b"content-type", b"")
+                if ctype.startswith(b"text/html") and not path.startswith("/docs"):
+                    headers.append((b"content-security-policy", CSP.encode()))
+                message = {**message, "headers": headers}
+            await send(message)
+
+        try:
+            await self.app(scope, capped_receive, send_with_headers)
+        except Exception:
+            if not refused:
+                raise
+
+
+async def _too_large(send):
+    body = json.dumps({"error": f"request body is larger than {MAX_BODY:,} bytes"}).encode()
+    await send({"type": "http.response.start", "status": 413,
+                "headers": [(b"content-type", b"application/json"), (b"content-length", str(len(body)).encode())] + SECURITY_HEADERS})
+    await send({"type": "http.response.body", "body": body})
+
+
 def _error(status: int, message: str, headers=None) -> JSONResponse:
     return JSONResponse({"error": message}, status_code=status, headers=headers)
 
@@ -250,6 +322,7 @@ def create_app() -> FastAPI:
     async def unexpected(_request: Request, _exc: Exception):
         return _error(500, "internal error")
 
+    app.add_middleware(Guard)   # added last, so it runs first: the cap applies before CORS or any route reads
     app.include_router(router)
     app.router.routes.extend(mcp_routes)
     app.mount("/static", StaticFiles(directory=str(svc.APP_DIR / "static")), name="static")   # site.css

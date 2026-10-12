@@ -805,3 +805,38 @@ def test_every_research_page_is_served(client):
         assert r.status_code == 200, slug
         assert "<main" in r.text
     assert client.get("/research/no-such-study").status_code == 404
+
+
+# ------------------------------------------------------------------ hardening
+
+def test_oversized_body_is_refused_before_it_is_read(client):
+    from app.main import MAX_BODY
+    big = json.dumps({"line": "x" * (MAX_BODY + 10)})
+    r = client.post("/validate", content=big, headers={"content-type": "application/json"})
+    assert r.status_code == 413 and "larger than" in r.json()["error"]
+    def chunks():   # no Content-Length: the cap applies as the body streams in
+        for _ in range(3):
+            yield b"x" * (MAX_BODY // 2)
+    r = client.post("/validate", content=chunks(), headers={"content-type": "application/json"})
+    assert r.status_code == 413
+    assert client.post("/validate", json={"line": "RW1 HO a-1 from=a to=b item=x ask=DRAFT"}).status_code == 200
+
+
+def test_security_headers(client):
+    page = client.get("/")
+    assert page.headers["x-content-type-options"] == "nosniff" and page.headers["x-frame-options"] == "DENY"
+    csp = page.headers["content-security-policy"]
+    assert "script-src 'self'" in csp and "frame-ancestors 'none'" in csp
+    assert "content-security-policy" not in client.get("/docs").headers      # Swagger UI loads from a CDN
+    api = client.post("/validate", json={"line": "RW1 HO a-1 from=a to=b item=x ask=DRAFT"})
+    assert api.headers["x-content-type-options"] == "nosniff" and "content-security-policy" not in api.headers
+
+
+def test_gate_bounds_one_citation():
+    from app import service as svc
+    doc = "\n".join("word " * 20 for _ in range(300))
+    row = "RW1 ST extractor-1 from=extractor to=record p=clin item=sym:x act=RPT pol=POS cert=CERT subj=PT time=CUR src=doc:d#l1-300 // word word"
+    r = svc.gate(row, "clin", doc, "d")
+    assert not r["ok"] and "at most 100 lines" in r["errors"][0]
+    ok = svc.gate(row.replace("#l1-300", "#l2-3"), "clin", doc, "d")
+    assert ok["ok"], ok["errors"]

@@ -202,6 +202,10 @@ def legend(profile=None) -> str:
 MAX_DOCUMENT = 200_000   # characters of source document
 MAX_BATCH = 60_000       # characters of lines
 MAX_ROWS = 500
+# One src range is the few lines a statement stands on (the translation corpus cites at most 45). Without a bound a
+# batch of rows each citing the whole document makes the gate join and search the document once per row.
+MAX_SRC_LINES = 100
+MAX_SRC_CHARS = 20_000
 
 _CONCEPT_RE = re.compile(r"[a-z0-9][a-z0-9./-]*")
 _DOC_SRC_RE = re.compile(r"^doc:([A-Za-z0-9._-]+)#l(\d+)(?:-(\d+))?$")
@@ -312,6 +316,10 @@ class _Gate:
             return
         if a < 1 or b > len(self.doc_lines) or b < a:
             errs.append(f"src={src}: the document has lines 1 to {len(self.doc_lines)}")
+            return
+        if b - a + 1 > MAX_SRC_LINES or sum(len(x) for x in self.doc_lines[a - 1:b]) > MAX_SRC_CHARS:
+            errs.append(f"src={src}: a source range is at most {MAX_SRC_LINES} lines and {MAX_SRC_CHARS:,} characters; "
+                        "cite the lines the quote is on")
             return
         if quote and _norm_words(quote) not in _join_doc_lines(self.doc_lines[a - 1:b]):
             errs.append(f"the quote is not found verbatim in {src}: {quote[:80]!r}")
