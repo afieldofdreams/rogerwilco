@@ -81,4 +81,4 @@ python3 tests/test_conformance.py --agent replies.jsonl   # score an agent's rep
 
 v0.1, draft. The core vocabulary is small on purpose; extend it through a profile, not by editing the core. Issues and profiles welcome.
 
-MIT licence. Adam Field, Croxio Ltd. Lineage: M-Form (medical-record compression, 2025) to P-Form (knowledge-graph handoffs, April 2026) to rogerwilco (September 2026).
+Apache License 2.0, copyright Croxio Ltd; see LICENSE and NOTICE. Built by Adam Field. Lineage: M-Form (medical-record compression, 2025) to P-Form (knowledge-graph handoffs, April 2026) to rogerwilco (September 2026).
