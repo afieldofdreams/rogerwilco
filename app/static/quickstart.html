@@ -4,14 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>Start in two minutes</title>
-<meta name="description" content="Three ways to start with rogerwilco: the API, Python, or your own agent. Two or three steps each, no key, no sign-up.">
+<title>Integrate rogerwilco: checks around an agent's irreversible actions</title>
+<meta name="description" content="How to integrate rogerwilco: pip install rogerwilco, then three checks a program runs around an AI agent&#x27;s irreversible actions. Check the job against the record before sending, check the tool&#x27;s statement before it acts, check what it did afterwards. Python, HTTP and a brief for your coding agent.">
+<link rel="alternate" type="text/markdown" href="/quickstart.md" title="This guide as Markdown">
 <!-- site:head -->
+<link rel="canonical" href="https://rogerwilco.crox.io/quickstart">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="rogerwilco">
+<meta property="og:title" content="Integrate rogerwilco: checks around an agent's irreversible actions">
+<meta property="og:description" content="How to integrate rogerwilco: pip install rogerwilco, then three checks a program runs around an AI agent&#x27;s irreversible actions. Check the job against the record before sending, check the tool&#x27;s statement before it acts, check what it did afterwards. Python, HTTP and a brief for your coding agent.">
+<meta property="og:url" content="https://rogerwilco.crox.io/quickstart">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="text/plain" href="/llms.txt" title="llms.txt">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=DM+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/static/site.css?v=62cf8f6a">
-<script src="/static/site.js?v=62cf8f6a" defer></script>
+<link rel="stylesheet" href="/static/site.css?v=5ebb7ca0">
+<script src="/static/site.js?v=5ebb7ca0" defer></script>
 <noscript><style>.site-nav{display:flex!important}.nav-toggle{display:none!important}</style></noscript>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23B8402A'/%3E%3Cpath d='M8 17l5 5 11-12' fill='none' stroke='%23fff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <!-- /site:head -->
@@ -25,92 +34,200 @@
 </header>
 <!-- /site:header -->
 <div class="wrap">
-  <main class="doc">
-    <h1>Start in two minutes</h1>
-    <p>rogerwilco is a message format and a check. There is nothing to sign up for and the hosted service needs no key. Pick the way that fits you. Each one takes two or three steps and ends with a real reply you can read.</p>
-    <div class="ways"><a href="#api">API</a><a href="#python">Python</a><a href="#agent">Your agent</a></div>
+<main class="doc guide">
+<h1>Integrate rogerwilco</h1>
+<p>rogerwilco puts three checks, run by a program, around anything an AI agent does that cannot be undone: a payment, a change of bank details, an email to a customer, a deploy. The job travels as one typed line. The line is checked against the approved record before it is sent. The tool that acts states exactly what it will do, and that statement is checked before it runs. What it actually did is checked afterwards. This page is for the developer wiring it in, and for the coding agent doing it on their behalf.</p>
+<p class="callout"><b>If you are a coding agent</b>, read <a href="/llms-full.txt">/llms-full.txt</a>: this guide, the skill and the full protocol in one file. The prompt under <a href="#agent">Hand it to your coding agent</a> is a complete brief.</p>
+<h2 id="install">Install</h2>
+<pre class="code" data-lang="sh"><code>pip install rogerwilco</code></pre>
+<p>Python 3.10 or later, standard library only, no dependencies. Until the first release is on PyPI: <code>pip install git+https://github.com/afieldofdreams/rogerwilco</code>. The same package gives you a command line, <code>rogerwilco</code>, and every function is also a hosted <a href="#http">HTTP endpoint</a> for other languages.</p>
+<h2 id="where">Where the checks go</h2>
+<div class="tw"><table><thead><tr><th>Check</th><th>Runs</th><th>Catches</th><th>Function</th></tr></thead><tbody><tr><td>1. The line against the record</td><td>before the job is sent</td><td>a wrong digit, date, account or addressee typed by the sender</td><td><code>check_ho</code></td></tr><tr><td>2. The tool's statement against the plan</td><td>after the tool prepares, before it acts</td><td>a wrong account or value the receiver or the tool resolved</td><td><code>check_rb_full</code></td></tr><tr><td>3. What was done against the plan</td><td>after the act</td><td>a tool that did something other than it stated</td><td><code>check_dn</code></td></tr></tbody></table></div>
+<p>In our studies check 1 caught every mistake planted in the sender's line; check 2, on a tool that states what it will do, took wrong payments caused by the tool from 59 in 60 to none; check 3 flagged every fault injected at the moment of execution, after the fact. The <a href="/">home page</a> tells those tests one at a time.</p>
+<h2 id="check-ho">1. Write the job as a line, and check it before it goes</h2>
+<p>Build the line from the approved record with <code>rw.encode</code>, then compare the two with <code>rw.check_ho</code>. Under a profile that names execution slots for the ask, <code>PAY</code> here, the check also insists the line asks for an execution readback, <code>rb=exec</code>.</p>
+<pre class="code" data-lang="python"><code>import rogerwilco as rw
 
-    <h2 id="api">API</h2>
-    <p>Plain HTTPS, JSON in, JSON out. No key.</p>
-    <ol>
-      <li>Check a line. This is the hand-over from the front page: pay invoice MD-2026-057, 5,400.00 pounds, to the account on file, on 2 October, under approval FD-0929.
-<pre>curl -s https://rogerwilco.crox.io/validate \
-  -H 'content-type: application/json' \
-  -d '{"line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929", "profile": "pay"}'</pre>
-<pre class="reply">{"ok": true,
- "message": {"v": "RW1", "type": "HO", "id": "scheduler-1", "re": null, "from": "scheduler", "to": "payer",
-             "item": "inv:MD-2026-057",
-             "slots": {"p": "pay", "ask": "PAY", "rb": ["exec"], "sup": "marlow", "amt": "5400.00", "cur": "GBP",
-                       "kind": "GROSS", "acct": "40-12-88/61102938", "paid": "20261002", "ref": "MD-2026-057",
-                       "apref": "FD-0929"},
-             "tail": null},
- "errors": [], "warnings": []}</pre></li>
-      <li>Check a readback. Send the hand-over you sent and the read-back that came back. Here the other agent read 5,100.00 instead of 5,400.00.
-<pre>curl -s https://rogerwilco.crox.io/check-rb \
-  -H 'content-type: application/json' \
-  -d '{"ho": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929",
-       "rb": "RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=a7a82de76607 sup=marlow amt=5100.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929",
-       "profile": "pay"}'</pre>
-<pre class="reply">{"ok": false, "problems": ["tier5 execution: amt mismatch: HO 5400.00 vs RB 5100.00"], "notes": []}</pre>
-<p class="muted"><code>ok: false</code> means the job does not change hands. Send the instruction again. With the right amount in the read-back the reply is <code>{"ok": true, "problems": [], "notes": []}</code>: roger, wilco.</p></li>
-      <li>Build the readback for the other side, if that agent runs code. It carries the values the act will use and adds <code>h=</code>, the fingerprint of the message as received; a value the hand-over leaves to the receiver, such as the account on file, the receiver adds itself.
-<pre>curl -s https://rogerwilco.crox.io/make-rb \
-  -H 'content-type: application/json' \
-  -d '{"ho": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929", "id": "payer-1", "profile": "pay"}'</pre>
-<pre class="reply">{"rb": "RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=a7a82de76607 sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929"}</pre></li>
-    </ol>
-    <p class="muted">Every endpoint, with its inputs and outputs: <a href="/docs">the API reference</a>. The gate, which checks lines against the document they came from, is <code>POST /gate</code>.</p>
+record = {&quot;to&quot;: &quot;payer&quot;, &quot;item&quot;: &quot;inv:MD-2026-057&quot;, &quot;ask&quot;: &quot;PAY&quot;, &quot;sup&quot;: &quot;marlow&quot;, &quot;amt&quot;: &quot;5400.00&quot;, &quot;cur&quot;: &quot;GBP&quot;, &quot;kind&quot;: &quot;GROSS&quot;, &quot;acct&quot;: &quot;40-12-88/61102938&quot;, &quot;paid&quot;: &quot;20261002&quot;, &quot;ref&quot;: &quot;MD-2026-057&quot;, &quot;apref&quot;: &quot;FD-0929&quot;}   # the approved record, from your database
 
-    <h2 id="python">Python</h2>
-    <p>One package, standard library only.</p>
-    <ol>
-      <li>Install it.
-<pre>pip install rogerwilco</pre>
-<p class="muted">Until it is on PyPI: <code>pip install git+https://github.com/afieldofdreams/rogerwilco</code></p></li>
-      <li>Build a readback and check it.
-<pre>import rogerwilco as rw
+ho = rw.encode({&quot;type&quot;: &quot;HO&quot;, &quot;id&quot;: &quot;scheduler-1&quot;, &quot;from&quot;: &quot;scheduler&quot;, &quot;to&quot;: &quot;payer&quot;, &quot;item&quot;: record[&quot;item&quot;],
+                &quot;slots&quot;: {&quot;p&quot;: &quot;pay&quot;, &quot;rb&quot;: [&quot;exec&quot;], **{k: v for k, v in record.items() if k not in (&quot;to&quot;, &quot;item&quot;)}}}, &quot;pay&quot;)
+problems, notes = rw.check_ho(ho, record, &quot;pay&quot;)
+if problems:
+    raise RuntimeError(problems)      # never send it</code></pre>
+<p>The line it builds:</p>
+<pre class="reply">RW1 HO scheduler-1 from=scheduler to=payer item=inv:MD-2026-057 ask=PAY p=pay rb=exec sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929</pre>
+<p>If a line was drafted by a model rather than built from the record, this is where a typo stops. With two digits swapped in the account:</p>
+<pre class="reply">[&#x27;record: acct mismatch: record 40-12-88/61102938 vs HO 40-12-88/61102983&#x27;]</pre>
+<h2 id="prepare">2. Make the tool prepare, and check what it says it will do</h2>
+<p>Give the tool that acts two phases. <code>prepare</code> resolves every value it will execute, including anything it looks up, such as the account on file, freezes them under a token and returns them as a readback line, <code>RB</code>. Nothing has happened yet. The sender checks that statement against the plan with <code>rw.check_rb_full</code>.</p>
+<pre class="code" data-lang="python"><code># inside your payment tool: resolve what will actually run, freeze it under a token, state it as a line
+values = resolve_payment(ho)                    # supplier, amount, account looked up on file, date, references
+token = secrets.token_hex(4)
+pending[token] = values
+statement = rw.encode({&quot;type&quot;: &quot;RB&quot;, &quot;id&quot;: &quot;payer-1&quot;, &quot;re&quot;: &quot;scheduler-1&quot;, &quot;from&quot;: &quot;payer&quot;, &quot;to&quot;: &quot;scheduler&quot;,
+                       &quot;item&quot;: &quot;inv:MD-2026-057&quot;, &quot;slots&quot;: {&quot;p&quot;: &quot;pay&quot;, &quot;ask&quot;: &quot;PAY&quot;, &quot;h&quot;: rw.digest(ho, &quot;pay&quot;), **values}}, &quot;pay&quot;)
 
-ho = "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929"
+# back on the sender&#x27;s side: check the statement against the plan
+problems, notes = rw.check_rb_full(ho, statement, &quot;pay&quot;)</code></pre>
+<p>The tool's statement, carrying <code>h=</code>, a fingerprint of the line it received:</p>
+<pre class="reply">RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=a7a82de76607 sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929</pre>
+<p>If the tool resolved a lookalike account, the check refuses it and nothing is paid:</p>
+<pre class="reply">[&#x27;tier5 execution: acct mismatch: HO 40-12-88/61102938 vs RB 40-12-88/61102983&#x27;]</pre>
+<p>Read the statement from the tool itself. Do not have a model copy it across: a small model in our study altered the tool's line in 51 of 129 relays.</p>
+<h2 id="check-dn">3. Commit only on a yes, then check what was done</h2>
+<p><code>commit</code> executes the frozen values and nothing else, and refuses without the sender's confirmation of that token. Its done report, <code>DN</code>, carries the values as executed, and <code>rw.check_dn</code> compares them with the plan.</p>
+<pre class="code" data-lang="python"><code>def commit(token, confirmed):
+    if not confirmed or token not in pending:
+        raise PermissionError(&quot;no confirmation for this token: nothing is paid&quot;)
+    values = pending.pop(token)
+    bank.pay(**values)                           # exactly what was stated, nothing else
+    return rw.encode({&quot;type&quot;: &quot;DN&quot;, &quot;id&quot;: &quot;payer-2&quot;, &quot;re&quot;: &quot;scheduler-1&quot;, &quot;from&quot;: &quot;payer&quot;, &quot;to&quot;: &quot;scheduler&quot;,
+                      &quot;item&quot;: &quot;inv:MD-2026-057&quot;, &quot;slots&quot;: {&quot;p&quot;: &quot;pay&quot;, &quot;out&quot;: &quot;OK&quot;, **values}}, &quot;pay&quot;)
 
-# the receiving agent sends this back before it does anything
-rb = rw.make_rb(ho, "payer-1", "pay")
+dn = commit(token, confirmed=not problems)
+problems, notes = rw.check_dn(ho, dn, &quot;pay&quot;, rb_line=statement)</code></pre>
+<p>A tool that states one thing and does another at the last moment is caught here, after the fact, so this is where you alert and reverse:</p>
+<pre class="reply">[&#x27;executed: amt mismatch: plan 5400.00 vs DN 5100.00&#x27;]</pre>
+<h2 id="example">The whole flow, runnable</h2>
+<p><a href="https://github.com/afieldofdreams/rogerwilco/blob/main/examples/payment.py">examples/payment.py</a> puts the three steps together with a toy two-phase payment tool. Run it, then run it with the tool resolving the wrong account.</p>
+<pre class="code" data-lang="python"><code>&quot;&quot;&quot;A payment handed from one agent to another with rogerwilco&#x27;s three checks around it.
 
-# the sending side checks it in code
-problems, notes = rw.check_rb_full(ho, rb, "pay")
-print(problems or "roger, wilco")</pre>
-<pre class="reply">roger, wilco</pre></li>
-      <li>See a miss. Change one digit in the read-back and check again.
-<pre>problems, notes = rw.check_rb_full(ho, rb.replace("5400.00", "5100.00"), "pay")
-print(problems)</pre>
-<pre class="reply">['tier3 echo: amt mismatch: HO 5400.00 vs RB 5100.00']</pre>
-<p class="muted">The fingerprint <code>h=</code> still matches here because the hand-over itself was not changed, only the read-back; a message corrupted on the way fails the fingerprint check as well. The same functions on the command line: <code>rogerwilco validate "&lt;line&gt;" --profile pay</code>, <code>rogerwilco make-rb "&lt;ho&gt;" payer-1 --profile pay</code>, <code>rogerwilco check-rb "&lt;ho&gt;" "&lt;rb&gt;" --profile pay</code>.</p></li>
-    </ol>
+    pip install rogerwilco
+    python examples/payment.py            # roger, wilco: the payment goes out
+    python examples/payment.py --fault    # the tool resolves the wrong account; the check stops it before any money moves
 
-    <h2 id="agent">Your agent</h2>
-    <p>An agent that cannot run code calls the hosted tools. An agent that can run code uses the skill folder. Any agent can learn the format from a short legend pasted into its prompt.</p>
-    <ol>
-      <li>Claude Code: add the tools in one line, then ask the agent to use rogerwilco when it hands work to a subagent.
-<pre>claude mcp add --transport http rogerwilco https://rogerwilco.crox.io/mcp</pre>
-<p class="muted">Eight tools arrive: <code>validate</code>, <code>gate</code>, <code>check_rb</code>, <code>make_rb</code>, <code>check_ho</code>, <code>check_dn</code>, <code>legend</code>, <code>to_json</code>. Any other MCP client takes the same URL.</p></li>
-      <li>Or copy the skill folder into your project, so the agent reads it on its own.
-<pre>git clone https://github.com/afieldofdreams/rogerwilco
-cp -r rogerwilco/rogerwilco .claude/skills/rogerwilco</pre></li>
-      <li>Any agent at all: put the legend in its system prompt. That is all the other side needs.
-<pre>curl -s "https://rogerwilco.crox.io/legend?profile=pay"</pre>
-<pre class="reply">rogerwilco RW1. One line per message: RW1 &lt;TYPE&gt; &lt;id&gt; [re=&lt;id&gt;] from=&lt;agent&gt; to=&lt;agent&gt; [item=&lt;ref&gt;] key=value ... [// tail]. ...
-HO handoff: requires from to item ask; ...
-RB readback: requires re from to item ask; ...</pre></li>
-    </ol>
+The scheduler hands the job over as a line; the line is checked against the approved record before it is sent.
+The payment tool prepares the payment and states, as a readback line, exactly what it will execute; the scheduler
+checks that statement and only then confirms. The tool commits what it stated and nothing else, and its done report
+is checked against the plan afterwards.
+&quot;&quot;&quot;
+import secrets
+import sys
 
-    <h2>What to read next</h2>
-    <p><a href="/lines">What a line is</a>: every message type with one example, and the rules a program checks. <a href="/research">Research</a>: what we tested and what happened. <a href="/spec">The spec</a>: the rulebook, for people writing their own implementation. <a href="/skill">The skill</a>: the file an AI agent reads.</p>
-  </main>
+import rogerwilco as rw
 
+PROFILE = &quot;pay&quot;   # the accounts-payable profile: it names the values a payment is executed with
+
+# The approved record: what the finance director signed off. In your system this comes from your database.
+RECORD = {&quot;to&quot;: &quot;payer&quot;, &quot;item&quot;: &quot;inv:MD-2026-057&quot;, &quot;ask&quot;: &quot;PAY&quot;, &quot;sup&quot;: &quot;marlow&quot;, &quot;amt&quot;: &quot;5400.00&quot;, &quot;cur&quot;: &quot;GBP&quot;,
+          &quot;kind&quot;: &quot;GROSS&quot;, &quot;acct&quot;: &quot;40-12-88/61102938&quot;, &quot;paid&quot;: &quot;20261002&quot;, &quot;ref&quot;: &quot;MD-2026-057&quot;, &quot;apref&quot;: &quot;FD-0929&quot;}
+
+
+# ---------------------------------------------------------------- the sender
+def hand_over() -&gt; str:
+    &quot;&quot;&quot;Write the job as a line, from the record, and check it before it goes (check 1).&quot;&quot;&quot;
+    slots = {k: v for k, v in RECORD.items() if k not in (&quot;to&quot;, &quot;item&quot;)}
+    ho = rw.encode({&quot;type&quot;: &quot;HO&quot;, &quot;id&quot;: &quot;scheduler-1&quot;, &quot;from&quot;: &quot;scheduler&quot;, &quot;to&quot;: RECORD[&quot;to&quot;], &quot;item&quot;: RECORD[&quot;item&quot;],
+                    &quot;slots&quot;: {&quot;p&quot;: PROFILE, &quot;rb&quot;: [&quot;exec&quot;], **slots}}, PROFILE)
+    problems, _notes = rw.check_ho(ho, RECORD, PROFILE)
+    if problems:
+        raise SystemExit(f&quot;not sent: {problems}&quot;)
+    return ho
+
+
+# ---------------------------------------------------------------- the receiver&#x27;s tool: prepare, then commit
+class PaymentTool:
+    &quot;&quot;&quot;Your payment tool, given two phases. prepare() resolves the payment and states it as a readback line;
+    commit() executes exactly what was stated, and only with the sender&#x27;s confirmation.&quot;&quot;&quot;
+
+    def __init__(self, fault: bool = False):
+        self.pending: dict[str, dict] = {}
+        self.fault = fault
+
+    def prepare(self, ho_line: str) -&gt; tuple[str, str]:
+        ho, errors, _ = rw.parse(ho_line, PROFILE)
+        if errors or ho[&quot;to&quot;] != &quot;payer&quot;:
+            raise ValueError(f&quot;refused: {errors or &#x27;not addressed to the payer&#x27;}&quot;)
+        values = {k: ho[&quot;slots&quot;][k] for k in (&quot;sup&quot;, &quot;amt&quot;, &quot;cur&quot;, &quot;kind&quot;, &quot;acct&quot;, &quot;paid&quot;, &quot;ref&quot;, &quot;apref&quot;)}
+        if self.fault:
+            values[&quot;acct&quot;] = &quot;40-12-88/61102983&quot;   # the tool resolves a lookalike account
+        token = secrets.token_hex(4)
+        self.pending[token] = values
+        statement = rw.encode({&quot;type&quot;: &quot;RB&quot;, &quot;id&quot;: &quot;payer-1&quot;, &quot;re&quot;: ho[&quot;id&quot;], &quot;from&quot;: &quot;payer&quot;, &quot;to&quot;: ho[&quot;from&quot;],
+                               &quot;item&quot;: ho[&quot;item&quot;], &quot;slots&quot;: {&quot;p&quot;: PROFILE, &quot;ask&quot;: &quot;PAY&quot;, &quot;h&quot;: rw.digest(ho_line, PROFILE),
+                                                             **values}}, PROFILE)
+        return token, statement
+
+    def commit(self, token: str, confirmed: bool) -&gt; str:
+        if not confirmed or token not in self.pending:
+            raise PermissionError(&quot;no confirmation for this token: nothing is paid&quot;)
+        values = self.pending.pop(token)
+        # ... call your bank here with `values`, and nothing else ...
+        return rw.encode({&quot;type&quot;: &quot;DN&quot;, &quot;id&quot;: &quot;payer-2&quot;, &quot;re&quot;: &quot;scheduler-1&quot;, &quot;from&quot;: &quot;payer&quot;, &quot;to&quot;: &quot;scheduler&quot;,
+                          &quot;item&quot;: RECORD[&quot;item&quot;], &quot;slots&quot;: {&quot;p&quot;: PROFILE, &quot;out&quot;: &quot;OK&quot;, **values}}, PROFILE)
+
+
+# ---------------------------------------------------------------- the flow
+def main(fault: bool) -&gt; int:
+    ho = hand_over()                                                  # check 1: the line against the record
+    tool = PaymentTool(fault)
+    token, statement = tool.prepare(ho)
+    problems, _notes = rw.check_rb_full(ho, statement, PROFILE)       # check 2: the tool&#x27;s statement against the plan
+    if problems:
+        print(&quot;held:&quot;, problems)
+        return 1
+    dn = tool.commit(token, confirmed=True)
+    problems, _notes = rw.check_dn(ho, dn, PROFILE, rb_line=statement)  # check 3: what was done against the plan
+    print(&quot;recall the payment:&quot; if problems else &quot;roger, wilco:&quot;, problems or dn)
+    return 1 if problems else 0
+
+
+if __name__ == &quot;__main__&quot;:
+    sys.exit(main(&quot;--fault&quot; in sys.argv))
+</code></pre>
+<pre class="code" data-lang="sh"><code>python examples/payment.py
+python examples/payment.py --fault</code></pre>
+<pre class="reply">roger, wilco: RW1 DN payer-2 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 out=OK p=pay sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929
+held: [&#x27;tier5 execution: acct mismatch: HO 40-12-88/61102938 vs RB 40-12-88/61102983&#x27;]</pre>
+<h2 id="legend">Teach the receiving model the format</h2>
+<p>A model that has to read or write lines needs about 400 tokens of legend in its prompt and nothing installed. Pass the profile so it gets the domain's codes.</p>
+<pre class="code" data-lang="python"><code>system_prompt += rw.legend(&quot;pay&quot;)</code></pre>
+<pre class="reply">rogerwilco RW1. One line per message: RW1 &lt;TYPE&gt; &lt;id&gt; [re=&lt;id&gt;] from=&lt;agent&gt; to=&lt;agent&gt; [item=&lt;ref&gt;] key=value ... [// tail]. No spaces in values; lists join with +; dates YYYYMMDD; tail is free text, 300 chars max.
+HO handoff: requires from to item ask; optional re due pri conf keep art ctx rb acc keys sup po amt cur kind dec flag appr var n src net vat acct paid ref eff apref addr
+RB readback: requires re from to item ask; optional due eta h do acc not asm sup po amt cur kind dec flag appr var n src net vat acct paid ref eff apref addr prev
+...</pre>
+<p>Where the receiver is a model that cannot run your two-phase tool, it can still read back the values it will act with: <code>rw.make_rb(ho, "payer-1", "pay")</code> builds a correct readback for a receiver that runs code, and the sender checks it the same way. On strong models this caught little, because they read well; on a weak model, the tool's statement did better than any readback the model wrote.</p>
+<h2 id="profiles">Your own domain: profiles</h2>
+<p>A profile adds the codes and slots for one kind of work and names, for each irreversible ask, the values it is executed with. That list is what checks 1 to 3 compare. Four ship with the package: <code>pay</code> (accounts payable), <code>clin</code> (clinical statements), <code>deploy</code> and <code>pform</code> (a knowledge-graph workflow). To make your own, copy <code>rogerwilco/profiles/pform.json</code>, list your asks and slots, and put the irreversible ones under <code>exec</code>. A profile may add codes; it may not redefine the core ones. <a href="/profiles">Profiles</a> shows the same line doing four kinds of work.</p>
+<h2 id="agent">Hand it to your coding agent</h2>
+<p>Paste this into Claude Code, Cursor or any coding agent working in your repository. It is the whole brief.</p>
+<pre class="code" data-lang="text"><code>Integrate rogerwilco (pip install rogerwilco) around every irreversible action in this codebase: payments,
+bank-detail changes, outbound emails, deletions, deploys. Read https://rogerwilco.crox.io/llms-full.txt first.
+1. Find each place an agent hands another agent or a tool a job that cannot be undone.
+2. Write that job as an RW1 HO line from the approved record with rw.encode, and refuse to send it unless
+   rw.check_ho(ho, record, profile) returns no problems.
+3. Split the tool that acts into prepare and commit. prepare resolves every value it will execute, freezes them under
+   a token and returns them as an RB line; commit executes the frozen values only, and only after the sender&#x27;s check.
+4. The sender runs rw.check_rb_full(ho, statement, profile) on that statement and confirms the token only when it
+   returns no problems. Read the statement from the tool, not from a model&#x27;s retelling of it.
+5. After commit, build a DN line from what the tool actually did and run rw.check_dn(ho, dn, profile, rb_line=statement);
+   any problem means alert and reverse.
+6. If the domain is not payments, copy rogerwilco/profiles/pform.json to a new profile and list the execution slots
+   for each irreversible ask under &quot;exec&quot;.
+Add tests that plant a wrong value at each of the three checks and assert it is caught.</code></pre>
+<h2 id="http">Not Python: the HTTP API</h2>
+<p>Every function is a JSON endpoint at this site, no key and no sign-up, for any language: <code>POST /check-ho</code>, <code>/check-rb</code>, <code>/check-dn</code>, <code>/make-rb</code>, <code>/validate</code>, <code>/digest</code>, <code>/to-json</code>, <code>/from-json</code>, <code>/gate</code>, and <code>GET /legend</code>. Check 1 with the swapped digits:</p>
+<pre class="code" data-lang="sh"><code>curl -s https://rogerwilco.crox.io/check-ho -H &#x27;content-type: application/json&#x27; -d &#x27;{
+  &quot;profile&quot;: &quot;pay&quot;,
+  &quot;ho&quot;: &quot;RW1 HO scheduler-1 from=scheduler to=payer item=inv:MD-2026-057 ask=PAY p=pay rb=exec sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102983 paid=20261002 ref=MD-2026-057 apref=FD-0929&quot;,
+  &quot;record&quot;: {&quot;to&quot;: &quot;payer&quot;, &quot;item&quot;: &quot;inv:MD-2026-057&quot;, &quot;ask&quot;: &quot;PAY&quot;, &quot;sup&quot;: &quot;marlow&quot;, &quot;amt&quot;: &quot;5400.00&quot;, &quot;cur&quot;: &quot;GBP&quot;, &quot;kind&quot;: &quot;GROSS&quot;, &quot;acct&quot;: &quot;40-12-88/61102938&quot;, &quot;paid&quot;: &quot;20261002&quot;, &quot;ref&quot;: &quot;MD-2026-057&quot;, &quot;apref&quot;: &quot;FD-0929&quot;}
+}&#x27;</code></pre>
+<pre class="reply">{&quot;ok&quot;: false, &quot;problems&quot;: [&quot;record: acct mismatch: record 40-12-88/61102938 vs HO 40-12-88/61102983&quot;], &quot;notes&quot;: []}</pre>
+<p>The full reference, with every input and output, is at <a href="/docs">/docs</a>. For production, run the checks in your own process with the library, or host this service yourself: it is one container, <code>docker build .</code> from the repository.</p>
+<h2 id="mcp">Trying it inside a chat client</h2>
+<p>The same checks are exposed as MCP tools, so you can try the format from Claude or another MCP client without writing code: <code>claude mcp add --transport http rogerwilco https://rogerwilco.crox.io/mcp</code>. This is for exploring, not for integration: checks that guard money belong in your own code path, where a model cannot skip them.</p>
+<h2 id="reference">The functions</h2>
+<div class="tw"><table><thead><tr><th>Function</th><th>Does</th><th>Returns</th></tr></thead><tbody><tr><td><code>encode(msg, profile)</code></td><td>JSON form to a line, validated</td><td>the line</td></tr><tr><td><code>parse(line, profile)</code></td><td>a line to its JSON form</td><td><code>(message, errors, warnings)</code></td></tr><tr><td><code>check_ho(ho, record, profile)</code></td><td>check 1: the line against the record</td><td><code>(problems, notes)</code></td></tr><tr><td><code>check_rb_full(ho, rb, profile)</code></td><td>check 2: a readback or a tool's statement against the line</td><td><code>(problems, notes)</code></td></tr><tr><td><code>check_dn(ho, dn, profile, rb_line=)</code></td><td>check 3: what was done against the plan</td><td><code>(problems, notes)</code></td></tr><tr><td><code>make_rb(ho, id, profile)</code></td><td>a correct readback, for a receiver that runs code</td><td>the RB line</td></tr><tr><td><code>digest(line, profile)</code></td><td>the fingerprint <code>h=</code> of a line</td><td>12 hex characters</td></tr><tr><td><code>legend(profile)</code></td><td>the prompt text another model needs</td><td>text</td></tr></tbody></table></div>
+<p>No problems means go. Anything in problems means stop: re-send the job from the record, or, after the act, reverse it. Notes are assumptions worth logging. <a href="/lines">What a line is</a> explains every message type; the <a href="/spec">spec</a> is the rulebook; the <a href="/skill">skill</a> is the file an agent reads.</p>
+<p class="muted">This page as Markdown: <a href="/quickstart.md">/quickstart.md</a>. For a model: <a href="/llms.txt">/llms.txt</a>, <a href="/llms-full.txt">/llms-full.txt</a>.</p>
+</main>
 </div>
 <!-- site:footer -->
 <footer class="site-foot">
   <span>Protocol RW1</span>
-  <span>Tools for agents: <code id="mcp-url">https://rogerwilco.crox.io/mcp</code></span>
+  <span><code>pip install rogerwilco</code></span>
+  <span><a href="/quickstart">Integrate</a> · <a href="/llms.txt">llms.txt</a></span>
   <span><a href="https://github.com/afieldofdreams/rogerwilco">Source</a></span>
   <span>A <a href="https://crox.io">Crox</a> lab. London.</span>
 </footer>

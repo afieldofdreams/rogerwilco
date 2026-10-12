@@ -415,7 +415,7 @@ def test_home_page_tells_the_tests(client):
 
 
 def test_quickstart_and_lines_pages(client):
-    for path, needle in (("/quickstart", "Start in two minutes"), ("/lines", "What a line is")):
+    for path, needle in (("/quickstart", "Integrate rogerwilco"), ("/lines", "What a line is")):
         r = client.get(path)
         assert r.status_code == 200 and r.headers["content-type"].startswith("text/html") and needle in r.text
 
@@ -435,18 +435,35 @@ def test_profiles_page_and_list_share_a_path(client):
 
 
 def test_quickstart_replies_are_real(client):
-    """The requests on the quickstart page answer exactly what the page shows."""
-    ho = ("RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec sup=marlow amt=5400.00 cur=GBP "
-          "kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929")
-    rb = post(client, "/make-rb", ho=ho, id="payer-1", profile="pay").json()["rb"]
-    assert "h=a7a82de76607" in rb                                                      # the fingerprint printed on the page
-    assert post(client, "/check-rb", ho=ho, rb=rb, profile="pay").json() == {"ok": True, "problems": [], "notes": []}
-    bad = post(client, "/check-rb", ho=ho, rb=rb.replace("amt=5400.00", "amt=5100.00"), profile="pay").json()
-    assert bad == {"ok": False, "problems": ["tier5 execution: amt mismatch: HO 5400.00 vs RB 5100.00"], "notes": []}
-    page = client.get("/quickstart").text
-    assert "tier5 execution: amt mismatch: HO 5400.00 vs RB 5100.00" in page and rb in page
-    body = post(client, "/validate", line=ho, profile="pay").json()
-    assert body["message"]["slots"]["rb"] == ["exec"] and body["message"]["slots"]["apref"] == "FD-0929"
+    """The guide's printed outputs are what the code it shows returns, the example runs both ways, and the curl call
+    answers what the page says."""
+    import html as _html
+    page = _html.unescape(client.get("/quickstart").text)
+    ho = ("RW1 HO scheduler-1 from=scheduler to=payer item=inv:MD-2026-057 ask=PAY p=pay rb=exec sup=marlow amt=5400.00 "
+          "cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929")
+    assert ho in page and post(client, "/validate", line=ho, profile="pay").json()["ok"] is True
+    record = {"to": "payer", "item": "inv:MD-2026-057", "ask": "PAY", "sup": "marlow", "amt": "5400.00", "cur": "GBP",
+              "kind": "GROSS", "acct": "40-12-88/61102938", "paid": "20261002", "ref": "MD-2026-057", "apref": "FD-0929"}
+    bad = post(client, "/check-ho", ho=ho.replace("61102938", "61102983"), record=record, profile="pay").json()
+    assert bad["ok"] is False and repr(bad["problems"]) in page
+    for args, start in (((), "roger, wilco"), (("--fault",), "held:")):
+        r = subprocess.run([sys.executable, str(APP_DIR.parent / "examples" / "payment.py"), *args], capture_output=True,
+                           text=True, env={**os.environ, "PYTHONPATH": str(APP_DIR.parent)})
+        assert r.stdout.startswith(start) and r.stdout.strip() in page
+    assert "/llms-full.txt" in page and 'rel="alternate" type="text/markdown"' in page
+
+
+def test_machine_readable_files(client):
+    for path, ctype, needle in (("/llms.txt", "text/plain", "pip install rogerwilco"), ("/llms-full.txt", "text/plain", "check_rb_full"),
+                                ("/quickstart.md", "text/markdown", "# Integrate rogerwilco"), ("/robots.txt", "text/plain", "Sitemap:"),
+                                ("/sitemap.xml", "application/xml", "<loc>https://rogerwilco.crox.io/quickstart</loc>")):
+        r = client.get(path)
+        assert r.status_code == 200 and r.headers["content-type"].startswith(ctype) and needle in r.text, path
+    full = client.get("/llms-full.txt").text
+    assert "# rogerwilco" in full and "RW1" in full and len(full) > 20000          # the guide, the skill and the spec
+    home = client.get("/").text
+    assert '<link rel="canonical" href="https://rogerwilco.crox.io/">' in home and 'application/ld+json' in home
+    assert '<link rel="canonical" href="https://rogerwilco.crox.io/quickstart">' in client.get("/quickstart").text
 
 
 # ------------------------------------------------------------------ the gate: lines as the record

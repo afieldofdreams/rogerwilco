@@ -14,6 +14,26 @@ The name is the radio call. *Roger*: received. *Wilco*: understood, and will com
 
 It is content, not transport. It rides inside an MCP tool result, an A2A message part, a chat turn, a queue message or a log line. The receiving agent needs nothing installed: a 400-token legend in its prompt is enough to read and reply.
 
+## Install and integrate
+
+```
+pip install rogerwilco
+```
+
+Python 3.10+, standard library only. Three checks go around anything an agent does that cannot be undone:
+
+```python
+import rogerwilco as rw
+
+problems, notes = rw.check_ho(ho, record, "pay")                    # 1. the job's line against the approved record, before sending
+problems, notes = rw.check_rb_full(ho, statement, "pay")            # 2. the tool's statement of what it will do, before it acts
+problems, notes = rw.check_dn(ho, dn, "pay", rb_line=statement)     # 3. what it did, against the plan, afterwards
+```
+
+Empty `problems` means go; anything else means stop. The integration guide, with a runnable two-phase payment tool and a
+brief to hand your coding agent, is at **https://rogerwilco.crox.io/quickstart**. For a model doing the integration:
+https://rogerwilco.crox.io/llms-full.txt. The evidence, seven pre-registered studies: https://rogerwilco.crox.io/research.
+
 ## Use it with Claude
 
 This repo is an [Agent Skill](https://docs.claude.com/en/docs/agents-and-tools/agent-skills/overview). Install it and Claude will use rogerwilco whenever it delegates to a subagent or receives a line that starts with `RW1`.
