@@ -371,7 +371,7 @@ def test_home_page_lines_are_real(client):
 
 
 def test_every_page_carries_the_same_header(client):
-    pages = ["/", "/quickstart", "/demo", "/explained", "/lines", "/about", "/research", "/research/readback"]
+    pages = ["/", "/quickstart", "/demo", "/lines", "/about", "/research", "/research/readback"]
     heads = []
     for path in pages:
         text = client.get(path, headers={"Accept": "text/html"}).text
@@ -404,18 +404,13 @@ def test_demo_page_and_its_lines(client):
     assert bad["ok"] is False and bad["problems"] == ["executed: amt mismatch: plan 5400.00 vs DN 5100.00"]
 
 
-def test_explained_page(client):
-    """The walk-through is served, tells the six tests in order, and its example line is a real one."""
-    r = client.get("/explained")
-    assert r.status_code == 200 and r.headers["content-type"].startswith("text/html")
-    text = r.text
-    assert "Say it back, explained" in text and 'href="/research"' in text and 'href="/demo"' in text
-    assert text.count("<figure class=\"flow\">") == 8 and text.count('role="img"') == 8
-    tests = [text.index(f"Test {n}</p>") for n in range(1, 7)]
-    assert tests == sorted(tests)
-    lines = [re.sub(r"<[^>]+>", "", m) for m in re.findall(r'<pre class="line">(.*?)</pre>', text, re.S)]
-    assert len(lines) == 1 and lines[0].split()[1] == "HO"
-    assert post(client, "/validate", line=lines[0], profile="pay").json()["ok"] is True
+def test_home_page_tells_the_tests(client):
+    """The home page tells the six tests in order, each with its flow diagram, and says what we were testing first."""
+    text = client.get("/").text
+    assert text.count('<figure class="flow">') == 8 and text.count('role="img"') == 8
+    order = [text.index(needle) for needle in ("What we were testing", "Two ways to say a job", "Test 1</p>", "Test 2</p>", "Test 3</p>",
+                                                "Test 4</p>", "Test 5</p>", "Test 6</p>", "The scorecard", "The flow that works", "How to use this", "What not to do")]
+    assert order == sorted(order)
     assert "\u2014" not in text
 
 
@@ -615,7 +610,7 @@ def test_index_page_numbers_match_the_studies():
         one_step = [r for r in prep if r["arm"] in "AD"]
         two_phase = [r for r in prep if r["arm"] in "PQ"]
         assert len(one_step) == 60 and sum(r["wrong_act"] for r in one_step) == 59 and sum(r["wrong_act"] for r in two_phase) == 0
-    assert "59 of 60, then 0" in html and 'href="/explained"' in html
+    assert "59 to 0" in html and "of 60 wrong accounts and dates" in html and "14 to 0" in html and "0 of 378" in html
     tr = (root / "translation" / "results" / "summary.md").read_text(encoding="utf-8")
     sonnet = [c.strip() for c in [l for l in tr.splitlines() if l.startswith("| L-sonnet")][0].strip("|").split("|")]
     assert sonnet[2].startswith("0.997") and "99.7%" in research              # recall

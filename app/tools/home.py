@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-"""Writes app/static/explained.html, the plain-language walk through the studies, with its flow diagrams.
+"""Writes app/static/index.html, the home page: the story one test at a time, with its flow diagrams.
 
-  python3 app/tools/explained.py       # rewrites the page; then run app/tools/stamp.py
+  python3 app/tools/home.py       # rewrites the page; then run app/tools/stamp.py
 
-The diagrams are inline SVG laid out from small specs below, so every test's picture shares one geometry and the
-colours come from site.css tokens (the SVG uses style attributes, which take var()). The figures in the text are the
-ones on the research pages: studies 6 and 7, both receivers; when a study is re-run, change them here and regenerate.
+Prose first, then the line. What we were testing, the two ways a job can be said, six tests each with a picture of who
+says what to whom and where a planted mistake was or was not caught, the scorecard, the flow that works with its three
+messages, how to use it, what not to do. The diagrams are inline SVG laid out from small specs below, so every test's
+picture shares one geometry and the colours come from site.css tokens (style attributes take var()). The figures are
+the ones on the research pages, studies 6 and 7, both receivers; when a study is re-run, change them here and
+regenerate. The three lines are real: the app's tests validate them and check the readback against the hand-over.
 """
 from __future__ import annotations
 
@@ -13,7 +16,7 @@ import sys
 from html import escape
 from pathlib import Path
 
-PAGE = Path(__file__).resolve().parents[1] / "static" / "explained.html"
+PAGE = Path(__file__).resolve().parents[1] / "static" / "index.html"
 
 # ---------------------------------------------------------------- the diagrams
 BOX_W, BOX_H, GAP, Y = 146, 46, 46, 64
@@ -96,6 +99,14 @@ D["works"] = fig(flow([("agent", "Scheduler", "writes the line"), ("check", "Che
                       marks=[(1, "ok", "typed mistakes"), (3, "ok", "wrong account, wrong date"), (5, "ok", "a tool that lies at the end")], edges=["before sending", "the values", "yes + ticket", "the report", ""], title="The flow that works: three program checks"),
                  "The flow that works. Three program checks, at the three places mistakes come from. The agents still talk; the checks are what stop the money.")
 
+# the three messages; the app's tests validate these lines and check the readback against the hand-over
+HO = ("RW1 <b>HO</b> scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=<b>PAY</b> rb=exec sup=marlow amt=<b>5400.00</b> "
+      "cur=GBP kind=GROSS acct=<b>40-12-88/61102938</b> paid=<b>20261002</b> ref=MD-2026-057 apref=FD-0929")
+RB = ("RW1 <b>RB</b> payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay <b>h=a7a82de76607</b> sup=marlow amt=5400.00 "
+      "cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929")
+DN = ("RW1 <b>DN</b> payer-2 re=scheduler-1 p=pay from=payer to=scheduler item=inv:MD-2026-057 out=OK sup=marlow amt=5400.00 "
+      "cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929")
+
 # ---------------------------------------------------------------- the page
 HTML = f"""<!doctype html>
 <html lang="en">
@@ -103,34 +114,35 @@ HTML = f"""<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>Say it back, explained</title>
-<meta name="description" content="What we tested, test by test: prose with nothing checking, prose judged by an AI, lines echoed back, lines with the values the payer will use, the report afterwards, and the tool's own statement before it acts. With a diagram of each flow and the mistakes it caught.">
+<title>rogerwilco</title>
+<meta name="description" content="Aviation learned how to hand an instruction from one person to another so that it cannot be misheard. rogerwilco gives that discipline to AI agents: a job as one typed line, read back and checked by a program before anything happens. Seven studies, told one test at a time, with a picture of each flow and the mistakes it caught.">
 <!-- site:head -->
 <!-- /site:head -->
 </head>
 <body>
 <!-- site:header -->
 <!-- /site:header -->
-<main class="explained">
+<main class="story">
   <header>
-    <p class="eyebrow">Seven studies · October 2026</p>
-    <h1>Say it back, explained</h1>
-    <p class="lede">AI agents hand jobs to each other, like "pay this bill". We tested six ways of doing that, planted mistakes on purpose, and counted which mistakes got caught before the money moved. This page tells the story one test at a time: what we were testing, the two ways a job can be said, then each test with a picture of who said what to whom and where the mistake was or was not caught.</p>
+    <p class="lede">Aviation learned, at great cost, how to hand an instruction from one person to another so that it cannot be misheard. rogerwilco gives that discipline to AI agents, and this page shows, one test at a time, what it catches.</p>
+    <p>On 27 March 1977 two Boeing 747s collided on a runway in Tenerife and 583 people died. One crew began its take-off on a clearance it had not been given. The words on the radio were ordinary English, and ordinary English was the problem: "we are now at take-off" meant one thing to the crew saying it and another to the controller hearing it. Aviation's answer was not a better pilot. It was a protocol. A fixed vocabulary, so a word means one thing. The person who will act reads the instruction back, and the person who gave it listens for the mistake. In the flight deck, the setting is called out and the other pilot checks the dial.</p>
+    <p>AI agents are now doing things that cannot be undone: paying invoices, changing the account a supplier is paid into, sending emails to customers. They hand each other those instructions in paragraphs. We spent seven studies finding out what actually stops a mistake before the money moves. Below: what we were testing, the two ways a job can be said, then six ways of handing a job over, each with a picture of who says what to whom and where a planted mistake was or was not caught.</p>
+    <p class="radio">The names come from the radio. <em>Roger</em> means "I received it". <em>Wilco</em> means "I understood it and I will do it". A controller says "descend to 3,000 feet, QNH 1013"; the pilot says it back; the controller listens. Agents can do the same, and a program can do the listening.</p>
   </header>
 
   <section>
     <h2>What we were testing</h2>
     <p>Three agents and a tool. The boss says what to pay. The scheduler agent writes the job. The payer agent reads it and looks up the bank account. The payment tool moves the money. A mistake can enter at three places, and once the money has moved it cannot be undone.</p>
     {D["places"]}
-    <p>The setting was a made-up company with a made-up month of bills, so no real money was ever at risk. We used four AI models from two companies: three strong ones and one weaker, cheaper one.</p>
+    <p>The setting was a made-up company with a made-up month of bills, so no real money was ever at risk. We used four AI models from two companies: three strong ones and one weaker, cheaper one. Every log and every grade is in the open.</p>
   </section>
 
   <section>
     <h2>Two ways to say a job</h2>
     <p>Everything turns on this. A job can be a sentence, or it can be a <b>line</b>: the same facts in fixed slots, each with a label. A person can read both. Only the line can be checked by a program, because a program can find <code>amt=</code> and compare it with the record, and it cannot find "five thousand four hundred" in a sentence reliably.</p>
     <div class="vs">
-      <div><span class="lbl">A sentence (prose)</span><p class="said">"Hi payer, please release the payment for Marlow Design Partners, invoice MD-2026-057: 5,400.00 GBP gross, to the account on file, on 2 October. Approved by the FD under FD-0929."</p></div>
-      <div><span class="lbl">A line</span><pre class="line">RW1 <b>HO</b> scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=<b>PAY</b> rb=exec sup=marlow <b>amt=5400.00</b> cur=GBP kind=GROSS <b>acct=40-12-88/61102938</b> paid=20261002 ref=MD-2026-057 apref=FD-0929</pre></div>
+      <div><span class="lbl">A sentence (prose)</span><p class="said">"Pay invoice MD-2026-057: 5,400.00 pounds, gross, to account 40-12-88 / 61102938, on 2 October, under approval FD-0929. Read back what you will do before you do anything."</p></div>
+      <div><span class="lbl">The same job as a line</span><pre class="line">{HO}</pre></div>
     </div>
     <p>"Say it back" means the payer repeats the job before acting, the way a pilot repeats a clearance before flying it. The question we kept asking: who does the repeating, what do they repeat, and who checks it? <a href="/lines">What a line is</a> explains every message type with one example each.</p>
   </section>
@@ -228,7 +240,26 @@ HTML = f"""<!doctype html>
   <section>
     <h2>The flow that works</h2>
     {D["works"]}
-    <p>Three checks, three places, all done by a program on typed lines. The agents still do the thinking and the talking. The checks are what stop the money.</p>
+    <p>Three checks, three places, all done by a program on typed lines. The agents still do the thinking and the talking. The checks are what stop the money. This is rogerwilco: three messages, each one line, said here first in words and then as the line a program checks.</p>
+    <div class="loop">
+      <div class="step">
+        <h2>1. Hand over <span>scheduler to payer</span></h2>
+        <p class="says">"Pay invoice MD-2026-057: 5,400.00 pounds, gross, to account 40-12-88 / 61102938, on 2 October, under approval FD-0929. Read back what you will do before you do anything."</p>
+        <p class="check"><span class="badge">check 1</span><span>The line is the one above. Before it is sent, a program compares it with the approved record, label by label: <code>check-ho</code>. A wrong digit, date or account stops here, with no round trip.</span></p>
+      </div>
+      <div class="step">
+        <h2>2. Read back <span>the tool's statement, payer to scheduler</span></h2>
+        <p class="says">"Paying invoice MD-2026-057, 5,400.00 pounds, gross, to 40-12-88 / 61102938, the account on file for Marlow, on 2 October, under FD-0929."</p>
+        <pre class="line">{RB}</pre>
+        <p class="check"><span class="badge">check 2</span><span>The values are the ones that will actually be used, the account read from the payer's own master, so an instruction that named the wrong account shows up here. <code>h=</code> is a fingerprint of the message as it arrived, so a digit changed on the way shows up too. Where the payment tool can prepare before it commits, this line is the tool's own statement of what it will run, frozen under a ticket: test 6. If anything differs, the payment waits and the scheduler sends the job again. If it all matches: roger, wilco, and the tool gets its yes.</span></p>
+      </div>
+      <div class="step">
+        <h2>3. Done <span>payer to scheduler</span></h2>
+        <p class="says">"Paid 5,400.00 pounds to 40-12-88 / 61102938 on 2 October, reference MD-2026-057, under FD-0929."</p>
+        <pre class="line">{DN}</pre>
+        <p class="check"><span class="badge">check 3</span><span>The done message carries the values as they were actually used, printed by the tool, not as they were asked for, so a program can compare them with the plan: <code>check-dn</code>. That is the second loop, not just "I understood" but "here is what I did", and in tests 5 and 6 it was the one check that caught a tool doing something other than what it was told.</span></p>
+      </div>
+    </div>
   </section>
 
   <section>
@@ -242,7 +273,14 @@ HTML = f"""<!doctype html>
       <li><b>Check the report afterwards.</b> The tool prints what it did; the program compares that with the plan. A difference means recall the payment.</li>
       <li><b>With a small or cheap model, let the program read the tool directly.</b> Do not have the model carry the tool's statement to the checker; the weak one changed it 51 times out of 129.</li>
     </ol>
-    <p>All of it is live here: the checks are <a href="/quickstart">web calls any agent can make</a>, the <a href="/demo">demo</a> walks through one payment with a mistake of your choosing, and the <a href="/spec">spec</a> says exactly what each check compares.</p>
+    <h3 class="section-h">Start in two minutes</h3>
+    <div class="starts">
+      <a class="start-card" href="/quickstart#api"><b>API</b><span>One POST, no key, no sign-up.</span><code>POST /check-rb</code></a>
+      <a class="start-card" href="/quickstart#python"><b>Python</b><span>One package, no dependencies.</span><code>pip install rogerwilco</code></a>
+      <a class="start-card" href="/quickstart#agent"><b>Your agent</b><span>Add the tools to Claude Code in one line, or give any agent the legend.</span><code>claude mcp add ...</code></a>
+      <a class="start-card" href="/demo"><b>The demo</b><span>Watch two agents hand a payment over, step by step, and plant a mistake.</span><code>/demo</code></a>
+    </div>
+    <p class="hint">Want the words first? <a href="/lines">What a line is</a> explains every message type with one example each, <a href="/profiles">profiles</a> show the same line doing four kinds of work, and the <a href="/spec">spec</a> and the <a href="/skill">skill</a> say exactly what each check compares.</p>
   </section>
 
   <section>
@@ -257,7 +295,7 @@ HTML = f"""<!doctype html>
     </ul>
   </section>
 
-  <p class="foot">Every study, log and grade is public in the <a href="https://github.com/afieldofdreams/rogerwilco">rogerwilco repository</a>, and <a href="/research">the research pages</a> carry every figure with its interval. Numbers above are from studies 6 and 7; the strong models were Claude Sonnet 5.5, Claude Haiku 5.5 and gpt-5.5, the weak one gpt-5.4-mini.</p>
+  <p class="foot">Every study, log and grade is public in the <a href="https://github.com/afieldofdreams/rogerwilco">rogerwilco repository</a>, and <a href="/research">the research pages</a> tell each of the seven studies with every figure and its interval. Numbers above are from studies 6 and 7; the strong models were Claude Sonnet 5.5, Claude Haiku 5.5 and gpt-5.5, the weak one gpt-5.4-mini.</p>
 </main>
 <!-- site:footer -->
 <!-- /site:footer -->
