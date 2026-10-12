@@ -359,6 +359,42 @@ main.story header { display: grid; gap: 0.7rem; }
 main.story section { display: grid; gap: 0.8rem; border-top: 1px solid var(--rule); padding-top: 1.3rem; }
 main.story .eyebrow { font: 0.74rem/1.4 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
 main.story .lede { font-size: 1.15rem; color: var(--muted); }
+main.story .hero { display: grid; gap: 0.9rem; }
+main.story .exchange { display: grid; gap: 8px; max-width: 66ch; }
+main.story .rt { display: grid; grid-template-columns: 4.6rem minmax(0, 1fr) auto; gap: 2px 12px; align-items: baseline; padding: 10px 12px; background: var(--surface); border: 1px solid var(--rule); }
+main.story .rt.pilot { margin-left: 2rem; border-left: 3px solid var(--accent); }
+main.story .rt .who { font: 500 0.72rem/1.5 var(--mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+main.story .rt p { font-size: 0.98rem; }
+main.story .rt p.hb { color: var(--muted); }
+main.story .rt .tag { font: 0.7rem/1.5 var(--mono); color: var(--accent); white-space: nowrap; }
+main.story .radio { display: grid; gap: 6px; }
+main.story .rx { display: grid; grid-template-columns: 4.6rem 9rem minmax(0, 1fr); gap: 2px 12px; align-items: baseline; padding: 8px 12px; background: var(--surface); border: 1px solid var(--rule); }
+main.story .rx .t { font: 0.74rem/1.6 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+main.story .rx .who { font: 500 0.72rem/1.6 var(--mono); letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink); }
+main.story .rx.klm .who { color: var(--accent); }
+main.story .rx.panam .who { color: var(--good); }
+main.story .rx p { grid-column: 3; font-size: 0.98rem; }
+main.story .rx p i { color: var(--muted); font-style: italic; }
+main.story .rx p.why { color: var(--warn); font-size: 0.9rem; }
+main.story .rx mark { background: var(--warn-tint); color: var(--ink); padding: 0 0.2em; }
+main.story .rx.end { background: var(--bad-tint); border-color: transparent; }
+main.story .rx.end .who { color: var(--bad); }
+main.story .rx.end p { color: var(--bad); font-weight: 600; }
+main.story p.cap { font: 0.78rem/1.5 var(--mono); color: var(--muted); }
+main.story .layers { display: grid; gap: 6px; }
+main.story .layer { display: grid; grid-template-columns: 9rem minmax(0, 1fr) minmax(0, 1fr); gap: 4px 14px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--rule); align-items: start; }
+main.story .layer.head { background: none; border: 0; padding: 0 12px; font: 500 0.68rem/1.4 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+main.story .layer h3 { font-size: 0.98rem; }
+main.story .layer h3 .n { display: block; font: 500 0.7rem/1.4 var(--mono); color: var(--accent); }
+main.story .layer p { font-size: 0.9rem; }
+main.story .layer p b { color: var(--good); font-weight: 600; }
+@media (max-width: 620px) {
+  main.story .rt { grid-template-columns: 1fr; } main.story .rt.pilot { margin-left: 1rem; }
+  main.story .rx { grid-template-columns: 4.6rem minmax(0, 1fr); } main.story .rx p { grid-column: 1 / -1; }
+  main.story .layer { grid-template-columns: 1fr; } main.story .layer.head { display: none; }
+  main.story .layer p::before { display: block; font: 500 0.66rem/1.6 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  main.story .layer p:nth-of-type(1)::before { content: "In the cockpit"; } main.story .layer p:nth-of-type(2)::before { content: "Between agents"; }
+}
 main.story .flow { margin: 0.2rem 0 0; display: grid; gap: 0.4rem; min-width: 0; }
 main.story .flow .scroll { overflow-x: auto; padding-bottom: 4px; }
 main.story .flow svg { display: block; color: var(--ink); font-family: var(--serif); }
