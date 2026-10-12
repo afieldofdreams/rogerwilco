@@ -50,7 +50,7 @@ This repo is an [Agent Skill](https://docs.claude.com/en/docs/agents-and-tools/a
 | `references/SPEC.md` | The protocol, version RW1 v0.1: grammar, nine message types, slots, codes, five rules, the five-tier readback, the checks before and after an irreversible act, JSON form, profiles. |
 | `scripts/rogerwilco.py` | Reference codec, standard library only: validate, encode, JSON twin, `make-rb`, `check-rb`, `check-ho`, `check-dn`, digest, legend, lint. |
 | `profiles/core.json` | The core vocabulary. |
-| `profiles/pform.json` | An example domain profile (a knowledge-graph workflow). Copy it to make your own. `pay.json` (accounts payable, with execution slots) and `clin.json` (clinical assertions) are the profiles the studies used. |
+| `profiles/pform.json` | An example domain profile (a knowledge-graph workflow). Copy it to make your own. `pay.json` (accounts payable, with execution slots) and `clin.json` (clinical assertions) are the profiles the studies used. `sdlc.json` covers building software with agents: requirement to merge, deploy, migration, infrastructure apply and publish, each with execution slots. |
 | `tests/conformance.jsonl` | 99 codec cases (parse, readback, presend, done, thread, digest) plus 6 agent-behaviour cases. |
 | `tests/test_conformance.py` | Runner. An implementation is conformant when it passes. |
 

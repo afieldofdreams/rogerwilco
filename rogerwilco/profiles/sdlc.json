@@ -1,0 +1,51 @@
+{
+  "profile": "sdlc",
+  "version": "0.1",
+  "extends": "RW1",
+  "description": "Building software with agents, end to end traceable: a requirement handed to a builder, the change reviewed, merged, released, migrated or applied. Platform-agnostic: repositories, trackers and hosts are named by reference (gh:, gl:, jira:, linear:, pensive:), never assumed. Every irreversible act (merge or push to a protected branch, deploy, migration, infrastructure apply, package publish) asks rb=exec, and the RB and the DN carry the execution slots listed under exec. The human's answers are closed.",
+  "enums": {
+    "env": {"DEV": "development", "STAGE": "staging", "PROD": "production"},
+    "ans": {"APPROVE": "yes, proceed as asked", "DECLINE": "no, do not proceed", "HOLD": "wait; do nothing until told"},
+    "state": {"UP": "serving and healthy", "DEGRADED": "serving with errors", "DOWN": "not serving"},
+    "sig": {"BUG": "a defect report", "FEAT": "a feature request", "INC": "an incident", "AGENT": "a signal the system raised from its own records", "NOTE": "a free-text observation"}
+  },
+  "asks": {
+    "MERGE": "merge the named branch at the named commit into the named base",
+    "PUSH": "push the named commit to the named branch",
+    "DEPLOY": "deploy the named version to the named environment",
+    "ROLLBACK": "return the environment to the previous version",
+    "MIGRATE": "run the named database migration; irreversible unless a down migration is named",
+    "APPLY": "apply the named infrastructure plan to the named environment; the plan is identified by its digest",
+    "PUBLISH": "publish the named version of a package or release from the named commit"
+  },
+  "slots": [
+    {"key": "repo", "type": "ref", "desc": "repository by reference, e.g. gh:owner/name or gl:group/name", "on": ["HO", "RB", "ST", "AQ", "AN", "DN", "UN", "FL"], "required": false},
+    {"key": "br", "type": "token", "desc": "branch the change is on, or is pushed to", "on": ["HO", "RB", "ST", "AQ", "AN", "DN", "FL"], "required": false},
+    {"key": "base", "type": "token", "desc": "branch a merge lands on", "on": ["HO", "RB", "ST", "AQ", "AN", "DN", "FL"], "required": false},
+    {"key": "sha", "type": "token", "desc": "commit, full or at least 12 hex characters", "on": ["HO", "RB", "ST", "AQ", "AN", "DN", "FL"], "required": false},
+    {"key": "env", "type": "enum:env", "desc": "target environment", "on": ["HO", "RB", "ST", "AQ", "AN", "DN", "UN", "FL"], "required": false},
+    {"key": "ver", "type": "token", "desc": "version, tag or image digest", "on": ["HO", "RB", "ST", "AQ", "AN", "DN", "FL"], "required": false},
+    {"key": "prev", "type": "token", "desc": "version running before the change", "on": ["HO", "RB", "ST", "DN"], "required": false},
+    {"key": "mig", "type": "token", "desc": "migration id", "on": ["HO", "RB", "ST", "AQ", "AN", "DN", "FL"], "required": false},
+    {"key": "down", "type": "bool", "desc": "whether a down migration exists (Y/N)", "on": ["HO", "RB", "AQ", "AN", "DN"], "required": false},
+    {"key": "plan", "type": "token", "desc": "digest of the infrastructure plan file, sha256:<hex>", "on": ["HO", "RB", "ST", "AQ", "AN", "DN", "FL"], "required": false},
+    {"key": "req", "type": "ref", "desc": "the requirement the work traces to, e.g. pensive:5029 or jira:ABC-12", "on": ["HO", "RB", "ST", "DN"], "required": false},
+    {"key": "apref", "type": "token", "desc": "the principal's approval reference for an irreversible act", "on": ["HO", "RB", "ST", "AQ", "AN", "DN"], "required": false},
+    {"key": "state", "type": "enum:state", "desc": "health after the change", "on": ["ST", "DN", "FL"], "required": false},
+    {"key": "sig", "type": "enum:sig", "desc": "kind of signal a status line reports", "on": ["ST"], "required": false}
+  ],
+  "exec": {
+    "MERGE": ["repo", "br", "base", "sha"],
+    "PUSH": ["repo", "br", "sha"],
+    "DEPLOY": ["env", "ver", "prev", "apref"],
+    "ROLLBACK": ["env", "ver", "prev"],
+    "MIGRATE": ["env", "mig", "down", "apref"],
+    "APPLY": ["env", "plan", "apref"],
+    "PUBLISH": ["repo", "ver", "sha"]
+  },
+  "item_examples": ["pensive:5029", "gh:owner/name#42", "gl:group/name!7", "jira:ABC-12", "linear:ENG-12", "svc:api"],
+  "asks_used": ["RESEARCH", "PLAN", "BUILD", "FIX", "REVIEW", "TEST", "DECIDE", "UNDO", "MERGE", "PUSH", "DEPLOY", "ROLLBACK", "MIGRATE", "APPLY", "PUBLISH"],
+  "translation": {
+    "note": "Every HO for build work names the requirement with req= and asks rb=acc or rb=plan; scope and test rules travel as acc constraints (scope:<path>, must:<rule>, no:<rule>, e.g. no:test-edit). Before an irreversible act the HO is built from the approval record by code or checked against it before it is sent (check-ho), asks rb=exec, and the RB and the DN carry the execution slots listed under exec, the DN with the values the tool printed. A commit made under a read-back HO carries the trailer RW-Trace: <session>/<HO id>."
+  }
+}

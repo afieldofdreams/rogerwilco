@@ -190,8 +190,9 @@ G: list[tuple] = [
           "the tool's statement did better than any readback the model wrote."),
     ("h2", "Your own domain: profiles", "profiles"),
     ("p", "A profile adds the codes and slots for one kind of work and names, for each irreversible ask, the values it is "
-          "executed with. That list is what checks 1 to 3 compare. Four ship with the package: `pay` (accounts payable), "
-          "`clin` (clinical statements), `deploy` and `pform` (a knowledge-graph workflow). To make your own, copy "
+          "executed with. That list is what checks 1 to 3 compare. Five ship with the package: `pay` (accounts payable), "
+          "`clin` (clinical statements), `deploy`, `sdlc` (building software with agents, merge to publish) and `pform` "
+          "(a knowledge-graph workflow). To make your own, copy "
           "`rogerwilco/profiles/pform.json`, list your asks and slots, and put the irreversible ones under `exec`. A profile "
           "may add codes; it may not redefine the core ones. [Profiles](/profiles) shows the same line doing four kinds of work."),
     ("h2", "Hand it to your coding agent", "agent"),
