@@ -11,6 +11,8 @@ Usage:
                                                     # before sending: the HO against the record it was built from
   rogerwilco.py check-dn "<HO line>" "<DN line>" [--profile NAME] [--rb "<RB line>"]
                                                     # after the act: the done report against the plan
+  rogerwilco.py check-thread FILE [--profile NAME] [--now YYYYMMDDTHHMMZ]
+                                                    # every handoff closes: DN, UN, FL or an acknowledged CX
   rogerwilco.py digest "<line>" [--profile NAME]                     # h= value for a line
   rogerwilco.py to-json "<line>" [--profile NAME]
   rogerwilco.py from-json '<json>' [--profile NAME]
@@ -30,6 +32,7 @@ PROFILES = HERE.parent / "profiles"
 ID_RE = re.compile(r"^[A-Za-z0-9._-]+$")
 KEY_RE = re.compile(r"^[a-z][a-z0-9_]*$")
 DATE_RE = re.compile(r"^\d{8}$")
+TIME_RE = re.compile(r"^\d{8}T\d{4}Z$")      # YYYYMMDDTHHMMZ, UTC to the minute: exp=
 
 
 class FormError(ValueError):
@@ -125,6 +128,10 @@ def _check_value(spec: dict, key: str, typ: str, raw: str, errors: list):
     if typ == "date":
         if not DATE_RE.match(raw):
             errors.append(f"{key}={raw}: dates are YYYYMMDD")
+        return raw
+    if typ == "time":
+        if not TIME_RE.match(raw):
+            errors.append(f"{key}={raw}: times are YYYYMMDDTHHMMZ in UTC, e.g. 20261002T1405Z")
         return raw
     if typ == "days":
         if not re.fullmatch(r"\d+d?", raw):
@@ -418,8 +425,19 @@ def compare_acc(expected: list[str], derived: list[str], keys: list[str] | None 
     return problems, notes
 
 
+def now_utc() -> str:
+    """The current time as an exp= value, YYYYMMDDTHHMMZ."""
+    import datetime as _dt
+    return _dt.datetime.now(_dt.timezone.utc).strftime("%Y%m%dT%H%MZ")
+
+
+def _expired(exp, now: str) -> bool:
+    """True when an exp= time has passed. Both are YYYYMMDDTHHMMZ, so they compare as strings."""
+    return bool(exp) and TIME_RE.match(str(exp)) is not None and str(now) >= str(exp)
+
+
 def check_rb_full(ho_line: str, rb_line: str, profile: str | None = None,
-                  expect_acc: list[str] | None = None) -> tuple[list[str], list[str]]:
+                  expect_acc: list[str] | None = None, now: str | None = None) -> tuple[list[str], list[str]]:
     """Rule 1, five tiers. Returns (problems, notes); no problems means the readback passes and ownership transfers.
 
     Tier 1 receipt:        RB.re == HO.id, and RB travels from HO.to back to HO.from.
@@ -450,6 +468,14 @@ def check_rb_full(ho_line: str, rb_line: str, profile: str | None = None,
         problems.append(f"tier1 receipt: RB re={rb['re']} does not point at HO id {ho['id']}")
     if rb["from"] != ho["to"] or rb["to"] != ho["from"]:
         problems.append(f"tier1 receipt: RB must come from {ho['to']} to {ho['from']}; got from={rb['from']} to={rb['to']}")
+    # expiry: a handoff or a prepared statement past its exp= cannot be confirmed; prepare again from the record
+    clock = now or now_utc()
+    if _expired(ho["slots"].get("exp"), clock):
+        problems.append(f"expired: the HO expired at {ho['slots']['exp']} (now {clock}); send a new HO from the record")
+    if _expired(rb["slots"].get("exp"), clock):
+        problems.append(f"expired: the statement expired at {rb['slots']['exp']} (now {clock}); prepare again")
+    if ho["slots"].get("exp") and rb["slots"].get("exp") and str(rb["slots"]["exp"]) > str(ho["slots"]["exp"]):
+        problems.append(f"expired: the statement's exp={rb['slots']['exp']} outlives the HO's exp={ho['slots']['exp']}")
     # tier 2
     if "h" in rb["slots"]:
         want = digest(ho)
@@ -462,7 +488,7 @@ def check_rb_full(ho_line: str, rb_line: str, profile: str | None = None,
     ho_flat = {"item": ho["item"], **ho["slots"]}
     rb_flat = {"item": rb["item"], **rb["slots"]}
     if "all" in levels:
-        keys = [k for k in ho_flat if k not in ("rb", "p", "acc")]
+        keys = [k for k in ho_flat if k not in ("rb", "p", "acc", "exp")]
     else:
         keys = list(DEFAULT_RB) + [k for k in named if k not in DEFAULT_RB]
     for k in keys:
@@ -560,7 +586,7 @@ def _exec_slots(spec: dict, ask) -> list[str]:
     return list((spec.get("exec") or {}).get(str(ask or "")) or [])
 
 
-_RB_OWN = ("h", "eta", "acc", "do", "not", "asm", "p")   # what an RB adds for itself; never part of the plan
+_RB_OWN = ("h", "eta", "acc", "do", "not", "asm", "p", "exp")   # what an RB adds for itself; never part of the plan
 
 
 def check_ho(ho_line: str, record: dict, profile: str | None = None) -> tuple[list[str], list[str]]:
@@ -661,6 +687,66 @@ def check_dn(ho_line: str, dn_line: str, profile: str | None = None,
     return problems, notes
 
 
+# ---------------------------------------------------------------- the thread: every handoff closes
+
+CLOSERS = ("DN", "UN", "FL")
+
+
+def check_thread(lines: list[str], profile: str | None = None, now: str | None = None) -> tuple[list[str], list[str]]:
+    """Every handoff ends. Given the lines of a conversation in the order they were sent, each HO must close with
+    exactly one DN, UN or FL from its receiver, or with a CX from its sender that the receiver acknowledged with
+    AN val=Y. A DN after a CX means the act ran although it was cancelled, or before the cancel arrived: it needs a
+    decision, usually an UNDO. An HO still open after its exp= (or after its due= date) is orphaned. A CX must come
+    from the HO's sender to its receiver. Returns (problems, notes); notes list handoffs that are open and in time."""
+    clock = now or now_utc()
+    problems: list[str] = []
+    notes: list[str] = []
+    msgs = []
+    for n, line in enumerate(lines, 1):
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        msg, errors, _ = parse(line, profile)
+        if errors:
+            problems.append(f"line {n}: " + "; ".join(errors))
+            continue
+        msgs.append((n, msg))
+    by_id = {m["id"]: m for _, m in msgs}
+    for n, ho in msgs:
+        if ho["type"] != "HO":
+            continue
+        hid = ho["id"]
+        after = [(k, m) for k, m in msgs if k > n and m.get("re") == hid]
+        closes = [(k, m) for k, m in after if m["type"] in CLOSERS and m["from"] == ho["to"]]
+        cancels = [(k, m) for k, m in after if m["type"] == "CX"]
+        for k, cx in cancels:
+            if cx["from"] != ho["from"] or cx["to"] != ho["to"]:
+                problems.append(f"line {k}: CX {cx['id']} must come from {ho['from']} to {ho['to']}, the HO's sender and receiver")
+        acked = [(k, cx) for k, cx in cancels
+                 if any(m["type"] == "AN" and m.get("re") == cx["id"] and str(m["slots"].get("val")) == "Y" and m["from"] == ho["to"]
+                        for j, m in msgs if j > k)]
+        if len(closes) > 1:
+            problems.append(f"{hid}: closed {len(closes)} times ({', '.join(m['type'] + ' ' + m['id'] for _, m in closes)}); a handoff closes once")
+        if cancels:
+            first_cx = cancels[0][0]
+            ran = [m for k, m in closes if m["type"] == "DN" and k > first_cx and str(m["slots"].get("out")) != "NOOP"]
+            if ran:
+                problems.append(f"{hid}: {ran[0]['id']} reports the act done after CX {cancels[0][1]['id']} cancelled it; decide whether to UNDO it")
+            elif not closes and not acked:
+                notes.append(f"{hid}: CX {cancels[0][1]['id']} sent, not yet acknowledged; the receiver must abandon any prepared statement and answer AN val=Y")
+        if closes or acked:
+            continue
+        exp, due = ho["slots"].get("exp"), ho["slots"].get("due")
+        if _expired(exp, clock) or (due and str(clock)[:8] > str(due)):
+            limit = f"exp={exp}" if _expired(exp, clock) else f"due={due}"
+            problems.append(f"{hid}: orphaned, open past {limit} with no DN, UN, FL or acknowledged CX; close it or cancel it")
+        else:
+            notes.append(f"{hid}: open")
+    for k, m in msgs:
+        if m["type"] == "CX" and (m.get("re") not in by_id or by_id[m["re"]]["type"] != "HO"):
+            problems.append(f"line {k}: CX {m['id']} re={m.get('re')} does not name an HO in this thread")
+    return problems, notes
+
+
 # ---------------------------------------------------------------- legend
 
 def legend(profile: str | None = None, lean: bool = False) -> str:
@@ -694,6 +780,7 @@ def legend(profile: str | None = None, lean: bool = False) -> str:
     core = load_core()
     if not lean:
         out.append("acc= constraint keys (closed set): " + "; ".join(f"{k}={v}" for k, v in core["constraint_keys"].items()) + ". Values: no spaces, lowercase, e.g. len:120w lang:uk must:monday-problem no:em-dash.")
+    out.append("Every HO closes exactly once: DN, UN or FL from the receiver, or CX from the sender. On a CX, abandon anything prepared and answer AN val=Y; if the act already ran, send its DN instead. exp=YYYYMMDDTHHMMZ (UTC) is the latest moment to act or confirm: never act on an HO, and never confirm a statement, past its exp. A DN that does not match the plan is reversed with a new HO ask=UNDO ctx=<that DN id>.")
     out.append("Message ids are <yourname>-<n>, unique in the conversation. Readback level is set per handoff by the sender: rb=exec before an irreversible act (a payment release, a payee change, anything external) where the profile names execution slots, rb=all where it does not; the default envelope echo otherwise.")
     if spec.get("exec"):
         out.append("rb=exec: the RB carries the execution slots for the ask with the values you will actually use, resolved from your own records where the HO does not give them (" +
@@ -767,6 +854,16 @@ def _main(argv: list[str]) -> int:
             for p in problems: print("MISMATCH:", p)
             for n_ in notes: print("NOTE:", n_)
             if not problems: print("OK the done report matches the plan")
+            return 1 if problems else 0
+        if cmd == "check-thread":
+            lines = Path(rest[0]).read_text().splitlines()
+            now = None
+            if "--now" in rest:
+                now = rest[rest.index("--now") + 1]
+            problems, notes = check_thread(lines, profile, now)
+            for p in problems: print("PROBLEM:", p)
+            for n_ in notes: print("NOTE:", n_)
+            if not problems: print("OK every handoff is closed or open in time")
             return 1 if problems else 0
         if cmd == "digest":
             print(digest(rest[0], profile)); return 0

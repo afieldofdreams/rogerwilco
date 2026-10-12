@@ -1,4 +1,4 @@
-# rogerwilco protocol, version RW1 (v0.1)
+# rogerwilco protocol, version RW1 (v0.2)
 
 A one-line, typed, closed-vocabulary message format for handing work between agents and asking them bounded questions. Any agent that can read a line of text can use it. Facts go in slots. Reasoning goes in the tail.
 
@@ -23,7 +23,7 @@ Tokens are separated by single spaces. The first three are positional; everythin
 | Element | Rule |
 |---|---|
 | `RW1` | Protocol version token. Required, always first. |
-| `TYPE` | One of the eight message types in section 3. Uppercase. |
+| `TYPE` | One of the nine message types in section 3. Uppercase. |
 | `id` | Message id: `<from>-<n>`, the sending agent's name, a hyphen and a number, e.g. `writer-07`, unique within the conversation. The validator refuses any other shape, so a receiver can tell who a message came from and which of theirs it is from the id alone. |
 | `key=value` | Keys are lowercase `[a-z][a-z0-9_]*`. Values contain no spaces. Lists join with `+`. Dates are `YYYYMMDD`. Booleans are `Y` or `N`. |
 | `// tail` | Free text after ` // `. At most 300 characters. Anything longer becomes an artifact and is referenced with `art=`. |
@@ -48,14 +48,15 @@ Extension keys begin with `x_` and may carry anything a profile has not defined.
 
 | Type | Meaning | Required slots | Optional slots |
 |---|---|---|---|
-| `HO` | Handoff: here is work, do this with it | `from to item ask` | `re due pri conf keep art ctx rb acc` |
-| `RB` | Readback: I received the handoff, here is what I understood, and I will act on it | `re from to item ask` (+ `due` if the HO had one, + anything the HO's `rb=` names, + `acc` when the HO asked `rb=acc` or `rb=plan`, + `do` for `rb=plan`, + the profile's execution slots for the ask when the HO asked `rb=exec`) | `h eta not asm` |
+| `HO` | Handoff: here is work, do this with it | `from to item ask` | `re due pri conf keep art ctx rb acc exp` |
+| `RB` | Readback: I received the handoff, here is what I understood, and I will act on it | `re from to item ask` (+ `due` if the HO had one, + anything the HO's `rb=` names, + `acc` when the HO asked `rb=acc` or `rb=plan`, + `do` for `rb=plan`, + the profile's execution slots for the ask when the HO asked `rb=exec`) | `h eta not asm exp` |
 | `AQ` | Ask: a bounded question | `from to need` (+ `opts` when `need=ENUM`) | `re item by` |
 | `AN` | Answer to an AQ | `re from to val` | `item` |
 | `ST` | Status: state changed on an item, no handover | `from to item` | `re pct eta blk` (+ profile state slots) |
 | `DN` | Done: the handed-off work is complete | `re from to item out` (+ the profile's execution slots, with the values as executed, after an act the HO asked `rb=exec` for) | `art next` |
 | `UN` | Unable: I will not or cannot take this | `re from to why` | `item alt need` |
 | `FL` | Fail: I took it and it failed | `re from to item why` | `art retry` |
+| `CX` | Cancel: the sender withdraws a handoff | `re from to item` | `why` |
 
 ### 3.1 Slot definitions
 
@@ -66,6 +67,7 @@ Extension keys begin with `x_` and may carry anything a profile has not defined.
 | `ask` | enum `ask` | What the receiver should do. Core set in section 4; profiles extend it. |
 | `due` | date | When the work is needed. |
 | `by` | date | When an answer is needed. |
+| `exp` | time | The latest moment to act, or to confirm a prepared statement: `YYYYMMDDTHHMMZ` in UTC (`20261002T1405Z`). On an HO, nothing may be done on it after; on an RB, the statement cannot be confirmed after, and it may not outlive the HO's. Never echoed, never part of the plan. |
 | `pri` | int 1–5 | Priority, 1 highest. |
 | `conf` | `L` `M` `H` | Sender's confidence in the brief and the state it describes. |
 | `keep` | list of agents | Agents that stay involved after the handoff. |
@@ -79,7 +81,7 @@ Extension keys begin with `x_` and may carry anything a profile has not defined.
 | `val` | value | The answer. For `need=TEXT`, `val=tail` and the answer is the tail. |
 | `out` | enum `out` | Outcome of a DN: `OK` `PARTIAL` `NOOP`. |
 | `next` | enum `ask` | Suggested next ask. |
-| `why` | enum `why` | Reason code on UN or FL. |
+| `why` | enum `why` | Reason code on UN, FL or CX. |
 | `alt` | agent | Suggested alternative receiver on UN. |
 | `retry` | `Y` `N` | Whether a retry is sensible on FL. |
 | `keys` | list of constraint keys | On an HO with `rb=acc` or `rb=plan`: the dimensions the sender will check (`keys=len+lang+must+no`). Never carries values. |
@@ -94,9 +96,9 @@ Extension keys begin with `x_` and may carry anything a profile has not defined.
 
 Profiles may extend any of these lists. They may not redefine a core code.
 
-**ask**: `REVIEW` review against stated criteria · `DRAFT` produce a first version · `DECIDE` choose among options · `RESEARCH` find out · `BUILD` implement · `FIX` repair a named defect · `SUMM` summarise · `PLAN` produce a plan · `TEST` verify · `EXTRACT` pull structured data out
+**ask**: `REVIEW` review against stated criteria · `DRAFT` produce a first version · `DECIDE` choose among options · `RESEARCH` find out · `BUILD` implement · `FIX` repair a named defect · `SUMM` summarise · `PLAN` produce a plan · `TEST` verify · `EXTRACT` pull structured data out · `UNDO` reverse a completed act named in `ctx`
 
-**why**: `NOCAP` no capability · `NOCTX` missing context · `PERM` not permitted · `BUSY` at capacity · `CONFLICT` item owned by another agent · `DUP` duplicate of an open handoff · `VER` unsupported protocol version · `UNK` unknown code in the message · `SCOPE` out of scope · `ERR` runtime error · `TIMEOUT` ran out of time
+**why**: `NOCAP` no capability · `NOCTX` missing context · `PERM` not permitted · `BUSY` at capacity · `CONFLICT` item owned by another agent · `DUP` duplicate of an open handoff · `VER` unsupported protocol version · `UNK` unknown code in the message · `SCOPE` out of scope · `ERR` runtime error · `TIMEOUT` ran out of time · `REVOKED` approval withdrawn · `SUPERSEDED` replaced by a newer handoff · `EXPIRED` past its expiry
 
 **out**: `OK` · `PARTIAL` · `NOOP`
 
@@ -108,7 +110,7 @@ Profiles may extend any of these lists. They may not redefine a core code.
 
 1. **No handover without readback.** An HO transfers ownership only when the receiver sends an RB that passes the sender's check (section 5.1). Until then the sender owns the item. The sender sets the level per handoff with `rb=`: the default envelope echo (`item`, `ask`, `due`) where a misread is cheap to catch later; `rb=exec` where the receiver's next act is irreversible (a payment release, a payee change, anything external) and the profile names execution slots for the ask, `rb=all` where it does not, and in that regime every `ST` or `AN` the receiver will act on is echoed back before it acts; `rb=acc` where the instruction lives in a brief. Before an irreversible act the HO is built from the record by code, or checked against it before it is sent (`check-ho`), and after the act the receiver's DN carries the values as executed, which the sender checks against the plan (`check-dn`, section 5.3). The month-end study measured full readback at 1.6x the traffic of envelope echo with nothing caught in three clean runs, which is why the level belongs to the handoff and not to the team. An RB that does not pass is void; the sender re-issues the HO with `re=` pointing at the void RB. The owner of an item is the `to` of the most recent HO that received a passing RB. No RB within the sender's deadline: the sender re-issues the same HO with `re=` pointing at the original; a receiver that already read it back replies `UN why=DUP`, so a retry cannot create two owners.
 2. **Never guess.** A receiver that meets an unknown version token, type, or enum value replies `UN why=UNK` (or `why=VER`) naming the offending code in the tail. It does not infer a meaning, and it does not substitute a nearby reason such as `NOCAP` or `SCOPE`: those describe the receiver, `UNK` describes the message. An AQ is answered with an AN or refused with UN; it is never left unanswered because the receiver is busy.
-3. **Every reply carries `re=`.** RB, AN, DN, UN and FL always do. Threads are reconstructed from ids.
+3. **Every reply carries `re=`.** RB, AN, DN, UN, FL and CX always do. Threads are reconstructed from ids, and every HO closes exactly once (section 5.4).
 4. **Facts in slots, reasoning in the tail.** A fact that has a slot goes in the slot, never only in the tail. The tail is at most 300 characters; longer content is an artifact referenced by `art=`.
 5. **Two forms, one message.** Every line has a canonical JSON form (section 6). An implementation is conformant when it round-trips the conformance suite in both directions and produces the expected replies.
 
@@ -173,7 +175,28 @@ A handoff before an irreversible act has three checks, and the readback is the m
 
 **The done report.** After the act the DN carries the same execution slots with the values as executed, taken from the tool's result, not from the receiver's intention. The sender checks it against the plan with `check-dn`: the DN answers the HO (receipt), and every execution slot it carries equals the HO's value, or the readback's where the HO left the slot to the receiver and the readback passed; a slot missing from an `out=OK` report fails; `out=NOOP` carries none, since nothing was executed; `out=PARTIAL` carries the ones that were. This is the loop that catches what no readback can: a tool that did something other than what it was told. It only works when the receiver reports what the tool printed, so a legend or a brief says so in those words.
 
+The tool's statement carries `exp=`, the end of its window for confirmation, and `commit` refuses after it: a confirmation that arrives late finds the world it was checked against may have moved (an account closed, an invoice paid elsewhere), so the statement is prepared again instead. A CX for the handoff makes the tool abandon any statement prepared for it.
+
 The execution slots are a profile's: an `exec` map from ask to slot list (section 7). An ask the profile does not list under `exec` gets no tier 5 and no done check beyond the receipt, and `check-rb` says so in a note.
+
+### 5.4 Every handoff closes
+
+A handoff that nobody closes is the protocol's black hole: the sender believes it is in hand, the receiver believes it is held, and a prepared statement waits for a confirmation that may come hours later. So every HO ends exactly once, with one of four messages:
+
+- `DN`, `UN` or `FL` from the receiver; or
+- `CX` from the sender, which withdraws the handoff (`why=REVOKED` when the approval was withdrawn, `SUPERSEDED` when a newer HO replaces it, `EXPIRED` when its window passed, `TIMEOUT` when no readback came). The receiver abandons anything prepared for it and answers `AN re=<CX id> val=Y`. If the act had already run, it answers with the act's DN instead: a cancel cannot unsay an act, and the sender then decides whether to reverse it.
+
+A held handoff, one whose readback failed and was not re-sent, is closed by the sender with a CX, never left. An HO with `exp=` that is still open after it is orphaned, as is one open after its `due=` date. A DN whose values do not match the plan (section 5.3) is reversed with a new HO, `ask=UNDO ctx=<the DN's id>`, which carries its own readback and checks.
+
+`check-thread` takes a conversation in the order it was sent and reports: an HO still open past its `exp=` or `due=`, an HO closed more than once, a DN reporting the act done after a CX (`out=NOOP`, nothing ran, is the correct answer to a cancel that arrived first), and a CX that does not come from the HO's sender to its receiver. A CX not yet acknowledged, or an HO open and in time, is a note.
+
+```
+RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec ... exp=20261002T1700Z
+RW1 CX scheduler-2 re=scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 why=REVOKED // FD-0929 withdrawn
+RW1 AN payer-3 re=scheduler-2 p=pay from=payer to=scheduler val=Y // statement abandoned; nothing paid
+```
+
+The cancel, the expiry and the closing rule came from a reader's point after study 7 was published: the two-phase tool held its statement indefinitely and the protocol gave the sender no way to withdraw a handoff. They are design, with conformance cases; no study has measured them yet.
 
 ## 6. JSON form
 

@@ -20,7 +20,8 @@
         "ctx",
         "rb",
         "acc",
-        "keys"
+        "keys",
+        "exp"
       ]
     },
     "RB": {
@@ -39,7 +40,8 @@
         "do",
         "acc",
         "not",
-        "asm"
+        "asm",
+        "exp"
       ]
     },
     "AQ": {
@@ -123,6 +125,18 @@
         "art",
         "retry"
       ]
+    },
+    "CX": {
+      "name": "cancel",
+      "required": [
+        "re",
+        "from",
+        "to",
+        "item"
+      ],
+      "optional": [
+        "why"
+      ]
     }
   },
   "slots": {
@@ -156,7 +170,8 @@
     "do": "token",
     "not": "list:token",
     "asm": "list:token",
-    "keys": "list:token"
+    "keys": "list:token",
+    "exp": "time"
   },
   "enums": {
     "ask": {
@@ -169,7 +184,8 @@
       "SUMM": "summarise",
       "PLAN": "produce a plan",
       "TEST": "verify",
-      "EXTRACT": "pull structured data out"
+      "EXTRACT": "pull structured data out",
+      "UNDO": "reverse a completed act named in ctx"
     },
     "why": {
       "NOCAP": "no capability",
@@ -182,7 +198,10 @@
       "UNK": "unknown code in the message",
       "SCOPE": "out of scope",
       "ERR": "runtime error",
-      "TIMEOUT": "ran out of time"
+      "TIMEOUT": "ran out of time",
+      "REVOKED": "approval withdrawn",
+      "SUPERSEDED": "replaced by a newer handoff",
+      "EXPIRED": "past its expiry"
     },
     "out": {
       "OK": "complete",

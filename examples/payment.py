@@ -3,12 +3,14 @@
     pip install rogerwilco
     python examples/payment.py            # roger, wilco: the payment goes out
     python examples/payment.py --fault    # the tool resolves the wrong account; the check stops it before any money moves
+    python examples/payment.py --cancel   # the approval is withdrawn before confirmation; the sender cancels, nothing is paid
 
 The scheduler hands the job over as a line; the line is checked against the approved record before it is sent.
 The payment tool prepares the payment and states, as a readback line, exactly what it will execute; the scheduler
 checks that statement and only then confirms. The tool commits what it stated and nothing else, and its done report
 is checked against the plan afterwards.
 """
+import datetime as dt
 import secrets
 import sys
 
@@ -50,26 +52,48 @@ class PaymentTool:
         if self.fault:
             values["acct"] = "40-12-88/61102983"   # the tool resolves a lookalike account
         token = secrets.token_hex(4)
-        self.pending[token] = values
+        # the statement is good for five minutes; a confirmation after that finds a world that may have moved
+        exp = (dt.datetime.now(dt.timezone.utc) + dt.timedelta(minutes=5)).strftime("%Y%m%dT%H%MZ")
+        self.pending[token] = {"values": values, "exp": exp, "ho": ho["id"]}
         statement = rw.encode({"type": "RB", "id": "payer-1", "re": ho["id"], "from": "payer", "to": ho["from"],
                                "item": ho["item"], "slots": {"p": PROFILE, "ask": "PAY", "h": rw.digest(ho_line, PROFILE),
-                                                             **values}}, PROFILE)
+                                                             "exp": exp, **values}}, PROFILE)
         return token, statement
+
+    def cancel(self, cx_line: str) -> str:
+        """A CX from the sender: abandon anything prepared for that handoff, and acknowledge."""
+        cx, errors, _ = rw.parse(cx_line, PROFILE)
+        if errors or cx["type"] != "CX":
+            raise ValueError(f"refused: {errors or 'not a CX'}")
+        for token in [t for t, p in self.pending.items() if p["ho"] == cx["re"]]:
+            del self.pending[token]
+        return rw.encode({"type": "AN", "id": "payer-3", "re": cx["id"], "from": "payer", "to": cx["from"],
+                          "slots": {"p": PROFILE, "val": "Y"}, "tail": "statement abandoned; nothing paid"}, PROFILE)
 
     def commit(self, token: str, confirmed: bool) -> str:
         if not confirmed or token not in self.pending:
             raise PermissionError("no confirmation for this token: nothing is paid")
-        values = self.pending.pop(token)
+        if rw.now_utc() >= self.pending[token]["exp"]:
+            del self.pending[token]
+            raise PermissionError("the statement expired before it was confirmed: prepare again")
+        values = self.pending.pop(token)["values"]
         # ... call your bank here with `values`, and nothing else ...
         return rw.encode({"type": "DN", "id": "payer-2", "re": "scheduler-1", "from": "payer", "to": "scheduler",
                           "item": RECORD["item"], "slots": {"p": PROFILE, "out": "OK", **values}}, PROFILE)
 
 
 # ---------------------------------------------------------------- the flow
-def main(fault: bool) -> int:
+def main(fault: bool, cancel: bool = False) -> int:
     ho = hand_over()                                                  # check 1: the line against the record
     tool = PaymentTool(fault)
     token, statement = tool.prepare(ho)
+    if cancel:                                                        # the approval is withdrawn before confirmation
+        cx = rw.encode({"type": "CX", "id": "scheduler-2", "re": "scheduler-1", "from": "scheduler", "to": "payer",
+                        "item": RECORD["item"], "slots": {"p": PROFILE, "why": "REVOKED"}}, PROFILE)
+        ack = tool.cancel(cx)
+        problems, _notes = rw.check_thread([ho, statement, cx, ack], PROFILE)   # every handoff closed
+        print("cancelled:" if not problems else "open:", problems or ack)
+        return 1 if problems else 0
     problems, _notes = rw.check_rb_full(ho, statement, PROFILE)       # check 2: the tool's statement against the plan
     if problems:
         print("held:", problems)
@@ -81,4 +105,4 @@ def main(fault: bool) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main("--fault" in sys.argv))
+    sys.exit(main("--fault" in sys.argv, "--cancel" in sys.argv))

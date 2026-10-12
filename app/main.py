@@ -54,6 +54,12 @@ class CheckDNBody(BaseModel):
                                                      "values the HO did not carry; its values are then the plan.")
 
 
+class CheckThreadBody(BaseModel):
+    lines: str | list[str] = Field(description="The conversation, one message per row, in the order sent.")
+    profile: str | None = Field(default=None, description=PROFILE_HELP)
+    now: str | None = Field(default=None, description="The time to judge expiry at, YYYYMMDDTHHMMZ in UTC. Default: now.")
+
+
 class MakeRBBody(BaseModel):
     ho: str = Field(description="The HO line to read back.", examples=[EXAMPLE_HO])
     id: str = Field(description="Message id for the RB, for example writer-01.")
@@ -186,6 +192,11 @@ def check_ho(body: CheckHOBody):
 @router.post("/check-dn", summary="Check a done report against the plan")
 def check_dn(body: CheckDNBody):
     return svc.check_dn(body.ho, body.dn, body.profile, body.rb)
+
+
+@router.post("/check-thread", summary="Check that every handoff in a conversation closed")
+def check_thread_route(body: CheckThreadBody):
+    return svc.check_thread(body.lines, body.profile, body.now)
 
 
 @router.post("/make-rb", summary="Build a readback for an HO")

@@ -96,12 +96,14 @@ problems, notes = rw.check_dn(ho, dn, &quot;pay&quot;, rb_line=statement)</code>
     pip install rogerwilco
     python examples/payment.py            # roger, wilco: the payment goes out
     python examples/payment.py --fault    # the tool resolves the wrong account; the check stops it before any money moves
+    python examples/payment.py --cancel   # the approval is withdrawn before confirmation; the sender cancels, nothing is paid
 
 The scheduler hands the job over as a line; the line is checked against the approved record before it is sent.
 The payment tool prepares the payment and states, as a readback line, exactly what it will execute; the scheduler
 checks that statement and only then confirms. The tool commits what it stated and nothing else, and its done report
 is checked against the plan afterwards.
 &quot;&quot;&quot;
+import datetime as dt
 import secrets
 import sys
 
@@ -143,26 +145,48 @@ class PaymentTool:
         if self.fault:
             values[&quot;acct&quot;] = &quot;40-12-88/61102983&quot;   # the tool resolves a lookalike account
         token = secrets.token_hex(4)
-        self.pending[token] = values
+        # the statement is good for five minutes; a confirmation after that finds a world that may have moved
+        exp = (dt.datetime.now(dt.timezone.utc) + dt.timedelta(minutes=5)).strftime(&quot;%Y%m%dT%H%MZ&quot;)
+        self.pending[token] = {&quot;values&quot;: values, &quot;exp&quot;: exp, &quot;ho&quot;: ho[&quot;id&quot;]}
         statement = rw.encode({&quot;type&quot;: &quot;RB&quot;, &quot;id&quot;: &quot;payer-1&quot;, &quot;re&quot;: ho[&quot;id&quot;], &quot;from&quot;: &quot;payer&quot;, &quot;to&quot;: ho[&quot;from&quot;],
                                &quot;item&quot;: ho[&quot;item&quot;], &quot;slots&quot;: {&quot;p&quot;: PROFILE, &quot;ask&quot;: &quot;PAY&quot;, &quot;h&quot;: rw.digest(ho_line, PROFILE),
-                                                             **values}}, PROFILE)
+                                                             &quot;exp&quot;: exp, **values}}, PROFILE)
         return token, statement
+
+    def cancel(self, cx_line: str) -&gt; str:
+        &quot;&quot;&quot;A CX from the sender: abandon anything prepared for that handoff, and acknowledge.&quot;&quot;&quot;
+        cx, errors, _ = rw.parse(cx_line, PROFILE)
+        if errors or cx[&quot;type&quot;] != &quot;CX&quot;:
+            raise ValueError(f&quot;refused: {errors or &#x27;not a CX&#x27;}&quot;)
+        for token in [t for t, p in self.pending.items() if p[&quot;ho&quot;] == cx[&quot;re&quot;]]:
+            del self.pending[token]
+        return rw.encode({&quot;type&quot;: &quot;AN&quot;, &quot;id&quot;: &quot;payer-3&quot;, &quot;re&quot;: cx[&quot;id&quot;], &quot;from&quot;: &quot;payer&quot;, &quot;to&quot;: cx[&quot;from&quot;],
+                          &quot;slots&quot;: {&quot;p&quot;: PROFILE, &quot;val&quot;: &quot;Y&quot;}, &quot;tail&quot;: &quot;statement abandoned; nothing paid&quot;}, PROFILE)
 
     def commit(self, token: str, confirmed: bool) -&gt; str:
         if not confirmed or token not in self.pending:
             raise PermissionError(&quot;no confirmation for this token: nothing is paid&quot;)
-        values = self.pending.pop(token)
+        if rw.now_utc() &gt;= self.pending[token][&quot;exp&quot;]:
+            del self.pending[token]
+            raise PermissionError(&quot;the statement expired before it was confirmed: prepare again&quot;)
+        values = self.pending.pop(token)[&quot;values&quot;]
         # ... call your bank here with `values`, and nothing else ...
         return rw.encode({&quot;type&quot;: &quot;DN&quot;, &quot;id&quot;: &quot;payer-2&quot;, &quot;re&quot;: &quot;scheduler-1&quot;, &quot;from&quot;: &quot;payer&quot;, &quot;to&quot;: &quot;scheduler&quot;,
                           &quot;item&quot;: RECORD[&quot;item&quot;], &quot;slots&quot;: {&quot;p&quot;: PROFILE, &quot;out&quot;: &quot;OK&quot;, **values}}, PROFILE)
 
 
 # ---------------------------------------------------------------- the flow
-def main(fault: bool) -&gt; int:
+def main(fault: bool, cancel: bool = False) -&gt; int:
     ho = hand_over()                                                  # check 1: the line against the record
     tool = PaymentTool(fault)
     token, statement = tool.prepare(ho)
+    if cancel:                                                        # the approval is withdrawn before confirmation
+        cx = rw.encode({&quot;type&quot;: &quot;CX&quot;, &quot;id&quot;: &quot;scheduler-2&quot;, &quot;re&quot;: &quot;scheduler-1&quot;, &quot;from&quot;: &quot;scheduler&quot;, &quot;to&quot;: &quot;payer&quot;,
+                        &quot;item&quot;: RECORD[&quot;item&quot;], &quot;slots&quot;: {&quot;p&quot;: PROFILE, &quot;why&quot;: &quot;REVOKED&quot;}}, PROFILE)
+        ack = tool.cancel(cx)
+        problems, _notes = rw.check_thread([ho, statement, cx, ack], PROFILE)   # every handoff closed
+        print(&quot;cancelled:&quot; if not problems else &quot;open:&quot;, problems or ack)
+        return 1 if problems else 0
     problems, _notes = rw.check_rb_full(ho, statement, PROFILE)       # check 2: the tool&#x27;s statement against the plan
     if problems:
         print(&quot;held:&quot;, problems)
@@ -174,18 +198,22 @@ def main(fault: bool) -&gt; int:
 
 
 if __name__ == &quot;__main__&quot;:
-    sys.exit(main(&quot;--fault&quot; in sys.argv))
+    sys.exit(main(&quot;--fault&quot; in sys.argv, &quot;--cancel&quot; in sys.argv))
 </code></pre>
 <pre class="code" data-lang="sh"><code>python examples/payment.py
 python examples/payment.py --fault</code></pre>
 <pre class="reply">roger, wilco: RW1 DN payer-2 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 out=OK p=pay sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929
 held: [&#x27;tier5 execution: acct mismatch: HO 40-12-88/61102938 vs RB 40-12-88/61102983&#x27;]</pre>
+<h2 id="cancel">Cancel, expiry, and nothing left open</h2>
+<p>A handoff must end. Every job closes exactly once: done, unable or failed from the receiver, or a cancel, <code>CX</code>, from the sender. If the approval is withdrawn before the tool commits, send a <code>CX</code>; the tool abandons what it prepared and acknowledges. If the act already ran, the receiver answers with the done report instead, and a mismatch is reversed with a new job, <code>ask=UNDO</code>. The tool's statement also carries <code>exp=</code>, the end of its window, and <code>commit</code> refuses after it, so a confirmation that arrives late cannot pay against a world that has moved. <code>rw.check_thread(lines, profile)</code> takes a conversation and reports any job left open past its time, closed twice, or acted on after a cancel.</p>
+<pre class="code" data-lang="sh"><code>python examples/payment.py --cancel</code></pre>
+<pre class="reply">cancelled: RW1 AN payer-3 re=scheduler-2 from=payer to=scheduler val=Y p=pay // statement abandoned; nothing paid</pre>
 <h2 id="legend">Teach the receiving model the format</h2>
 <p>A model that has to read or write lines needs about 400 tokens of legend in its prompt and nothing installed. Pass the profile so it gets the domain's codes.</p>
 <pre class="code" data-lang="python"><code>system_prompt += rw.legend(&quot;pay&quot;)</code></pre>
 <pre class="reply">rogerwilco RW1. One line per message: RW1 &lt;TYPE&gt; &lt;id&gt; [re=&lt;id&gt;] from=&lt;agent&gt; to=&lt;agent&gt; [item=&lt;ref&gt;] key=value ... [// tail]. No spaces in values; lists join with +; dates YYYYMMDD; tail is free text, 300 chars max.
-HO handoff: requires from to item ask; optional re due pri conf keep art ctx rb acc keys sup po amt cur kind dec flag appr var n src net vat acct paid ref eff apref addr
-RB readback: requires re from to item ask; optional due eta h do acc not asm sup po amt cur kind dec flag appr var n src net vat acct paid ref eff apref addr prev
+HO handoff: requires from to item ask; optional re due pri conf keep art ctx rb acc keys exp sup po amt cur kind dec flag appr var n src net vat acct paid ref eff apref addr
+RB readback: requires re from to item ask; optional due eta h do acc not asm exp sup po amt cur kind dec flag appr var n src net vat acct paid ref eff apref addr prev
 ...</pre>
 <p>Where the receiver is a model that cannot run your two-phase tool, it can still read back the values it will act with: <code>rw.make_rb(ho, "payer-1", "pay")</code> builds a correct readback for a receiver that runs code, and the sender checks it the same way. On strong models this caught little, because they read well; on a weak model, the tool's statement did better than any readback the model wrote.</p>
 <h2 id="profiles">Your own domain: profiles</h2>
@@ -218,7 +246,7 @@ Add tests that plant a wrong value at each of the three checks and assert it is 
 <h2 id="mcp">Trying it inside a chat client</h2>
 <p>The same checks are exposed as MCP tools, so you can try the format from Claude or another MCP client without writing code: <code>claude mcp add --transport http rogerwilco https://rogerwilco.crox.io/mcp</code>. This is for exploring, not for integration: checks that guard money belong in your own code path, where a model cannot skip them.</p>
 <h2 id="reference">The functions</h2>
-<div class="tw"><table><thead><tr><th>Function</th><th>Does</th><th>Returns</th></tr></thead><tbody><tr><td><code>encode(msg, profile)</code></td><td>JSON form to a line, validated</td><td>the line</td></tr><tr><td><code>parse(line, profile)</code></td><td>a line to its JSON form</td><td><code>(message, errors, warnings)</code></td></tr><tr><td><code>check_ho(ho, record, profile)</code></td><td>check 1: the line against the record</td><td><code>(problems, notes)</code></td></tr><tr><td><code>check_rb_full(ho, rb, profile)</code></td><td>check 2: a readback or a tool's statement against the line</td><td><code>(problems, notes)</code></td></tr><tr><td><code>check_dn(ho, dn, profile, rb_line=)</code></td><td>check 3: what was done against the plan</td><td><code>(problems, notes)</code></td></tr><tr><td><code>make_rb(ho, id, profile)</code></td><td>a correct readback, for a receiver that runs code</td><td>the RB line</td></tr><tr><td><code>digest(line, profile)</code></td><td>the fingerprint <code>h=</code> of a line</td><td>12 hex characters</td></tr><tr><td><code>legend(profile)</code></td><td>the prompt text another model needs</td><td>text</td></tr></tbody></table></div>
+<div class="tw"><table><thead><tr><th>Function</th><th>Does</th><th>Returns</th></tr></thead><tbody><tr><td><code>encode(msg, profile)</code></td><td>JSON form to a line, validated</td><td>the line</td></tr><tr><td><code>parse(line, profile)</code></td><td>a line to its JSON form</td><td><code>(message, errors, warnings)</code></td></tr><tr><td><code>check_ho(ho, record, profile)</code></td><td>check 1: the line against the record</td><td><code>(problems, notes)</code></td></tr><tr><td><code>check_rb_full(ho, rb, profile)</code></td><td>check 2: a readback or a tool's statement against the line</td><td><code>(problems, notes)</code></td></tr><tr><td><code>check_dn(ho, dn, profile, rb_line=)</code></td><td>check 3: what was done against the plan</td><td><code>(problems, notes)</code></td></tr><tr><td><code>make_rb(ho, id, profile)</code></td><td>a correct readback, for a receiver that runs code</td><td>the RB line</td></tr><tr><td><code>digest(line, profile)</code></td><td>the fingerprint <code>h=</code> of a line</td><td>12 hex characters</td></tr><tr><td><code>check_thread(lines, profile)</code></td><td>every job closed: done, unable, failed or cancelled; none open past its time</td><td><code>(problems, notes)</code></td></tr><tr><td><code>legend(profile)</code></td><td>the prompt text another model needs</td><td>text</td></tr></tbody></table></div>
 <p>No problems means go. Anything in problems means stop: re-send the job from the record, or, after the act, reverse it. Notes are assumptions worth logging. <a href="/lines">What a line is</a> explains every message type; the <a href="/spec">spec</a> is the rulebook; the <a href="/skill">skill</a> is the file an agent reads.</p>
 <p class="muted">This page as Markdown: <a href="/quickstart.md">/quickstart.md</a>. For a model: <a href="/llms.txt">/llms.txt</a>, <a href="/llms-full.txt">/llms-full.txt</a>.</p>
 </main>

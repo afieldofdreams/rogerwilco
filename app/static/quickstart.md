@@ -113,12 +113,14 @@ A tool that states one thing and does another at the last moment is caught here,
     pip install rogerwilco
     python examples/payment.py            # roger, wilco: the payment goes out
     python examples/payment.py --fault    # the tool resolves the wrong account; the check stops it before any money moves
+    python examples/payment.py --cancel   # the approval is withdrawn before confirmation; the sender cancels, nothing is paid
 
 The scheduler hands the job over as a line; the line is checked against the approved record before it is sent.
 The payment tool prepares the payment and states, as a readback line, exactly what it will execute; the scheduler
 checks that statement and only then confirms. The tool commits what it stated and nothing else, and its done report
 is checked against the plan afterwards.
 """
+import datetime as dt
 import secrets
 import sys
 
@@ -160,26 +162,48 @@ class PaymentTool:
         if self.fault:
             values["acct"] = "40-12-88/61102983"   # the tool resolves a lookalike account
         token = secrets.token_hex(4)
-        self.pending[token] = values
+        # the statement is good for five minutes; a confirmation after that finds a world that may have moved
+        exp = (dt.datetime.now(dt.timezone.utc) + dt.timedelta(minutes=5)).strftime("%Y%m%dT%H%MZ")
+        self.pending[token] = {"values": values, "exp": exp, "ho": ho["id"]}
         statement = rw.encode({"type": "RB", "id": "payer-1", "re": ho["id"], "from": "payer", "to": ho["from"],
                                "item": ho["item"], "slots": {"p": PROFILE, "ask": "PAY", "h": rw.digest(ho_line, PROFILE),
-                                                             **values}}, PROFILE)
+                                                             "exp": exp, **values}}, PROFILE)
         return token, statement
+
+    def cancel(self, cx_line: str) -> str:
+        """A CX from the sender: abandon anything prepared for that handoff, and acknowledge."""
+        cx, errors, _ = rw.parse(cx_line, PROFILE)
+        if errors or cx["type"] != "CX":
+            raise ValueError(f"refused: {errors or 'not a CX'}")
+        for token in [t for t, p in self.pending.items() if p["ho"] == cx["re"]]:
+            del self.pending[token]
+        return rw.encode({"type": "AN", "id": "payer-3", "re": cx["id"], "from": "payer", "to": cx["from"],
+                          "slots": {"p": PROFILE, "val": "Y"}, "tail": "statement abandoned; nothing paid"}, PROFILE)
 
     def commit(self, token: str, confirmed: bool) -> str:
         if not confirmed or token not in self.pending:
             raise PermissionError("no confirmation for this token: nothing is paid")
-        values = self.pending.pop(token)
+        if rw.now_utc() >= self.pending[token]["exp"]:
+            del self.pending[token]
+            raise PermissionError("the statement expired before it was confirmed: prepare again")
+        values = self.pending.pop(token)["values"]
         # ... call your bank here with `values`, and nothing else ...
         return rw.encode({"type": "DN", "id": "payer-2", "re": "scheduler-1", "from": "payer", "to": "scheduler",
                           "item": RECORD["item"], "slots": {"p": PROFILE, "out": "OK", **values}}, PROFILE)
 
 
 # ---------------------------------------------------------------- the flow
-def main(fault: bool) -> int:
+def main(fault: bool, cancel: bool = False) -> int:
     ho = hand_over()                                                  # check 1: the line against the record
     tool = PaymentTool(fault)
     token, statement = tool.prepare(ho)
+    if cancel:                                                        # the approval is withdrawn before confirmation
+        cx = rw.encode({"type": "CX", "id": "scheduler-2", "re": "scheduler-1", "from": "scheduler", "to": "payer",
+                        "item": RECORD["item"], "slots": {"p": PROFILE, "why": "REVOKED"}}, PROFILE)
+        ack = tool.cancel(cx)
+        problems, _notes = rw.check_thread([ho, statement, cx, ack], PROFILE)   # every handoff closed
+        print("cancelled:" if not problems else "open:", problems or ack)
+        return 1 if problems else 0
     problems, _notes = rw.check_rb_full(ho, statement, PROFILE)       # check 2: the tool's statement against the plan
     if problems:
         print("held:", problems)
@@ -191,7 +215,7 @@ def main(fault: bool) -> int:
 
 
 if __name__ == "__main__":
-    sys.exit(main("--fault" in sys.argv))
+    sys.exit(main("--fault" in sys.argv, "--cancel" in sys.argv))
 
 ```
 
@@ -205,6 +229,18 @@ roger, wilco: RW1 DN payer-2 re=scheduler-1 from=payer to=scheduler item=inv:MD-
 held: ['tier5 execution: acct mismatch: HO 40-12-88/61102938 vs RB 40-12-88/61102983']
 ```
 
+## Cancel, expiry, and nothing left open
+
+A handoff must end. Every job closes exactly once: done, unable or failed from the receiver, or a cancel, `CX`, from the sender. If the approval is withdrawn before the tool commits, send a `CX`; the tool abandons what it prepared and acknowledges. If the act already ran, the receiver answers with the done report instead, and a mismatch is reversed with a new job, `ask=UNDO`. The tool's statement also carries `exp=`, the end of its window, and `commit` refuses after it, so a confirmation that arrives late cannot pay against a world that has moved. `rw.check_thread(lines, profile)` takes a conversation and reports any job left open past its time, closed twice, or acted on after a cancel.
+
+```sh
+python examples/payment.py --cancel
+```
+
+```
+cancelled: RW1 AN payer-3 re=scheduler-2 from=payer to=scheduler val=Y p=pay // statement abandoned; nothing paid
+```
+
 ## Teach the receiving model the format
 
 A model that has to read or write lines needs about 400 tokens of legend in its prompt and nothing installed. Pass the profile so it gets the domain's codes.
@@ -215,8 +251,8 @@ system_prompt += rw.legend("pay")
 
 ```
 rogerwilco RW1. One line per message: RW1 <TYPE> <id> [re=<id>] from=<agent> to=<agent> [item=<ref>] key=value ... [// tail]. No spaces in values; lists join with +; dates YYYYMMDD; tail is free text, 300 chars max.
-HO handoff: requires from to item ask; optional re due pri conf keep art ctx rb acc keys sup po amt cur kind dec flag appr var n src net vat acct paid ref eff apref addr
-RB readback: requires re from to item ask; optional due eta h do acc not asm sup po amt cur kind dec flag appr var n src net vat acct paid ref eff apref addr prev
+HO handoff: requires from to item ask; optional re due pri conf keep art ctx rb acc keys exp sup po amt cur kind dec flag appr var n src net vat acct paid ref eff apref addr
+RB readback: requires re from to item ask; optional due eta h do acc not asm exp sup po amt cur kind dec flag appr var n src net vat acct paid ref eff apref addr prev
 ...
 ```
 
@@ -280,6 +316,7 @@ The same checks are exposed as MCP tools, so you can try the format from Claude 
 | `check_dn(ho, dn, profile, rb_line=)` | check 3: what was done against the plan | `(problems, notes)` |
 | `make_rb(ho, id, profile)` | a correct readback, for a receiver that runs code | the RB line |
 | `digest(line, profile)` | the fingerprint `h=` of a line | 12 hex characters |
+| `check_thread(lines, profile)` | every job closed: done, unable, failed or cancelled; none open past its time | `(problems, notes)` |
 | `legend(profile)` | the prompt text another model needs | text |
 
 No problems means go. Anything in problems means stop: re-send the job from the record, or, after the act, reverse it. Notes are assumptions worth logging. [What a line is](https://rogerwilco.crox.io/lines) explains every message type; the [spec](https://rogerwilco.crox.io/spec) is the rulebook; the [skill](https://rogerwilco.crox.io/skill) is the file an agent reads.

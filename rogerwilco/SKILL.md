@@ -43,7 +43,7 @@ RW1 <TYPE> <id> [re=<id>] from=<agent> to=<agent> [item=<ref>] [key=value ...] [
 - `item` is a reference to the thing under discussion: `gh:owner/repo#42`, `pensive:4102`, `url:...`, `file:...`, `sha256:...`.
 - `to=human` escalates to the human principal.
 
-## Eight types
+## Nine types
 
 | Type | Use | Required |
 |---|---|---|
@@ -55,13 +55,14 @@ RW1 <TYPE> <id> [re=<id>] from=<agent> to=<agent> [item=<ref>] [key=value ...] [
 | `DN` | done | `re from to item out`, and after an act asked with `rb=exec` the execution slots with the values as executed |
 | `UN` | unable, will not take it | `re from to why` |
 | `FL` | took it and it failed | `re from to item why` |
+| `CX` | the sender withdraws a handoff | `re from to item`, and `why` (`REVOKED` `SUPERSEDED` `EXPIRED` `TIMEOUT`) |
 
-Optional slots: `rb` readback level on an HO: `echo` (default), `all`, `acc`, `plan`, `exec`, plus slot names to echo (`rb=acc+pri`) · `keys` on an HO: the constraint keys the sender will check (`keys=len+lang+must+no`), so the receiver reports those dimensions · `acc` acceptance criteria as `key:value` tokens (`len:120w+lang:uk+must:monday-problem+no:em-dash`) · `do` what you will produce · `not` what you exclude · `asm` assumptions you are making · `h` digest of the HO, code-side receivers only · `due` `by` (dates) · `pri` 1–5, 1 highest · `conf` L/M/H · `keep` agents staying involved · `art` artifact refs · `ctx` earlier message ids · `eta` · `pct` 0–100 · `blk` blockers · `alt` alternative agent · `next` suggested next ask · `retry` Y/N.
+Optional slots: `rb` readback level on an HO: `echo` (default), `all`, `acc`, `plan`, `exec`, plus slot names to echo (`rb=acc+pri`) · `keys` on an HO: the constraint keys the sender will check (`keys=len+lang+must+no`), so the receiver reports those dimensions · `acc` acceptance criteria as `key:value` tokens (`len:120w+lang:uk+must:monday-problem+no:em-dash`) · `do` what you will produce · `not` what you exclude · `asm` assumptions you are making · `h` digest of the HO, code-side receivers only · `due` `by` (dates) · `exp` the latest moment to act or confirm, `YYYYMMDDTHHMMZ` UTC · `pri` 1–5, 1 highest · `conf` L/M/H · `keep` agents staying involved · `art` artifact refs · `ctx` earlier message ids · `eta` · `pct` 0–100 · `blk` blockers · `alt` alternative agent · `next` suggested next ask · `retry` Y/N.
 
 ## Codes
 
-- `ask`: `REVIEW` `DRAFT` `DECIDE` `RESEARCH` `BUILD` `FIX` `SUMM` `PLAN` `TEST` `EXTRACT`
-- `why`: `NOCAP` no capability · `NOCTX` missing context · `PERM` not permitted · `BUSY` · `CONFLICT` owned elsewhere · `DUP` · `VER` bad version · `UNK` unknown code · `SCOPE` · `ERR` · `TIMEOUT`
+- `ask`: `REVIEW` `DRAFT` `DECIDE` `RESEARCH` `BUILD` `FIX` `SUMM` `PLAN` `TEST` `EXTRACT` `UNDO` (reverse the act named in `ctx`)
+- `why`: `NOCAP` no capability · `NOCTX` missing context · `PERM` not permitted · `BUSY` · `CONFLICT` owned elsewhere · `DUP` · `VER` bad version · `UNK` unknown code · `SCOPE` · `ERR` · `TIMEOUT` · `REVOKED` approval withdrawn · `SUPERSEDED` · `EXPIRED`
 - `out`: `OK` `PARTIAL` `NOOP`
 - `need`: `ENUM` `TEXT` `NUM` `DATE` `YESNO`. For `TEXT`, reply `val=tail` and put the answer in the tail.
 
@@ -75,7 +76,7 @@ A profile adds domain codes and slots; a message using one carries `p=<profile>`
    **Before an irreversible act, three checks.** Build the HO from the record by code, or check it against the record before you send it (`check-ho`): a value that differs from the record, a value the record holds that the line omits, or a missing `rb=exec` stops the line going out. When you receive an HO with `rb=exec`, read back the execution slots with the values you will actually use, resolved from your own records where the HO does not give them (the account on file; for a bank change, the account you are replacing in `prev=`); if a value you resolved contradicts the HO, ask instead of acting. As the sender, check a resolved value against your record, and clear the act with `AN val=Y` only when the readback passes. After the act, report what the tool did, not what you meant: the DN carries the same slots with the values from the tool's result, and the sender checks it against the plan (`check-dn`). That done check is the only loop that catches a tool doing something other than what it was told. Where the act tool can prepare before it commits, the readback is the tool's prepared statement, not your own values: relay the line the tool printed unchanged, compare it first with the call you made and abandon and ask if they differ, and commit only the token the sender confirmed.
    **Readback is comprehension, not recall.** Echoing slots proves you saw them. When the HO says `rb=acc` or `rb=plan`, read the brief and any `art=` it points at, derive the acceptance criteria yourself, and send them as `acc=` (`len:120w+tone:plain+no:em-dash+must:monday-problem`); add `do=` for `plan`; put anything you are excluding in `not=` and anything the brief left open in `asm=`; paraphrase the task in the tail. The sender compares your `acc=` by key with criteria it kept to itself: a different value is a contradiction and a missing key is a gap, both fail the readback; an extra key is an assumption the sender will confirm. When you send an HO whose instruction lives in the tail or an artifact, ask for `rb=acc`, name the keys you will check with `keys=` (dimensions only, never the values), and write your criteria down first using the closed key set.
 2. **Never guess.** Unknown version, type or code: reply `UN why=UNK` (or `why=VER`) and name the code in the tail. `UNK` describes the message; do not substitute `NOCAP` or `SCOPE`, which describe you. An AQ always gets an AN (or a UN); never leave a question unanswered because you are busy.
-3. **Every reply carries `re=`.** RB, AN, DN, UN, FL always. Reconstruct threads from ids, not from position.
+3. **Every reply carries `re=`.** RB, AN, DN, UN, FL, CX always. Reconstruct threads from ids, not from position. **Every HO closes exactly once**: DN, UN or FL from you as receiver, or a CX from the sender. On a CX, abandon anything prepared for it and answer `AN val=Y`; if the act already ran, send its DN instead. Never act on an HO, or confirm a tool's statement, past its `exp=`. As a sender, close a handoff you are holding with a CX rather than leaving it, and reverse a DN that did not match the plan with a new HO `ask=UNDO ctx=<DN id>`. `check-thread` finds any handoff left open.
 4. **Facts in slots, reasoning in the tail.** If a fact has a slot, it goes in the slot. Tail is 300 characters max.
 5. **One message, two forms.** The line and its JSON twin are equivalent (see SPEC §6). Use whichever your side handles better; the codec maps between them.
 
