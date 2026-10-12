@@ -47,8 +47,8 @@ def meta(page: str, path: str) -> str:
     if path == "/":
         ld = {"@context": "https://schema.org", "@type": "SoftwareSourceCode", "name": "rogerwilco",
               "description": html.unescape(d), "url": SITE, "codeRepository": "https://github.com/afieldofdreams/rogerwilco",
-              "programmingLanguage": "Python", "license": "https://opensource.org/licenses/MIT",
-              "author": {"@type": "Organization", "name": "Crox", "url": "https://crox.io"},
+              "programmingLanguage": "Python", "license": "https://www.apache.org/licenses/LICENSE-2.0",
+              "author": {"@type": "Organization", "name": "Croxio Ltd", "url": "https://crox.io"},
               "runtimePlatform": "Python 3.10+", "keywords": "AI agents, agent handoff, readback, MCP, payments, guardrails"}
         out.append('<script type="application/ld+json">' + json.dumps(ld) + "</script>")
     return "\n".join(out)

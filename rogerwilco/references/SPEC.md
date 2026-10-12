@@ -2,7 +2,7 @@
 
 A one-line, typed, closed-vocabulary message format for handing work between agents and asking them bounded questions. Any agent that can read a line of text can use it. Facts go in slots. Reasoning goes in the tail.
 
-Status: draft v0.1, 28 September 2026. Author: Adam Field, Croxio Ltd. Licence: MIT.
+Status: draft v0.1, 28 September 2026. Author: Adam Field, Croxio Ltd. Licence: Apache 2.0.
 
 ## 1. Design goals
 

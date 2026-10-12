@@ -308,7 +308,7 @@ PAGES = ["/", "/quickstart", "/demo", "/lines", "/profiles", "/research", "/abou
 
 LLMS = f"""# rogerwilco
 
-> rogerwilco is a Python library and protocol (RW1) that puts three program-run checks around an AI agent's irreversible actions, after aviation's readback: a job travels as one typed line; the line is checked against the approved record before it is sent; the tool that acts states exactly what it will do, and that statement is checked before it runs; what it did is checked afterwards. `pip install rogerwilco`. Standard library only. MIT licence.
+> rogerwilco is a Python library and protocol (RW1) that puts three program-run checks around an AI agent's irreversible actions, after aviation's readback: a job travels as one typed line; the line is checked against the approved record before it is sent; the tool that acts states exactly what it will do, and that statement is checked before it runs; what it did is checked afterwards. `pip install rogerwilco`. Standard library only. Apache 2.0 licence.
 
 Use it when an agent pays, changes bank details, sends an external email, deletes or deploys: anything that cannot be undone. The receiving model needs only a short legend in its prompt.
 
