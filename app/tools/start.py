@@ -339,7 +339,7 @@ Use it when an agent pays, changes bank details, sends an external email, delete
 ## Evidence
 
 - [The tests, one at a time]({SITE}/): what was tested and what each check caught
-- [Research]({SITE}/research): seven pre-registered studies, every figure with its interval
+- [Research]({SITE}/research): eight pre-registered studies, every figure with its interval
 
 ## Optional
 
