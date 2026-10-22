@@ -28,7 +28,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import common as C  # noqa: E402
 
-VALUE_SLOTS = {"item", "ask", "to", "sup", "amt", "cur", "kind", "paid", "ref", "apref", "acct", "eff", "addr", "due", "pri", "appr", "prev"}
+VALUE_SLOTS = {"item", "ask", "to", "sup", "amt", "cur", "kind", "paid", "ref", "apref", "acct", "eff", "addr", "due", "pri", "appr", "prev", "x_cb"}
 WAIVED = "the HO must ask rb=exec"
 WHY = {
     "acct": "not the ACTIVE account on file for the supplier named in the HO", "prev": "not the account on file that this change replaces",

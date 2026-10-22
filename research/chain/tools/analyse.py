@@ -127,10 +127,8 @@ def tests(cells: dict, models: list[str]) -> dict:
             t["H4 R false alarms over correct forwards (upper bound under 5%)"] = {"R": fmt(fa), "holds": fa["n"] > 0 and fa["hi"] < 0.05}
         f2, r2 = get(2, "F", m), get(2, "R", m)
         if f2 and r2:
-            a, b = r2["correct_act"], f2["correct_act"]
-            t["H6 block 2: more correct acts in R than F (one-sided)"] = {"R": fmt(a), "F": fmt(b), "p": round(fisher(a["k"], a["n"] - a["k"], b["k"], b["n"] - b["k"], "greater"), 4)}
             a, b = r2["as_expected"], f2["as_expected"]
-            t["H6a block 2: more chains as expected (act, or ask where the log does not cover) in R than F (one-sided)"] = {"R": fmt(a), "F": fmt(b), "p": round(fisher(a["k"], a["n"] - a["k"], b["k"], b["n"] - b["k"], "greater"), 4)}
+            t["H6 block 2: more chains end as expected (the correct act, or the ask where the log does not cover the item) in R than F (one-sided)"] = {"R": fmt(a), "F": fmt(b), "p": round(fisher(a["k"], a["n"] - a["k"], b["k"], b["n"] - b["k"], "greater"), 4)}
         if l and r:
             a, b = l["correct_act"], r["correct_act"]
             t["H8 block 1: L against R on correct acts (two-sided)"] = {"L": fmt(a), "R": fmt(b), "p": round(fisher(a["k"], a["n"] - a["k"], b["k"], b["n"] - b["k"]), 4)}
@@ -170,7 +168,8 @@ def analyse(tag: str | None, only: str = "", suffix: str = "", exclude: str = ""
                "tokenizer": C.TOKENIZER, "chains": len(rows), "cost_usd_total": round(sum(r.get("cost_usd") or 0 for r in rows), 4)}
     Kmax = max((r["K"] for r in rows), default=2)
     hop_cols = " | ".join(f"size hop {h}" for h in range(1, Kmax + 2))
-    lines = [f"| block | arm | model | K | chains | correct act | as expected | wrong | asked | held | not done | every field at payer | any drift | loss (field missing, asked or not done) | caught | false alarms / correct forwards | {hop_cols} | traffic median | turns mean | cost $ mean | harness faults |",
+    levels = sorted({r.get("harden", 0) for r in rows})
+    lines = [f"Ladder level(s) in this set: {', '.join(str(x) for x in levels)}.", "", f"| block | arm | model | K | chains | correct act | as expected | wrong | asked | held | not done | every field at payer | any drift | loss (field missing, asked or not done) | caught | false alarms / correct forwards | {hop_cols} | traffic median | turns mean | cost $ mean | harness faults |",
              "|" + "---|" * (20 + Kmax + 1)]
     for key in sorted(cs):
         c = cs[key]

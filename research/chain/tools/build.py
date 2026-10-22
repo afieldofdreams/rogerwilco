@@ -86,7 +86,7 @@ def make_trial(tid: str, block: int, act: str, context: str, arm: str, model: st
             if hop["role"] == "payer":
                 C.write_json(C.SENDER / f"{tid}.master.json", hop["context"])
         (hd / "prompt.txt").write_text(user_turn(hd, hop))
-        brief = f"data/briefs/{arm}-{hop['role']}-{act}.txt"
+        brief = f"data/briefs/{B.brief_name(arm, hop['role'], act)}"
         briefs[str(h)] = brief
         hops_meta[str(h)] = {"agent": hop["agent"], "role": hop["role"], "prev": hop["prev"], "next": hop["next"], "brief": brief,
                              "context_file": hop["context_file"]}
@@ -97,14 +97,14 @@ def make_trial(tid: str, block: int, act: str, context: str, arm: str, model: st
         if hop.get("expect") == "ask":
             expected = f"ask@{h}"
     C.write_json(d / "meta.json", {"id": tid, "block": block, "act": act, "context": context, "arm": arm, "model": model, "K": K, "repeat": rep,
-                                   "agents": cc["agents"], "hops": hops_meta})
+                                   "agents": cc["agents"], "hops": hops_meta, "harden": C.HARDEN})
     shas = {h: hashlib.sha256((C.ROOT / b).read_bytes()).hexdigest()[:12] for h, b in briefs.items()}
     C.write_json(C.SENDER / f"{tid}.json", {
         "id": tid, "block": block, "act": act, "context": context, "arm": arm, "model": model, "K": K, "repeat": rep,
         "record": rec, "first_message": first, "first_slots": C.first_slots(act, rec), "agents": cc["agents"], "expected": expected,
         "hops": {str(h): {"agent": hop["agent"], "role": hop["role"], "prev": hop["prev"], "next": hop["next"], "inbox": hop["inbox"],
                           "expect": hop.get("expect"), "context_file": hop["context_file"]} for h, hop in cc["hops"].items()},
-        "context_desc": cc["desc"], "confuser": confuser, "brief_sha": shas,
+        "context_desc": cc["desc"], "confuser": confuser, "brief_sha": shas, "harden": C.HARDEN,
     })
     return True
 
@@ -157,12 +157,13 @@ def main(argv: list[str]) -> int:
     if a.smoke:
         n = build([1], C.ARMS, ["haiku55"], 1, a.only, acts=["PAY"], contexts=[1])
     elif a.pilot:
-        n = build([1], ["F", "R"], a.models.split(","), 1, a.only, acts=["PAY", "CHGBANK"], contexts=[1, 2])
+        arms = a.arms.split(",") if a.arms != "F,A,L,R" else ["F", "R"]
+        n = build([1], arms, a.models.split(","), a.repeats if a.repeats != 3 else 1, a.only, acts=["PAY", "CHGBANK"], contexts=[1, 2])
     else:
         n = build([int(b) for b in a.blocks.split(",")], a.arms.split(","), a.models.split(","), a.repeats, a.only,
                   acts=a.acts.split(",") if a.acts else None, contexts=[int(x) for x in a.contexts.split(",")] if a.contexts else None,
                   ks=[int(x) for x in a.ks.split(",")] if a.ks else None)
-    print(f"built {n} chains in {C.TRIALS}")
+    print(f"built {n} chains in {C.TRIALS} at ladder level {C.HARDEN}")
     return 0
 
 

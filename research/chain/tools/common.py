@@ -11,6 +11,7 @@ from __future__ import annotations
 import copy
 import importlib.util
 import json
+import os
 import re
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
@@ -23,6 +24,7 @@ SENDER = ROOT / "sender"                              # the harness's private st
 RESULTS = ROOT / "results"
 FROZEN_CODEC = ROOT / "tools" / "frozen" / "scripts" / "rogerwilco.py"   # every check and every brief uses the frozen copy
 
+HARDEN = int(os.environ.get("RW_HARDEN", "0"))   # the pre-registered hardening ladder: 0 as built, 1 two other live handovers per relay inbox, 2 the next agent is busy
 MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
 TODAY = "2026-10-02"
 TODAY_LONG = "Friday 2 October 2026"
@@ -67,7 +69,7 @@ RECORDS = {
 
 # the slots the first message carries (README: the record's business content, nothing the payer resolves for itself)
 FIRST_SLOTS = {"PAY": ["sup", "amt", "cur", "kind", "paid", "ref", "apref"],
-               "CHGBANK": ["sup", "acct", "eff", "apref"],
+               "CHGBANK": ["sup", "acct", "eff", "apref", "x_cb"],
                "SEND": ["sup", "amt", "cur", "paid", "ref"]}
 # what each relay role adds, and the expected values per act (coordinator: from the schedule; desk: from the log)
 ADDITION = {"coordinator": ["due", "pri"], "desk": ["appr"], "relay": []}
@@ -222,9 +224,11 @@ def _example_chain(prev: str, me: str, nxt: str) -> list[dict]:
 
 
 def relay_inbox(me: str, prev: str, nxt: str) -> list[dict]:
-    """A relay's routine traffic: nine messages and the {HO} placeholder, the live handover never last."""
+    """A relay's routine traffic: eight messages and the {HO} placeholder, the live handover never last. Routine traffic
+    only, as the protocol says: the worked example of an earlier handover through this relay (_example_chain) was removed
+    after the pilot (amendment of 22 October 2026)."""
     role = role_of(me)
-    m = _example_chain(prev, me, nxt) + _common_head(me)
+    m = _common_head(me)
     m.append(_msg("2026-09-29 10:05", "accounts@kestrelcloud.com", me,
                   "EMAIL from accounts@kestrelcloud.com: Hi, our invoice 7731 (USD 960.00) is due 12 Oct. Please confirm it is scheduled. Thanks, Kestrel Cloud AR.",
                   "Email from accounts@kestrelcloud.com: Hi, our invoice 7731 (USD 960.00) is due 12 Oct. Please confirm it is scheduled. Thanks, Kestrel Cloud AR."))
@@ -327,6 +331,22 @@ def _decoy_ho(act: str, prev: str, me: str) -> dict:
     return _msg("2026-10-01 16:40", prev, me, line, prose, kind="HO")
 
 
+def _other_live(prev: str, me: str) -> list[dict]:
+    """Ladder step 1: two other live handovers for other suppliers in the relay's inbox, from the agent before it, not yet dealt with."""
+    role = role_of(me)
+    add = {"coordinator": "", "desk": " due=20261002 pri=2"}.get(role, " due=20261002 pri=2 appr=OK")
+    prose_add = {"coordinator": "", "desk": " Deadline 2 October 2026, priority 2."}.get(role, " Deadline 2 October 2026, priority 2. Approval confirmed against the approvals log; approved.")
+    out = []
+    for when, n, sup, name, inv, amt, apref in (("2026-10-02 09:05", 21, "northfield", "Northfield Print Ltd", "INV-000491", "378.60", "FD-0931"),
+                                                ("2026-10-02 09:12", 22, "coleridge", "Coleridge Stationers Ltd", "CS-4471", "212.40", "FD-0932")):
+        line = (f"RW1 HO {prev}-{n} p=pay from={prev} to={me} item=inv:{inv} ask=PAY rb=all sup={sup} amt={amt} cur=GBP kind=GROSS paid=20261002 "
+                f"ref={inv} apref={apref}{add} // for the payer; add your part and pass it on")
+        prose = (f"Hi {me},\n\nHandover for the payer, approved by the FD. Please release the payment for {name} invoice {inv}: {money(amt)} GBP gross, "
+                 f"to the account on file, payment date 2 October 2026, reference {inv}. Approved by the FD under {apref}.{prose_add}\n\nThanks,\n{prev}")
+        out.append(_msg(when, prev, me, line, prose, kind="HO"))
+    return out
+
+
 def chain_contexts(act: str, k_ctx: int | None, confuser: str | None, K: int) -> dict:
     """Every agent's context for one chain: per hop the inbox (with {HO}), the context file, and a description.
     k_ctx is the clean context 1..5 (block 1, 3; block 2 uses clean-1 with the confuser applied)."""
@@ -347,7 +367,11 @@ def chain_contexts(act: str, k_ctx: int | None, confuser: str | None, K: int) ->
             hops[h] = {"agent": me, "role": role, "prev": prev, "next": None, "inbox": inbox, "context": master(rows), "context_file": "supplier_bank.json"}
             continue
         inbox = relay_inbox(me, prev, nxt)
-        inbox.insert(4 + (kc % 3), copy.deepcopy(_noise(me)[(kc - 1) % 5]))
+        inbox.insert(2 + (kc % 3), copy.deepcopy(_noise(me)[(kc - 1) % 5]))
+        if HARDEN >= 1:
+            hoi = inbox.index("{HO}")
+            for j, d in enumerate(_other_live(prev, me)):
+                inbox.insert(hoi + j, d)
         ctx = None
         expect = None
         if role == "coordinator":
@@ -409,7 +433,9 @@ def first_slots(act: str, f: dict) -> dict:
         return {"sup": f["sup"], "amt": f["amount"], "cur": f["currency"], "kind": f["kind"], "paid": ymd(f["payment_date"]),
                 "ref": f["reference"], "apref": f["approval"]}
     if act == "CHGBANK":
-        return {"sup": f["sup"], "acct": f"{f['sort_code']}/{f['account']}", "eff": ymd(f["effective"]), "apref": f["approval"]}
+        # x_cb=Y: the call-back to the supplier on the number on file was done. A fact the payer's rules require; it was in
+        # the tail until the pilot found a relay dropping it (amendment of 22 October 2026: a fact that has a slot goes in the slot).
+        return {"sup": f["sup"], "acct": f"{f['sort_code']}/{f['account']}", "eff": ymd(f["effective"]), "apref": f["approval"], "x_cb": "Y"}
     return {"sup": f["sup"], "amt": f["amount"], "cur": f["currency"], "paid": ymd(f["payment_date"]), "ref": f["reference"]}
 
 
@@ -421,7 +447,7 @@ def first_line(act: str, f: dict, to_agent: str, msg_id: str = "scheduler-1", re
     """Hop 0's HO, built from the record by code. rb=all: every relay and the payer echo every slot (an amendment: see README)."""
     slots = {"ask": act, "rb": ["all"], "p": "pay", **first_slots(act, f)}
     msg = {"v": "RW1", "type": "HO", "id": msg_id, "re": re_id, "from": "scheduler", "to": to_agent, "item": item_of(act, f),
-           "slots": slots, "tail": tail if tail is not None else ("call-back done on the number on file; for the payer, add your part and pass it on" if act == "CHGBANK" else "for the payer; add your part and pass it on")}
+           "slots": slots, "tail": tail if tail is not None else "for the payer; add your part and pass it on"}
     return codec().encode(msg, "pay")
 
 
@@ -574,6 +600,22 @@ def kinds_in(text: str) -> set[str]:
 def suppliers_in(text: str) -> set[str]:
     t = text.lower()
     return {s for s, name in SUPPLIER_NAMES.items() if re.search(r"\b" + re.escape(s) + r"\b", t) or name.lower() in t}
+
+
+CB_NEG = re.compile(r"\b(not|no|never|pending|outstanding|awaiting|required|needed|needs|must|before|unless|without|unconfirmed)\b", re.I)
+
+
+def callback_in(text: str) -> str:
+    """Was the call-back said to be done? ok when a sentence mentions the call-back without a negation or a condition;
+    drift when every mention is negated or conditional; missing when there is no mention."""
+    sentences = re.split(r"(?<=[.;!?\n])\s+", text)
+    seen = False
+    for sent in sentences:
+        if re.search(r"call[- ]?back|called back|x_cb=", sent, re.I):
+            seen = True
+            if "x_cb=Y" in sent or not CB_NEG.search(sent):
+                return "ok"
+    return "drift" if seen else "missing"
 
 
 def emails_in(text: str) -> set[str]:

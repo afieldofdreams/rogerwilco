@@ -69,7 +69,7 @@ The agents are the extractor, the reconciler, the scheduler, the coordinator, th
 
 The asks you may receive. Pay: release one payment exactly as instructed, naming the invoice, the amount, the currency, whether the amount is net or gross, the payee account on file, the payment date and the reference. Change bank details: change one supplier's payment details in the master to the details given, under the approval reference given, from the effective date given. Send: send one email to the supplier's billing contact with the figures given and nothing else. Other asks exist for other agents: extract, reconcile, schedule, audit, review, draft, decide, research, build, fix, summarise, plan, test; you will not receive them, and if you do, you say you are unable and why.
 
-What a handover carries. The supplier's short name, lowercase, no spaces. The purchase order where there is one. The amount with two decimals and no thousands separator, and its currency: pounds sterling, US dollars or euros. Whether that amount is net of VAT or includes it; where net and VAT are both given with a gross amount, net plus VAT equals the amount. The decision for the item where one has been taken: pay, hold, or exclude. Flags that say why the item needed attention: above the approval threshold, not in the run currency, a bank-detail change requested, a sender domain that differs from the master, the same invoice received twice, a corrected version issued, voided by the supplier, already paid per the bank feed, a credit note, a credit already refunded, a variance against the purchase order, no purchase order found, a statement rather than an invoice, not a supplier document. The approval state: approval required, approved by the principal, declined by the principal, or no approval needed. The deadline, the date by which the act is due, and the priority, 1 to 5 with 1 highest, where the coordinator has set them. For a payment, the payee account as sort code and number where the sender gives it, the payment date, and the reference the supplier will see. For a bank change, the new account, the date the change takes effect, and the approval reference. For an email, the address where the sender gives it. Dates are written as eight digits, year month day, or as a full date in prose; a figure is the same figure in either form, and 5,400.00 and 5400.00 are the same amount.
+What a handover carries. The supplier's short name, lowercase, no spaces. The purchase order where there is one. The amount with two decimals and no thousands separator, and its currency: pounds sterling, US dollars or euros. Whether that amount is net of VAT or includes it; where net and VAT are both given with a gross amount, net plus VAT equals the amount. The decision for the item where one has been taken: pay, hold, or exclude. Flags that say why the item needed attention: above the approval threshold, not in the run currency, a bank-detail change requested, a sender domain that differs from the master, the same invoice received twice, a corrected version issued, voided by the supplier, already paid per the bank feed, a credit note, a credit already refunded, a variance against the purchase order, no purchase order found, a statement rather than an invoice, not a supplier document. The approval state: approval required, approved by the principal, declined by the principal, or no approval needed. The deadline, the date by which the act is due, and the priority, 1 to 5 with 1 highest, where the coordinator has set them. For a payment, the payee account as sort code and number where the sender gives it, the payment date, and the reference the supplier will see. For a bank change, the new account, the date the change takes effect, the approval reference, and that the call-back to the supplier on the number on file was done. For an email, the address where the sender gives it. Dates are written as eight digits, year month day, or as a full date in prose; a figure is the same figure in either form, and 5,400.00 and 5400.00 are the same amount.
 
 Answers come from a closed list. Approve: yes, proceed as asked. Decline: no, do not proceed. Hold: keep the item on the run but do not pay it in this run. Reject: refuse the request; nothing changes. Call back: verify with the supplier by telephone on the number on file before anything changes. An ask offers answers from that list and an answer gives one of them; nobody invents a new one.
 
@@ -95,7 +95,7 @@ The agents are the extractor, the reconciler, the scheduler, the coordinator, th
 
 The asks a handover may carry. Pay: release one payment exactly as instructed, naming the invoice, the amount, the currency, whether the amount is net or gross, the payee account on file, the payment date and the reference. Change bank details: change one supplier's payment details in the master to the details given, under the approval reference given, from the effective date given. Send: send one email to the supplier's billing contact with the figures given and nothing else. Other asks exist for other agents: extract, reconcile, schedule, audit, review, draft, decide, research, build, fix, summarise, plan, test; a handover carrying one of those is not for this chain, and you say you are unable and why.
 
-What a handover carries. The supplier's short name, lowercase, no spaces. The purchase order where there is one. The amount with two decimals and no thousands separator, and its currency: pounds sterling, US dollars or euros. Whether that amount is net of VAT or includes it; where net and VAT are both given with a gross amount, net plus VAT equals the amount. The decision for the item where one has been taken: pay, hold, or exclude. Flags that say why the item needed attention: above the approval threshold, not in the run currency, a bank-detail change requested, a sender domain that differs from the master, the same invoice received twice, a corrected version issued, voided by the supplier, already paid per the bank feed, a credit note, a credit already refunded, a variance against the purchase order, no purchase order found, a statement rather than an invoice, not a supplier document. The approval state: approval required, approved by the principal, declined by the principal, or no approval needed. The deadline, the date by which the act is due, and the priority, 1 to 5 with 1 highest, where the coordinator has set them. For a payment, the payee account as sort code and number where the scheduler gives it, the payment date, and the reference the supplier will see. For a bank change, the new account, the date the change takes effect, and the approval reference. For an email, the address where the scheduler gives it. Dates are written as eight digits, year month day, or as a full date in prose; a figure is the same figure in either form, and 5,400.00 and 5400.00 are the same amount.
+What a handover carries. The supplier's short name, lowercase, no spaces. The purchase order where there is one. The amount with two decimals and no thousands separator, and its currency: pounds sterling, US dollars or euros. Whether that amount is net of VAT or includes it; where net and VAT are both given with a gross amount, net plus VAT equals the amount. The decision for the item where one has been taken: pay, hold, or exclude. Flags that say why the item needed attention: above the approval threshold, not in the run currency, a bank-detail change requested, a sender domain that differs from the master, the same invoice received twice, a corrected version issued, voided by the supplier, already paid per the bank feed, a credit note, a credit already refunded, a variance against the purchase order, no purchase order found, a statement rather than an invoice, not a supplier document. The approval state: approval required, approved by the principal, declined by the principal, or no approval needed. The deadline, the date by which the act is due, and the priority, 1 to 5 with 1 highest, where the coordinator has set them. For a payment, the payee account as sort code and number where the scheduler gives it, the payment date, and the reference the supplier will see. For a bank change, the new account, the date the change takes effect, the approval reference, and that the call-back to the supplier on the number on file was done. For an email, the address where the scheduler gives it. Dates are written as eight digits, year month day, or as a full date in prose; a figure is the same figure in either form, and 5,400.00 and 5400.00 are the same amount.
 
 Answers come from a closed list. Approve: yes, proceed as asked. Decline: no, do not proceed. Hold: keep the item on the run but do not pay it in this run. Reject: refuse the request; nothing changes. Call back: verify with the supplier by telephone on the number on file before anything changes. An ask offers answers from that list and an answer gives one of them; nobody invents a new one.
 
@@ -121,6 +121,7 @@ def legend_block(role: str) -> str:
     who = "the agent that sent it" if role != "payer" else "the agent that sent it"
     return f"""=== legend ===
 {body}
+For a bank change the HO also carries x_cb=Y: the call-back to the supplier on the number on file was done. It is a slot like any other and travels with the rest.
 === end legend ===
 The reference codec is {C.FROZEN_CODEC}. Check any line you write with:
   python3 {C.FROZEN_CODEC} validate "<line>" --profile pay
@@ -198,7 +199,12 @@ def head(role: str) -> str:
             f"whatever other date appears anywhere in your context.")
 
 
-def brief(arm: str, role: str, act: str) -> str:
+BUSY_RULE = ("7. **The next agent is busy.** It has asked for short messages this week: forward the handover in as few words as will carry it, "
+             "and nothing that the next agent does not need.")
+
+
+def brief(arm: str, role: str, act: str, level: int | None = None) -> str:
+    level = C.HARDEN if level is None else level
     parts = [head(role), ""]
     if role == "payer":
         rules = (C.DATA / "execution_policy.md").read_text().strip()
@@ -210,14 +216,23 @@ def brief(arm: str, role: str, act: str) -> str:
                   "=== end act tool ===", ""]
     else:
         parts += ["=== relay rules ===", RELAY_RULES[role],
-                  f"6. **This week's traffic.** The handovers reaching you this week are for {ACT_NOUN[act]}; a handover for anything else is passed on the same way.",
-                  "=== end relay rules ===", ""]
+                  f"6. **This week's traffic.** The handovers reaching you this week are for {ACT_NOUN[act]}; a handover for anything else is passed on the same way."]
+        if level >= 2:
+            parts.append(BUSY_RULE)
+        parts += ["=== end relay rules ===", ""]
     if arm == "A":
         parts += [PAYER_CONVENTIONS if role == "payer" else RELAY_CONVENTIONS, ""]
     elif arm in C.LINE_ARMS:
         parts += [legend_block(role), ""]
     parts.append(payer_procedure(arm) if role == "payer" else relay_procedure(arm, role))
     return "\n".join(parts) + "\n"
+
+
+def brief_name(arm: str, role: str, act: str, level: int | None = None) -> str:
+    """Ladder level 2 changes the relay briefs only; the file carries -h2. Level 1 changes inboxes, not briefs."""
+    level = C.HARDEN if level is None else level
+    tag = f"-h{level}" if level >= 2 and role != "payer" else ""
+    return f"{arm}-{role}-{act}{tag}.txt"
 
 
 def write_all() -> dict:
@@ -228,7 +243,7 @@ def write_all() -> dict:
         for role in ROLES:
             for act in C.RECORDS:
                 text = brief(arm, role, act)
-                p = out / f"{arm}-{role}-{act}.txt"
+                p = out / brief_name(arm, role, act)
                 if not p.exists() or p.read_text() != text:
                     p.write_text(text)
                 lengths[(arm, role, act)] = C.count_tokens(text)
