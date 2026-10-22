@@ -1,0 +1,214 @@
+{
+ "status": "ok",
+ "ended": {
+  "hop": 3,
+  "how": "done",
+  "detail": ""
+ },
+ "turns": [
+  {
+   "hop": 1,
+   "agent": "coordinator",
+   "turn": 1,
+   "result": "SENT",
+   "session": "77f10cfc-3a48-4baf-8c84-b69ec473f995",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 13783,
+    "cache_read_input_tokens": 141757,
+    "output_tokens": 1310,
+    "output_tokens_details": {
+     "thinking_tokens": 683
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 13783,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 39774,
+      "cache_creation_input_tokens": 389,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 389
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1514,
+     "outputTokens": 1335,
+     "cacheReadInputTokens": 141757,
+     "cacheCreationInputTokens": 13783,
+     "webSearchRequests": 0,
+     "costUSD": 0.0049930700000000005,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 683,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.0049930700000000005,
+   "seconds": 15,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01AAj9ekE3QJsLroCAiFmhWH",
+     "tool_input": {
+      "command": "cat > out.txt << 'EOF'\nTo: desk\nFrom: coordinator\n\nHi desk,\n\nHandover for the payer, approved by the FD. Please release the payment for Marlow Design Partners LLP invoice MD-2026-057: 5,400.00 GBP gross, to the account on file, payment date 2 October 2026, reference MD-2026-057. Approved by the FD under FD-0929. Deadline 2 October 2026, priority 2.\n\nThanks,\ncoordinator\nEOF\ncat out.txt",
+      "description": "Write forwarded handover to out.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 4
+  },
+  {
+   "hop": 2,
+   "agent": "desk",
+   "turn": 1,
+   "result": "SENT",
+   "session": "cb7cb22a-fd83-403b-b88d-c2cf0b3208f5",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 13719,
+    "cache_read_input_tokens": 141860,
+    "output_tokens": 1041,
+    "output_tokens_details": {
+     "thinking_tokens": 352
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 13719,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 39700,
+      "cache_creation_input_tokens": 408,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 408
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1511,
+     "outputTokens": 1060,
+     "cacheReadInputTokens": 141860,
+     "cacheCreationInputTokens": 13719,
+     "webSearchRequests": 0,
+     "costUSD": 0.004843500000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 352,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.004843500000000001,
+   "seconds": 13,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01GiaaxCvxbF8Hq2YJ7dyNUi",
+     "tool_input": {
+      "command": "cat > out.txt << 'EOF'\nTo: payer\nFrom: desk\n\nHi payer,\n\nHandover for the payer, approved by the FD. Please release the payment for Marlow Design Partners LLP invoice MD-2026-057: 5,400.00 GBP gross, to the account on file, payment date 2 October 2026, reference MD-2026-057. Approved by the FD under FD-0929. Deadline 2 October 2026, priority 2. Approval FD-0929 confirmed against the approvals log; approved.\n\nThanks,\ndesk\nEOF\ncat out.txt",
+      "description": "Write forwarded handover to out.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 4
+  },
+  {
+   "hop": 3,
+   "agent": "payer",
+   "turn": 1,
+   "result": "DONE",
+   "session": "6dfca4c4-c7b5-4f21-b056-f56b71a47441",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 16195,
+    "cache_read_input_tokens": 146368,
+    "output_tokens": 2256,
+    "output_tokens_details": {
+     "thinking_tokens": 1240
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 16195,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 41591,
+      "cache_creation_input_tokens": 1379,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 1379
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1503,
+     "outputTokens": 2275,
+     "cacheReadInputTokens": 146368,
+     "cacheCreationInputTokens": 16195,
+     "webSearchRequests": 0,
+     "costUSD": 0.005990480000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1240,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.005990480000000001,
+   "seconds": 17,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 5
+  }
+ ]
+}
