@@ -70,7 +70,7 @@ RECORDS = {
 # the slots the first message carries (README: the record's business content, nothing the payer resolves for itself)
 FIRST_SLOTS = {"PAY": ["sup", "amt", "cur", "kind", "paid", "ref", "apref"],
                "CHGBANK": ["sup", "acct", "eff", "apref", "x_cb"],
-               "SEND": ["sup", "amt", "cur", "paid", "ref"]}
+               "SEND": ["sup", "addr", "amt", "cur", "paid", "ref"]}
 # what each relay role adds, and the expected values per act (coordinator: from the schedule; desk: from the log)
 ADDITION = {"coordinator": ["due", "pri"], "desk": ["appr"], "relay": []}
 ACT_DATE = {"PAY": "payment_date", "CHGBANK": "effective", "SEND": "payment_date"}
@@ -436,7 +436,9 @@ def first_slots(act: str, f: dict) -> dict:
         # x_cb=Y: the call-back to the supplier on the number on file was done. A fact the payer's rules require; it was in
         # the tail until the pilot found a relay dropping it (amendment of 22 October 2026: a fact that has a slot goes in the slot).
         return {"sup": f["sup"], "acct": f"{f['sort_code']}/{f['account']}", "eff": ymd(f["effective"]), "apref": f["approval"], "x_cb": "Y"}
-    return {"sup": f["sup"], "amt": f["amount"], "cur": f["currency"], "paid": ymd(f["payment_date"]), "ref": f["reference"]}
+    # addr: the billing contact on file. A relay holds no master and cannot resolve it; the legend says a SEND goes to the
+    # address given, and without one the relays asked instead of forwarding (amendment of 22 October 2026, after the freeze).
+    return {"sup": f["sup"], "addr": f["to"], "amt": f["amount"], "cur": f["currency"], "paid": ymd(f["payment_date"]), "ref": f["reference"]}
 
 
 def item_of(act: str, f: dict) -> str:
@@ -462,7 +464,7 @@ def first_prose(act: str, f: dict, to_agent: str) -> str:
                 f"account {f['account']}, effective {long_date(f['effective'])}. The FD approved this under {f['approval']} "
                 f"after the call-back to the number on file.")
     else:
-        body = (f"Please send the remittance advice to {f['supplier']} at their billing contact on file for invoice {f['item']}: "
+        body = (f"Please send the remittance advice to {f['supplier']} at their billing contact on file, {f['to']}, for invoice {f['item']}: "
                 f"{money(f['amount'])} {f['currency']} paid on {long_date(f['payment_date'])}, reference {f['reference']}.")
     lead = "Handover for the payer, approved by the FD." if act != "SEND" else "Handover for the payer."
     return f"Hi {to_agent},\n\n{lead} {body}\n\nThanks,\nscheduler"

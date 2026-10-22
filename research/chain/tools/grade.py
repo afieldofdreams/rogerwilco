@@ -115,6 +115,9 @@ def prose_fields(text: str, act: str, rec: dict) -> dict:
             out[k] = judge(fd, v.upper(), fd - {v.upper()})
         elif k == "x_cb":
             out[k] = C.callback_in(text)
+        elif k == "addr":
+            mails = C.emails_in(text)
+            out[k] = judge(mails, v.lower(), mails - {v.lower()})
         elif k == "acct":
             sc, an = v.split("/")
             ok = C.norm_digits(sc) in sorts and an in accts

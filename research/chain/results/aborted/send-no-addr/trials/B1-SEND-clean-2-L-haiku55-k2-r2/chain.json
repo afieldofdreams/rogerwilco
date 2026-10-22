@@ -1,0 +1,55 @@
+{
+ "id": "B1-SEND-clean-2-L-haiku55-k2-r2",
+ "arm": "L",
+ "K": 2,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "delivered": {
+  "1": {
+   "from": "scheduler",
+   "to": "coordinator",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 // for the payer; add your part and pass it on",
+   "tokens": 69,
+   "when": "2026-10-02 09:32",
+   "reissued": null,
+   "final": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 // for the payer; add your part and pass it on"
+  }
+ },
+ "traffic": [
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "deliver",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 // for the payer; add your part and pass it on",
+   "tokens": 69
+  },
+  {
+   "hop": 1,
+   "from": "coordinator",
+   "to": "scheduler",
+   "kind": "question",
+   "text": "RW1 AQ coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=inv:MD-2026-057 need=TEXT // SEND scheduler-1 has no addr (supplier address) for marlow. Please send addr. Also no apref on it; scheduler-14 cites FD-0929. Confirm apref.\n",
+   "tokens": 71
+  }
+ ],
+ "checks": {
+  "1": {
+   "rb": null,
+   "rb2": null,
+   "forward": []
+  }
+ },
+ "counters": {},
+ "ended": {
+  "hop": 1,
+  "how": "asked",
+  "detail": ""
+ },
+ "status": "ok",
+ "flags": []
+}
