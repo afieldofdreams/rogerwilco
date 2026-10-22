@@ -57,6 +57,8 @@ MODELS = {
     "qwen3b": {"kind": "local", "file": "qwen2.5-3b-instruct-q4_k_m.gguf", "name": "Qwen2.5-3B-Instruct Q4_K_M", "params_b": 3},
     "llama3b": {"kind": "local", "file": "Llama-3.2-3B-Instruct-Q4_K_M.gguf", "name": "Llama-3.2-3B-Instruct Q4_K_M", "params_b": 3.2},
     "qwen7b": {"kind": "local", "file": "Qwen2.5-7B-Instruct-Q4_K_M.gguf", "name": "Qwen2.5-7B-Instruct Q4_K_M", "params_b": 7},
+    # added after the freeze, 22 October 2026, at Adam's request: one size up, queued after qwen7b (README, amendments after the freeze)
+    "qwen14b": {"kind": "local", "file": "Qwen2.5-14B-Instruct-Q4_K_M.gguf", "name": "Qwen2.5-14B-Instruct Q4_K_M", "params_b": 14},
     "haiku45": {"kind": "claude", "id": "claude-haiku-4-5", "name": "Claude Haiku 4.5"},
     "haiku55": {"kind": "claude", "id": "claude-haiku-5-5", "name": "Claude Haiku 5.5"},
 }
