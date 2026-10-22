@@ -1,0 +1,222 @@
+{
+ "status": "ok",
+ "ended": {
+  "hop": 3,
+  "how": "done",
+  "detail": ""
+ },
+ "turns": [
+  {
+   "hop": 1,
+   "agent": "coordinator",
+   "turn": 1,
+   "result": "SENT",
+   "session": "5165edb1-5297-4ee0-be6e-2c2e46192957",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 13665,
+    "cache_read_input_tokens": 159354,
+    "output_tokens": 2806,
+    "output_tokens_details": {
+     "thinking_tokens": 1926
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 13665,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 44967,
+      "cache_creation_input_tokens": 395,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 395
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1510,
+     "outputTokens": 2827,
+     "cacheReadInputTokens": 159354,
+     "cacheCreationInputTokens": 13665,
+     "webSearchRequests": 0,
+     "costUSD": 0.00589104,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1926,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.00589104,
+   "seconds": 20,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  },
+  {
+   "hop": 2,
+   "agent": "desk",
+   "turn": 1,
+   "result": "SENT",
+   "session": "4a81feb2-11d6-4471-b088-4ba8b841dcb4",
+   "usage": {
+    "input_tokens": 14,
+    "cache_creation_input_tokens": 16726,
+    "cache_read_input_tokens": 293108,
+    "output_tokens": 3184,
+    "output_tokens_details": {
+     "thinking_tokens": 1470
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 16726,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 45774,
+      "cache_creation_input_tokens": 603,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 603
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1513,
+     "outputTokens": 3205,
+     "cacheReadInputTokens": 293108,
+     "cacheCreationInputTokens": 16726,
+     "webSearchRequests": 0,
+     "costUSD": 0.008030080000000002,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1470,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.008030080000000002,
+   "seconds": 25,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01BzJvScWEgZjDPmrMED9wcN",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/research/chain/tools/frozen/scripts/rogerwilco.py validate \"RW1 HO desk-1 from=desk to=payer item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk due=20261002 pri=3 appr=OK // Forwarded from coordinator-1. Approval checked: FD-0929 covers marlow, MD-2026-057, 5400.00 GBP gross, 2 Oct 2026. Only appr=OK added.\" --profile pay && printf '%s\\n' \"RW1 HO desk-1 from=desk to=payer item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk due=20261002 pri=3 appr=OK // Forwarded from coordinator-1. Approval checked: FD-0929 covers marlow, MD-2026-057, 5400.00 GBP gross, 2 Oct 2026. Only appr=OK added.\" > out.txt && cat out.txt",
+      "description": "Validate corrected line and write it to out.txt"
+     }
+    },
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01DxStEwmULxfrxQMUADh2NK",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/research/chain/tools/frozen/scripts/rogerwilco.py validate \"$(head -n1 out.txt)\" --profile pay",
+      "description": "Validate the line written to out.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 7
+  },
+  {
+   "hop": 3,
+   "agent": "payer",
+   "turn": 1,
+   "result": "DONE",
+   "session": "d55d02ed-dba6-4172-838b-c6236898f902",
+   "usage": {
+    "input_tokens": 16,
+    "cache_creation_input_tokens": 18237,
+    "cache_read_input_tokens": 348817,
+    "output_tokens": 3533,
+    "output_tokens_details": {
+     "thinking_tokens": 1431
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 18237,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 47987,
+      "cache_creation_input_tokens": 369,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 369
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1507,
+     "outputTokens": 3553,
+     "cacheReadInputTokens": 348817,
+     "cacheCreationInputTokens": 18237,
+     "webSearchRequests": 0,
+     "costUSD": 0.009062770000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1431,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.009062770000000001,
+   "seconds": 28,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_0161dGCt1usqAm8S2BsbMNs1",
+     "tool_input": {
+      "command": "printf '%s\\n' \"RW1 DN payer-9 re=desk-1 from=payer to=desk item=inv:MD-2026-057 p=pay out=OK sup=marlow addr=billing@marlowdesign.co.uk amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057\" > /home/user/rogerwilco/research/chain/trials/B2-SEND-coord-sched-L-haiku55-k2-r3/hop3/dn.txt && cat /home/user/rogerwilco/research/chain/trials/B2-SEND-coord-sched-L-haiku55-k2-r3/hop3/dn.txt",
+      "description": "Write the DN line to dn.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 8
+  }
+ ]
+}

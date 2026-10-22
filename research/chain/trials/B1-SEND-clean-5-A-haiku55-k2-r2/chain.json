@@ -1,0 +1,55 @@
+{
+ "id": "B1-SEND-clean-5-A-haiku55-k2-r2",
+ "arm": "A",
+ "K": 2,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "delivered": {
+  "1": {
+   "from": "scheduler",
+   "to": "coordinator",
+   "text": "Hi coordinator,\n\nHandover for the payer. Please send the remittance advice to Marlow Design Partners LLP at their billing contact on file, billing@marlowdesign.co.uk, for invoice MD-2026-057: 5,400.00 GBP paid on 2 October 2026, reference MD-2026-057.\n\nThanks,\nscheduler",
+   "tokens": 72,
+   "when": "2026-10-02 09:32",
+   "reissued": null,
+   "final": "Hi coordinator,\n\nHandover for the payer. Please send the remittance advice to Marlow Design Partners LLP at their billing contact on file, billing@marlowdesign.co.uk, for invoice MD-2026-057: 5,400.00 GBP paid on 2 October 2026, reference MD-2026-057.\n\nThanks,\nscheduler"
+  }
+ },
+ "traffic": [
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "deliver",
+   "text": "Hi coordinator,\n\nHandover for the payer. Please send the remittance advice to Marlow Design Partners LLP at their billing contact on file, billing@marlowdesign.co.uk, for invoice MD-2026-057: 5,400.00 GBP paid on 2 October 2026, reference MD-2026-057.\n\nThanks,\nscheduler",
+   "tokens": 72
+  },
+  {
+   "hop": 1,
+   "from": "coordinator",
+   "to": "scheduler",
+   "kind": "question",
+   "text": "To: scheduler\nFrom: coordinator\nAnswers: message 9 (2026-10-02 09:32, remittance advice for Marlow Design Partners LLP, invoice MD-2026-057, 5,400.00 GBP, paid 2 October 2026, reference MD-2026-057)\n\nHolding message 9 and not forwarding it yet. Your message 3 (2026-09-30 11:30) said the Marlow payment would be scheduled for 2 October with a handover to follow. No payment handover for MD-2026-057 has reached me, and message 9 states the payment as paid.\n\nQuestion: has the payment for MD-2026-057 been released to the payer? Answer yes or no. If yes, I will forward message 9 to desk at once with the deadline 2 October 2026 and priority 3. If no, do not send the remittance advice until it is released.\n\nCoordinator\n",
+   "tokens": 204
+  }
+ ],
+ "checks": {
+  "1": {
+   "rb": null,
+   "rb2": null,
+   "forward": []
+  }
+ },
+ "counters": {},
+ "ended": {
+  "hop": 1,
+  "how": "asked",
+  "detail": ""
+ },
+ "status": "ok",
+ "flags": []
+}

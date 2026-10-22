@@ -1,0 +1,43 @@
+{
+ "id": "B1-CHGBANK-clean-4-F-haiku45-k2-r3",
+ "block": 1,
+ "act": "CHGBANK",
+ "context": "clean-4",
+ "arm": "F",
+ "model": "haiku45",
+ "K": 2,
+ "repeat": 3,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "hops": {
+  "1": {
+   "agent": "coordinator",
+   "role": "coordinator",
+   "prev": "scheduler",
+   "next": "desk",
+   "brief": "data/briefs/F-coordinator-CHGBANK.txt",
+   "context_file": "schedule.json"
+  },
+  "2": {
+   "agent": "desk",
+   "role": "desk",
+   "prev": "coordinator",
+   "next": "payer",
+   "brief": "data/briefs/F-desk-CHGBANK.txt",
+   "context_file": "approvals.json"
+  },
+  "3": {
+   "agent": "payer",
+   "role": "payer",
+   "prev": "desk",
+   "next": null,
+   "brief": "data/briefs/F-payer-CHGBANK.txt",
+   "context_file": "supplier_bank.json"
+  }
+ },
+ "harden": 1
+}

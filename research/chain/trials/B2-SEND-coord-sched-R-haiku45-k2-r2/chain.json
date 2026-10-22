@@ -1,0 +1,92 @@
+{
+ "id": "B2-SEND-coord-sched-R-haiku45-k2-r2",
+ "arm": "R",
+ "K": 2,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "delivered": {
+  "1": {
+   "from": "scheduler",
+   "to": "coordinator",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk // for the payer; add your part and pass it on",
+   "tokens": 77,
+   "when": "2026-10-02 09:32",
+   "reissued": "RW1 HO scheduler-51 re=coordinator-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk // re coordinator-1: tier2 integrity: h=3c0ae160e5e8 but digest of the HO is 3fd22e2f3ef9",
+   "final": "RW1 HO scheduler-51 re=coordinator-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk // re coordinator-1: tier2 integrity: h=3c0ae160e5e8 but digest of the HO is 3fd22e2f3ef9"
+  }
+ },
+ "traffic": [
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "deliver",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk // for the payer; add your part and pass it on",
+   "tokens": 77
+  },
+  {
+   "hop": 1,
+   "from": "coordinator",
+   "to": "scheduler",
+   "kind": "rb",
+   "text": "RW1 RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=inv:MD-2026-057 ask=SEND p=pay h=3c0ae160e5e8 sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk",
+   "tokens": 78
+  },
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "reissue",
+   "text": "RW1 HO scheduler-51 re=coordinator-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk // re coordinator-1: tier2 integrity: h=3c0ae160e5e8 but digest of the HO is 3fd22e2f3ef9",
+   "tokens": 108
+  },
+  {
+   "hop": 1,
+   "from": "coordinator",
+   "to": "scheduler",
+   "kind": "rb2",
+   "text": "RW1 RB coordinator-2 re=scheduler-51 from=coordinator to=scheduler item=inv:MD-2026-057 ask=SEND p=pay h=eb6402ac6cca sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk",
+   "tokens": 75
+  }
+ ],
+ "checks": {
+  "1": {
+   "rb": {
+    "ok": false,
+    "problems": [
+     "tier2 integrity: h=3c0ae160e5e8 but digest of the HO is 3fd22e2f3ef9"
+    ],
+    "notes": [],
+    "kind": "formal",
+    "rb": "RW1 RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=inv:MD-2026-057 ask=SEND p=pay h=3c0ae160e5e8 sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk",
+    "rb_id": "coordinator-1"
+   },
+   "rb2": {
+    "ok": false,
+    "problems": [
+     "tier2 integrity: h=eb6402ac6cca but digest of the HO is 8f3dc81f1514"
+    ],
+    "notes": [],
+    "kind": "formal",
+    "rb": "RW1 RB coordinator-2 re=scheduler-51 from=coordinator to=scheduler item=inv:MD-2026-057 ask=SEND p=pay h=eb6402ac6cca sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk",
+    "rb_id": "coordinator-2"
+   },
+   "forward": []
+  }
+ },
+ "counters": {
+  "scheduler": 51
+ },
+ "ended": {
+  "hop": 1,
+  "how": "held",
+  "detail": "held: hop 1 (coordinator): readback rejected twice"
+ },
+ "status": "held: hop 1 (coordinator): readback rejected twice",
+ "flags": [],
+ "clock": 1
+}
