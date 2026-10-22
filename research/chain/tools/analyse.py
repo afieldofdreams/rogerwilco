@@ -153,8 +153,14 @@ def tests(cells: dict, models: list[str]) -> dict:
 def analyse(tag: str | None, only: str = "", suffix: str = "", exclude: str = "") -> None:
     rows = []
     skip = [x for x in exclude.split(",") if x]
+    # results/excluded.json: {chain id: reason}. A chain that ended in a runner error and was run again under a new repeat id
+    # is kept on disk and left out here, as the exclusions rule says; the replacement carries the next repeat number.
+    excluded_path = C.RESULTS / "excluded.json"
+    excluded = C.read_json(excluded_path) if excluded_path.exists() else {}
     for trial in sorted(C.TRIALS.iterdir()):
         g = trial / "grade.json"
+        if trial.name in excluded:
+            continue
         if g.exists() and only in trial.name and (not suffix or trial.name.endswith(suffix)) and not any(trial.name.endswith(x) for x in skip):
             rows.append(C.read_json(g))
     out_dir = C.RESULTS / tag if tag else C.RESULTS
