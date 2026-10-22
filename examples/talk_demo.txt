@@ -1,0 +1,249 @@
+
+Scene 1: cleared to pay (a clean handoff)
+=========================================
+
+    approved record FD-0929 (signed off by the finance director): pay marlow 5400.00 GBP GROSS to
+      40-12-88/61102938 on 20261002, reference MD-2026-057, for inv:MD-2026-057
+
+scheduler -> payer
+    RW1 HO scheduler-1 from=scheduler to=payer item=inv:MD-2026-057 ask=PAY p=pay rb=exec sup=marlow
+          amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057
+          apref=FD-0929
+    > The job, built from the approved record by code, not typed.
+
+scheduler runs check-ho
+    OK the HO matches the record; send it
+    > Checked against the record before it leaves the scheduler.
+
+payment tool
+    RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay
+          h=a7a82de76607 sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938
+          paid=20261002 ref=MD-2026-057 apref=FD-0929 x_tok=dcab72bd
+    > The tool states what it will execute, before it executes.
+
+payer -> scheduler
+    RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay
+          h=a7a82de76607 sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938
+          paid=20261002 ref=MD-2026-057 apref=FD-0929 x_tok=dcab72bd
+    > Payer relays the statement unchanged; h= is the codec's digest.
+
+scheduler runs check-rb
+    OK readback passes; ownership transfers
+    > Every execution value matches the plan; the digest proves it arrived.
+
+scheduler -> payer
+    RW1 AN scheduler-2 re=payer-1 from=scheduler to=payer val=Y p=pay // readback matches the
+          approved run; proceed
+    > Cleared. Only now may the tool commit the token.
+
+payer -> scheduler
+    RW1 DN payer-2 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 out=OK p=pay
+          sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002
+          ref=MD-2026-057 apref=FD-0929
+    > What the tool did, from its result, not what was meant.
+
+scheduler runs check-dn
+    OK the done report matches the plan
+    > Done report matches the plan.
+
+scheduler runs check-thread
+    OK every handoff is closed or open in time
+    > The handoff opened once and closed once.
+
+Roger. Wilco.
+
+
+Scene 2: a transposed digit in the draft (refused before it is sent)
+====================================================================
+
+    approved record FD-0929 (signed off by the finance director): pay marlow 5400.00 GBP GROSS to
+      40-12-88/61102938 on 20261002, reference MD-2026-057, for inv:MD-2026-057
+
+scheduler
+    RW1 HO scheduler-1 from=scheduler to=payer item=inv:MD-2026-057 ask=PAY p=pay rb=exec sup=marlow
+          amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102398 paid=20261002 ref=MD-2026-057
+          apref=FD-0929
+    > Drafted by hand. One account digit transposed: 2938 became 2398.
+
+scheduler runs check-ho
+    REFUSED: record: acct mismatch: record 40-12-88/61102938 vs HO 40-12-88/61102398
+    > Refused at the boundary. Nothing leaves the scheduler.
+
+Not sent. The error lived at the boundary, and the boundary is where it was caught.
+
+
+Scene 3: the tool resolves a lookalike account (refused before anything is paid)
+================================================================================
+
+    approved record FD-0929 (signed off by the finance director): pay marlow 5400.00 GBP GROSS to
+      40-12-88/61102938 on 20261002, reference MD-2026-057, for inv:MD-2026-057
+
+scheduler -> payer
+    RW1 HO scheduler-1 from=scheduler to=payer item=inv:MD-2026-057 ask=PAY p=pay rb=exec sup=marlow
+          amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057
+          apref=FD-0929
+    > The HO is right: built from the record and checked.
+
+scheduler runs check-ho
+    OK the HO matches the record; send it
+    > Checked against the record before it leaves the scheduler.
+
+payment tool
+    RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay
+          h=a7a82de76607 sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102983
+          paid=20261002 ref=MD-2026-057 apref=FD-0929 x_tok=1b4be219
+    > The tool resolved a lookalike account. Its statement says so.
+
+payer -> scheduler
+    RW1 RB payer-1 re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-057 ask=PAY p=pay
+          h=a7a82de76607 sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102983
+          paid=20261002 ref=MD-2026-057 apref=FD-0929 x_tok=1b4be219
+    > Payer relays it unchanged. The payer does not check; the sender does.
+
+scheduler runs check-rb
+    REFUSED: tier5 execution: acct mismatch: HO 40-12-88/61102938 vs RB 40-12-88/61102983
+    > Set the altitude in the window; the other pilot checks the window.
+
+scheduler -> payer
+    RW1 AN scheduler-2 re=payer-1 from=scheduler to=payer val=N p=pay // acct differs from the
+          approved record; do not commit
+    > Not cleared. The tool abandons the token; nothing is paid.
+
+    payment tool: no confirmation for this token: nothing is paid
+
+Nothing paid. A human looks at the account before anyone tries again.
+
+
+Scene 4: the same handoff relayed through two more agents, each hop checked
+===========================================================================
+
+scheduler -> coordinator
+    RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=exec
+          sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002
+          ref=MD-2026-057 apref=FD-0929
+    > Hop one: scheduler to the coordinator, built from the record.
+
+scheduler runs check-ho
+    OK the HO matches the record; send it
+    > Checked against the approved record before it goes.
+
+coordinator -> desk
+    RW1 HO coordinator-1 from=coordinator to=desk item=inv:MD-2026-057 ask=PAY due=20261002 pri=2
+          p=pay rb=exec sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938
+          paid=20261002 ref=MD-2026-057 apref=FD-0929
+    > Coordinator adds due= and pri=, checks its line against what it heard.
+
+coordinator runs check-ho
+    OK the HO matches the record; send it
+    > Every value it heard is still on the line it sends.
+
+desk -> payer
+    RW1 HO desk-1 from=desk to=payer item=inv:MD-2026-057 ask=PAY due=20261002 pri=2 p=pay rb=exec
+          sup=marlow amt=5400.00 cur=GBP kind=GROSS appr=OK acct=40-12-88/61102938 paid=20261002
+          ref=MD-2026-057 apref=FD-0929
+    > Desk adds appr=OK and checks again. The graph's edges, each one checked.
+
+desk runs check-ho
+    OK the HO matches the record; send it
+    > Three hops, three checks, one record.
+
+payer -> desk
+    RW1 RB payer-1 re=desk-1 from=payer to=desk item=inv:MD-2026-057 ask=PAY due=20261002 p=pay
+          h=ff6db200bba0 sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938
+          paid=20261002 ref=MD-2026-057 apref=FD-0929
+    > Payer reads back to the desk; the digest proves it arrived intact.
+
+desk runs check-rb
+    OK readback passes; ownership transfers
+    > The payer now owns the job. Every edge was checked.
+
+The graph's edges, each one checked.
+
+
+Scene 4b: the desk drops apref= when it forwards
+================================================
+
+scheduler -> coordinator
+    RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=exec
+          sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002
+          ref=MD-2026-057 apref=FD-0929
+    > Hop one: scheduler to the coordinator, built from the record.
+
+scheduler runs check-ho
+    OK the HO matches the record; send it
+    > Checked against the approved record before it goes.
+
+coordinator -> desk
+    RW1 HO coordinator-1 from=coordinator to=desk item=inv:MD-2026-057 ask=PAY due=20261002 pri=2
+          p=pay rb=exec sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938
+          paid=20261002 ref=MD-2026-057 apref=FD-0929
+    > Coordinator adds due= and pri=, checks its line against what it heard.
+
+coordinator runs check-ho
+    OK the HO matches the record; send it
+    > Every value it heard is still on the line it sends.
+
+desk -> payer
+    RW1 HO desk-1 from=desk to=payer item=inv:MD-2026-057 ask=PAY due=20261002 pri=2 p=pay rb=exec
+          sup=marlow amt=5400.00 cur=GBP kind=GROSS appr=OK acct=40-12-88/61102938 paid=20261002
+          ref=MD-2026-057
+    > Desk adds appr=OK and forwards without apref=. Watch the check.
+
+desk runs check-ho
+    REFUSED: record: HO does not carry apref (record has apref=FD-0929)
+    > Refused at hop three, naming the slot. Nothing reaches the payer.
+
+The graph's edges, each one checked. One edge failed, and only that edge.
+
+
+Scene 5: the same instruction as prose (for contrast)
+=====================================================
+
+scheduler -> coordinator
+    Hi, could you pass this on to the payments desk for me? We've had sign-off from the finance
+    director (approval ref FD-0929) to pay Marlow's invoice MD-2026-057. The amount is £5,400.00
+    gross, including VAT, to their usual account, sort code 40-12-88, account number 61102938, going
+    out on 2 October 2026, and please make sure the payment reference is MD-2026-057 so their
+    accounts team can match it. It isn't urgent but I'd like it confirmed back once it's with the
+    desk. Let me know if anything looks off or you need the PO.
+    > The same instruction as agents actually write it: hop one.
+
+coordinator -> desk
+    Forwarding a payment request from the scheduler. Marlow have an invoice outstanding,
+    MD-2026-057, which the FD has approved under FD-0929. Please arrange payment of £5,400 (that's
+    the gross figure, VAT included) to Marlow's account on file, 40-12-88 / 61102938, with reference
+    MD-2026-057. The scheduler would like it to go on the 2nd of October, so I've set the due date
+    to 2 October and marked it priority 2 since it's not urgent but shouldn't slip. Could you
+    confirm back to me when it's with the payer, and flag anything that doesn't match what you have
+    on file for Marlow?
+    > Hop two restates and rewords. Which copy is the record?
+
+desk -> payer
+    Please release the following payment. Supplier: Marlow. Invoice: MD-2026-057. Amount: £5,400.00
+    gross (inclusive of VAT), currency GBP. Pay to the account held in the supplier master, sort
+    code 40-12-88, account 61102938. Payment date 2 October 2026, priority 2. Use MD-2026-057 as the
+    remittance reference. This has been approved by the principal, so it's cleared to go; the
+    approval came through the scheduler via the coordinator earlier today. Once the payment is made,
+    send back the confirmation with the amount and account actually used so I can close it off on
+    our side. Thanks.
+    > Hop three lost the approval reference. No check can say so.
+
+scheduler -> payer
+    RW1 HO scheduler-1 from=scheduler to=payer item=inv:MD-2026-057 ask=PAY p=pay rb=exec sup=marlow
+          amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057
+          apref=FD-0929
+    > The line again. Every fact in a slot, checkable at every hop.
+
+                                                     chars   tokens
+    prose, hop 1 (scheduler -> coordinator)            525      131
+    prose, hop 2 (coordinator -> desk)                 577      144
+    prose, hop 3 (desk -> payer)                       584      146
+    prose, three hops                                 1686      422
+    the line, any hop                                  194       48
+
+    > Tokens approximated as characters divided by four.
+
+    > No check is possible on prose: nothing has a slot.
+
+Three paragraphs, three paraphrases, no readback. One line, one digest, checked at every edge.
+
