@@ -206,9 +206,11 @@ def grade_chain(trial: Path) -> dict | None:
     any_drift = any(drift[h] for h in drift)
     # arm R: refusals
     caught, false_alarms, correct_forwards, refusals = [], [], 0, []
+    readbacks_checked = 0        # every rb and rb2 the previous hop's code checked, so that readback false alarms have a denominator
     for h, ch in chain.get("checks", {}).items():
         if h == "dn" or not isinstance(ch, dict):
             continue
+        readbacks_checked += sum(1 for kind in ("rb", "rb2") if ch.get(kind))
         for fc in ch.get("forward", []):
             if fc["ok"] or fc.get("kind") == "formal":
                 correct_forwards += 1
@@ -241,6 +243,7 @@ def grade_chain(trial: Path) -> dict | None:
         "coverage": coverage, "parsed": parsed, "drift": drift, "additions": additions, "reached_payer": reached_payer,
         "all_fields_at_payer": bool(all_fields_at_payer), "fields_missing_at_payer": fields_missing_at_payer, "any_drift": any_drift,
         "refusals": refusals, "caught": caught, "false_alarms": false_alarms, "correct_forwards": correct_forwards,
+        "readbacks_checked": readbacks_checked,
         "second_act_attempt": second_act_attempt, "dn_present": dn.get("present"), "dn_checked": dn.get("checked"), "dn_ok": dn.get("ok"), "dn_honest": dn.get("honest"),
         "sizes": sizes, "traffic_tokens": traffic, "model_turns": len(turns.get("turns", [])), "sessions": len({t.get("hop") for t in turns.get("turns", [])}),
         "usage": usage, "denials": sum(len(t.get("denials") or []) for t in turns.get("turns", [])),

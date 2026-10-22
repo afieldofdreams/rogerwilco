@@ -80,7 +80,12 @@ def cell_summary(rows: list[dict]) -> dict:
     Kmax = max(r["K"] for r in rows)
     sizes = {str(h): med([r["sizes"].get(str(h)) for r in rows]) for h in range(1, Kmax + 2)}
     correct_forwards = sum(r["correct_forwards"] for r in rows)
-    false_alarms = sum(len(r["false_alarms"]) for r in rows)
+    # false alarms at the forward (check-ho on a line that carried every received slot with the right values) are H4 as
+    # registered; false alarms at the readback (check-rb refusing a readback whose values were all right, in this run every
+    # one a digest that did not match because the relay retyped the handover) are reported apart, over the readbacks checked.
+    fa_forward = sum(sum(1 for x in r["false_alarms"] if " forward:" in x) for r in rows)
+    fa_readback = sum(sum(1 for x in r["false_alarms"] if " forward:" not in x) for r in rows)
+    readbacks_checked = sum(r.get("readbacks_checked", 0) for r in rows)
     return {
         "chains": n,
         "correct_act": rate(sum(r["outcome"] == "correct" for r in rows), n),
@@ -97,7 +102,8 @@ def cell_summary(rows: list[dict]) -> dict:
         "drifts": [f"{r['id']}: " + "; ".join(f"hop {h}: {','.join(v)}" for h, v in r["drift"].items() if v) for r in rows if r["any_drift"]],
         "loss": rate(sum((not r["all_fields_at_payer"]) or r["asked"] or r["outcome"] == "not done" for r in rows), n),
         "caught": sum(len(r["caught"]) for r in rows),
-        "false_alarms_over_correct_forwards": rate(false_alarms, correct_forwards),
+        "false_alarms_over_correct_forwards": rate(fa_forward, correct_forwards),
+        "readback_false_alarms_over_readbacks": rate(fa_readback, readbacks_checked),
         "refusals": sum(len(r["refusals"]) for r in rows),
         "size_median_by_hop": sizes,
         "traffic_median": med([r["traffic_tokens"] for r in rows]),
@@ -125,6 +131,8 @@ def tests(cells: dict, models: list[str]) -> dict:
         if r:
             fa = r["false_alarms_over_correct_forwards"]
             t["H4 R false alarms over correct forwards (upper bound under 5%)"] = {"R": fmt(fa), "holds": fa["n"] > 0 and fa["hi"] < 0.05}
+            rfa = r["readback_false_alarms_over_readbacks"]
+            t["R readback false alarms over readbacks checked (reported, not registered)"] = {"R": fmt(rfa)}
         f2, r2 = get(2, "F", m), get(2, "R", m)
         if f2 and r2:
             a, b = r2["as_expected"], f2["as_expected"]
@@ -175,14 +183,14 @@ def analyse(tag: str | None, only: str = "", suffix: str = "", exclude: str = ""
     Kmax = max((r["K"] for r in rows), default=2)
     hop_cols = " | ".join(f"size hop {h}" for h in range(1, Kmax + 2))
     levels = sorted({r.get("harden", 0) for r in rows})
-    lines = [f"Ladder level(s) in this set: {', '.join(str(x) for x in levels)}.", "", f"| block | arm | model | K | chains | correct act | as expected | wrong | asked | held | not done | every field at payer | any drift | loss (field missing, asked or not done) | caught | false alarms / correct forwards | {hop_cols} | traffic median | turns mean | cost $ mean | harness faults |",
-             "|" + "---|" * (20 + Kmax + 1)]
+    lines = [f"Ladder level(s) in this set: {', '.join(str(x) for x in levels)}.", "", f"| block | arm | model | K | chains | correct act | as expected | wrong | asked | held | not done | every field at payer | any drift | loss (field missing, asked or not done) | caught | false alarms / correct forwards | readback false alarms / readbacks | {hop_cols} | traffic median | turns mean | cost $ mean | harness faults |",
+             "|" + "---|" * (21 + Kmax + 1)]
     for key in sorted(cs):
         c = cs[key]
         sizes = " | ".join(str(c["size_median_by_hop"].get(str(h), "")) for h in range(1, Kmax + 2))
         lines.append(f"| {key[0]} | {key[1]} | {key[2]} | {key[3]} | {c['chains']} | {fmt(c['correct_act'])} | {fmt(c['as_expected'])} | {fmt(c['wrong_act'])} | {fmt(c['asked'])} | "
                      f"{fmt(c['held'])} | {fmt(c['not_done'])} | {fmt(c['all_fields_at_payer'])} | {fmt(c['any_drift'])} | {fmt(c['loss'])} | {c['caught']} | "
-                     f"{fmt(c['false_alarms_over_correct_forwards'])} | {sizes} | {c['traffic_median']} | {c['model_turns_mean']} | {c['cost_usd_mean']} | {c['harness_faults']} |")
+                     f"{fmt(c['false_alarms_over_correct_forwards'])} | {fmt(c['readback_false_alarms_over_readbacks'])} | {sizes} | {c['traffic_median']} | {c['model_turns_mean']} | {c['cost_usd_mean']} | {c['harness_faults']} |")
     lines += ["", f"{len(rows)} chains, total cost ${summary['cost_usd_total']}, tokens counted with {C.TOKENIZER}.", "", "Tests (per model; Fisher's exact, pure Python; Clopper-Pearson 95% intervals):"]
     for m, t in summary["tests"].items():
         for name, v in t.items():
