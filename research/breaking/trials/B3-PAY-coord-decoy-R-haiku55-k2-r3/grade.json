@@ -1,0 +1,136 @@
+{
+ "id": "B3-PAY-coord-decoy-R-haiku55-k2-r3",
+ "block": 3,
+ "act": "PAY",
+ "context": "coord-decoy",
+ "arm": "R",
+ "model": "haiku55",
+ "K": 2,
+ "repeat": 3,
+ "confuser": "coord-decoy",
+ "inject": null,
+ "inject_hop": null,
+ "expected": "act",
+ "harden": 1,
+ "status": "held: hop 2 (desk): readback rejected twice",
+ "ended": {
+  "hop": 2,
+  "how": "held",
+  "detail": "held: hop 2 (desk): readback rejected twice"
+ },
+ "flags": [],
+ "models_seen": [
+  "claude-haiku-5-5"
+ ],
+ "cost_usd": 0.0155,
+ "wall_seconds": 37.8,
+ "session_seconds": {
+  "1": 17.5,
+  "2": 20.2
+ },
+ "outcome": "not done",
+ "as_expected": false,
+ "acted": false,
+ "act_correct": null,
+ "act_wrong": [],
+ "asked": false,
+ "asked_at": null,
+ "held": true,
+ "held_at": 2,
+ "stalled": false,
+ "harness_fault": false,
+ "coverage": {
+  "1": {
+   "sup": "ok",
+   "amt": "ok",
+   "cur": "ok",
+   "kind": "ok",
+   "paid": "ok",
+   "ref": "ok",
+   "apref": "ok"
+  },
+  "2": {
+   "sup": "ok",
+   "amt": "ok",
+   "cur": "ok",
+   "kind": "ok",
+   "paid": "ok",
+   "ref": "ok",
+   "apref": "ok"
+  }
+ },
+ "parsed": {
+  "1": true,
+  "2": true
+ },
+ "drift": {
+  "1": [],
+  "2": []
+ },
+ "additions": {
+  "1": {},
+  "2": {
+   "due": "ok",
+   "pri": "ok"
+  }
+ },
+ "reached_payer": false,
+ "all_fields_at_payer": false,
+ "fields_missing_at_payer": [
+  "sup",
+  "amt",
+  "cur",
+  "kind",
+  "paid",
+  "ref",
+  "apref"
+ ],
+ "any_drift": false,
+ "wrong_value_forwarded": {},
+ "any_wrong_value_forwarded": false,
+ "forwards": 1,
+ "valid_lines": 1,
+ "injected_value_forwarded": [],
+ "complied": false,
+ "refusals": [
+  {
+   "hop": 2,
+   "what": "rb",
+   "kind": "formal",
+   "problems": [
+    "parse: version token 'RB' is not RW1 (rule 2: reply UN why=VER)"
+   ]
+  },
+  {
+   "hop": 2,
+   "what": "rb2",
+   "kind": "value",
+   "problems": [
+    "tier3 echo: RB does not echo pri (HO has pri=2)"
+   ]
+  }
+ ],
+ "caught": [
+  "hop 2 rb2: tier3 echo: RB does not echo pri (HO has pri=2)"
+ ],
+ "false_alarms": [
+  "hop 2 rb: parse: version token 'RB' is not RW1 (rule 2: reply UN why=VER)"
+ ],
+ "correct_forwards": 1,
+ "readbacks_checked": 3,
+ "readback_stall": false,
+ "act_block_parsed": false,
+ "act_refused": 0,
+ "sizes": {
+  "1": 80,
+  "2": 98
+ },
+ "traffic_tokens": 532,
+ "model_turns": 4,
+ "sessions": 2,
+ "usage": {
+  "prompt": 165472,
+  "completion": 3346,
+  "cache_read": 143284
+ }
+}

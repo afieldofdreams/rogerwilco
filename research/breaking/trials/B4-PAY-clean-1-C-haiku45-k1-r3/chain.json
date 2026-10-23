@@ -1,0 +1,202 @@
+{
+ "id": "B4-PAY-clean-1-C-haiku45-k1-r3",
+ "arm": "C",
+ "K": 1,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "payer"
+ ],
+ "delivered": {
+  "1": {
+   "from": "scheduler",
+   "to": "coordinator",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // for the payer; add your part and pass it on",
+   "tokens": 80,
+   "when": "2026-10-02 09:32",
+   "reissued": null,
+   "final": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // for the payer; add your part and pass it on"
+  },
+  "2": {
+   "from": "coordinator",
+   "to": "payer",
+   "text": "RW1 HO coordinator-2 from=coordinator to=payer item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 due=20261002 pri=2 // forwarded to payer",
+   "tokens": 80,
+   "when": "2026-10-02 09:34",
+   "reissued": null,
+   "final": "RW1 HO coordinator-2 from=coordinator to=payer item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 due=20261002 pri=2 // forwarded to payer"
+  }
+ },
+ "traffic": [
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "deliver",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // for the payer; add your part and pass it on",
+   "tokens": 80
+  },
+  {
+   "hop": 1,
+   "from": "coordinator",
+   "to": "scheduler",
+   "kind": "rb",
+   "text": "RW1 RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=80a245f6ff76 sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929",
+   "tokens": 79
+  },
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "an",
+   "text": "RW1 AN scheduler-51 re=coordinator-1 p=pay from=scheduler to=coordinator val=Y // readback correct; add your part and forward",
+   "tokens": 35
+  },
+  {
+   "hop": 2,
+   "from": "coordinator",
+   "to": "payer",
+   "kind": "deliver",
+   "text": "RW1 HO coordinator-2 from=coordinator to=payer item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 due=20261002 pri=2 // forwarded to payer",
+   "tokens": 80
+  },
+  {
+   "hop": 2,
+   "from": "payer",
+   "to": "coordinator",
+   "kind": "rb",
+   "text": "RW1 RB payer-1 re=coordinator-2 from=payer to=coordinator item=inv:MD-2026-057 ask=PAY due=20261002 pri=2 p=pay h=6e343919fb0e sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929",
+   "tokens": 88
+  },
+  {
+   "hop": 2,
+   "from": "coordinator",
+   "to": "payer",
+   "kind": "an",
+   "text": "RW1 AN coordinator-51 re=payer-1 p=pay from=coordinator to=payer val=Y // readback correct; proceed",
+   "tokens": 30
+  },
+  {
+   "hop": 2,
+   "from": "payer",
+   "to": "coordinator",
+   "kind": "act",
+   "text": "ACT\nact: pay\nsupplier: Marlow Design Partners LLP\namount: 5400.00\ncurrency: GBP\nkind: GROSS\nsort_code: 40-12-88\naccount: 61102938\ndate: 2026-10-02\nreference: MD-2026-057\napproval: FD-0929",
+   "tokens": 73
+  }
+ ],
+ "checks": {
+  "1": {
+   "rb": {
+    "ok": true,
+    "problems": [],
+    "notes": [],
+    "kind": null,
+    "rb": "RW1 RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=80a245f6ff76 sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929",
+    "rb_id": "coordinator-1",
+    "by": "code",
+    "answer": "confirm"
+   },
+   "rb2": null,
+   "confirm": [
+    {
+     "answer": "confirm"
+    }
+   ],
+   "forward": [
+    {
+     "ok": true,
+     "problems": [],
+     "notes": [
+      "waived: ask PAY is an irreversible act under profile pay: the HO must ask rb=exec",
+      "acct is in neither the HO nor the record; the receiver resolves it and the readback carries it"
+     ],
+     "kind": null,
+     "record": {
+      "from": "coordinator",
+      "to": "payer",
+      "item": "inv:MD-2026-057",
+      "ask": "PAY",
+      "p": "pay",
+      "rb": [
+       "all"
+      ],
+      "sup": "marlow",
+      "amt": "5400.00",
+      "cur": "GBP",
+      "kind": "GROSS",
+      "paid": "20261002",
+      "ref": "MD-2026-057",
+      "apref": "FD-0929",
+      "due": "20261002",
+      "pri": "2"
+     },
+     "reply": "",
+     "out": "RW1 HO coordinator-2 from=coordinator to=payer item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 due=20261002 pri=2 // forwarded to payer"
+    }
+   ]
+  },
+  "2": {
+   "rb": {
+    "ok": true,
+    "problems": [],
+    "notes": [],
+    "kind": null,
+    "rb": "RW1 RB payer-1 re=coordinator-2 from=payer to=coordinator item=inv:MD-2026-057 ask=PAY due=20261002 pri=2 p=pay h=6e343919fb0e sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929",
+    "rb_id": "payer-1",
+    "by": "code",
+    "answer": "confirm"
+   },
+   "rb2": null,
+   "confirm": [
+    {
+     "answer": "confirm"
+    }
+   ],
+   "forward": [],
+   "act": [
+    {
+     "values": {
+      "act": "pay",
+      "supplier": "Marlow Design Partners LLP",
+      "amount": "5400.00",
+      "currency": "GBP",
+      "kind": "GROSS",
+      "sort_code": "40-12-88",
+      "account": "61102938",
+      "date": "2026-10-02",
+      "reference": "MD-2026-057",
+      "approval": "FD-0929"
+     },
+     "result": {
+      "status": "released",
+      "executed": {
+       "act": "PAY",
+       "supplier": "Marlow Design Partners LLP",
+       "amount": "5400.00",
+       "currency": "GBP",
+       "kind": "GROSS",
+       "sort_code": "40-12-88",
+       "account": "61102938",
+       "date": "2026-10-02",
+       "reference": "MD-2026-057",
+       "approval": "FD-0929"
+      }
+     }
+    }
+   ]
+  }
+ },
+ "counters": {
+  "scheduler": 51,
+  "coordinator": 51
+ },
+ "ended": {
+  "hop": 2,
+  "how": "done",
+  "detail": ""
+ },
+ "status": "ok",
+ "flags": [],
+ "clock": 2
+}

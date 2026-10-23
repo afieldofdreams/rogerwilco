@@ -1,0 +1,45 @@
+{
+ "id": "B1-CHGBANK-clean-1-L-haiku55-k2-r1",
+ "block": 1,
+ "block_name": "baseline",
+ "act": "CHGBANK",
+ "context": "clean-1",
+ "arm": "L",
+ "model": "haiku55",
+ "K": 2,
+ "repeat": 1,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "hops": {
+  "1": {
+   "agent": "coordinator",
+   "role": "coordinator",
+   "prev": "scheduler",
+   "next": "desk",
+   "brief": "data/briefs/L-coordinator-CHGBANK.txt",
+   "context_file": "schedule.json"
+  },
+  "2": {
+   "agent": "desk",
+   "role": "desk",
+   "prev": "coordinator",
+   "next": "payer",
+   "brief": "data/briefs/L-desk-CHGBANK.txt",
+   "context_file": "approvals.json"
+  },
+  "3": {
+   "agent": "payer",
+   "role": "payer",
+   "prev": "desk",
+   "next": null,
+   "brief": "data/briefs/L-payer-CHGBANK.txt",
+   "context_file": "supplier_bank.json"
+  }
+ },
+ "harden": 1,
+ "inject_hop": null
+}

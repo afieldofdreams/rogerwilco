@@ -1,0 +1,162 @@
+{
+ "id": "B3-PAY-desk-cover-R-haiku45-k2-r2",
+ "arm": "R",
+ "K": 2,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "delivered": {
+  "1": {
+   "from": "scheduler",
+   "to": "coordinator",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // for the payer; add your part and pass it on",
+   "tokens": 80,
+   "when": "2026-10-02 09:32",
+   "reissued": null,
+   "final": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // for the payer; add your part and pass it on"
+  },
+  "2": {
+   "from": "coordinator",
+   "to": "desk",
+   "text": "RW1 HO coordinator-2 from=coordinator to=desk item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 due=20261002 pri=2",
+   "tokens": 76,
+   "when": "2026-10-02 09:34",
+   "reissued": null,
+   "final": "RW1 HO coordinator-2 from=coordinator to=desk item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 due=20261002 pri=2"
+  }
+ },
+ "traffic": [
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "deliver",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // for the payer; add your part and pass it on",
+   "tokens": 80
+  },
+  {
+   "hop": 1,
+   "from": "coordinator",
+   "to": "scheduler",
+   "kind": "rb",
+   "text": "RW1 RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929",
+   "tokens": 73
+  },
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "an",
+   "text": "RW1 AN scheduler-51 re=coordinator-1 p=pay from=scheduler to=coordinator val=Y // readback correct; add your part and forward",
+   "tokens": 35
+  },
+  {
+   "hop": 2,
+   "from": "coordinator",
+   "to": "desk",
+   "kind": "deliver",
+   "text": "RW1 HO coordinator-2 from=coordinator to=desk item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 due=20261002 pri=2",
+   "tokens": 76
+  },
+  {
+   "hop": 2,
+   "from": "desk",
+   "to": "coordinator",
+   "kind": "rb",
+   "text": "RW1 RB desk-1 re=coordinator-2 from=desk to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 due=20261002 pri=2",
+   "tokens": 82
+  },
+  {
+   "hop": 2,
+   "from": "coordinator",
+   "to": "desk",
+   "kind": "an",
+   "text": "RW1 AN coordinator-51 re=desk-1 p=pay from=coordinator to=desk val=Y // readback correct; add your part and forward",
+   "tokens": 34
+  },
+  {
+   "hop": 2,
+   "from": "desk",
+   "to": "coordinator",
+   "kind": "question",
+   "text": "RW1 AQ desk-2 from=desk to=scheduler need=TEXT re=coordinator-2 item=inv:MD-2026-057 apref=FD-0929 sup=marlow // Approval FD-0929 in log covers item MD-2026-061, not MD-2026-057. Clarify correct approval reference.",
+   "tokens": 72
+  }
+ ],
+ "checks": {
+  "1": {
+   "rb": {
+    "ok": true,
+    "problems": [],
+    "notes": [],
+    "kind": null,
+    "rb": "RW1 RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929",
+    "rb_id": "coordinator-1",
+    "by": "model"
+   },
+   "rb2": null,
+   "confirm": [],
+   "forward": [
+    {
+     "ok": true,
+     "problems": [],
+     "notes": [
+      "waived: ask PAY is an irreversible act under profile pay: the HO must ask rb=exec",
+      "acct is in neither the HO nor the record; the receiver resolves it and the readback carries it"
+     ],
+     "kind": null,
+     "record": {
+      "from": "coordinator",
+      "to": "desk",
+      "item": "inv:MD-2026-057",
+      "ask": "PAY",
+      "p": "pay",
+      "rb": [
+       "all"
+      ],
+      "sup": "marlow",
+      "amt": "5400.00",
+      "cur": "GBP",
+      "kind": "GROSS",
+      "paid": "20261002",
+      "ref": "MD-2026-057",
+      "apref": "FD-0929",
+      "due": "20261002",
+      "pri": "2"
+     },
+     "reply": "",
+     "out": "RW1 HO coordinator-2 from=coordinator to=desk item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 due=20261002 pri=2"
+    }
+   ]
+  },
+  "2": {
+   "rb": {
+    "ok": true,
+    "problems": [],
+    "notes": [],
+    "kind": null,
+    "rb": "RW1 RB desk-1 re=coordinator-2 from=desk to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 due=20261002 pri=2",
+    "rb_id": "desk-1",
+    "by": "model"
+   },
+   "rb2": null,
+   "confirm": [],
+   "forward": []
+  }
+ },
+ "counters": {
+  "scheduler": 51,
+  "coordinator": 51
+ },
+ "ended": {
+  "hop": 2,
+  "how": "asked",
+  "detail": ""
+ },
+ "status": "ok",
+ "flags": [],
+ "clock": 2
+}
