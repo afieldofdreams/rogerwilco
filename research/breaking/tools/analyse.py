@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Aggregate grade.json files into results/summary.json and results/summary.md: cells, proportions with Clopper-Pearson
-95% intervals, medians, and the pre-registered tests H1 to H8 (Fisher's exact, pure Python).
+95% intervals, medians, and the pre-registered tests H1 to H8 (Fisher's exact, pure Python), plus H9 for block 6, the
+routed message (registered after the freeze, 23 October 2026): block 6 against block 1 per arm per model, with intervals
+and no test at that size.
 
   python3 tools/analyse.py [--tag NAME] [--only SUBSTR] [--suffix -p] [--exclude -s,-p]     # --tag writes results/<NAME>/
 
@@ -178,6 +180,23 @@ def tests(cells: dict, rows: list[dict], models: list[str]) -> dict:
             byK = {K: cells[(4, arm, m, K)]["correct_act"] for K in (1, 2, 3, 5) if (4, arm, m, K) in cells}
             if byK:
                 t[f"H7 block 4 {arm}: correct acts by K"] = {str(K): fmt(v) for K, v in byK.items()}
+        # H9: block 6, the routed message, against block 1 per arm (F, L, C): correct acts with intervals, no test at this
+        # size; and the ordering of the arms on wrong acts (C at zero, F and L above it) where any wrong act occurs
+        for arm in C.ROUTED_ARMS:
+            c6, c1 = get(6, arm, m), get(1, arm, m)
+            if c6:
+                t[f"H9 block 6 {arm}: correct acts against block 1"] = {
+                    "block 6": fmt(c6["correct_act"]), "block 1": fmt(c1["correct_act"]) if c1 else "(not run)",
+                    "more_in_block_6": bool(c1) and (c6["correct_act"]["p"] or 0) > (c1["correct_act"]["p"] or 0),
+                    "wrong block 6": fmt(c6["wrong_act"]), "wrong block 1": fmt(c1["wrong_act"]) if c1 else "(not run)"}
+        b6 = {arm: get(6, arm, m) for arm in C.ROUTED_ARMS if get(6, arm, m)}
+        if b6:
+            wrongs = {arm: c["wrong_act"]["k"] for arm, c in b6.items()}
+            any_wrong = any(wrongs.values())
+            t["H9 block 6: wrong acts by arm (C at zero, F and L above it, where any wrong act occurs)"] = {
+                **{arm: fmt(c["wrong_act"]) for arm, c in b6.items()}, "any_wrong": any_wrong,
+                "C_at_zero": wrongs.get("C", 0) == 0, "F_above_C": wrongs.get("F", 0) > wrongs.get("C", 0), "L_above_C": wrongs.get("L", 0) > wrongs.get("C", 0),
+                "holds": (not any_wrong) or (wrongs.get("C", 0) == 0 and all(wrongs.get(a, 0) > 0 for a in ("F", "L") if a in wrongs))}
         # H8: anchors, block 1, C against R (two-sided)
         r1, c1 = get(1, "R", m), get(1, "C", m)
         if r1 and c1 and not local:

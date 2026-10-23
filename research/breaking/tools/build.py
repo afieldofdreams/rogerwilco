@@ -7,6 +7,8 @@
 
 Ids: B1-PAY-clean-1-C-qwen15-k2-r1, B2-PAY-clean-2-A-llama3b-k2-r1 (block 2 is brevity: the -h2 relay briefs),
 B3-CHGBANK-desk-near-R-qwen7b-k2-r1, B4-SEND-clean-1-C-haiku55-k5-r1, B5-PAY-inject-coord-F-qwen3b-k2-r1, plus the suffix.
+Block 6, the routed message (B6-PAY-clean-1-C-qwen7b-k2-r1): arms F, L and C, clean contexts 1 and 2, no inbox at any hop
+(the live message alone is the agent's mail) and the short -b6 briefs; built with --blocks 6 --repeats 1 --models ...
 A hop folder holds what that agent sees: inbox.md (routine traffic; run.py renders the live message into it when it is
 delivered) and its context file (schedule.json, approvals.json or supplier_bank.json). The agent's first turn is composed
 by run.py from those and the reply instruction. The record, the inboxes as built and the expected additions live in
@@ -57,7 +59,8 @@ def make_trial(tid: str, block: int, act: str, context: str, arm: str, model: st
     if d.exists():
         return False
     level = C.harden_for_block(block)
-    cc = C.chain_contexts(act, k_ctx, confuser, K, inject)
+    routed = C.routed_block(block)
+    cc = C.chain_contexts(act, k_ctx, confuser, K, inject, routed=routed)
     rec = C.RECORDS[act]
     d.mkdir(parents=True)
     C.SENDER.mkdir(exist_ok=True)
@@ -71,7 +74,7 @@ def make_trial(tid: str, block: int, act: str, context: str, arm: str, model: st
             C.write_json(hd / hop["context_file"], hop["context"])
             if hop["role"] == "payer":
                 C.write_json(C.SENDER / f"{tid}.master.json", hop["context"])
-        brief = f"data/briefs/{B.brief_name(arm, hop['role'], act, level)}"
+        brief = f"data/briefs/{B.brief_name(arm, hop['role'], act, level, block)}"
         briefs[str(h)] = brief
         hops_meta[str(h)] = {"agent": hop["agent"], "role": hop["role"], "prev": hop["prev"], "next": hop["next"], "brief": brief,
                              "context_file": hop["context_file"]}
@@ -81,7 +84,8 @@ def make_trial(tid: str, block: int, act: str, context: str, arm: str, model: st
         if hop.get("expect") == "ask":
             expected = f"ask@{h}"
     C.write_json(d / "meta.json", {"id": tid, "block": block, "block_name": C.BLOCKS[block], "act": act, "context": context, "arm": arm, "model": model,
-                                   "K": K, "repeat": rep, "agents": cc["agents"], "hops": hops_meta, "harden": level, "inject_hop": cc["inject_hop"]})
+                                   "K": K, "repeat": rep, "agents": cc["agents"], "hops": hops_meta, "harden": level, "inject_hop": cc["inject_hop"],
+                                   "routed": routed})
     shas = {h: hashlib.sha256((C.ROOT / b).read_bytes()).hexdigest()[:12] for h, b in briefs.items()}
     C.write_json(C.SENDER / f"{tid}.json", {
         "id": tid, "block": block, "act": act, "context": context, "arm": arm, "model": model, "K": K, "repeat": rep,
@@ -89,7 +93,7 @@ def make_trial(tid: str, block: int, act: str, context: str, arm: str, model: st
         "hops": {str(h): {"agent": hop["agent"], "role": hop["role"], "prev": hop["prev"], "next": hop["next"], "inbox": hop["inbox"],
                           "expect": hop.get("expect"), "context_file": hop["context_file"]} for h, hop in cc["hops"].items()},
         "context_desc": cc["desc"], "confuser": confuser, "inject": inject, "inject_hop": cc["inject_hop"],
-        "planted": C.PLANTED if inject else None, "brief_sha": shas, "harden": level,
+        "planted": C.PLANTED if inject else None, "brief_sha": shas, "harden": level, "routed": routed,
     })
     return True
 
@@ -101,10 +105,12 @@ def build(blocks, arms, models, repeats, only, acts=None, contexts=None, ks=None
         for arm in arms:
             if block == 4 and arm not in SWEEP_ARMS:
                 continue
+            if C.routed_block(block) and arm not in C.ROUTED_ARMS:
+                continue
             for model in models:
                 for rep in range(1, repeats + 1):
                     for act in acts:
-                        if block in (1, 2):
+                        if block in (1, 2) or C.routed_block(block):
                             for k in (contexts or [1, 2]):
                                 tid = f"B{block}-{act}-clean-{k}-{arm}-{model}-k2-r{rep}"
                                 if only in tid:

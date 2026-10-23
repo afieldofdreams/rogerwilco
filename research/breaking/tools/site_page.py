@@ -65,7 +65,7 @@ def figures(results: Path = C.RESULTS) -> dict:
         if not mrows:
             continue
         f[f"chains_{m}"] = f"{len(mrows):,}"
-        for block in (1, 2, 3, 5):
+        for block in (1, 2, 3, 5, 6):
             for arm in C.ARMS:
                 c = cells.get(f"B{block}-{arm}-{model}-k2")
                 if not c:

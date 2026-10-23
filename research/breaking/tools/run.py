@@ -252,10 +252,11 @@ CONTEXT_NAME = {"coordinator": "your run schedule (schedule.json)", "desk": "the
                 "payer": "the supplier master (supplier_bank.json)"}
 
 
-def instruction(arm: str, role: str, nxt: str | None, step: str) -> str:
-    """The reply instruction, repeated from the brief's procedure. step: first | forward | act."""
+def instruction(arm: str, role: str, nxt: str | None, step: str, routed: bool = False) -> str:
+    """The reply instruction, repeated from the brief's procedure. step: first | forward | act. In block 6 (routed) the
+    short brief carries no AQ or UN line, so a question is ASK and prose in every arm, and the HO is the message received."""
     ask_prose = "or reply ASK on the first line and your question below it"
-    ask_line = "or reply ASK on the first line and one AQ or UN line below it"
+    ask_line = ask_prose if routed else "or reply ASK on the first line and one AQ or UN line below it"
     if role == "payer":
         act = f"Reply with the act block (ACT on the first line, then one key: value per line) and nothing else, {ask_prose if arm in C.PROSE_ARMS else ask_line}."
         if step == "act" or arm not in C.CHECKED_ARMS:
@@ -269,24 +270,32 @@ def instruction(arm: str, role: str, nxt: str | None, step: str) -> str:
             return fwd
     if arm == "R":
         return f"Reply with your readback of the HO, one RB line, and nothing else, and wait for the reply; {ask_line}."
-    return f"Reply CONFIRM if every value in the readback is what the HO in your inbox carries (the readback repeats neither rb= nor the tail, by design), or DISPUTE: <slot> <value> if one is not; {ask_line}."
+    where = "the HO you received" if routed else "the HO in your inbox"
+    return f"Reply CONFIRM if every value in the readback is what {where} carries (the readback repeats neither rb= nor the tail, by design), or DISPUTE: <slot> <value> if one is not; {ask_line}."
 
 
-def first_turn(trial: Path, state: dict, h: int, rb_line: str | None) -> str:
+def first_turn(trial: Path, state: dict, h: int, rb_line: str | None, live_text: str | None = None) -> str:
+    """The agent's first user turn. Blocks 1 to 5: the inbox with the live message in it, the context file, the reply
+    instruction. Block 6 (routed): the live message alone, as "the message you received, from <agent>:", then the context
+    file, then the reply instruction; no inbox is rendered into the turn."""
     hop = state["hops"][str(h)]
     me, prev, nxt, role, arm = hop["agent"], hop["prev"], hop["next"], hop["role"], state["arm"]
+    routed = bool(state.get("routed"))
     d = trial / f"hop{h}"
     who = f"You are the agent named {me}; the agent before you in the chain is {prev}" + (f" and the agent after you is {nxt}." if nxt else ".")
     ctx_name = CONTEXT_NAME[role]
-    parts = [f"{who} You have been woken because new mail arrived. Your inbox follows" + (f", then {ctx_name}." if ctx_name else ".") +
-             " Deal with the newest handover addressed to you that has not been dealt with, following your procedure.", "",
-             (d / "inbox.md").read_text().rstrip()]
+    if routed:
+        parts = [f"{who} The message you received, from {prev}:", "", (live_text or "").rstrip()]
+    else:
+        parts = [f"{who} You have been woken because new mail arrived. Your inbox follows" + (f", then {ctx_name}." if ctx_name else ".") +
+                 " Deal with the newest handover addressed to you that has not been dealt with, following your procedure.", "",
+                 (d / "inbox.md").read_text().rstrip()]
     if hop["context_file"]:
         parts += ["", f"# {hop['context_file']}", json.dumps(C.read_json(d / hop["context_file"]), indent=1)]
     parts += ["", "# Your reply"]
     if rb_line:
-        parts += ["Your code composed this readback from the newest handover as delivered to you:", rb_line, ""]
-    parts.append(instruction(arm, role, nxt, "first"))
+        parts += [f"Your code composed this readback from the {'message' if routed else 'newest handover'} as delivered to you:", rb_line, ""]
+    parts.append(instruction(arm, role, nxt, "first", routed))
     return "\n".join(parts) + "\n"
 
 
@@ -301,6 +310,7 @@ def run_chain(trial: Path, backend) -> str:
     state = C.sender_state(meta["id"])
     arm, Kn, act, rec = state["arm"], state["K"], state["act"], state["record"]
     agents = state["agents"]
+    routed = bool(state.get("routed"))
     turns: list = []
     chain = {"id": meta["id"], "arm": arm, "K": Kn, "agents": agents, "delivered": {}, "traffic": [], "checks": {}, "counters": {},
              "ended": None, "status": "ok", "flags": []}
@@ -345,7 +355,7 @@ def run_chain(trial: Path, backend) -> str:
                     status = f"harness: make-rb failed at hop {h}: {e}"; end(h, "error", status); break
                 (d / "rb.txt").write_text(rb_line + "\n")
                 record_traffic(chain, h, me, prev, "rb", rb_line)
-            first = first_turn(trial, state, h, rb_line)
+            first = first_turn(trial, state, h, rb_line, chain["delivered"][str(h)]["final"])
             (d / "prompt.txt").write_text(first)
             r = say(first)
             if "error" in r:
@@ -378,7 +388,7 @@ def run_chain(trial: Path, backend) -> str:
                             record_traffic(chain, h, prev, me, "an", an)
                             append_inbox(trial, chain, h, prev, me, an)
                             stage = "act" if role == "payer" else "forward"
-                            r = say(f"Message from {prev}:\n{an}\n\n{instruction(arm, role, nxt, stage)}")
+                            r = say(f"Message from {prev}:\n{an}\n\n{instruction(arm, role, nxt, stage, routed)}")
                         else:
                             re_ho = K.reissue_line(ho, next_id(chain, prev), rc["rb_id"], rc["problems"])
                             chain["delivered"][str(h)]["reissued"] = re_ho; chain["delivered"][str(h)]["final"] = re_ho
@@ -394,7 +404,7 @@ def run_chain(trial: Path, backend) -> str:
                             if nudged:
                                 outcome = "stalled"; status = f"{me} replied neither CONFIRM nor DISPUTE twice at hop {h}: {reply[:80]!r}"; break
                             nudged = True
-                            r = say("Your reply was not what your procedure asks for at this step. " + instruction(arm, role, nxt, "first"))
+                            r = say("Your reply was not what your procedure asks for at this step. " + instruction(arm, role, nxt, "first", routed))
                             continue
                         if pc["answer"] == "confirm":
                             rc = {"ok": True, "problems": [], "notes": [], "kind": None, "rb": rbl, "rb_id": f"{me}-{2 if rb_second else 1}", "by": "code", "answer": "confirm"}
@@ -404,7 +414,7 @@ def run_chain(trial: Path, backend) -> str:
                             record_traffic(chain, h, prev, me, "an", an)
                             append_inbox(trial, chain, h, prev, me, an)
                             stage = "act" if role == "payer" else "forward"
-                            r = say(f"Message from {prev}:\n{an}\n\n{instruction(arm, role, nxt, stage)}")
+                            r = say(f"Message from {prev}:\n{an}\n\n{instruction(arm, role, nxt, stage, routed)}")
                         else:  # dispute
                             dc = K.check_dispute(ho, rbl, pc["slot"], pc["value"])
                             dc["answer"] = "dispute"
@@ -423,7 +433,7 @@ def run_chain(trial: Path, backend) -> str:
                             append_inbox(trial, chain, h, prev, me, re_ho)
                             rb_second = True
                             r = say(f"Message from {prev}:\n{re_ho}\n\nThe HO again: your dispute named a value the readback carries exactly as the HO carries it. "
-                                    f"Your code composed this readback from it:\n{rb2}\n\n{instruction(arm, role, nxt, 'first')}")
+                                    f"Your code composed this readback from it:\n{rb2}\n\n{instruction(arm, role, nxt, 'first', routed)}")
                     if "error" in r:
                         status = f"{me} error at hop {h} turn {n}: {r['error']}"; end(h, "error", r["error"]); outcome = "error"
                     continue
@@ -463,7 +473,7 @@ def run_chain(trial: Path, backend) -> str:
                     if nudged:
                         outcome = "stalled"; status = f"payer replied neither ACT nor ASK twice: {reply[:80]!r}"; break
                     nudged = True
-                    r = say("Your reply was not what your procedure asks for. " + instruction(arm, role, nxt, "act"))
+                    r = say("Your reply was not what your procedure asks for. " + instruction(arm, role, nxt, "act", routed))
                     if "error" in r:
                         status = f"{me} error at hop {h} turn {n}: {r['error']}"; end(h, "error", r["error"]); outcome = "error"
                     continue

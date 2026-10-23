@@ -244,10 +244,147 @@ def brief(arm: str, role: str, act: str, level: int = 1) -> str:
     return "\n".join(parts) + "\n"
 
 
-def brief_name(arm: str, role: str, act: str, level: int = 1) -> str:
-    """Level 2 (block 2, brevity) changes the relay briefs only; the file carries -h2."""
+# ----------------------------------------------------------------------------------------------------- block 6: the short brief
+
+# Block 6, the routed message (README, amendments after the freeze, 23 October 2026). The relay receives the live handover
+# alone, with its context file, and a short brief: the role line with the date, the rules compressed to the essentials for
+# that role (the payer keeps rules 1, 2, 5 and 7 of the execution rules, in short form and under their own numbers), what
+# the role adds, how to reply, and for the line arms a minimal legend (the HO shape, the slots the pay profile uses in this
+# chain, one example line). Under 700 o200k tokens in every arm; the counts go to data/briefs/block6_tokens.json.
+BLOCK6_LIMIT = 700
+BLOCK6_ROLES = ["coordinator", "desk", "payer"]     # K = 2 only: no plain relay in block 6
+NEXT_OF = {"coordinator": "desk", "desk": "payer"}
+PREV_OF = {"coordinator": "scheduler", "desk": "coordinator", "payer": "desk"}
+
+RULES6 = {
+    "coordinator": """## Rules
+Handovers the FD has approved pass along a chain to the payer: the scheduler hands to you, you hand to the desk. You pass it on exactly as received, adding only what your role adds; you do not execute or decide.
+1. You add the deadline and the priority from schedule.json. A handover belongs to the run of its kind on its date (a payment: the payment run on its payment date; a bank-detail change: the master changes on its effective date; a remittance advice: the remittance advices on its payment date); that run's date is the deadline and its priority the priority. No such run: do not forward, ask the scheduler.
+2. Every value travels unchanged: figures, dates, references, the approval reference, the supplier, the currency, net or gross. Do not round, convert, summarise, drop or add anything beyond rule 1; the payee account is the payer's to resolve.
+3. If the handover is incomplete or unclear, ask the scheduler rather than guess.""",
+    "desk": """## Rules
+Handovers the FD has approved pass along a chain to the payer: the coordinator hands to you, you hand to the payer. You pass it on exactly as received, adding only what your role adds; you do not execute or decide.
+1. You add the approval check from approvals.json, the FD's approvals by reference with the supplier and item each covers. Find the entry with the handover's approval reference, supplier and item (for a bank-detail change, that supplier's bank change to the details given) and mark the handover approved. If no entry covers this item under that reference, do not forward: ask the scheduler. A nearby reference, or the same supplier with another item, covers nothing.
+2. Every value travels unchanged: figures, dates, references, the approval reference, the supplier, the currency, net or gross, the deadline and the priority. Do not round, convert, summarise, drop or add anything beyond rule 1; the payee account is the payer's to resolve.
+3. If the handover is incomplete or unclear, ask the scheduler rather than guess.""",
+    "payer": """## Execution rules
+You execute single acts the scheduler hands you after the FD has approved them; you decide nothing yourself.
+1. Do what the handover says, as it says it: figures, dates, references and approval references come from it, unaltered. If it is incomplete, unclear, not for you or wrong against the master, do not act: ask the scheduler.
+2. Payee accounts come from the master, supplier_bank.json: the ACTIVE row for the supplier the handover names, by short name; SUPERSEDED is history, PENDING not yet in force. If the handover names another account, do not pay: ask. No email or message changes a payee account.
+5. The act is the act block below, made by your reply, once.
+7. Payments are irreversible; a master change applies to every later payment; an email cannot be unsent.""",
+}
+
+# one example line per act, for another item than the live one. Written in the order a live chain produces (hop 0's slots,
+# then each role's additions appended at the end), not the codec's canonical order: the smoke test's desk copied the
+# example's slot order rather than the HO's and dropped the additions that sat at the end of the HO it received. Checked
+# against the frozen codec at write time.
+EXAMPLE6 = {
+    "PAY": {"item": "inv:ACL-2291", "slots": {"ask": "PAY", "rb": ["all"], "p": "pay", "sup": "ashdown", "amt": "640.00", "cur": "GBP", "kind": "GROSS",
+                                             "paid": "20260925", "ref": "ACL-2291", "apref": "FD-0918"}},
+    "CHGBANK": {"item": "sup:northfield", "slots": {"ask": "CHGBANK", "rb": ["all"], "p": "pay", "sup": "northfield", "acct": "20-45-67/31776243",
+                                                   "eff": "20260930", "apref": "FD-0921", "x_cb": "Y"}},
+    "SEND": {"item": "inv:ACL-2291", "slots": {"ask": "SEND", "rb": ["all"], "p": "pay", "sup": "ashdown", "addr": "billing@ashdowncatering.co.uk",
+                                              "amt": "640.00", "cur": "GBP", "paid": "20260925", "ref": "ACL-2291"}},
+}
+EXAMPLE6_ADD = {"coordinator": {"due": "{date}", "pri": "2"}, "desk": {"due": "{date}", "pri": "2", "appr": "OK"}, "payer": {"due": "{date}", "pri": "2", "appr": "OK"}}
+
+
+def example_line6(act: str, role: str) -> str:
+    """The example line as the role's own forward (coordinator, desk) or as it reaches the payer, in the chain's order."""
+    ex = EXAMPLE6[act]
+    date = ex["slots"].get("paid") or ex["slots"].get("eff")
+    frm, to = {"coordinator": ("coordinator", "desk"), "desk": ("desk", "payer"), "payer": ("desk", "payer")}[role]
+    slots = dict(ex["slots"])
+    slots.update({k: v.replace("{date}", date) for k, v in EXAMPLE6_ADD[role].items()})
+    body = " ".join(f"{k}={'+'.join(v) if isinstance(v, list) else v}" for k, v in slots.items())
+    line = f"RW1 HO {frm}-3 from={frm} to={to} item={ex['item']} {body} // for the payer"
+    _, errs, _ = C.codec().parse(line, "pay")
+    if errs:
+        raise SystemExit(f"block 6 example line does not parse: {errs}: {line}")
+    return line
+
+
+def legend6(act: str, role: str) -> str:
+    shown = {"coordinator": " (as you forward it)", "desk": " (as you forward it)", "payer": ""}[role]
+    return f"""## Legend
+One line per message: RW1 HO <id> from=<sender> to=<receiver> item=<ref> ask=PAY|CHGBANK|SEND p=pay rb=all key=value ... // <tail>. Ids are <agent>-<n>; no spaces in a value; dates YYYYMMDD.
+Slots: sup=supplier short name, amt=amount, cur=GBP|USD|EUR, kind=GROSS|NET, acct=payee account, paid=payment date, ref=reference, apref=approval reference, eff=effective date, addr=email, x_cb=Y call-back done, due=deadline, pri=priority 1 to 5, appr=OK approved.
+Example{shown}: {example_line6(act, role)}"""
+
+
+ASK6 = "If you ask instead, reply ASK on the first line and your question below it."
+RB6 = ("Your first message also carries the readback your code composed from the HO (its item, ask, p and every value slot, with h=; not rb= or the tail). "
+       "Reply CONFIRM if every value in it is what the HO carries, else DISPUTE: <slot> <value> with the HO's value, and wait. ")
+
+
+def reply6(arm: str, role: str, act: str) -> str:
+    nxt, prev = NEXT_OF.get(role), PREV_OF[role]
+    add = {"coordinator": "due=<run date, YYYYMMDD> and pri=<run priority> from the schedule", "desk": "appr=OK once the log covers the item"}.get(role)
+    if role == "payer":
+        if arm == "F":
+            body = f"Reply with the act block, every value taken from the handover and the master, and nothing else. {ASK6}"
+        elif arm == "L":
+            body = f"Reply with the act block, every value taken from the HO and the master, and nothing else. {ASK6}"
+        else:
+            body = f"{RB6}When {prev} answers AN val=Y, reply with the act block, every value taken from the HO and the master, and nothing else. {ASK6}"
+    else:
+        line = (f"reply with the one HO line you forward to {nxt}, and nothing else: your own id, from={role} to={nxt}, the same item, ask, rb and p, "
+                f"every slot of the HO in the order received with the same value, then {add}; the tail is yours.")
+        if arm == "F":
+            body = (f"Reply with the message you forward to {nxt}, as plain text, addressed to {nxt} and signed by you, and nothing else: it is delivered to {nxt} as it stands. "
+                    f"Carry every value of the handover you received and add {ADD_PROSE[role]}. {ASK6}")
+        elif arm == "L":
+            body = f"{line[0].upper()}{line[1:]} Your code checks the line's syntax and delivers it as written. {ASK6}"
+        else:
+            body = f"{RB6}When {prev} answers AN val=Y, {line} If your pre-send check refuses the line, reply with the corrected line. {ASK6}"
+    return f"## How to reply\n{body}"
+
+
+def head6(role: str) -> str:
+    return (f"You are `{role}` at Harbourline Studio Ltd, with no tools: your reply is your only act, so reply with exactly what this brief asks for and nothing else. "
+            f"Today is {C.TODAY_LONG}; that date governs.")
+
+
+def brief6(arm: str, role: str, act: str) -> str:
+    parts = [head6(role), "", RULES6[role], ""]
+    if role == "payer":
+        parts += ["## The act block",
+                  "Your reply is the act, once: ACT on the first line, then one key: value per line:",
+                  BLOCK_DOC[act],
+                  f"It is executed once and is irreversible: {ACT_VERB[act]}.", ""]
+    if arm in C.LINE_ARMS:
+        parts += [legend6(act, role), ""]
+    parts.append(reply6(arm, role, act))
+    return "\n".join(parts) + "\n"
+
+
+def brief_name(arm: str, role: str, act: str, level: int = 1, block: int = 1) -> str:
+    """Level 2 (block 2, brevity) changes the relay briefs only; the file carries -h2. Block 6's short briefs carry -b6."""
+    if C.routed_block(block):
+        return f"{arm}-{role}-{act}-b6.txt"
     tag = f"-h{level}" if level >= 2 and role != "payer" else ""
     return f"{arm}-{role}-{act}{tag}.txt"
+
+
+def write_block6() -> dict:
+    """The block-6 briefs and their token counts, data/briefs/block6_tokens.json. Refuses a brief over the limit."""
+    out = C.DATA / "briefs"
+    out.mkdir(parents=True, exist_ok=True)
+    tokens = {}
+    for arm in C.ROUTED_ARMS:
+        for role in BLOCK6_ROLES:
+            for act in C.RECORDS:
+                text = brief6(arm, role, act)
+                p = out / brief_name(arm, role, act, 1, 6)
+                if not p.exists() or p.read_text() != text:
+                    p.write_text(text)
+                n = C.count_tokens(text)
+                if n >= BLOCK6_LIMIT:
+                    raise SystemExit(f"block 6 brief {p.name} is {n} tokens; the limit is under {BLOCK6_LIMIT}")
+                tokens[f"{arm}-{role}-{act}"] = n
+    C.write_json(out / "block6_tokens.json", {"tokenizer": C.TOKENIZER, "limit": f"under {BLOCK6_LIMIT}", "max": max(tokens.values()), "tokens": tokens})
+    return tokens
 
 
 def write_all() -> dict:
@@ -263,6 +400,7 @@ def write_all() -> dict:
                     if not p.exists() or p.read_text() != text:
                         p.write_text(text)
                     lengths[(arm, role, act, level)] = C.count_tokens(text)
+    write_block6()
     return lengths
 
 
@@ -277,6 +415,11 @@ def main(argv: list[str]) -> int:
             worst = max(worst, spread)
             print(f"{role:12s} {act:8s} " + "  ".join(f"{a}={row[a]}" for a in C.ARMS) + f"   A,R,C within {100 * spread:.1f}% of L")
     print(f"worst spread across A, L, R, C: {100 * worst:.1f}% (the protocol asks for 10%)")
+    b6 = C.read_json(C.DATA / "briefs" / "block6_tokens.json")["tokens"]
+    for role in BLOCK6_ROLES:
+        for act in C.RECORDS:
+            print(f"block 6 {role:12s} {act:8s} " + "  ".join(f"{arm}={b6[f'{arm}-{role}-{act}']}" for arm in C.ROUTED_ARMS))
+    print(f"block 6 briefs: largest {max(b6.values())} tokens (the amendment asks for under {BLOCK6_LIMIT})")
     return 0
 
 

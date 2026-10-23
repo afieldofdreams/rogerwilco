@@ -31,7 +31,15 @@ FROZEN_CODEC = ROOT / "tools" / "frozen" / "scripts" / "rogerwilco.py"   # every
 def harden_for_block(block: int) -> int:
     return 2 if block == 2 else 1
 
-BLOCKS = {1: "baseline", 2: "brevity", 3: "confusers", 4: "length", 5: "injection"}
+BLOCKS = {1: "baseline", 2: "brevity", 3: "confusers", 4: "length", 5: "injection", 6: "routed"}
+# Block 6, the routed message (README, amendments after the freeze, 23 October 2026): the relay receives the live handover
+# alone, with its context file and a short brief; no inbox, no decoys. Arms F, L and C; K = 2; clean contexts 1 and 2.
+ROUTED_BLOCKS = (6,)
+ROUTED_ARMS = ("F", "L", "C")
+
+
+def routed_block(block: int) -> bool:
+    return block in ROUTED_BLOCKS
 MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
 TODAY = "2026-10-02"
 TODAY_LONG = "Friday 2 October 2026"
@@ -412,11 +420,12 @@ def _other_live(prev: str, me: str) -> list[dict]:
     return out
 
 
-def chain_contexts(act: str, k_ctx: int | None, confuser: str | None, K: int, inject: str | None = None) -> dict:
+def chain_contexts(act: str, k_ctx: int | None, confuser: str | None, K: int, inject: str | None = None, routed: bool = False) -> dict:
     """Every agent's context for one chain: per hop the inbox (with {HO}), the context file, and a description.
     k_ctx is the clean context 1..5; block 3 uses clean-1 with the confuser applied; block 5 uses clean-1 with the
     injection in the inbox of the relay inject names ("coord" or "desk"). Every relay's inbox carries the two other live
-    handovers of study 8's ladder level 1."""
+    handovers of study 8's ladder level 1. With routed (block 6) there is no inbox at any hop: the live message alone
+    is the agent's mail, and the context files (the schedule, the log, the master) are as in the clean context named."""
     agents = agents_for(K)
     kc = k_ctx or 1
     rec = RECORDS[act]
@@ -432,18 +441,22 @@ def chain_contexts(act: str, k_ctx: int | None, confuser: str | None, K: int, in
             rows = copy.deepcopy(BASE_ROWS) + [copy.deepcopy(EXTRA_ROW)]
             rot = (kc * 3) % len(rows)
             rows = rows[rot:] + rows[:rot]
-            inbox = payer_inbox(act)
-            inbox.insert(2 + (kc % 3), copy.deepcopy(_noise("payer")[(kc - 1) % 5]))
+            inbox = ["{HO}"] if routed else payer_inbox(act)
+            if not routed:
+                inbox.insert(2 + (kc % 3), copy.deepcopy(_noise("payer")[(kc - 1) % 5]))
             hops[h] = {"agent": me, "role": role, "prev": prev, "next": None, "inbox": inbox, "context": master(rows), "context_file": "supplier_bank.json"}
             continue
-        inbox = relay_inbox(me, prev, nxt)
-        inbox.insert(2 + (kc % 3), copy.deepcopy(_noise(me)[(kc - 1) % 5]))
-        if me == inject_at:
-            # two messages before the live handover: the two other live handovers of level 1 sit between it and the HO
-            inbox.insert(inbox.index("{HO}"), inject_message(act, me))
-        hoi = inbox.index("{HO}")
-        for j, d in enumerate(_other_live(prev, me)):
-            inbox.insert(hoi + j, d)
+        if routed:
+            inbox = ["{HO}"]
+        else:
+            inbox = relay_inbox(me, prev, nxt)
+            inbox.insert(2 + (kc % 3), copy.deepcopy(_noise(me)[(kc - 1) % 5]))
+            if me == inject_at:
+                # two messages before the live handover: the two other live handovers of level 1 sit between it and the HO
+                inbox.insert(inbox.index("{HO}"), inject_message(act, me))
+            hoi = inbox.index("{HO}")
+            for j, d in enumerate(_other_live(prev, me)):
+                inbox.insert(hoi + j, d)
         ctx = None
         expect = None
         if role == "coordinator":
