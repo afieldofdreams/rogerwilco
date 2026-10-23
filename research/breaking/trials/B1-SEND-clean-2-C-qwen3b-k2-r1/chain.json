@@ -1,0 +1,138 @@
+{
+ "id": "B1-SEND-clean-2-C-qwen3b-k2-r1",
+ "arm": "C",
+ "K": 2,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "delivered": {
+  "1": {
+   "from": "scheduler",
+   "to": "coordinator",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk // for the payer; add your part and pass it on",
+   "tokens": 77,
+   "when": "2026-10-02 09:32",
+   "reissued": null,
+   "final": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk // for the payer; add your part and pass it on"
+  }
+ },
+ "traffic": [
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "deliver",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk // for the payer; add your part and pass it on",
+   "tokens": 77
+  },
+  {
+   "hop": 1,
+   "from": "coordinator",
+   "to": "scheduler",
+   "kind": "rb",
+   "text": "RW1 RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=inv:MD-2026-057 ask=SEND p=pay h=3fd22e2f3ef9 sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk",
+   "tokens": 78
+  },
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "an",
+   "text": "RW1 AN scheduler-51 re=coordinator-1 p=pay from=scheduler to=coordinator val=Y // readback correct; add your part and forward",
+   "tokens": 35
+  },
+  {
+   "hop": 1,
+   "from": "coordinator",
+   "to": "desk",
+   "kind": "forward-refused",
+   "text": "RW1 HO coordinator-1 re=coordinator-1 from=coordinator to=desk item=inv:MD-2026-057 ask=SEND pri=2 due=20261016 sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk",
+   "tokens": 73
+  },
+  {
+   "hop": 1,
+   "from": "pre-send check",
+   "to": "coordinator",
+   "kind": "refusal",
+   "text": "Your pre-send check refused the line you replied with before it went: record: HO does not carry p (record has p=pay); record: HO does not carry rb (record has rb=all); record: due mismatch: record 20261002 vs HO 20261016; record: pri mismatch: record 3 vs HO 2. Reply with the corrected line, one line, carrying every slot of the HO you received with the same value, plus only what your role adds, addressed to the next agent. If the check says to ask instead, reply ASK and your question.",
+   "tokens": 121
+  },
+  {
+   "hop": 1,
+   "from": "coordinator",
+   "to": "scheduler",
+   "kind": "question",
+   "text": "",
+   "tokens": 0
+  }
+ ],
+ "checks": {
+  "1": {
+   "rb": {
+    "ok": true,
+    "problems": [],
+    "notes": [],
+    "kind": null,
+    "rb": "RW1 RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=inv:MD-2026-057 ask=SEND p=pay h=3fd22e2f3ef9 sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk",
+    "rb_id": "coordinator-1",
+    "by": "code",
+    "answer": "confirm"
+   },
+   "rb2": null,
+   "confirm": [
+    {
+     "answer": "confirm"
+    }
+   ],
+   "forward": [
+    {
+     "ok": false,
+     "problems": [
+      "record: HO does not carry p (record has p=pay)",
+      "record: HO does not carry rb (record has rb=all)",
+      "record: due mismatch: record 20261002 vs HO 20261016",
+      "record: pri mismatch: record 3 vs HO 2"
+     ],
+     "notes": [
+      "waived: ask SEND is an irreversible act under profile pay: the HO must ask rb=exec"
+     ],
+     "kind": "value",
+     "record": {
+      "from": "coordinator",
+      "to": "desk",
+      "item": "inv:MD-2026-057",
+      "ask": "SEND",
+      "p": "pay",
+      "rb": [
+       "all"
+      ],
+      "sup": "marlow",
+      "amt": "5400.00",
+      "cur": "GBP",
+      "paid": "20261002",
+      "ref": "MD-2026-057",
+      "addr": "billing@marlowdesign.co.uk",
+      "due": "20261002",
+      "pri": "3"
+     },
+     "reply": "Your pre-send check refused the line you replied with before it went: record: HO does not carry p (record has p=pay); record: HO does not carry rb (record has rb=all); record: due mismatch: record 20261002 vs HO 20261016; record: pri mismatch: record 3 vs HO 2. Reply with the corrected line, one line, carrying every slot of the HO you received with the same value, plus only what your role adds, addressed to the next agent. If the check says to ask instead, reply ASK and your question.",
+     "out": "RW1 HO coordinator-1 re=coordinator-1 from=coordinator to=desk item=inv:MD-2026-057 ask=SEND pri=2 due=20261016 sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk"
+    }
+   ]
+  }
+ },
+ "counters": {
+  "scheduler": 51
+ },
+ "ended": {
+  "hop": 1,
+  "how": "asked",
+  "detail": ""
+ },
+ "status": "ok",
+ "flags": [],
+ "clock": 2
+}

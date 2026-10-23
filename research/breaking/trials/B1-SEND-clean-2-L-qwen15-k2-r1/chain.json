@@ -1,0 +1,56 @@
+{
+ "id": "B1-SEND-clean-2-L-qwen15-k2-r1",
+ "arm": "L",
+ "K": 2,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "delivered": {
+  "1": {
+   "from": "scheduler",
+   "to": "coordinator",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk // for the payer; add your part and pass it on",
+   "tokens": 77,
+   "when": "2026-10-02 09:32",
+   "reissued": null,
+   "final": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk // for the payer; add your part and pass it on"
+  }
+ },
+ "traffic": [
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "deliver",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk // for the payer; add your part and pass it on",
+   "tokens": 77
+  },
+  {
+   "hop": 1,
+   "from": "coordinator",
+   "to": "scheduler",
+   "kind": "question",
+   "text": "UN\nRB all\np=pay\nsup=northfield\namt=378.60\ncur=GBP\nkind=GROSS\npaid=20261002\nref=INV-000491\napref=FD-0931\nRB all\np=pay\nsup=coleridge\namt=212.40\ncur=GBP\nkind=GROSS\npaid=20261002\nref=CS-4471\napref=FD-0932\nRB all\np=pay\nsup=marlow\namt=5400.00\ncur=GBP\nkind=NET\nflag=FX\ndec=HOLD\npaid=20261002\nref=MD-2026-057\naddr=billing@marlowdesign.co.uk\nRB all\np=pay\nsup=kestrel\namt=960.00\ncur=USD\nkind=NET\nflag=FX\ndec=HOLD\npaid=20261002\nref=MD-2026-057\naddr=billing@marlowdesign.co.uk",
+   "tokens": 216
+  }
+ ],
+ "checks": {
+  "1": {
+   "rb": null,
+   "rb2": null,
+   "confirm": [],
+   "forward": []
+  }
+ },
+ "counters": {},
+ "ended": {
+  "hop": 1,
+  "how": "asked",
+  "detail": ""
+ },
+ "status": "ok",
+ "flags": []
+}
