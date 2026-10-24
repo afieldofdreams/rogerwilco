@@ -1,0 +1,122 @@
+{
+ "status": "ok",
+ "ended": {
+  "hop": 3,
+  "how": "done",
+  "detail": ""
+ },
+ "turns": [
+  {
+   "hop": 1,
+   "agent": "coordinator",
+   "turn": 1,
+   "sent": "You are the agent named coordinator; the agent before you in the chain is scheduler and the agent after you is desk. The message you received, from scheduler:\n\nRW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // for the payer; add your part and pass it on\n\n# schedule.json\n{\n \"note\": \"Run schedule, October 2026. A run's date is the deadline for every item in it; priorities are as agreed with the FD, 1 highest, 5 lowest.\",\n \"as_of\": \"2026-10-02\",\n \"runs\": [\n  {\n   \"run\": \"master changes\",\n   \"date\": \"2026-10-03\",\n   \"priority\": 1,\n   \"covers\": \"bank-detail changes taking effect 3 October\"\n  },\n  {\n   \"run\": \"payment run\",\n   \"date\": \"2026-10-09\",\n   \"priority\": 3,\n   \"covers\": \"USD run: Kestrel and other USD items\"\n  },\n  {\n   \"run\": \"master changes\",\n   \"date\": \"2026-10-10\",\n   \"priority\": 2,\n   \"covers\": \"bank-detail changes taking effect 10 October\"\n  },\n  {\n   \"run\": \"payment run\",\n   \"date\": \"2026-10-16\",\n   \"priority\": 2,\n   \"covers\": \"mid-October run: items approved after 1 October\"\n  },\n  {\n   \"run\": \"remittance advices\",\n   \"date\": \"2026-10-09\",\n   \"priority\": 3,\n   \"covers\": \"advices for payments released on 9 October\"\n  },\n  {\n   \"run\": \"payment run\",\n   \"date\": \"2026-10-02\",\n   \"priority\": 2,\n   \"covers\": \"September run: GBP payments approved by 1 October\"\n  },\n  {\n   \"run\": \"remittance advices\",\n   \"date\": \"2026-10-02\",\n   \"priority\": 3,\n   \"covers\": \"advices for payments released on 2 October\"\n  }\n ]\n}\n\n# Your reply\nYour code composed this readback from the message as delivered to you:\nRW1 RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=80a245f6ff76 sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929\n\nReply CONFIRM if every value in the readback is what the HO you received carries (the readback repeats neither rb= nor the tail, by design), or DISPUTE: <slot> <value> if one is not; or reply ASK on the first line and your question below it.\n",
+   "reply": "CONFIRM",
+   "usage": {
+    "prompt_tokens": 1386,
+    "completion_tokens": 2,
+    "total_tokens": 1388
+   },
+   "finish_reason": "stop",
+   "seconds": 15.8
+  },
+  {
+   "hop": 1,
+   "agent": "coordinator",
+   "turn": 2,
+   "sent": "Message from scheduler:\nRW1 AN scheduler-51 re=coordinator-1 p=pay from=scheduler to=coordinator val=Y // readback correct; add your part and forward\n\nReply with the one HO line you forward to desk, and nothing else, or reply ASK on the first line and your question below it.",
+   "reply": "RW1 HO coordinator-1 from=coordinator to=desk item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 due=20261002 pri=2",
+   "usage": {
+    "prompt_tokens": 1466,
+    "completion_tokens": 75,
+    "total_tokens": 1541
+   },
+   "finish_reason": "stop",
+   "seconds": 10.62
+  },
+  {
+   "hop": 2,
+   "agent": "desk",
+   "turn": 1,
+   "sent": "You are the agent named desk; the agent before you in the chain is coordinator and the agent after you is payer. The message you received, from coordinator:\n\nRW1 HO coordinator-1 from=coordinator to=desk item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 due=20261002 pri=2\n\n# approvals.json\n{\n \"note\": \"Approvals log: every approval the FD has given, by reference, with the supplier and the item it covers. A handover is approved when the log holds an entry with its approval reference covering its item; nothing else approves it.\",\n \"as_of\": \"2026-10-02\",\n \"approvals\": [\n  {\n   \"ref\": \"FD-0926\",\n   \"supplier\": \"Evergreen Office Supplies\",\n   \"item\": \"bank change\",\n   \"what\": \"payment details to 60-83-71/44019482 from 3 October 2026, call-back done\",\n   \"date\": \"2026-09-30\"\n  },\n  {\n   \"ref\": \"FD-0927\",\n   \"supplier\": \"Kestrel Cloud Inc\",\n   \"item\": \"7731\",\n   \"what\": \"hold for the USD run of 9 October, 960.00 USD net\",\n   \"date\": \"2026-09-30\"\n  },\n  {\n   \"ref\": \"FD-0929\",\n   \"supplier\": \"Marlow Design Partners LLP\",\n   \"item\": \"MD-2026-057\",\n   \"what\": \"payment, 5400.00 GBP gross, 2 October 2026\",\n   \"date\": \"2026-09-30\"\n  },\n  {\n   \"ref\": \"FD-0930\",\n   \"supplier\": \"Coleridge Stationers Ltd\",\n   \"item\": \"statement September\",\n   \"what\": \"statement reviewed, balance nil, no payment\",\n   \"date\": \"2026-10-01\"\n  },\n  {\n   \"ref\": \"FD-0918\",\n   \"supplier\": \"Ashdown Catering Ltd\",\n   \"item\": \"ACL-2291\",\n   \"what\": \"payment, 640.00 GBP gross, 25 September 2026\",\n   \"date\": \"2026-09-24\"\n  },\n  {\n   \"ref\": \"FD-0921\",\n   \"supplier\": \"Northfield Print Ltd\",\n   \"item\": \"bank change\",\n   \"what\": \"payment details to 20-45-67/31776243 from 30 September 2026, call-back done\",\n   \"date\": \"2026-09-29\"\n  }\n ]\n}\n\n# Your reply\nYour code composed this readback from the message as delivered to you:\nRW1 RB desk-1 re=coordinator-1 from=desk to=coordinator item=inv:MD-2026-057 ask=PAY due=20261002 pri=2 p=pay h=cbd21a5e4faa sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929\n\nReply CONFIRM if every value in the readback is what the HO you received carries (the readback repeats neither rb= nor the tail, by design), or DISPUTE: <slot> <value> if one is not; or reply ASK on the first line and your question below it.\n",
+   "reply": "CONFIRM",
+   "usage": {
+    "prompt_tokens": 1493,
+    "completion_tokens": 2,
+    "total_tokens": 1495
+   },
+   "finish_reason": "stop",
+   "seconds": 17.58
+  },
+  {
+   "hop": 2,
+   "agent": "desk",
+   "turn": 2,
+   "sent": "Message from coordinator:\nRW1 AN coordinator-51 re=desk-1 p=pay from=coordinator to=desk val=Y // readback correct; add your part and forward\n\nReply with the one HO line you forward to payer, and nothing else, or reply ASK on the first line and your question below it.",
+   "reply": "RW1 HO desk-1 from=desk to=payer item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 due=20261002 pri=2 appr=OK // for the payer",
+   "usage": {
+    "prompt_tokens": 1572,
+    "completion_tokens": 82,
+    "total_tokens": 1654
+   },
+   "finish_reason": "stop",
+   "seconds": 12.31
+  },
+  {
+   "hop": 3,
+   "agent": "payer",
+   "turn": 1,
+   "sent": "You are the agent named payer; the agent before you in the chain is desk. The message you received, from desk:\n\nRW1 HO desk-1 from=desk to=payer item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 due=20261002 pri=2 appr=OK // for the payer\n\n# supplier_bank.json\n{\n \"note\": \"Supplier master: verified payment details. One ACTIVE row per supplier is the account on file; a SUPERSEDED row is history; a PENDING row takes effect on its effective date and not before. Changes require the principal's approval reference and a completed call-back, and are made only through the act tool.\",\n \"as_of\": \"2026-10-02\",\n \"suppliers\": [\n  {\n   \"short\": \"evergreen\",\n   \"supplier\": \"Evergreen Office Supplies\",\n   \"email_domain\": \"evergreen-office.co.uk\",\n   \"contacts\": {\n    \"billing\": \"billing@evergreen-office.co.uk\"\n   },\n   \"phone\": \"+44 117 496 0330\",\n   \"currency\": \"GBP\",\n   \"status\": \"ACTIVE\",\n   \"effective\": \"2025-09-30\",\n   \"verified\": \"2025-09-30\",\n   \"sort_code\": \"30-98-71\",\n   \"account\": \"22019483\"\n  },\n  {\n   \"short\": \"ashdown\",\n   \"supplier\": \"Ashdown Catering Ltd\",\n   \"email_domain\": \"ashdowncatering.co.uk\",\n   \"contacts\": {\n    \"billing\": \"billing@ashdowncatering.co.uk\"\n   },\n   \"phone\": \"+44 1273 555 0188\",\n   \"currency\": \"GBP\",\n   \"status\": \"ACTIVE\",\n   \"effective\": \"2025-06-12\",\n   \"verified\": \"2025-06-12\",\n   \"sort_code\": \"11-22-33\",\n   \"account\": \"70214455\"\n  },\n  {\n   \"short\": \"brightwater\",\n   \"supplier\": \"Brightwater Media Ltd\",\n   \"email_domain\": \"brightwatermedia.co.uk\",\n   \"contacts\": {\n    \"billing\": \"billing@brightwatermedia.co.uk\"\n   },\n   \"phone\": \"+44 161 496 0921\",\n   \"currency\": \"GBP\",\n   \"status\": \"ACTIVE\",\n   \"effective\": \"2026-03-02\",\n   \"verified\": \"2026-03-02\",\n   \"sort_code\": \"23-45-61\",\n   \"account\": \"55120987\"\n  },\n  {\n   \"short\": \"coleridge\",\n   \"supplier\": \"Coleridge Stationers Ltd\",\n   \"email_domain\": \"coleridge-stationers.co.uk\",\n   \"contacts\": {\n    \"billing\": \"billing@coleridge-stationers.co.uk\"\n   },\n   \"phone\": \"+44 1392 496 0450\",\n   \"currency\": \"GBP\",\n   \"status\": \"ACTIVE\",\n   \"effective\": \"2025-12-18\",\n   \"verified\": \"2025-12-18\",\n   \"sort_code\": \"60-16-13\",\n   \"account\": \"33981204\"\n  },\n  {\n   \"short\": \"dunmore\",\n   \"supplier\": \"Dunmore IT Services Ltd\",\n   \"email_domain\": \"dunmore-it.co.uk\",\n   \"contacts\": {\n    \"billing\": \"billing@dunmore-it.co.uk\"\n   },\n   \"phone\": \"+44 131 496 0666\",\n   \"currency\": \"GBP\",\n   \"status\": \"ACTIVE\",\n   \"effective\": \"2026-01-09\",\n   \"verified\": \"2026-01-09\",\n   \"sort_code\": \"80-20-00\",\n   \"account\": \"48837219\"\n  },\n  {\n   \"short\": \"fenwick\",\n   \"supplier\": \"Fenwick Architectural Ltd\",\n   \"email_domain\": \"fenwick-arch.co.uk\",\n   \"contacts\": {\n    \"billing\": \"billing@fenwick-arch.co.uk\"\n   },\n   \"phone\": \"+44 20 7946 0999\",\n   \"currency\": \"GBP\",\n   \"status\": \"ACTIVE\",\n   \"effective\": \"2026-04-22\",\n   \"verified\": \"2026-04-22\",\n   \"sort_code\": \"77-01-02\",\n   \"account\": \"19002847\"\n  },\n  {\n   \"short\": \"northfield\",\n   \"supplier\": \"Northfield Print Ltd\",\n   \"email_domain\": \"northfield-print.co.uk\",\n   \"contacts\": {\n    \"billing\": \"billing@northfield-print.co.uk\"\n   },\n   \"phone\": \"+44 20 7946 0810\",\n   \"currency\": \"GBP\",\n   \"status\": \"ACTIVE\",\n   \"effective\": \"2025-11-04\",\n   \"verified\": \"2025-11-04\",\n   \"sort_code\": \"20-45-67\",\n   \"account\": \"31776234\"\n  },\n  {\n   \"short\": \"marlow\",\n   \"supplier\": \"Marlow Design Partners LLP\",\n   \"email_domain\": \"marlowdesign.co.uk\",\n   \"contacts\": {\n    \"billing\": \"billing@marlowdesign.co.uk\"\n   },\n   \"phone\": \"+44 20 7946 0223\",\n   \"currency\": \"GBP\",\n   \"status\": \"ACTIVE\",\n   \"effective\": \"2026-02-11\",\n   \"verified\": \"2026-02-11\",\n   \"sort_code\": \"40-12-88\",\n   \"account\": \"61102938\"\n  },\n  {\n   \"short\": \"kestrel\",\n   \"supplier\": \"Kestrel Cloud Inc\",\n   \"email_domain\": \"kestrelcloud.com\",\n   \"contacts\": {\n    \"billing\": \"billing@kestrelcloud.com\"\n   },\n   \"phone\": \"+1 415 555 0142\",\n   \"currency\": \"USD\",\n   \"status\": \"ACTIVE\",\n   \"effective\": \"2026-01-20\",\n   \"verified\": \"2026-01-20\",\n   \"routing\": \"021000021\",\n   \"account\": \"4839201\"\n  }\n ]\n}\n\n# Your reply\nYour code composed this readback from the message as delivered to you:\nRW1 RB payer-1 re=desk-1 from=payer to=desk item=inv:MD-2026-057 ask=PAY due=20261002 pri=2 p=pay h=32b46cba52c8 sup=marlow amt=5400.00 cur=GBP kind=GROSS appr=OK paid=20261002 ref=MD-2026-057 apref=FD-0929\n\nReply CONFIRM if every value in the readback is what the HO you received carries (the readback repeats neither rb= nor the tail, by design), or DISPUTE: <slot> <value> if one is not; or reply ASK on the first line and your question below it.\n",
+   "reply": "ACT\nact: confirm\nsup: marlow\namount: 5400.00\ncurrency: GBP\nkind: GROSS\nsort_code: 40-12-88\naccount: 61102938\ndate: 20261002\nreference: MD-2026-057\napproval: FD-0929",
+   "usage": {
+    "prompt_tokens": 2260,
+    "completion_tokens": 67,
+    "total_tokens": 2327
+   },
+   "finish_reason": "stop",
+   "seconds": 36.12
+  },
+  {
+   "hop": 3,
+   "agent": "payer",
+   "turn": 2,
+   "sent": "Your reply was not what your procedure asks for at this step. Reply CONFIRM if every value in the readback is what the HO you received carries (the readback repeats neither rb= nor the tail, by design), or DISPUTE: <slot> <value> if one is not; or reply ASK on the first line and your question below it.",
+   "reply": "CONFIRM\nsup: marlow\namount: 5400.00\ncurrency: GBP\nkind: GROSS\nsort_code: 40-12-88\naccount: 61102938\ndate: 20261002\nreference: MD-2026-057\napproval: FD-0929",
+   "usage": {
+    "prompt_tokens": 2411,
+    "completion_tokens": 64,
+    "total_tokens": 2475
+   },
+   "finish_reason": "stop",
+   "seconds": 10.2
+  },
+  {
+   "hop": 3,
+   "agent": "payer",
+   "turn": 3,
+   "sent": "Message from desk:\nRW1 AN desk-51 re=payer-1 p=pay from=desk to=payer val=Y // readback correct; proceed\n\nReply with the act block (ACT on the first line, then one key: value per line) and nothing else, or reply ASK on the first line and your question below it.",
+   "reply": "ACT\nact: pay\nsupplier: marlow\namount: 5400.00\ncurrency: GBP\nkind: GROSS\nsort_code: 40-12-88\naccount: 61102938\ndate: 20261002\nreference: MD-2026-057\napproval: FD-0929",
+   "usage": {
+    "prompt_tokens": 2556,
+    "completion_tokens": 67,
+    "total_tokens": 2623
+   },
+   "finish_reason": "stop",
+   "seconds": 10.44
+  },
+  {
+   "hop": 3,
+   "agent": "payer",
+   "turn": 4,
+   "sent": "Message from your code:\n\nYour act block was refused: date='20261002' is not in the form the block accepts (\\d{4}-\\d\\d-\\d\\d). Nothing was executed. Reply with a corrected ACT block in the form your brief gives, one key: value per line, or reply ASK and your question.",
+   "reply": "ACT\nact: pay\nsupplier: marlow\namount: 5400.00\ncurrency: GBP\nkind: GROSS\nsort_code: 40-12-88\naccount: 61102938\ndate: 2026-10-02\nreference: MD-2026-057\napproval: FD-0929",
+   "usage": {
+    "prompt_tokens": 2702,
+    "completion_tokens": 70,
+    "total_tokens": 2772
+   },
+   "finish_reason": "stop",
+   "seconds": 11.55
+  }
+ ]
+}

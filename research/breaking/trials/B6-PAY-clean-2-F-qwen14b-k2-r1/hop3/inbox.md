@@ -1,0 +1,12 @@
+# Inbox for payer (oldest first, newest last)
+
+## 1. 2026-10-02 09:36 from desk to payer
+Hi payer,
+
+Handover for the payer, approved by the FD. Please release the payment for Marlow Design Partners LLP invoice MD-2026-057: 5,400.00 GBP gross, to the account on file, payment date 2 October 2026, reference MD-2026-057. Approved by the FD under FD-0929, which covers this item.
+
+Deadline: 2 October 2026
+Priority: 2
+
+Thanks,
+desk

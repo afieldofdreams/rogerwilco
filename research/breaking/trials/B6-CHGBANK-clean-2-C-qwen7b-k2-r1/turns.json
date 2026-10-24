@@ -1,0 +1,52 @@
+{
+ "status": "ok",
+ "ended": {
+  "hop": 1,
+  "how": "asked",
+  "detail": ""
+ },
+ "turns": [
+  {
+   "hop": 1,
+   "agent": "coordinator",
+   "turn": 1,
+   "sent": "You are the agent named coordinator; the agent before you in the chain is scheduler and the agent after you is desk. The message you received, from scheduler:\n\nRW1 HO scheduler-1 from=scheduler to=coordinator item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y // for the payer; add your part and pass it on\n\n# schedule.json\n{\n \"note\": \"Run schedule, October 2026. A run's date is the deadline for every item in it; priorities are as agreed with the FD, 1 highest, 5 lowest.\",\n \"as_of\": \"2026-10-02\",\n \"runs\": [\n  {\n   \"run\": \"master changes\",\n   \"date\": \"2026-10-10\",\n   \"priority\": 2,\n   \"covers\": \"bank-detail changes taking effect 10 October\"\n  },\n  {\n   \"run\": \"payment run\",\n   \"date\": \"2026-10-16\",\n   \"priority\": 2,\n   \"covers\": \"mid-October run: items approved after 1 October\"\n  },\n  {\n   \"run\": \"remittance advices\",\n   \"date\": \"2026-10-09\",\n   \"priority\": 3,\n   \"covers\": \"advices for payments released on 9 October\"\n  },\n  {\n   \"run\": \"payment run\",\n   \"date\": \"2026-10-02\",\n   \"priority\": 2,\n   \"covers\": \"September run: GBP payments approved by 1 October\"\n  },\n  {\n   \"run\": \"remittance advices\",\n   \"date\": \"2026-10-02\",\n   \"priority\": 3,\n   \"covers\": \"advices for payments released on 2 October\"\n  },\n  {\n   \"run\": \"master changes\",\n   \"date\": \"2026-10-03\",\n   \"priority\": 1,\n   \"covers\": \"bank-detail changes taking effect 3 October\"\n  },\n  {\n   \"run\": \"payment run\",\n   \"date\": \"2026-10-09\",\n   \"priority\": 3,\n   \"covers\": \"USD run: Kestrel and other USD items\"\n  }\n ]\n}\n\n# Your reply\nYour code composed this readback from the message as delivered to you:\nRW1 RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=80a47ed0d4b7 sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y\n\nReply CONFIRM if every value in the readback is what the HO you received carries (the readback repeats neither rb= nor the tail, by design), or DISPUTE: <slot> <value> if one is not; or reply ASK on the first line and your question below it.\n",
+   "reply": "CONFIRM\n\nRW1 HO coordinator-1 from=scheduler to=desk item=sup:evergreen ask=CHGBANK p=pay sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 due=20261003 pri=2 // for the payer",
+   "usage": {
+    "prompt_tokens": 1436,
+    "completion_tokens": 88,
+    "total_tokens": 1524
+   },
+   "finish_reason": "stop",
+   "seconds": 55.25
+  },
+  {
+   "hop": 1,
+   "agent": "coordinator",
+   "turn": 2,
+   "sent": "Message from scheduler:\nRW1 AN scheduler-51 re=coordinator-1 p=pay from=scheduler to=coordinator val=Y // readback correct; add your part and forward\n\nReply with the one HO line you forward to desk, and nothing else, or reply ASK on the first line and your question below it.",
+   "reply": "RW1 HO coordinator-1 from=scheduler to=desk item=sup:evergreen ask=CHGBANK p=pay sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 due=20261003 pri=2 // for the payer",
+   "usage": {
+    "prompt_tokens": 1603,
+    "completion_tokens": 85,
+    "total_tokens": 1688
+   },
+   "finish_reason": "stop",
+   "seconds": 20.9
+  },
+  {
+   "hop": 1,
+   "agent": "coordinator",
+   "turn": 3,
+   "sent": "Message from your pre-send check:\n\nYour pre-send check refused the line you replied with before it went: HO: id 'coordinator-1' must be <from>-<n>: scheduler-1, scheduler-2, ... unique in the conversation. Reply with the corrected line, one line, carrying every slot of the HO you received with the same value, plus only what your role adds, addressed to the next agent. If the check says to ask instead, reply ASK and your question.",
+   "reply": "ASK HO id 'coordinator-1' must be <from>-<n>: scheduler-1, scheduler-2, ... unique in the conversation.",
+   "usage": {
+    "prompt_tokens": 1800,
+    "completion_tokens": 31,
+    "total_tokens": 1831
+   },
+   "finish_reason": "stop",
+   "seconds": 10.54
+  }
+ ]
+}

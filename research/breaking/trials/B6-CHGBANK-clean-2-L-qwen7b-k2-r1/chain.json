@@ -1,0 +1,174 @@
+{
+ "id": "B6-CHGBANK-clean-2-L-qwen7b-k2-r1",
+ "arm": "L",
+ "K": 2,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "delivered": {
+  "1": {
+   "from": "scheduler",
+   "to": "coordinator",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y // for the payer; add your part and pass it on",
+   "tokens": 73,
+   "when": "2026-10-02 09:32",
+   "reissued": null,
+   "final": "RW1 HO scheduler-1 from=scheduler to=coordinator item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y // for the payer; add your part and pass it on"
+  },
+  "2": {
+   "from": "coordinator",
+   "to": "desk",
+   "text": "RW1 HO coordinator-1 from=scheduler to=desk item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261002 pri=2 // for the payer",
+   "tokens": 72,
+   "when": "2026-10-02 09:34",
+   "reissued": null,
+   "final": "RW1 HO coordinator-1 from=scheduler to=desk item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261002 pri=2 // for the payer"
+  },
+  "3": {
+   "from": "desk",
+   "to": "payer",
+   "text": "RW1 HO desk-1 from=coordinator to=payer item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261002 pri=2 appr=OK // for the payer",
+   "tokens": 76,
+   "when": "2026-10-02 09:36",
+   "reissued": null,
+   "final": "RW1 HO desk-1 from=coordinator to=payer item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261002 pri=2 appr=OK // for the payer"
+  }
+ },
+ "traffic": [
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "deliver",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y // for the payer; add your part and pass it on",
+   "tokens": 73
+  },
+  {
+   "hop": 2,
+   "from": "coordinator",
+   "to": "desk",
+   "kind": "deliver",
+   "text": "RW1 HO coordinator-1 from=scheduler to=desk item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261002 pri=2 // for the payer",
+   "tokens": 72
+  },
+  {
+   "hop": 3,
+   "from": "desk",
+   "to": "payer",
+   "kind": "deliver",
+   "text": "RW1 HO desk-1 from=coordinator to=payer item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261002 pri=2 appr=OK // for the payer",
+   "tokens": 76
+  },
+  {
+   "hop": 3,
+   "from": "payer",
+   "to": "desk",
+   "kind": "act",
+   "text": "ACT\nact: chgbank\nsupplier: evergreen\nsort_code: 30-98-71\naccount: 22019482\neffective: 20261003\napproval: FD-0926",
+   "tokens": 42
+  },
+  {
+   "hop": 3,
+   "from": "code",
+   "to": "payer",
+   "kind": "act-refusal",
+   "text": "Your act block was refused: effective='20261003' is not in the form the block accepts (\\d{4}-\\d\\d-\\d\\d). Nothing was executed. Reply with a corrected ACT block in the form your brief gives, one key: value per line, or reply ASK and your question.",
+   "tokens": 63
+  },
+  {
+   "hop": 3,
+   "from": "payer",
+   "to": "desk",
+   "kind": "act",
+   "text": "ACT\nact: chgbank\nsupplier: evergreen\nsort_code: 30-98-71\naccount: 22019482\neffective: 2026-10-03\napproval: FD-0926",
+   "tokens": 45
+  }
+ ],
+ "checks": {
+  "1": {
+   "rb": null,
+   "rb2": null,
+   "confirm": [],
+   "forward": [
+    {
+     "ok": false,
+     "problems": [
+      "syntax: id 'coordinator-1' must be <from>-<n>: scheduler-1, scheduler-2, ... unique in the conversation"
+     ],
+     "notes": [],
+     "kind": "formal",
+     "out": "RW1 HO coordinator-1 from=scheduler to=desk item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261002 pri=2 // for the payer",
+     "delivered_as_written": true
+    }
+   ]
+  },
+  "2": {
+   "rb": null,
+   "rb2": null,
+   "confirm": [],
+   "forward": [
+    {
+     "ok": false,
+     "problems": [
+      "syntax: id 'desk-1' must be <from>-<n>: coordinator-1, coordinator-2, ... unique in the conversation"
+     ],
+     "notes": [],
+     "kind": "formal",
+     "out": "RW1 HO desk-1 from=coordinator to=payer item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261002 pri=2 appr=OK // for the payer",
+     "delivered_as_written": true
+    }
+   ]
+  },
+  "3": {
+   "rb": null,
+   "rb2": null,
+   "confirm": [],
+   "forward": [],
+   "act": [
+    {
+     "values": {
+      "act": "chgbank",
+      "supplier": "evergreen",
+      "sort_code": "30-98-71",
+      "account": "22019482",
+      "effective": "20261003",
+      "approval": "FD-0926"
+     },
+     "result": {
+      "status": "REFUSED",
+      "reason": "effective='20261003' is not in the form the block accepts (\\d{4}-\\d\\d-\\d\\d)"
+     }
+    },
+    {
+     "values": {
+      "act": "chgbank",
+      "supplier": "evergreen",
+      "sort_code": "30-98-71",
+      "account": "22019482",
+      "effective": "2026-10-03",
+      "approval": "FD-0926"
+     },
+     "result": {
+      "status": "REFUSED",
+      "reason": "no ACTIVE row in the master for supplier 'evergreen'; nothing changed"
+     }
+    }
+   ]
+  }
+ },
+ "counters": {},
+ "ended": {
+  "hop": 3,
+  "how": "stalled",
+  "detail": "act block refused twice: no ACTIVE row in the master for supplier 'evergreen'; nothing changed"
+ },
+ "status": "act block refused twice: no ACTIVE row in the master for supplier 'evergreen'; nothing changed",
+ "flags": [
+  "hop 1: coordinator forwarded a line that does not parse; delivered as written",
+  "hop 2: desk forwarded a line that does not parse; delivered as written"
+ ],
+ "clock": 1
+}

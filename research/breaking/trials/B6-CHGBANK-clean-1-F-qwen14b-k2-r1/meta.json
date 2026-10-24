@@ -1,0 +1,46 @@
+{
+ "id": "B6-CHGBANK-clean-1-F-qwen14b-k2-r1",
+ "block": 6,
+ "block_name": "routed",
+ "act": "CHGBANK",
+ "context": "clean-1",
+ "arm": "F",
+ "model": "qwen14b",
+ "K": 2,
+ "repeat": 1,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "hops": {
+  "1": {
+   "agent": "coordinator",
+   "role": "coordinator",
+   "prev": "scheduler",
+   "next": "desk",
+   "brief": "data/briefs/F-coordinator-CHGBANK-b6.txt",
+   "context_file": "schedule.json"
+  },
+  "2": {
+   "agent": "desk",
+   "role": "desk",
+   "prev": "coordinator",
+   "next": "payer",
+   "brief": "data/briefs/F-desk-CHGBANK-b6.txt",
+   "context_file": "approvals.json"
+  },
+  "3": {
+   "agent": "payer",
+   "role": "payer",
+   "prev": "desk",
+   "next": null,
+   "brief": "data/briefs/F-payer-CHGBANK-b6.txt",
+   "context_file": "supplier_bank.json"
+  }
+ },
+ "harden": 1,
+ "inject_hop": null,
+ "routed": true
+}
