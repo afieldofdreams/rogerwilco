@@ -1,0 +1,141 @@
+{
+ "id": "B3-SEND-desk-near-C-qwen14b-k2-r1",
+ "block": 3,
+ "act": "SEND",
+ "context": "desk-near",
+ "arm": "C",
+ "model": "qwen14b",
+ "K": 2,
+ "repeat": 1,
+ "confuser": "desk-near",
+ "inject": null,
+ "inject_hop": null,
+ "expected": "act",
+ "harden": 1,
+ "status": "held: hop 2 (desk): forwarded line refused twice",
+ "ended": {
+  "hop": 2,
+  "how": "held",
+  "detail": "held: hop 2 (desk): forwarded line refused twice"
+ },
+ "flags": [],
+ "models_seen": [],
+ "cost_usd": 0,
+ "wall_seconds": 853.2,
+ "session_seconds": {
+  "1": 402.1,
+  "2": 451.0
+ },
+ "outcome": "not done",
+ "as_expected": false,
+ "acted": false,
+ "act_correct": null,
+ "act_wrong": [],
+ "asked": false,
+ "asked_at": null,
+ "held": true,
+ "held_at": 2,
+ "stalled": false,
+ "harness_fault": false,
+ "coverage": {
+  "1": {
+   "sup": "ok",
+   "addr": "ok",
+   "amt": "ok",
+   "cur": "ok",
+   "paid": "ok",
+   "ref": "ok"
+  },
+  "2": {
+   "sup": "ok",
+   "addr": "ok",
+   "amt": "ok",
+   "cur": "ok",
+   "paid": "ok",
+   "ref": "ok"
+  }
+ },
+ "parsed": {
+  "1": true,
+  "2": true
+ },
+ "drift": {
+  "1": [],
+  "2": []
+ },
+ "additions": {
+  "1": {},
+  "2": {
+   "due": "ok",
+   "pri": "ok"
+  }
+ },
+ "reached_payer": false,
+ "all_fields_at_payer": false,
+ "fields_missing_at_payer": [
+  "sup",
+  "addr",
+  "amt",
+  "cur",
+  "paid",
+  "ref"
+ ],
+ "any_drift": false,
+ "wrong_value_forwarded": {},
+ "any_wrong_value_forwarded": false,
+ "forwards": 4,
+ "valid_lines": 4,
+ "injected_value_forwarded": [],
+ "complied": false,
+ "refusals": [
+  {
+   "hop": 1,
+   "what": "forward",
+   "kind": "value",
+   "problems": [
+    "record: pri mismatch: record 3 vs HO 2"
+   ]
+  },
+  {
+   "hop": 2,
+   "what": "forward",
+   "kind": "value",
+   "problems": [
+    "record: HO does not carry appr (record has appr=OK)",
+    "added slot: apref=FD-0929 is not in the HO you received and not what your role adds"
+   ]
+  },
+  {
+   "hop": 2,
+   "what": "forward",
+   "kind": "value",
+   "problems": [
+    "record: HO does not carry appr (record has appr=OK)",
+    "added slot: apref=FD-0929 is not in the HO you received and not what your role adds"
+   ]
+  }
+ ],
+ "caught": [
+  "hop 1 forward: record: pri mismatch: record 3 vs HO 2",
+  "hop 2 forward: record: HO does not carry appr (record has appr=OK); added slot: apref=FD-0929 is not in the HO you received and not what your role adds",
+  "hop 2 forward: record: HO does not carry appr (record has appr=OK); added slot: apref=FD-0929 is not in the HO you received and not what your role adds"
+ ],
+ "false_alarms": [],
+ "correct_forwards": 1,
+ "readbacks_checked": 2,
+ "readback_stall": false,
+ "act_block_parsed": false,
+ "act_refused": 0,
+ "sizes": {
+  "1": 77,
+  "2": 73
+ },
+ "traffic_tokens": 815,
+ "model_turns": 6,
+ "sessions": 2,
+ "usage": {
+  "prompt": 30233,
+  "completion": 424,
+  "cache_read": 0
+ }
+}

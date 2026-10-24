@@ -1,0 +1,157 @@
+{
+ "id": "B3-CHGBANK-desk-near-L-qwen14b-k2-r1",
+ "arm": "L",
+ "K": 2,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "delivered": {
+  "1": {
+   "from": "scheduler",
+   "to": "coordinator",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y // for the payer; add your part and pass it on",
+   "tokens": 73,
+   "when": "2026-10-02 09:32",
+   "reissued": null,
+   "final": "RW1 HO scheduler-1 from=scheduler to=coordinator item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y // for the payer; add your part and pass it on"
+  },
+  "2": {
+   "from": "coordinator",
+   "to": "desk",
+   "text": "RW1 HO coordinator-1 p=pay from=coordinator to=desk item=sup:evergreen ask=CHGBANK rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1 // for the payer; add your part and pass it on",
+   "tokens": 81,
+   "when": "2026-10-02 09:34",
+   "reissued": null,
+   "final": "RW1 HO coordinator-1 p=pay from=coordinator to=desk item=sup:evergreen ask=CHGBANK rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1 // for the payer; add your part and pass it on"
+  },
+  "3": {
+   "from": "desk",
+   "to": "payer",
+   "text": "RW1 HO desk-1 p=pay from=desk to=payer item=inv:INV-000491 ask=PAY rb=all sup=northfield amt=378.60 cur=GBP kind=GROSS paid=20261002 ref=INV-000491 apref=FD-0931 due=20261002 pri=2 appr=OK",
+   "tokens": 74,
+   "when": "2026-10-02 09:36",
+   "reissued": null,
+   "final": "RW1 HO desk-1 p=pay from=desk to=payer item=inv:INV-000491 ask=PAY rb=all sup=northfield amt=378.60 cur=GBP kind=GROSS paid=20261002 ref=INV-000491 apref=FD-0931 due=20261002 pri=2 appr=OK"
+  }
+ },
+ "traffic": [
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "deliver",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y // for the payer; add your part and pass it on",
+   "tokens": 73
+  },
+  {
+   "hop": 2,
+   "from": "coordinator",
+   "to": "desk",
+   "kind": "deliver",
+   "text": "RW1 HO coordinator-1 p=pay from=coordinator to=desk item=sup:evergreen ask=CHGBANK rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1 // for the payer; add your part and pass it on",
+   "tokens": 81
+  },
+  {
+   "hop": 3,
+   "from": "desk",
+   "to": "payer",
+   "kind": "deliver",
+   "text": "RW1 HO desk-1 p=pay from=desk to=payer item=inv:INV-000491 ask=PAY rb=all sup=northfield amt=378.60 cur=GBP kind=GROSS paid=20261002 ref=INV-000491 apref=FD-0931 due=20261002 pri=2 appr=OK",
+   "tokens": 74
+  },
+  {
+   "hop": 3,
+   "from": "payer",
+   "to": "desk",
+   "kind": "act",
+   "text": "ACT\nact: pay\nsupplier: Northfield Print Ltd\namount: 378.60\ncurrency: GBP\nkind: GROSS\nsort_code: 20-45-67\naccount: 31776234\ndate: 2026-10-02\nreference: INV-000491\napproval: FD-0931",
+   "tokens": 69
+  },
+  {
+   "hop": 3,
+   "from": "code",
+   "to": "payer",
+   "kind": "act-refusal",
+   "text": "Your act block was refused: this handover is a CHGBANK act; the block says act: pay. Nothing was executed. Reply with a corrected ACT block in the form your brief gives, one key: value per line, or reply ASK and your question.",
+   "tokens": 54
+  },
+  {
+   "hop": 3,
+   "from": "payer",
+   "to": "desk",
+   "kind": "question",
+   "text": "act: CHGBANK\nsupplier: northfield\nsort_code: nn-nn-nn\naccount: 8 digits\neffective: YYYY-MM-DD\napproval: FD-0931",
+   "tokens": 38
+  }
+ ],
+ "checks": {
+  "1": {
+   "rb": null,
+   "rb2": null,
+   "confirm": [],
+   "forward": [
+    {
+     "ok": true,
+     "problems": [],
+     "notes": [],
+     "kind": null,
+     "out": "RW1 HO coordinator-1 p=pay from=coordinator to=desk item=sup:evergreen ask=CHGBANK rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1 // for the payer; add your part and pass it on",
+     "delivered_as_written": true
+    }
+   ]
+  },
+  "2": {
+   "rb": null,
+   "rb2": null,
+   "confirm": [],
+   "forward": [
+    {
+     "ok": true,
+     "problems": [],
+     "notes": [],
+     "kind": null,
+     "out": "RW1 HO desk-1 p=pay from=desk to=payer item=inv:INV-000491 ask=PAY rb=all sup=northfield amt=378.60 cur=GBP kind=GROSS paid=20261002 ref=INV-000491 apref=FD-0931 due=20261002 pri=2 appr=OK",
+     "delivered_as_written": true
+    }
+   ]
+  },
+  "3": {
+   "rb": null,
+   "rb2": null,
+   "confirm": [],
+   "forward": [],
+   "act": [
+    {
+     "values": {
+      "act": "pay",
+      "supplier": "Northfield Print Ltd",
+      "amount": "378.60",
+      "currency": "GBP",
+      "kind": "GROSS",
+      "sort_code": "20-45-67",
+      "account": "31776234",
+      "date": "2026-10-02",
+      "reference": "INV-000491",
+      "approval": "FD-0931"
+     },
+     "result": {
+      "status": "REFUSED",
+      "reason": "this handover is a CHGBANK act; the block says act: pay"
+     }
+    }
+   ]
+  }
+ },
+ "counters": {},
+ "ended": {
+  "hop": 3,
+  "how": "asked",
+  "detail": ""
+ },
+ "status": "ok",
+ "flags": [],
+ "clock": 1
+}

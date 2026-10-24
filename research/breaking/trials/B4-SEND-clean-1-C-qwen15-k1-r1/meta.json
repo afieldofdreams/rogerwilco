@@ -1,0 +1,36 @@
+{
+ "id": "B4-SEND-clean-1-C-qwen15-k1-r1",
+ "block": 4,
+ "block_name": "length",
+ "act": "SEND",
+ "context": "clean-1",
+ "arm": "C",
+ "model": "qwen15",
+ "K": 1,
+ "repeat": 1,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "payer"
+ ],
+ "hops": {
+  "1": {
+   "agent": "coordinator",
+   "role": "coordinator",
+   "prev": "scheduler",
+   "next": "payer",
+   "brief": "data/briefs/C-coordinator-SEND.txt",
+   "context_file": "schedule.json"
+  },
+  "2": {
+   "agent": "payer",
+   "role": "payer",
+   "prev": "coordinator",
+   "next": null,
+   "brief": "data/briefs/C-payer-SEND.txt",
+   "context_file": "supplier_bank.json"
+  }
+ },
+ "harden": 1,
+ "inject_hop": null
+}

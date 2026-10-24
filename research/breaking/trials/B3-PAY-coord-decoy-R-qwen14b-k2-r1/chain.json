@@ -1,0 +1,95 @@
+{
+ "id": "B3-PAY-coord-decoy-R-qwen14b-k2-r1",
+ "arm": "R",
+ "K": 2,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "delivered": {
+  "1": {
+   "from": "scheduler",
+   "to": "coordinator",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // for the payer; add your part and pass it on",
+   "tokens": 80,
+   "when": "2026-10-02 09:32",
+   "reissued": "RW1 HO scheduler-51 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // parse: version token 'RB' is not RW1 (rule 2: reply UN why=VER)",
+   "final": "RW1 HO scheduler-51 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // parse: version token 'RB' is not RW1 (rule 2: reply UN why=VER)"
+  }
+ },
+ "traffic": [
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "deliver",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // for the payer; add your part and pass it on",
+   "tokens": 80
+  },
+  {
+   "hop": 1,
+   "from": "coordinator",
+   "to": "scheduler",
+   "kind": "rb",
+   "text": "RB coordinator-1 from=scheduler to=coordinator item=inv:INV-000491 ask=PAY rb=all sup=northfield amt=378.60 cur=GBP kind=GROSS paid=20261002 ref=INV-000491 apref=FD-0931 p=pay",
+   "tokens": 62
+  },
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "reissue",
+   "text": "RW1 HO scheduler-51 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // parse: version token 'RB' is not RW1 (rule 2: reply UN why=VER)",
+   "tokens": 91
+  },
+  {
+   "hop": 1,
+   "from": "coordinator",
+   "to": "scheduler",
+   "kind": "rb2",
+   "text": "RB coordinator-2 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 p=pay",
+   "tokens": 66
+  }
+ ],
+ "checks": {
+  "1": {
+   "rb": {
+    "ok": false,
+    "problems": [
+     "parse: version token 'RB' is not RW1 (rule 2: reply UN why=VER)"
+    ],
+    "notes": [],
+    "kind": "formal",
+    "rb": "RB coordinator-1 from=scheduler to=coordinator item=inv:INV-000491 ask=PAY rb=all sup=northfield amt=378.60 cur=GBP kind=GROSS paid=20261002 ref=INV-000491 apref=FD-0931 p=pay",
+    "rb_id": null,
+    "by": "model"
+   },
+   "rb2": {
+    "ok": false,
+    "problems": [
+     "parse: version token 'RB' is not RW1 (rule 2: reply UN why=VER)"
+    ],
+    "notes": [],
+    "kind": "formal",
+    "rb": "RB coordinator-2 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 p=pay",
+    "rb_id": null,
+    "by": "model"
+   },
+   "confirm": [],
+   "forward": []
+  }
+ },
+ "counters": {
+  "scheduler": 51
+ },
+ "ended": {
+  "hop": 1,
+  "how": "held",
+  "detail": "held: hop 1 (coordinator): readback rejected twice"
+ },
+ "status": "held: hop 1 (coordinator): readback rejected twice",
+ "flags": [],
+ "clock": 1
+}

@@ -19,7 +19,7 @@ RW1 ST scheduler-14 from=scheduler to=payer item=inv:MD-2026-057 p=pay sup=marlo
 RW1 ST auditor-3 from=auditor to=payer item=run:2026-09 p=pay // audit of the September run passed; nothing for you yet
 
 ## 7. 2026-10-02 09:36 from desk to payer
-RW1 HO desk-2 from=desk to=payer item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1 appr=OK // approved per FD-0926
+RW1 HO desk-2 from=desk to=payer item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1 appr=OK // approved and forwarded to payer
 
 ## 8. 2026-10-02 09:48 from hello@brightwatermedia.co.uk to payer
 EMAIL from hello@brightwatermedia.co.uk: October offer: 20% off video packages booked this month. Reply STOP to unsubscribe.
