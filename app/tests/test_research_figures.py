@@ -1,7 +1,7 @@
 """Every figure on a generated research page is read from the study's results JSON, never typed.
 
 A page carries each number as <span data-fig="name">value</span>; this test recomputes the figures from the study's
-results/summary.json with the study's own generator and asserts the committed page matches. Studies 6, 7 and 8 generate their
+results/summary.json with the study's own generator and asserts the committed page matches. Studies 6, 7, 8 and 9 generate their
 pages this way. Skipped for a study whose results or page are not in the checkout.
 """
 import importlib.util
@@ -12,7 +12,7 @@ from pathlib import Path
 import pytest
 
 REPO = Path(__file__).resolve().parents[2]
-STUDIES = [("plan-readback", "plan-readback.html"), ("tool-prepare", "tool-prepare.html"), ("chain", "chain.html")]
+STUDIES = [("plan-readback", "plan-readback.html"), ("tool-prepare", "tool-prepare.html"), ("chain", "chain.html"), ("breaking", "breaking.html")]
 
 
 @pytest.mark.parametrize("folder,page_name", STUDIES)

@@ -115,7 +115,7 @@ HTML = f"""<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <title>rogerwilco</title>
-<meta name="description" content="Aviation learned how to hand an instruction from one person to another so that it cannot be misheard. rogerwilco gives that discipline to AI agents: a job as one typed line, read back and checked by a program before anything happens. The last minute at Tenerife, the five layers that keep flying safe, their twins for agents, and eight studies told one test at a time, with a picture of each flow and the mistakes it caught.">
+<meta name="description" content="Aviation learned how to hand an instruction from one person to another so that it cannot be misheard. rogerwilco gives that discipline to AI agents: a job as one typed line, read back and checked by a program before anything happens. The last minute at Tenerife, the five layers that keep flying safe, their twins for agents, and nine studies told one test at a time, with a picture of each flow and the mistakes it caught.">
 <!-- site:head -->
 <!-- /site:head -->
 </head>
@@ -170,7 +170,7 @@ HTML = f"""<!doctype html>
       <div class="layer" role="row"><h3 role="cell"><span class="n">4</span>Watch the radar</h3><p role="cell">The tower sees what the aircraft actually does, so a mistake is seen early.</p><p role="cell">The tool reports what it actually did and a program compares it with the plan. <b>Caught every fault, after the money moved.</b></p></div>
       <div class="layer" role="row"><h3 role="cell"><span class="n">5</span>The aircraft says no</h3><p role="cell">The flight computer will not fly the aircraft into the ground, whatever anyone says.</p><p role="cell">The tool will not pay until the program says yes, whatever any agent says. <b>Never paid early, in 378 tries.</b></p></div>
     </div>
-    <p>rogerwilco is those layers written down for agents: three one-line messages, the checks a program runs on them, hosted here for any agent to call, and eight studies that planted mistakes to find out what each layer catches. The rest of this page is those studies, one test at a time. <em>Roger</em> means "I received it"; <em>wilco</em> means "I understood it and I will do it".</p>
+    <p>rogerwilco is those layers written down for agents: three one-line messages, the checks a program runs on them, hosted here for any agent to call, and nine studies that planted mistakes to find out what each layer catches. The rest of this page is those studies, one test at a time. <em>Roger</em> means "I received it"; <em>wilco</em> means "I understood it and I will do it".</p>
   </section>
 
   <section>
@@ -338,7 +338,7 @@ HTML = f"""<!doctype html>
     </ul>
   </section>
 
-  <p class="foot">Every study, log and grade is public in the <a href="https://github.com/afieldofdreams/rogerwilco">rogerwilco repository</a>, and <a href="/research">the research pages</a> tell each of the eight studies with every figure and its interval. Numbers above are from studies 6 and 7; the strong models were Claude Sonnet 5.5, Claude Haiku 5.5 and gpt-5.5, the weak one gpt-5.4-mini.</p>
+  <p class="foot">Every study, log and grade is public in the <a href="https://github.com/afieldofdreams/rogerwilco">rogerwilco repository</a>, and <a href="/research">the research pages</a> tell each of the nine studies with every figure and its interval. Numbers above are from studies 6 and 7; the strong models were Claude Sonnet 5.5, Claude Haiku 5.5 and gpt-5.5, the weak one gpt-5.4-mini.</p>
 </main>
 <!-- site:footer -->
 <!-- /site:footer -->

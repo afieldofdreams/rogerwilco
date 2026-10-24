@@ -811,8 +811,9 @@ def test_research_index_and_pages(client):
     r = client.get("/research")
     assert r.status_code == 200 and "text/html" in r.headers["content-type"]
     assert "Month-end close" in r.text and "/research/month-end" in r.text
-    assert "The relay" in r.text and "/research/chain" in r.text and "Eight studies" in r.text
-    for slug in ("wire-study", "pilot", "month-end", "translation", "readback", "plan-readback", "tool-prepare", "chain"):
+    assert "The relay" in r.text and "/research/chain" in r.text and "Nine studies" in r.text
+    assert "The breaking point" in r.text and "/research/breaking" in r.text
+    for slug in ("wire-study", "pilot", "month-end", "translation", "readback", "plan-readback", "tool-prepare", "chain", "breaking"):
         page = client.get(f"/research/{slug}")
         assert page.status_code == 200, slug
         assert page.text.lstrip().startswith("<!doctype html>"), slug
