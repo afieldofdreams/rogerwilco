@@ -1,0 +1,48 @@
+{
+ "id": "B1-PAY-clean-1-L-or-deepseekflash-k2-r1-x",
+ "arm": "L",
+ "K": 2,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "delivered": {
+  "1": {
+   "from": "scheduler",
+   "to": "coordinator",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // for the payer; add your part and pass it on",
+   "tokens": 80,
+   "when": "2026-10-02 09:32",
+   "reissued": null,
+   "final": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // for the payer; add your part and pass it on"
+  }
+ },
+ "traffic": [
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "deliver",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // for the payer; add your part and pass it on",
+   "tokens": 80
+  }
+ ],
+ "checks": {
+  "1": {
+   "rb": null,
+   "rb2": null,
+   "confirm": [],
+   "forward": []
+  }
+ },
+ "counters": {},
+ "ended": {
+  "hop": 1,
+  "how": "error",
+  "detail": "LLMError: HTTP 402 from https://openrouter.ai/api/v1/chat/completions: This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits."
+ },
+ "status": "coordinator error at hop 1: LLMError: HTTP 402 from https://openrouter.ai/api/v1/chat/completions: This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.",
+ "flags": []
+}
