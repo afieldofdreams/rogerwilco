@@ -2,7 +2,8 @@
 """Aggregate grade.json files into results/summary.json and results/summary.md: cells, proportions with Clopper-Pearson
 95% intervals, medians, and the pre-registered tests H1 to H8 (Fisher's exact, pure Python), plus H9 for block 6, the
 routed message (registered after the freeze, 23 October 2026): block 6 against block 1 per arm per model, with intervals
-and no test at that size.
+and no test at that size; and H10 for the cross-vendor extension (25 October 2026): the hosted Llama 3.2 3B at full precision
+against the local Q4 one on block 1 correct acts, Fisher two-sided, per arm and over F, L and C together.
 
 Amendments in the analysis, 24 October 2026 (README): `wrong_act` is a chain that acted and the act was wrong;
 `asked_elsewhere` is the desk-cover cell's chain that asked at a hop other than the desk (graded wrong, not acted);
@@ -278,13 +279,37 @@ def tests(cells: dict, rows: list[dict], models: list[str]) -> dict:
         if r1 and c1 and not local:
             a, b = c1["correct_act"], r1["correct_act"]
             t["H8 block 1: C against R on correct acts (two-sided, anchors)"] = {"C": fmt(a), "R": fmt(b), "p": ftest(a, b, "two-sided")}
+        # H10 (the cross-vendor extension, 25 October 2026): the hosted model at full precision is not separable from the local
+        # Q4 model with the same weights on correct acts in block 1, Fisher two-sided, per arm and over arms F, L and C together
+        twin = C.MODELS.get(m, {}).get("same_weights_as")
+        if twin:
+            hosted_k = hosted_n = local_k = local_n = 0
+            for arm in C.ROUTED_ARMS:
+                ch, cl = get(1, arm, m), get(1, arm, twin)
+                if ch and cl:
+                    a, b = ch["correct_act"], cl["correct_act"]
+                    t[f"H10 block 1 {arm}: hosted full precision against local Q4 on correct acts (two-sided)"] = {"hosted": fmt(a), "local": fmt(b), "p": ftest(a, b, "two-sided")}
+                    hosted_k += a["k"]; hosted_n += a["n"]; local_k += b["k"]; local_n += b["n"]
+            if hosted_n and local_n:
+                a, b = rate(hosted_k, hosted_n), rate(local_k, local_n)
+                t["H10 block 1 F, L and C together: hosted full precision against local Q4 on correct acts (two-sided)"] = {"hosted": fmt(a), "local": fmt(b), "p": ftest(a, b, "two-sided")}
+                # the same comparison on wrong acts, reported beside it
+                hw = sum(get(1, arm, m)["wrong_act"]["k"] for arm in C.ROUTED_ARMS if get(1, arm, m) and get(1, arm, twin))
+                lw = sum(get(1, arm, twin)["wrong_act"]["k"] for arm in C.ROUTED_ARMS if get(1, arm, m) and get(1, arm, twin))
+                a2, b2 = rate(hw, hosted_n), rate(lw, local_n)
+                t["H10 block 1 F, L and C together: hosted against local on wrong acts (two-sided)"] = {"hosted": fmt(a2), "local": fmt(b2), "p": ftest(a2, b2, "two-sided")}
         out[m] = t
-    # H3 across models: the smallest model that keeps 90% or better, per arm
-    floor = {}
+    # H3 across models: the smallest model that keeps 90% or better, per arm; study 9's own models (local and anchors) as
+    # registered, and the hosted models of the extension apart (the extension of 25 October 2026 leaves the first unchanged)
+    floor, floor_hosted = {}, {}
     for arm in C.ARMS:
-        ok = [m for m in C.MODEL_ORDER if m in models and (1, arm, m, 2) in cells and (cells[(1, arm, m, 2)]["correct_act"]["p"] or 0) >= 0.9]
+        ok = [m for m in C.STUDY_MODELS if m in models and (1, arm, m, 2) in cells and (cells[(1, arm, m, 2)]["correct_act"]["p"] or 0) >= 0.9]
         floor[arm] = ok[0] if ok else None
+        okh = [m for m in C.API_MODELS if m in models and (1, arm, m, 2) in cells and (cells[(1, arm, m, 2)]["correct_act"]["p"] or 0) >= 0.9]
+        floor_hosted[arm] = okh[0] if okh else None
     out["_H3_smallest_model_at_90_per_arm"] = floor
+    if any(m in C.API_MODELS for m in models):
+        out["_H3_smallest_hosted_model_at_90_per_arm"] = floor_hosted
     return out
 
 # ----------------------------------------------------------------------------------------------------- output

@@ -67,11 +67,26 @@ MODELS = {
     "qwen7b": {"kind": "local", "file": "Qwen2.5-7B-Instruct-Q4_K_M.gguf", "name": "Qwen2.5-7B-Instruct Q4_K_M", "params_b": 7},
     # added after the freeze, 22 October 2026, at Adam's request: one size up, queued after qwen7b (README, amendments after the freeze)
     "qwen14b": {"kind": "local", "file": "Qwen2.5-14B-Instruct-Q4_K_M.gguf", "name": "Qwen2.5-14B-Instruct Q4_K_M", "params_b": 14},
+    # the cross-vendor extension, 25 October 2026 (README, "Extension: the cross-vendor run"): hosted models through OpenRouter
+    # via research/harness/llm.py, text only, the same turns as the other kinds; run.py's ApiBackend. By size, the three whose
+    # size is not published last. same_weights_as names the local model with the same weights (H10, the precision comparison).
+    "or-llama3b": {"kind": "api", "model": "openrouter:meta-llama/llama-3.2-3b-instruct", "name": "Llama 3.2 3B Instruct (hosted, full precision)", "params_b": 3.2, "same_weights_as": "llama3b"},
+    "or-llama8b": {"kind": "api", "model": "openrouter:meta-llama/llama-3.1-8b-instruct", "name": "Llama 3.1 8B Instruct (hosted)", "params_b": 8},
+    "or-ministral8b": {"kind": "api", "model": "openrouter:mistralai/ministral-8b-2512", "name": "Ministral 8B 2512 (hosted)", "params_b": 8},
+    "or-gemma12b": {"kind": "api", "model": "openrouter:google/gemma-3-12b-it", "name": "Gemma 3 12B (hosted)", "params_b": 12},
+    "or-ministral14b": {"kind": "api", "model": "openrouter:mistralai/ministral-14b-2512", "name": "Ministral 14B 2512 (hosted)", "params_b": 14},
+    "or-gemma27b": {"kind": "api", "model": "openrouter:google/gemma-3-27b-it", "name": "Gemma 3 27B (hosted)", "params_b": 27},
+    "or-llama70b": {"kind": "api", "model": "openrouter:meta-llama/llama-3.3-70b-instruct", "name": "Llama 3.3 70B Instruct (hosted)", "params_b": 70},
+    "or-gpt54mini": {"kind": "api", "model": "openrouter:openai/gpt-5.4-mini", "name": "GPT-5.4 mini (hosted)", "params_b": None},
+    "or-geminilite": {"kind": "api", "model": "openrouter:google/gemini-3.1-flash-lite", "name": "Gemini 3.1 Flash Lite (hosted)", "params_b": None},
+    "or-deepseekflash": {"kind": "api", "model": "openrouter:deepseek/deepseek-v4.1-flash", "name": "DeepSeek V4.1 Flash (hosted)", "params_b": None},
     "haiku45": {"kind": "claude", "id": "claude-haiku-4-5", "name": "Claude Haiku 4.5"},
     "haiku55": {"kind": "claude", "id": "claude-haiku-5-5", "name": "Claude Haiku 5.5"},
 }
 LOCAL_MODELS = [m for m, v in MODELS.items() if v["kind"] == "local"]
+API_MODELS = [m for m, v in MODELS.items() if v["kind"] == "api"]
 ANCHORS = [m for m, v in MODELS.items() if v["kind"] == "claude"]
+STUDY_MODELS = LOCAL_MODELS + ANCHORS          # study 9's own run; the api models are the extension of 25 October 2026
 MODEL_ORDER = list(MODELS)
 
 

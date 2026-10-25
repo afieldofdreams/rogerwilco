@@ -12,9 +12,13 @@ refusal, an act refusal) are later user turns of the same conversation and are a
 Backends: local models load in-process through llama_cpp (tools/serve.py), one model at a time, one chain at a time, at
 temperature 0; the anchors run through headless `claude -p` (text only, no tools, --session-id then --resume) from an
 empty directory outside the repository, with --jobs chains in parallel; --server URL sends local chains through
-research/harness/llm.py's compat: adapter to a server tools/serve.py started. Everything the models said and every usage
-record goes to <trial>/turns.json with wall seconds; every message between agents to <trial>/chain.json; the model file's
-sha256 or the API's model id, the harness commit, the llama_cpp version and the sampling to <trial>/manifest.json.
+research/harness/llm.py's compat: adapter to a server tools/serve.py started; the hosted models of the cross-vendor
+extension (kind "api", 25 October 2026) run through llm.py's openrouter: adapter, text only, --jobs chains in parallel,
+with the key read from OPENROUTER_API_KEY in the environment and never written anywhere, and with a cost ceiling
+(RW_COST_CEILING, default $80) past which no chain starts. Everything the models said and every usage record goes to
+<trial>/turns.json with wall seconds (and, for the hosted models, the cost and the model id and provider as returned per
+call); every message between agents to <trial>/chain.json; the model file's sha256 or the API's model id, the harness
+commit, the llama_cpp version and the sampling to <trial>/manifest.json.
 """
 from __future__ import annotations
 
@@ -27,6 +31,7 @@ import json
 import os
 import subprocess
 import sys
+import threading
 import time
 import uuid
 from datetime import datetime, timezone
@@ -183,10 +188,139 @@ class ClaudeConversation:
         return {"error": "gave up", "seconds": round(time.time() - t0, 1)}
 
 
+class ApiBackend:
+    """A hosted model through research/harness/llm.py's openrouter: adapter, text only, no tools: the cross-vendor extension
+    of 25 October 2026 (README, "Extension: the cross-vendor run"). The same system prompt, first turn, nudges, confirm step
+    and act block as the other kinds; --jobs chains in parallel. Temperature 0 where the model's listing says it takes
+    temperature, else the provider's default, recorded; the reply cap is the local models' 500 tokens, raised to
+    API_MAX_TOKENS_REASONING on a model whose listing names a reasoning parameter (the cap covers the reasoning), which runs
+    at reasoning effort API_REASONING_EFFORT, recorded. Usage and cost per call come from the provider's usage accounting
+    (`usage: {include: true}`); when a call reports no cost it is computed from the listed pricing and marked so. The model
+    id and the upstream provider as returned on every call are kept in the turn and summarised in the manifest."""
+    kind = "api"
+
+    def __init__(self, alias: str):
+        self.alias = alias
+        self.model = C.MODELS[alias]["model"]
+        spec = importlib.util.spec_from_file_location("rw_llm", HARNESS_LLM)
+        self.llm = importlib.util.module_from_spec(spec); spec.loader.exec_module(self.llm)
+        provider, name = self.llm.parse_model(self.model)
+        self.listing = api_listing(name)
+        params = set(self.listing.get("supported_parameters") or [])
+        self.reasoning = bool(params & {"reasoning", "reasoning_effort", "include_reasoning"})
+        self.temperature = 0.0 if "temperature" in params else None
+        self.max_tokens = API_MAX_TOKENS_REASONING if self.reasoning else API_MAX_TOKENS
+        extra = {"usage": {"include": True}}
+        if self.reasoning:
+            extra["reasoning"] = {"effort": API_REASONING_EFFORT}
+        os.environ["RW_EXTRA_BODY"] = json.dumps(extra)
+        os.environ["RW_MAX_TOKENS"] = str(self.max_tokens)
+        if self.temperature is None:
+            os.environ.pop("RW_TEMPERATURE", None)
+        else:
+            os.environ["RW_TEMPERATURE"] = str(self.temperature)
+        os.environ.pop("RW_BASE_URL", None)
+        self.llm.preflight(self.model)        # the key must be in the environment; nothing is sent
+        pricing = self.listing.get("pricing") or {}
+        self.price_in = float(pricing.get("prompt") or 0); self.price_out = float(pricing.get("completion") or 0)
+        # llm.py keeps neither the model id as served nor the upstream provider; read them off the raw response per call
+        self._meta = threading.local()
+        orig = self.llm._parse_openai
+
+        def parse(data, host, estimate):
+            self._meta.last = {"model": data.get("model"), "provider": data.get("provider"), "generation": data.get("id")}
+            return orig(data, host, estimate)
+        self.llm._parse_openai = parse
+        self.lock = threading.Lock()
+        self.desc = {"backend": "openrouter via research/harness/llm.py, text only, no tools", "model_requested": self.model,
+                     "listed": {k: self.listing.get(k) for k in ("id", "name", "context_length", "pricing", "supported_parameters", "created")},
+                     "temperature": self.temperature if self.temperature is not None else "provider default (the listing does not take temperature)",
+                     "max_tokens": self.max_tokens, "reasoning": {"effort": API_REASONING_EFFORT} if self.reasoning else "not a reasoning model by its listing",
+                     "usage_accounting": True, "retries": int(os.environ.get("RW_RETRIES", "8"))}
+
+    def describe(self) -> dict:
+        return self.desc
+
+    def conversation(self, system: str, cwd: Path):
+        return ApiConversation(self, system)
+
+    def close(self) -> None:
+        pass
+
+
+class ApiConversation:
+    def __init__(self, backend: ApiBackend, system: str):
+        self.b = backend
+        self.messages = [{"role": "system", "content": system}]
+
+    def send(self, text: str) -> dict:
+        self.messages.append({"role": "user", "content": text})
+        self.b._meta.last = None
+        try:
+            assistant, _, usage = self.b.llm.chat(self.messages, [], self.b.model)
+        except Exception as e:  # noqa: BLE001
+            self.messages.pop()
+            return {"error": f"{type(e).__name__}: {str(e)[:300]}", "seconds": 0}
+        reply = (assistant.get("content") or "").strip()
+        self.messages.append({"role": "assistant", "content": reply})      # the reply as delivered; no reasoning is replayed
+        meta = getattr(self.b._meta, "last", None) or {}
+        cost, source = usage.get("cost"), "provider usage accounting"
+        if cost is None:
+            cost = (usage.get("prompt_tokens") or 0) * self.b.price_in + (usage.get("completion_tokens") or 0) * self.b.price_out
+            source = "computed from the listed pricing (the call reported no cost)"
+        api_spend(cost)
+        served = meta.get("model") or self.b.model.split(":", 1)[1]
+        return {"reply": reply, "usage": usage, "finish_reason": usage.get("finish_reason"), "seconds": usage.get("latency_s"),
+                "cost": cost, "cost_source": source, "models": {served: {"provider": meta.get("provider"), "generation": meta.get("generation")}},
+                "reasoning_chars": len(assistant.get("_reasoning") or "") or None}
+
+
+_LISTING: dict = {}
+
+
+def api_listing(name: str) -> dict:
+    """GET /api/v1/models once per process (public, free): the model's id, name, context length, pricing and parameters."""
+    global _LISTING
+    if not _LISTING:
+        import urllib.request
+        req = urllib.request.Request("https://openrouter.ai/api/v1/models", headers={"User-Agent": "rogerwilco-harness/0.1"})
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            _LISTING = {m["id"]: m for m in json.loads(resp.read())["data"]}
+    if name not in _LISTING:
+        raise RuntimeError(f"{name} is not in OpenRouter's model listing")
+    return _LISTING[name]
+
+
+API_MAX_TOKENS = 500                      # the local models' cap
+API_MAX_TOKENS_REASONING = 4000           # the cap covers the reasoning on a reasoning model; the visible reply is still under 500
+API_REASONING_EFFORT = "low"
+API_COST_CEILING = float(os.environ.get("RW_COST_CEILING", "80"))   # the runner starts no chain once the recorded api spend passes this
+_API_SPENT = 0.0
+_API_LOCK = threading.Lock()
+
+
+def api_spend(cost: float) -> None:
+    global _API_SPENT
+    with _API_LOCK:
+        _API_SPENT += cost or 0
+
+
+def api_spent_before() -> float:
+    """What every api chain on disk has cost so far (pilot included), from the manifests: the ceiling counts everything."""
+    total = 0.0
+    for t in C.TRIALS.iterdir():
+        m = t / "manifest.json"
+        if m.exists() and C.MODELS.get(C.read_json(t / "meta.json")["model"], {}).get("kind") == "api":
+            total += C.read_json(m).get("cost_usd") or 0
+    return total
+
+
 def backend_for(alias: str, server: str | None):
     kind = C.MODELS[alias]["kind"]
     if kind == "claude":
         return ClaudeBackend(alias)
+    if kind == "api":
+        return ApiBackend(alias)
     if server:
         return CompatBackend(alias, server)
     return LocalBackend(alias)
@@ -529,7 +663,7 @@ def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--only", default="", help="substring of the chain id; several, comma-separated, must all match")
     ap.add_argument("--models", default="", help="model aliases to run, comma-separated (default: every model with built chains)")
-    ap.add_argument("--jobs", type=int, default=4, help="chains in parallel for the anchors; local models run one at a time")
+    ap.add_argument("--jobs", type=int, default=4, help="chains in parallel for the anchors and the hosted (api) models; local models run one at a time")
     ap.add_argument("--redo", action="store_true")
     ap.add_argument("--reset", action="store_true", help="with --redo: return the selected chains to their built state first")
     ap.add_argument("--limit", type=int, default=0)
@@ -560,10 +694,15 @@ def main(argv: list[str]) -> int:
     for t in trials:
         by_model.setdefault(C.read_json(t / "meta.json")["model"], []).append(t)
     order = [m for m in C.MODEL_ORDER if m in by_model]
-    print(f"{len(trials)} chains over {len(order)} models ({', '.join(order)}); anchors {a.jobs} at a time, local models one at a time; cli {CLI_VERSION}, commit {HARNESS_COMMIT}", flush=True)
+    print(f"{len(trials)} chains over {len(order)} models ({', '.join(order)}); anchors and hosted models {a.jobs} at a time, local models one at a time; cli {CLI_VERSION}, commit {HARNESS_COMMIT}", flush=True)
     bad = 0
     done = 0
     t0 = time.time()
+    C.codec()   # load the frozen codec before any thread needs it: common.codec() is not safe to call first from several threads at once
+    global _API_SPENT
+    if any(C.MODELS[m]["kind"] == "api" for m in order):
+        _API_SPENT = api_spent_before()
+        print(f"hosted models: ${_API_SPENT:.2f} recorded so far across every api chain on disk; ceiling ${API_COST_CEILING:.0f}", flush=True)
 
     def report(t: Path, status: str) -> None:
         nonlocal bad, done
@@ -593,6 +732,29 @@ def main(argv: list[str]) -> int:
                     except Exception as e:  # noqa: BLE001
                         status = f"crashed: {type(e).__name__}: {e}"
                     report(t, status)
+        elif backend.kind == "api":
+            # --jobs chains at a time, started one by one so that no chain starts once the recorded spend passes the ceiling
+            pending = list(ts); running: dict = {}
+            with cf.ThreadPoolExecutor(max_workers=a.jobs) as ex:
+                while pending or running:
+                    while pending and len(running) < a.jobs and _API_SPENT < API_COST_CEILING:
+                        t = pending.pop(0); running[ex.submit(run_chain, t, backend)] = t
+                    if not running:
+                        break
+                    finished, _ = cf.wait(list(running), return_when=cf.FIRST_COMPLETED)
+                    for fut in finished:
+                        t = running.pop(fut)
+                        try:
+                            status = fut.result()
+                        except Exception as e:  # noqa: BLE001
+                            status = f"crashed: {type(e).__name__}: {e}"
+                        report(t, status)
+            print(f"-- {alias}: recorded api spend now ${_API_SPENT:.2f}", flush=True)
+            if pending:
+                print(f"cost ceiling ${API_COST_CEILING:.0f} reached: {len(pending)} chains of {alias} not started", flush=True)
+                for t in pending:
+                    done += 1
+                    print(f"[{done}/{len(trials)}] {t.name:48s} not started (cost ceiling)", flush=True)
         else:
             for t in ts:
                 try:

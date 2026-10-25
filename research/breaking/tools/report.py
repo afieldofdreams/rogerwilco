@@ -42,6 +42,14 @@ def cell_key(block: int, arm: str, model: str, K: int) -> str:
     return f"B{block}-{arm}-{model}-k{K}"
 
 
+def split_key(key: str) -> tuple[str, str, str, str]:
+    """B3-C-or-llama3b-k2 -> (B3, C, or-llama3b, k2): the hosted models' aliases carry a hyphen (the extension of 25 October 2026)."""
+    b, rest = key.split("-", 1)
+    rest, K = rest.rsplit("-", 1)
+    arm, model = rest.split("-", 1)
+    return b, arm, model, K
+
+
 def build(tag: str | None, notes_path: Path | None) -> Path:
     d = C.RESULTS / tag if tag else C.RESULTS
     s = C.read_json(d / "summary.json")
@@ -75,10 +83,10 @@ def build(tag: str | None, notes_path: Path | None) -> Path:
                "<th>injected forwarded</th><th>complied</th><th>caught</th><th>false alarms / correct forwards</th><th>readback form refusals / readbacks</th>"
                + "".join(f"<th>size hop {h}</th>" for h in range(1, Kmax + 2)) + "<th>traffic median</th><th>turns</th><th>wall s</th><th>cost $</th><th>harness faults</th></tr>")
     def sort_key(k):
-        b, arm, model, K = k.split("-")
+        b, arm, model, K = split_key(k)
         return (int(b[1:]), models.index(model) if model in models else 9, C.ARMS.index(arm), int(K[1:]))
     for key in sorted(cells, key=sort_key):
-        c = cells[key]; b, arm, model, K = key.split("-")
+        c = cells[key]; b, arm, model, K = split_key(key)
         sizes = "".join(f"<td>{c['size_median_by_hop'].get(str(h), '')}</td>" for h in range(1, Kmax + 2))
         out.append(f"<tr><td>{b[1:]}</td><td>{arm}</td><td>{esc(C.model_name(model))}</td><td>{K[1:]}</td><td>{c['chains']}</td><td>{pct(c['correct_act'])}</td>"
                    f"<td>{pct(c['as_expected'])}</td><td>{pct(c['wrong_act'])}</td><td>{pct(c['asked_elsewhere'])}</td><td>{pct(c['graded_wrong'])}</td><td>{pct(c['asked'])}</td><td>{pct(c['held'])}</td>"
@@ -116,7 +124,7 @@ def build(tag: str | None, notes_path: Path | None) -> Path:
         out.append("<h2>Block 4: the sweep, by K</h2><table><tr><th>model</th><th>arm</th><th>K</th><th>chains</th><th>correct act</th><th>every field at payer</th><th>wrong value forwarded</th>"
                    "<th>median size at the payer</th><th>median traffic</th><th>wall s</th></tr>")
         for key in sorted(b4, key=sort_key):
-            c = cells[key]; _, arm, model, K = key.split("-"); k = int(K[1:])
+            c = cells[key]; _, arm, model, K = split_key(key); k = int(K[1:])
             out.append(f"<tr><td>{esc(C.model_name(model))}</td><td>{arm}</td><td>{k}</td><td>{c['chains']}</td><td>{pct(c['correct_act'])}</td>"
                        f"<td>{pct(c['all_fields_at_payer'])}</td><td>{pct(c['wrong_value_forwarded'])}</td><td>{c['size_median_by_hop'].get(str(k + 1))}</td><td>{c['traffic_median']}</td><td>{c['wall_seconds_median']}</td></tr>")
         out.append("</table>")
