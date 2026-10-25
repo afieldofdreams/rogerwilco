@@ -23,7 +23,10 @@ sys.path.insert(0, str(HERE))
 import common as C  # noqa: E402
 
 PAGE = C.REPO / "app" / "static" / "research" / "breaking.html"
-MODELS = {"qwen15": "q15", "qwen3b": "q3", "llama3b": "l3", "qwen7b": "q7", "qwen14b": "q14", "haiku45": "h45", "haiku55": "h55"}   # alias -> figure prefix
+MODELS = {"qwen15": "q15", "qwen3b": "q3", "llama3b": "l3", "qwen7b": "q7", "qwen14b": "q14", "haiku45": "h45", "haiku55": "h55",   # alias -> figure prefix
+          # the cross-vendor extension, 25 October 2026
+          "or-llama3b": "ol3", "or-llama8b": "ol8", "or-ministral8b": "om8", "or-gemma12b": "og12", "or-ministral14b": "om14", "or-gemma27b": "og27",
+          "or-llama70b": "ol70", "or-gpt54mini": "ogpt", "or-geminilite": "ogem", "or-deepseekflash": "odsf"}
 
 
 def load(path: Path) -> dict:
@@ -39,6 +42,14 @@ def ci(r: dict) -> str:
     if not r.get("n"):
         return "none attempted"
     return f"{100 * r['p']:.0f}%, {100 * r['lo']:.0f} to {100 * r['hi']:.0f}"
+
+
+def med_of(xs: list):
+    xs = sorted(x for x in xs if x is not None)
+    if not xs:
+        return None
+    n = len(xs)
+    return round(xs[n // 2] if n % 2 else (xs[n // 2 - 1] + xs[n // 2]) / 2, 1)
 
 
 def num(x) -> str:
@@ -57,23 +68,33 @@ def pval(p: float) -> str:
 def figures(results: Path = C.RESULTS) -> dict:
     """Named figures from the main run's summary and the pilot's. Strings, as they appear on the page."""
     s = load(results / "summary.json")
-    cells, rows = s["cells"], s["rows"]
+    cells, all_rows = s["cells"], s["rows"]
+    # study 9's own run is the local models and the anchors; the hosted models of the extension (25 October 2026) are read
+    # apart, under x_ keys below, so that no figure of the original write-up moves
+    rows = [r for r in all_rows if r["model"] in C.STUDY_MODELS]
+    xrows = [r for r in all_rows if r["model"] in C.API_MODELS]
     f: dict[str, str] = {}
-    f["chains"] = f"{s['chains']:,}"
-    f["cost_total"] = f"${s['cost_usd_total']:,.2f}"
-    f["wall_hours"] = f"{s.get('wall_hours_total', 0):,.1f}"
+    f["chains"] = f"{len(rows):,}"
+    f["cost_total"] = f"${sum(r['cost_usd'] or 0 for r in rows):,.2f}"
+    f["wall_hours"] = f"{sum(r['wall_seconds'] or 0 for r in rows) / 3600:,.1f}"
     def form(x: dict) -> bool:
         return not any("mismatch" in q for q in x.get("problems", []))
 
     for model, m in MODELS.items():
-        mrows = [r for r in rows if r["model"] == model]
+        mrows = [r for r in all_rows if r["model"] == model]
         if not mrows:
             continue
         f[f"chains_{m}"] = f"{len(mrows):,}"
         f[f"cost_{m}"] = f"${sum(r['cost_usd'] or 0 for r in mrows):,.2f}"
+        f[f"costchain_{m}"] = f"${sum(r['cost_usd'] or 0 for r in mrows) / len(mrows):,.4f}"
         f[f"wall_h_{m}"] = f"{sum(r['wall_seconds'] or 0 for r in mrows) / 3600:.1f}"
+        f[f"wall_med_{m}"] = num(med_of([r.get("wall_seconds") for r in mrows]))
         f[f"wrong_acts_{m}"] = str(sum(1 for r in mrows if r["acted"] and r["outcome"] == "wrong"))
+        f[f"wrong_acts_C_{m}"] = str(sum(1 for r in mrows if r["acted"] and r["outcome"] == "wrong" and r["arm"] == "C"))
         f[f"reached_{m}"] = f"{sum(1 for r in mrows if r['reached_payer'])} of {len(mrows)}"
+        f[f"served_{m}"] = ", ".join(sorted({x for r in mrows for x in (r.get("models_seen") or [])})) or "not recorded"
+        f[f"complied_{m}"] = str(sum(1 for r in mrows if r["complied"]))
+        f[f"b5n_{m}"] = str(sum(1 for r in mrows if r["block"] == 5))
         # arm R and arm C over every block: readbacks checked, form refusals, held with values right, chains with an RB that did not parse
         for arm in C.CHECKED_ARMS:
             ar = [r for r in mrows if r["arm"] == arm]
@@ -158,10 +179,45 @@ def figures(results: Path = C.RESULTS) -> dict:
     f["complied_total"] = str(sum(1 for r in rows if r["complied"]))
     f["chains_b5"] = str(sum(1 for r in rows if r["block"] == 5))
     f["injected_tail_total"] = str(sum(1 for r in rows if any(isinstance(x, int) for x in r["injected_value_forwarded"])))
-    f["injected_slot_total"] = str(sum(len(v.get("misses_in_a_slot", [])) for mt in s["tests"].values() if isinstance(mt, dict) for k, v in mt.items() if k.startswith("H2") and isinstance(v, dict)))
+    def slot_total(models: list[str]) -> int:
+        return sum(len(v.get("misses_in_a_slot", [])) for mm, mt in s["tests"].items() if mm in models and isinstance(mt, dict) for k, v in mt.items() if k.startswith("H2") and isinstance(v, dict))
+    f["injected_slot_total"] = str(slot_total(C.STUDY_MODELS))
     f["wall_h_local"] = f"{sum(r['wall_seconds'] or 0 for r in rows if r['model'] in C.LOCAL_MODELS) / 3600:.1f}"
     f["chains_local"] = f"{sum(1 for r in rows if r['model'] in C.LOCAL_MODELS):,}"
-    f["chains_anchors"] = f"{sum(1 for r in rows if r['model'] not in C.LOCAL_MODELS):,}"
+    f["chains_anchors"] = f"{sum(1 for r in rows if r['model'] in C.ANCHORS):,}"
+    # the extension's own totals, over the hosted models
+    if xrows:
+        f["x_chains"] = f"{len(xrows):,}"
+        f["x_models"] = str(len({r["model"] for r in xrows}))
+        f["x_cost"] = f"${sum(r['cost_usd'] or 0 for r in xrows):,.2f}"
+        f["x_wall_h"] = f"{sum(r['wall_seconds'] or 0 for r in xrows) / 3600:,.1f}"
+        f["x_harness_faults"] = str(sum(1 for r in xrows if r["harness_fault"]))
+        f["x_wrong_acts_total"] = str(sum(1 for r in xrows if r["acted"] and r["outcome"] == "wrong"))
+        f["x_wrong_acts_checked"] = str(sum(1 for r in xrows if r["acted"] and r["outcome"] == "wrong" and r["arm"] == "C"))
+        f["x_chains_checked"] = f"{sum(1 for r in xrows if r['arm'] == 'C'):,}"
+        f["x_wrong_acts_unchecked"] = str(sum(1 for r in xrows if r["acted"] and r["outcome"] == "wrong" and r["arm"] != "C"))
+        f["x_chains_unchecked"] = f"{sum(1 for r in xrows if r['arm'] != 'C'):,}"
+        f["x_complied_total"] = str(sum(1 for r in xrows if r["complied"]))
+        f["x_chains_b5"] = str(sum(1 for r in xrows if r["block"] == 5))
+        f["x_injected_tail_total"] = str(sum(1 for r in xrows if any(isinstance(x, int) for x in r["injected_value_forwarded"])))
+        f["x_injected_slot_total"] = str(slot_total(C.API_MODELS))
+        f["x_asked_elsewhere_total"] = str(sum(1 for r in xrows if (not r["acted"]) and r["outcome"] == "wrong"))
+        for arm, model in s["tests"].get("_H3_smallest_hosted_model_at_90_per_arm", {}).items():
+            f[f"h3_floor_hosted_{arm}"] = C.model_name(model) if model else "none"
+        t10 = s["tests"].get("or-llama3b", {})
+        for name, v in t10.items():
+            if not name.startswith("H10"):
+                continue
+            key = "all" if "together" in name else name.split()[3].rstrip(":")
+            if "wrong acts" in name:
+                key = "wrong"
+            f[f"h10_{key}_p"] = pval(v["p"])
+            f[f"h10_{key}_hosted"] = v["hosted"].split(" (")[0].replace(" / ", " of ")
+            f[f"h10_{key}_local"] = v["local"].split(" (")[0].replace(" / ", " of ")
+        xpilot = results / "extension_pilot" / "summary.json"
+        if xpilot.exists():
+            xp = load(xpilot)
+            f["x_pilot_chains"] = str(xp["chains"]); f["x_pilot_cost"] = f"${xp['cost_usd_total']:,.2f}"
     pilot = results / "pilot" / "summary.json"
     if pilot.exists():
         p = load(pilot)

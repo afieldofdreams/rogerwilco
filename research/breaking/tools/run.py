@@ -213,6 +213,11 @@ class ApiBackend:
         extra = {"usage": {"include": True}}
         if self.reasoning:
             extra["reasoning"] = {"effort": API_REASONING_EFFORT}
+        if C.MODELS[alias].get("params_b") is not None:
+            # an open-weight model: the pilot of 25 October 2026 found OpenRouter routing each one across several upstream hosts
+            # per call (Llama 70B over six), whose serving precision is not promised; the main run asks for an unquantised
+            # serving so that "full precision" in H10 is a fact of the run and not of the listing (README, the amendment)
+            extra["provider"] = {"quantizations": API_QUANTIZATIONS}
         os.environ["RW_EXTRA_BODY"] = json.dumps(extra)
         os.environ["RW_MAX_TOKENS"] = str(self.max_tokens)
         if self.temperature is None:
@@ -236,6 +241,7 @@ class ApiBackend:
                      "listed": {k: self.listing.get(k) for k in ("id", "name", "context_length", "pricing", "supported_parameters", "created")},
                      "temperature": self.temperature if self.temperature is not None else "provider default (the listing does not take temperature)",
                      "max_tokens": self.max_tokens, "reasoning": {"effort": API_REASONING_EFFORT} if self.reasoning else "not a reasoning model by its listing",
+                     "provider_routing": extra.get("provider") or "any (a closed model, served by its vendor)",
                      "usage_accounting": True, "retries": int(os.environ.get("RW_RETRIES", "8"))}
 
     def describe(self) -> dict:
@@ -294,6 +300,7 @@ def api_listing(name: str) -> dict:
 API_MAX_TOKENS = 500                      # the local models' cap
 API_MAX_TOKENS_REASONING = 4000           # the cap covers the reasoning on a reasoning model; the visible reply is still under 500
 API_REASONING_EFFORT = "low"
+API_QUANTIZATIONS = ["bf16", "fp16", "fp32"]   # the servings an open-weight model may be routed to in the main run (not applied in the pilot)
 API_COST_CEILING = float(os.environ.get("RW_COST_CEILING", "80"))   # the runner starts no chain once the recorded api spend passes this
 _API_SPENT = 0.0
 _API_LOCK = threading.Lock()
