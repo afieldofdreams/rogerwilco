@@ -1,0 +1,231 @@
+{
+ "status": "ok",
+ "ended": {
+  "hop": 3,
+  "how": "done",
+  "detail": ""
+ },
+ "turns": [
+  {
+   "hop": 1,
+   "agent": "coordinator",
+   "turn": 1,
+   "result": "SENT",
+   "session": "76980b53-81e3-479d-b9b0-2a6962a06f2f",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 13151,
+    "cache_read_input_tokens": 157935,
+    "output_tokens": 2440,
+    "output_tokens_details": {
+     "thinking_tokens": 1308
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 13151,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 43857,
+      "cache_creation_input_tokens": 987,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 987
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1506,
+     "outputTokens": 2461,
+     "cacheReadInputTokens": 157935,
+     "cacheCreationInputTokens": 13151,
+     "webSearchRequests": 0,
+     "costUSD": 0.00559065,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1308,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.00559065,
+   "seconds": 20,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01FE8bhWvFawSxvXpk3z37oi",
+     "tool_input": {
+      "command": "printf '%s\\n' 'RW1 HO coordinator-1 from=coordinator to=desk item=inv:MD-2026-057 ask=SEND rb=all p=pay sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk due=20261002 pri=3 // Remittance advice to Marlow for MD-2026-057, on the 2 October advices run, as handed over by scheduler-1' > out.txt && cat out.txt && python3 /home/user/rogerwilco/research/chain/tools/frozen/scripts/rogerwilco.py validate \"$(cat out.txt)\" --profile pay",
+      "description": "Write forwarded handover and validate it"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  },
+  {
+   "hop": 2,
+   "agent": "desk",
+   "turn": 1,
+   "result": "SENT",
+   "session": "e3ca02b5-f827-456e-9c91-87f4cf7bb786",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 16326,
+    "cache_read_input_tokens": 157310,
+    "output_tokens": 3142,
+    "output_tokens_details": {
+     "thinking_tokens": 1854
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 16326,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 44826,
+      "cache_creation_input_tokens": 1151,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 1151
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1503,
+     "outputTokens": 3161,
+     "cacheReadInputTokens": 157310,
+     "cacheCreationInputTokens": 16326,
+     "webSearchRequests": 0,
+     "costUSD": 0.0065691,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1854,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.0065691,
+   "seconds": 23,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01TyrhLs94rQd2iJtAvpY9HG",
+     "tool_input": {
+      "command": "printf '%s\\n' 'RW1 HO desk-1 from=desk to=payer item=inv:MD-2026-057 ask=SEND rb=all p=pay sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk due=20261002 pri=3 appr=OK // Remittance advice to Marlow for MD-2026-057, on the 2 October advices run. Approval FD-0929 covers this item (Marlow, MD-2026-057, 5400.00 GBP gross).' > out.txt && cat out.txt && python3 /home/user/rogerwilco/research/chain/tools/frozen/scripts/rogerwilco.py validate \"$(cat out.txt)\" --profile pay",
+      "description": "Write forwarded handover line and validate it"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  },
+  {
+   "hop": 3,
+   "agent": "payer",
+   "turn": 1,
+   "result": "DONE",
+   "session": "ff218215-94f2-4b84-b7b7-9ae9ddfcac58",
+   "usage": {
+    "input_tokens": 14,
+    "cache_creation_input_tokens": 18510,
+    "cache_read_input_tokens": 301415,
+    "output_tokens": 3319,
+    "output_tokens_details": {
+     "thinking_tokens": 929
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 18510,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 47734,
+      "cache_creation_input_tokens": 895,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 895
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1501,
+     "outputTokens": 3620,
+     "cacheReadInputTokens": 301415,
+     "cacheCreationInputTokens": 18510,
+     "webSearchRequests": 0,
+     "costUSD": 0.00867625,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1209,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.00867625,
+   "seconds": 23,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01DJAXAhLbv7kRNFd6QAteaG",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/research/chain/tools/frozen/scripts/rogerwilco.py validate \"RW1 HO desk-1 from=desk to=payer item=inv:MD-2026-057 ask=SEND rb=all p=pay sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk due=20261002 pri=3 appr=OK // Remittance advice to Marlow for MD-2026-057, on the 2 October advices run. Approval FD-0929 covers this item: Marlow, MD-2026-057, 5400.00 GBP gross.\" --profile pay; echo \"exit=$?\"; cat prompt.txt",
+      "description": "Validate the desk handover and read the prompt file"
+     }
+    },
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01CCGaKfX8B1Fh7vg2HPGQov",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/research/chain/tools/frozen/scripts/rogerwilco.py validate \"RW1 DN payer-9 re=desk-1 from=payer to=desk item=inv:MD-2026-057 p=pay out=OK sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk // Remittance advice sent to billing contact on file; tool reported status sent.\" --profile pay && echo 'RW1 DN payer-9 re=desk-1 from=payer to=desk item=inv:MD-2026-057 p=pay out=OK sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk // Remittance advice sent to billing contact on file; tool reported status sent.' > dn.txt && cat dn.txt",
+      "description": "Validate and write the DN line to dn.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 9
+  }
+ ]
+}

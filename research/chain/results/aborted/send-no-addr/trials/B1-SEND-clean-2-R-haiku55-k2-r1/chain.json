@@ -1,0 +1,81 @@
+{
+ "id": "B1-SEND-clean-2-R-haiku55-k2-r1",
+ "arm": "R",
+ "K": 2,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "delivered": {
+  "1": {
+   "from": "scheduler",
+   "to": "coordinator",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 // for the payer; add your part and pass it on",
+   "tokens": 69,
+   "when": "2026-10-02 09:32",
+   "reissued": null,
+   "final": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 // for the payer; add your part and pass it on"
+  }
+ },
+ "traffic": [
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "deliver",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 // for the payer; add your part and pass it on",
+   "tokens": 69
+  },
+  {
+   "hop": 1,
+   "from": "coordinator",
+   "to": "scheduler",
+   "kind": "rb",
+   "text": "RW1 RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=inv:MD-2026-057 ask=SEND p=pay h=927f3a344b06 sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057",
+   "tokens": 68
+  },
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "an",
+   "text": "RW1 AN scheduler-51 re=coordinator-1 p=pay from=scheduler to=coordinator val=Y // readback correct; add your part and forward",
+   "tokens": 35
+  },
+  {
+   "hop": 1,
+   "from": "coordinator",
+   "to": "scheduler",
+   "kind": "question",
+   "text": "RW1 AQ coordinator-2 re=scheduler-1 from=coordinator to=scheduler item=inv:MD-2026-057 need=TEXT p=pay // SEND needs the supplier address (addr=); HO scheduler-1 carries none, so not forwarded. Please send the marlow address on file.\n",
+   "tokens": 64
+  }
+ ],
+ "checks": {
+  "1": {
+   "rb": {
+    "ok": true,
+    "problems": [],
+    "notes": [],
+    "kind": null,
+    "rb": "RW1 RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=inv:MD-2026-057 ask=SEND p=pay h=927f3a344b06 sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057",
+    "rb_id": "coordinator-1"
+   },
+   "rb2": null,
+   "forward": []
+  }
+ },
+ "counters": {
+  "scheduler": 51
+ },
+ "ended": {
+  "hop": 1,
+  "how": "asked",
+  "detail": ""
+ },
+ "status": "ok",
+ "flags": [],
+ "clock": 1
+}

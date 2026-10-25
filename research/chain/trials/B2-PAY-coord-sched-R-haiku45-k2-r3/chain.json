@@ -1,0 +1,180 @@
+{
+ "id": "B2-PAY-coord-sched-R-haiku45-k2-r3",
+ "arm": "R",
+ "K": 2,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "delivered": {
+  "1": {
+   "from": "scheduler",
+   "to": "coordinator",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // for the payer; add your part and pass it on",
+   "tokens": 80,
+   "when": "2026-10-02 09:32",
+   "reissued": null,
+   "final": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // for the payer; add your part and pass it on"
+  },
+  "2": {
+   "from": "coordinator",
+   "to": "desk",
+   "text": "RW1 HO coordinator-2 from=coordinator to=desk item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 due=20261002 pri=2 // handover for payment; confirmed and forwarded",
+   "tokens": 85,
+   "when": "2026-10-02 09:34",
+   "reissued": "RW1 HO coordinator-51 re=desk-1 from=coordinator to=desk item=inv:MD-2026-057 ask=PAY due=20261002 pri=2 p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // re desk-1: item: inv:CS-4471 (expected inv:MD-2026-057): not the item handed over; sup: coleridge (expected marlow): not the supplier handed over; amt: 212.40 (expected 5400.00): not the approved amount; ref: CS-4471 (expected MD-2026-057): not the ap",
+   "final": "RW1 HO coordinator-51 re=desk-1 from=coordinator to=desk item=inv:MD-2026-057 ask=PAY due=20261002 pri=2 p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // re desk-1: item: inv:CS-4471 (expected inv:MD-2026-057): not the item handed over; sup: coleridge (expected marlow): not the supplier handed over; amt: 212.40 (expected 5400.00): not the approved amount; ref: CS-4471 (expected MD-2026-057): not the ap"
+  }
+ },
+ "traffic": [
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "deliver",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // for the payer; add your part and pass it on",
+   "tokens": 80
+  },
+  {
+   "hop": 1,
+   "from": "coordinator",
+   "to": "scheduler",
+   "kind": "rb",
+   "text": "RW1 RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=80a245f6ff76 sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929",
+   "tokens": 79
+  },
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "an",
+   "text": "RW1 AN scheduler-51 re=coordinator-1 p=pay from=scheduler to=coordinator val=Y // readback correct; add your part and forward",
+   "tokens": 35
+  },
+  {
+   "hop": 2,
+   "from": "coordinator",
+   "to": "desk",
+   "kind": "deliver",
+   "text": "RW1 HO coordinator-2 from=coordinator to=desk item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 due=20261002 pri=2 // handover for payment; confirmed and forwarded",
+   "tokens": 85
+  },
+  {
+   "hop": 2,
+   "from": "desk",
+   "to": "coordinator",
+   "kind": "rb",
+   "text": "RW1 RB desk-1 re=coordinator-22 from=desk to=coordinator item=inv:CS-4471 ask=PAY due=20261002 pri=2 p=pay h=94ad917adc03 sup=coleridge amt=212.40 cur=GBP kind=GROSS paid=20261002 ref=CS-4471 apref=FD-0932",
+   "tokens": 83
+  },
+  {
+   "hop": 2,
+   "from": "coordinator",
+   "to": "desk",
+   "kind": "reissue",
+   "text": "RW1 HO coordinator-51 re=desk-1 from=coordinator to=desk item=inv:MD-2026-057 ask=PAY due=20261002 pri=2 p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // re desk-1: item: inv:CS-4471 (expected inv:MD-2026-057): not the item handed over; sup: coleridge (expected marlow): not the supplier handed over; amt: 212.40 (expected 5400.00): not the approved amount; ref: CS-4471 (expected MD-2026-057): not the ap",
+   "tokens": 165
+  },
+  {
+   "hop": 2,
+   "from": "desk",
+   "to": "coordinator",
+   "kind": "rb2",
+   "text": "RW1 RB desk-2 re=coordinator-51 from=desk to=coordinator item=inv:MD-2026-057 ask=PAY due=20261002 pri=2 p=pay h=035ac5ac5fc6 sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929",
+   "tokens": 88
+  }
+ ],
+ "checks": {
+  "1": {
+   "rb": {
+    "ok": true,
+    "problems": [],
+    "notes": [],
+    "kind": null,
+    "rb": "RW1 RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=80a245f6ff76 sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929",
+    "rb_id": "coordinator-1"
+   },
+   "rb2": null,
+   "forward": [
+    {
+     "ok": true,
+     "problems": [],
+     "notes": [
+      "waived: ask PAY is an irreversible act under profile pay: the HO must ask rb=exec",
+      "acct is in neither the HO nor the record; the receiver resolves it and the readback carries it"
+     ],
+     "kind": null,
+     "record": {
+      "from": "coordinator",
+      "to": "desk",
+      "item": "inv:MD-2026-057",
+      "ask": "PAY",
+      "p": "pay",
+      "rb": [
+       "all"
+      ],
+      "sup": "marlow",
+      "amt": "5400.00",
+      "cur": "GBP",
+      "kind": "GROSS",
+      "paid": "20261002",
+      "ref": "MD-2026-057",
+      "apref": "FD-0929",
+      "due": "20261002",
+      "pri": "2"
+     },
+     "reply": "",
+     "out": "RW1 HO coordinator-2 from=coordinator to=desk item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 due=20261002 pri=2 // handover for payment; confirmed and forwarded"
+    }
+   ]
+  },
+  "2": {
+   "rb": {
+    "ok": false,
+    "problems": [
+     "tier1 receipt: RB re=coordinator-22 does not point at HO id coordinator-2",
+     "tier2 integrity: h=94ad917adc03 but digest of the HO is 734f2136b37d",
+     "tier3 echo: item mismatch: HO inv:MD-2026-057 vs RB inv:CS-4471",
+     "tier3 echo: sup mismatch: HO marlow vs RB coleridge",
+     "tier3 echo: amt mismatch: HO 5400.00 vs RB 212.40",
+     "tier3 echo: ref mismatch: HO MD-2026-057 vs RB CS-4471",
+     "tier3 echo: apref mismatch: HO FD-0929 vs RB FD-0932",
+     "item: inv:CS-4471 (expected inv:MD-2026-057): not the item handed over",
+     "sup: coleridge (expected marlow): not the supplier handed over",
+     "amt: 212.40 (expected 5400.00): not the approved amount",
+     "ref: CS-4471 (expected MD-2026-057): not the approved reference",
+     "apref: FD-0932 (expected FD-0929): not the approval reference on record"
+    ],
+    "notes": [],
+    "kind": "value",
+    "rb": "RW1 RB desk-1 re=coordinator-22 from=desk to=coordinator item=inv:CS-4471 ask=PAY due=20261002 pri=2 p=pay h=94ad917adc03 sup=coleridge amt=212.40 cur=GBP kind=GROSS paid=20261002 ref=CS-4471 apref=FD-0932",
+    "rb_id": "desk-1"
+   },
+   "rb2": {
+    "ok": false,
+    "problems": [
+     "tier2 integrity: h=035ac5ac5fc6 but digest of the HO is 5ea08e5add85"
+    ],
+    "notes": [],
+    "kind": "formal",
+    "rb": "RW1 RB desk-2 re=coordinator-51 from=desk to=coordinator item=inv:MD-2026-057 ask=PAY due=20261002 pri=2 p=pay h=035ac5ac5fc6 sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929",
+    "rb_id": "desk-2"
+   },
+   "forward": []
+  }
+ },
+ "counters": {
+  "scheduler": 51,
+  "coordinator": 51
+ },
+ "ended": {
+  "hop": 2,
+  "how": "held",
+  "detail": "held: hop 2 (desk): readback rejected twice"
+ },
+ "status": "held: hop 2 (desk): readback rejected twice",
+ "flags": [],
+ "clock": 2
+}

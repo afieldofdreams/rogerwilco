@@ -1,0 +1,89 @@
+{
+ "status": "ok",
+ "ended": {
+  "hop": 1,
+  "how": "asked",
+  "detail": ""
+ },
+ "turns": [
+  {
+   "hop": 1,
+   "agent": "coordinator",
+   "turn": 1,
+   "result": "ASKED",
+   "session": "e27b59e7-7618-48d2-9052-335e55154323",
+   "usage": {
+    "input_tokens": 14,
+    "cache_creation_input_tokens": 15637,
+    "cache_read_input_tokens": 289429,
+    "output_tokens": 2758,
+    "output_tokens_details": {
+     "thinking_tokens": 1636
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 15637,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 44993,
+      "cache_creation_input_tokens": 312,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 312
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1516,
+     "outputTokens": 2783,
+     "cacheReadInputTokens": 289429,
+     "cacheCreationInputTokens": 15637,
+     "webSearchRequests": 0,
+     "costUSD": 0.007564790000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1636,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.007564790000000001,
+   "seconds": 26,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_014SuN59njzGdRnao8ENHrrz",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/research/chain/tools/frozen/scripts/rogerwilco.py validate \"AQ coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=inv:MD-2026-057 sup=marlow need=TEXT // SEND for marlow has no addr: give the supplier email address to send to\" --profile pay; echo \"exit=$?\"",
+      "description": "Validate the ask line with the codec"
+     }
+    },
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01FJnuwqLbfzbL5ZYfB9wdTQ",
+     "tool_input": {
+      "command": "printf '%s\\n' \"RW1 AQ coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=inv:MD-2026-057 sup=marlow need=TEXT // SEND for marlow has no addr: give the supplier email address to send to\" > question.txt && cat question.txt",
+      "description": "Write the ask line to question.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 7
+  }
+ ]
+}

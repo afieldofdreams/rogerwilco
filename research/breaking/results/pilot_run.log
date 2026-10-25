@@ -1,0 +1,21 @@
+reset 12 chains
+12 chains over 6 models (qwen15, qwen3b, llama3b, qwen7b, haiku45, haiku55); anchors 4 at a time, local models one at a time; cli 2.1.308, commit 3ecc70db8
+-- haiku45: 2 chains; {"backend": "claude -p 2.1.308, text only, no tools, cwd outside the repository", "model_requested": "claude-haiku-4-5", "temperature": "provider default", "max_tokens": "provider default"}
+[1/12 54s] B1-PAY-clean-1-F-haiku45-k2-r1-p                 done at hop 3; ok
+[2/12 79s] B1-PAY-clean-1-C-haiku45-k2-r1-p                 done at hop 3; ok
+-- haiku55: 2 chains; {"backend": "claude -p 2.1.308, text only, no tools, cwd outside the repository", "model_requested": "claude-haiku-5-5", "temperature": "provider default", "max_tokens": "provider default"}
+[3/12 104s] B1-PAY-clean-1-F-haiku55-k2-r1-p                 done at hop 3; ok
+[4/12 137s] B1-PAY-clean-1-C-haiku55-k2-r1-p                 done at hop 3; ok
+-- qwen15: 2 chains; {"backend": "llama_cpp in-process", "alias": "qwen15", "name": "Qwen2.5-1.5B-Instruct Q4_K_M", "file": "qwen2.5-1.5b-instruct-q4_k_m.gguf", "sha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e", "n_ctx": 12288, "n_threads": 4, "temperature": 0.0, "max_tokens": 500, "llama_cpp"
+[5/12 183s] B1-PAY-clean-1-C-qwen15-k2-r1-p                  asked at hop 1; ok
+[6/12 194s] B1-PAY-clean-1-F-qwen15-k2-r1-p                  asked at hop 1; ok
+-- qwen3b: 2 chains; {"backend": "llama_cpp in-process", "alias": "qwen3b", "name": "Qwen2.5-3B-Instruct Q4_K_M", "file": "qwen2.5-3b-instruct-q4_k_m.gguf", "sha256": "626b4a6678b86442240e33df819e00132d3ba7dddfe1cdc4fbb18e0a9615c62d", "n_ctx": 12288, "n_threads": 4, "temperature": 0.0, "max_tokens": 500, "llama_cpp": "0
+[7/12 283s] B1-PAY-clean-1-C-qwen3b-k2-r1-p                  asked at hop 1; ok
+[8/12 303s] B1-PAY-clean-1-F-qwen3b-k2-r1-p                  asked at hop 1; ok
+-- llama3b: 2 chains; {"backend": "llama_cpp in-process", "alias": "llama3b", "name": "Llama-3.2-3B-Instruct Q4_K_M", "file": "Llama-3.2-3B-Instruct-Q4_K_M.gguf", "sha256": "6c1a2b41161032677be168d354123594c0e6e67d2b9227c84f296ad037c728ff", "n_ctx": 12288, "n_threads": 4, "temperature": 0.0, "max_tokens": 500, "llama_cpp
+[9/12 405s] B1-PAY-clean-1-C-llama3b-k2-r1-p                 held at hop 1; held: hop 1 (coordinator): forwarded line refused twice
+[10/12 565s] B1-PAY-clean-1-F-llama3b-k2-r1-p                 done at hop 3; ok
+-- qwen7b: 2 chains; {"backend": "llama_cpp in-process", "alias": "qwen7b", "name": "Qwen2.5-7B-Instruct Q4_K_M", "file": "Qwen2.5-7B-Instruct-Q4_K_M.gguf", "sha256": "65b8fcd92af6b4fefa935c625d1ac27ea29dcb6ee14589c55a8f115ceaaa1423", "n_ctx": 12288, "n_threads": 4, "temperature": 0.0, "max_tokens": 500, "llama_cpp": "0
+[11/12 761s] B1-PAY-clean-1-C-qwen7b-k2-r1-p                  held at hop 1; held: hop 1 (coordinator): forwarded line refused twice
+[12/12 1091s] B1-PAY-clean-1-F-qwen7b-k2-r1-p                  done at hop 3; ok
+done; 2 chains with a status other than ok (held, stalled or error; a chain that asked is ok)

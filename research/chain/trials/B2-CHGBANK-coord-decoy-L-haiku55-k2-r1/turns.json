@@ -1,0 +1,231 @@
+{
+ "status": "ok",
+ "ended": {
+  "hop": 3,
+  "how": "done",
+  "detail": ""
+ },
+ "turns": [
+  {
+   "hop": 1,
+   "agent": "coordinator",
+   "turn": 1,
+   "result": "SENT",
+   "session": "68242635-387a-4ad0-a480-890d6566d75d",
+   "usage": {
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 16173,
+    "cache_read_input_tokens": 202655,
+    "output_tokens": 3167,
+    "output_tokens_details": {
+     "thinking_tokens": 2056
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 16173,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 45450,
+      "cache_creation_input_tokens": 392,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 392
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1528,
+     "outputTokens": 3188,
+     "cacheReadInputTokens": 202655,
+     "cacheCreationInputTokens": 16173,
+     "webSearchRequests": 0,
+     "costUSD": 0.00700795,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 2056,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.00700795,
+   "seconds": 22,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01QA125D3BzeFRTjtTWD7FPo",
+     "tool_input": {
+      "command": "printf '%s\\n' \"RW1 HO coordinator-1 p=pay from=coordinator to=desk item=sup:evergreen ask=CHGBANK rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1 // Forwarding scheduler-1 unchanged: Evergreen bank-detail change, master changes run 3 Oct\" > out.txt && cat out.txt",
+      "description": "Write forwarded handover to out.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 5
+  },
+  {
+   "hop": 2,
+   "agent": "desk",
+   "turn": 1,
+   "result": "SENT",
+   "session": "58d78e90-2ce3-494a-8c82-3af8f8e9c2cd",
+   "usage": {
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 16049,
+    "cache_read_input_tokens": 246564,
+    "output_tokens": 3043,
+    "output_tokens_details": {
+     "thinking_tokens": 1658
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 16049,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 45140,
+      "cache_creation_input_tokens": 561,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 561
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1527,
+     "outputTokens": 3313,
+     "cacheReadInputTokens": 246564,
+     "cacheCreationInputTokens": 16049,
+     "webSearchRequests": 0,
+     "costUSD": 0.007484640000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1905,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.007484640000000001,
+   "seconds": 22,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01FMvtFGLC5TVu5S6vg3JCaa",
+     "tool_input": {
+      "command": "printf '%s\\n' 'RW1 HO desk-1 p=pay from=desk to=payer item=sup:evergreen ask=CHGBANK rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1 appr=OK // Evergreen bank-detail change to 60-83-71/44019482 from 3 Oct, call-back done; covered by FD-0926' > out.txt && cat out.txt && python3 /home/user/rogerwilco/research/chain/tools/frozen/scripts/rogerwilco.py validate \"$(cat out.txt)\" --profile pay",
+      "description": "Write forwarded handover and validate it"
+     }
+    },
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01LffkTQ2gTGGZrZ4Dtxedy7",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/research/chain/tools/frozen/scripts/rogerwilco.py validate \"$(cat out.txt)\" --profile pay",
+      "description": "Validate the forwarded line with the codec"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 6
+  },
+  {
+   "hop": 3,
+   "agent": "payer",
+   "turn": 1,
+   "result": "DONE",
+   "session": "c3382957-e225-4500-9dce-9e3829d1dd24",
+   "usage": {
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 17657,
+    "cache_read_input_tokens": 253965,
+    "output_tokens": 2899,
+    "output_tokens_details": {
+     "thinking_tokens": 1369
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 17657,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 46989,
+      "cache_creation_input_tokens": 787,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 787
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1519,
+     "outputTokens": 2918,
+     "cacheReadInputTokens": 253965,
+     "cacheCreationInputTokens": 17657,
+     "webSearchRequests": 0,
+     "costUSD": 0.007681950000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1369,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.007681950000000001,
+   "seconds": 23,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01JHRG6MB2EKvVSBjNG1k81m",
+     "tool_input": {
+      "command": "echo \"RW1 DN payer-8 re=desk-1 from=payer to=desk item=sup:evergreen p=pay out=OK sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 prev=30-98-71/22019483\" > dn.txt && cat dn.txt && python3 /home/user/rogerwilco/research/chain/tools/frozen/scripts/rogerwilco.py validate \"$(cat dn.txt)\" --profile pay",
+      "description": "Write and validate the DN line"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 7
+  }
+ ]
+}

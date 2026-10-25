@@ -1,0 +1,58 @@
+<!doctype html><html lang='en'><head><meta charset='utf-8'><title>Study 8: the relay</title><style>body{font:16px/1.5 Georgia,serif;max-width:72rem;margin:2rem auto;padding:0 1rem;color:#222}
+h1{font-size:1.6rem}h2{font-size:1.2rem;margin-top:2rem}h3{font-size:1rem;margin-top:1.4rem}
+table{border-collapse:collapse;font-size:0.82rem;margin:1rem 0;width:100%}
+th,td{border:1px solid #ccc;padding:0.3rem 0.5rem;text-align:left;vertical-align:top}th{background:#f3f3f3}
+.note{background:#fff7e0;padding:0.8rem 1rem;border-left:4px solid #e0b000}.ok{color:#1a7f37}.bad{color:#b00020}code{font-size:0.85em}
+.head td{font-size:1rem}.small{font-size:0.8rem;color:#555}</style></head><body>
+<h1>Study 8: the relay</h1>
+<p>Results as computed from the chain files. 16 chains, total cost $2.5949, tokens counted with tiktoken o200k_base, hardening level 0.</p>
+<h2>The headline: block 1, a correct act per arm, and the size of the message at each hop</h2>
+<h3>Claude Haiku 5.5</h3><table class='head'><tr><th>arm</th><th>chains</th><th>correct act</th><th>every record field at the payer</th><th>any drift</th><th>asked</th><th>held</th><th>median size hop 1 / 2 / 3 (tokens)</th><th>median traffic</th><th>turns</th><th>cost $</th></tr>
+<tr><td>F, free prose</td><td>4</td><td>4 / 4 (100%, 40 to 100)</td><td>4 / 4 (100%, 40 to 100)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>75.5 / 92.5 / 104.5</td><td>442.5</td><td>3.0</td><td>0.0166</td></tr>
+<tr><td>R, lines checked at every hop</td><td>4</td><td>4 / 4 (100%, 40 to 100)</td><td>4 / 4 (100%, 40 to 100)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>79.0 / 88.5 / 95.5</td><td>679.0</td><td>6.0</td><td>0.0511</td></tr>
+</table>
+<h3>Claude Haiku 4.5</h3><table class='head'><tr><th>arm</th><th>chains</th><th>correct act</th><th>every record field at the payer</th><th>any drift</th><th>asked</th><th>held</th><th>median size hop 1 / 2 / 3 (tokens)</th><th>median traffic</th><th>turns</th><th>cost $</th></tr>
+<tr><td>F, free prose</td><td>4</td><td>4 / 4 (100%, 40 to 100)</td><td>4 / 4 (100%, 40 to 100)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>75.5 / 88.5 / 100.5</td><td>329.0</td><td>3.0</td><td>0.1552</td></tr>
+<tr><td>R, lines checked at every hop</td><td>4</td><td>4 / 4 (100%, 40 to 100)</td><td>4 / 4 (100%, 40 to 100)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>79.0 / 85.5 / 84.5</td><td>658.5</td><td>6.0</td><td>0.4259</td></tr>
+</table>
+<h2>Every cell</h2><table><tr><th>block</th><th>arm</th><th>model</th><th>K</th><th>chains</th><th>correct act</th><th>as expected</th><th>wrong</th><th>asked</th><th>held</th><th>not done</th><th>every field at payer</th><th>any drift</th><th>loss</th><th>caught</th><th>false alarms / correct forwards</th><th>size hop 1</th><th>size hop 2</th><th>size hop 3</th><th>traffic median</th><th>turns</th><th>cost $</th><th>harness faults</th></tr>
+<tr><td>1</td><td>F</td><td>Claude Haiku 5.5</td><td>2</td><td>4</td><td>4 / 4 (100%, 40 to 100)</td><td>4 / 4 (100%, 40 to 100)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>4 / 4 (100%, 40 to 100)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>0</td><td>0 / 0</td><td>75.5</td><td>92.5</td><td>104.5</td><td>442.5</td><td>3.0</td><td>0.0166</td><td>0</td></tr>
+<tr><td>1</td><td>R</td><td>Claude Haiku 5.5</td><td>2</td><td>4</td><td>4 / 4 (100%, 40 to 100)</td><td>4 / 4 (100%, 40 to 100)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>4 / 4 (100%, 40 to 100)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>0</td><td>0 / 8 (0%, 0 to 37)</td><td>79.0</td><td>88.5</td><td>95.5</td><td>679.0</td><td>6.0</td><td>0.0511</td><td>0</td></tr>
+<tr><td>1</td><td>F</td><td>Claude Haiku 4.5</td><td>2</td><td>4</td><td>4 / 4 (100%, 40 to 100)</td><td>4 / 4 (100%, 40 to 100)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>4 / 4 (100%, 40 to 100)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>0</td><td>0 / 0</td><td>75.5</td><td>88.5</td><td>100.5</td><td>329.0</td><td>3.0</td><td>0.1552</td><td>0</td></tr>
+<tr><td>1</td><td>R</td><td>Claude Haiku 4.5</td><td>2</td><td>4</td><td>4 / 4 (100%, 40 to 100)</td><td>4 / 4 (100%, 40 to 100)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>4 / 4 (100%, 40 to 100)</td><td>0 / 4 (0%, 0 to 60)</td><td>0 / 4 (0%, 0 to 60)</td><td>0</td><td>0 / 8 (0%, 0 to 37)</td><td>79.0</td><td>85.5</td><td>84.5</td><td>658.5</td><td>6.0</td><td>0.4259</td><td>0</td></tr>
+</table><p class='small'>Every proportion carries its 95% Clopper-Pearson interval. Loss is a field missing at the payer, a payer that asked, or a chain not done. Caught is a refusal by check-ho or check-rb that named a dropped or changed value or a wrong addition; a false alarm is a refusal with every value right.</p>
+<h2>The pre-registered tests</h2><table><tr><th>model</th><th>test</th><th>cells</th><th>result</th></tr>
+<tr><td>Claude Haiku 4.5</td><td>H1 block 1: more correct acts in R than F (one-sided)</td><td>R: 4 / 4 (100%, 40 to 100), F: 4 / 4 (100%, 40 to 100)</td><td>p = 1.0000</td></tr>
+<tr><td>Claude Haiku 4.5</td><td>H2 block 1: every field at the payer in more chains in R than F (one-sided)</td><td>R: 4 / 4 (100%, 40 to 100), F: 4 / 4 (100%, 40 to 100)</td><td>p = 1.0000</td></tr>
+<tr><td>Claude Haiku 4.5</td><td>H4 R false alarms over correct forwards (upper bound under 5%)</td><td>R: 0 / 8 (0%, 0 to 37)</td><td>does not hold</td></tr>
+<tr><td>Claude Haiku 4.5</td><td>H3 block 1 F: median size hop 1 -&gt; hop K+1</td><td>hop1: 75.5, hopK+1: 100.5</td><td>grows</td></tr>
+<tr><td>Claude Haiku 4.5</td><td>H3 block 1 R: median size hop 1 -&gt; hop K+1</td><td>hop1: 79.0, hopK+1: 84.5</td><td>grows</td></tr>
+<tr><td>Claude Haiku 5.5</td><td>H1 block 1: more correct acts in R than F (one-sided)</td><td>R: 4 / 4 (100%, 40 to 100), F: 4 / 4 (100%, 40 to 100)</td><td>p = 1.0000</td></tr>
+<tr><td>Claude Haiku 5.5</td><td>H2 block 1: every field at the payer in more chains in R than F (one-sided)</td><td>R: 4 / 4 (100%, 40 to 100), F: 4 / 4 (100%, 40 to 100)</td><td>p = 1.0000</td></tr>
+<tr><td>Claude Haiku 5.5</td><td>H4 R false alarms over correct forwards (upper bound under 5%)</td><td>R: 0 / 8 (0%, 0 to 37)</td><td>does not hold</td></tr>
+<tr><td>Claude Haiku 5.5</td><td>H3 block 1 F: median size hop 1 -&gt; hop K+1</td><td>hop1: 75.5, hopK+1: 104.5</td><td>grows</td></tr>
+<tr><td>Claude Haiku 5.5</td><td>H3 block 1 R: median size hop 1 -&gt; hop K+1</td><td>hop1: 79.0, hopK+1: 95.5</td><td>grows</td></tr>
+</table>
+<h2>Every drift, by chain and hop</h2><p>None.</p>
+<h2>Every refusal in arm R</h2>
+<p>None.</p>
+<p class='small'>Payers that attempted a second act after acting (refused by the tool): 2: B1-PAY-clean-1-F-haiku55-k2-r1-p, B1-PAY-clean-2-F-haiku45-k2-r1-p.</p>
+<h2>Every chain</h2><pre style='font-size:0.72rem;white-space:pre-wrap'>| chain | outcome | expected | fields missing at payer | drift (hop: fields) | refusals (hop what kind) | sizes | traffic | turns | cost $ | status |
+|---|---|---|---|---|---|---|---|---|---|---|
+| B1-CHGBANK-clean-1-F-haiku45-k2-r1-p | correct | act |  |  |  | 73/86/98 | 318 | 3 | 0.1639 | ok |
+| B1-CHGBANK-clean-1-F-haiku55-k2-r1-p | correct | act |  |  |  | 73/86/98 | 337 | 3 | 0.0171 | ok |
+| B1-CHGBANK-clean-1-R-haiku45-k2-r1-p | correct | act |  |  |  | 78/83/85 | 633 | 6 | 0.4499 | ok |
+| B1-CHGBANK-clean-1-R-haiku55-k2-r1-p | correct | act |  |  |  | 78/93/101 | 655 | 6 | 0.0525 | ok |
+| B1-CHGBANK-clean-2-F-haiku45-k2-r1-p | correct | act |  |  |  | 73/86/98 | 335 | 3 | 0.1608 | ok |
+| B1-CHGBANK-clean-2-F-haiku55-k2-r1-p | correct | act |  |  |  | 73/86/98 | 340 | 3 | 0.017 | ok |
+| B1-CHGBANK-clean-2-R-haiku45-k2-r1-p | correct | act |  |  |  | 78/80/84 | 631 | 6 | 0.4495 | ok |
+| B1-CHGBANK-clean-2-R-haiku55-k2-r1-p | correct | act |  |  |  | 78/86/98 | 661 | 6 | 0.0584 | ok |
+| B1-PAY-clean-1-F-haiku45-k2-r1-p | correct | act |  |  |  | 78/91/103 | 323 | 3 | 0.1647 | ok |
+| B1-PAY-clean-1-F-haiku55-k2-r1-p | correct | act |  |  |  | 78/99/140 | 565 | 3 | 0.0163 | ok |
+| B1-PAY-clean-1-R-haiku45-k2-r1-p | correct | act |  |  |  | 80/88/84 | 685 | 6 | 0.4669 | ok |
+| B1-PAY-clean-1-R-haiku55-k2-r1-p | correct | act |  |  |  | 80/89/92 | 702 | 6 | 0.0451 | ok |
+| B1-PAY-clean-2-F-haiku45-k2-r1-p | correct | act |  |  |  | 78/91/103 | 378 | 3 | 0.1314 | ok |
+| B1-PAY-clean-2-F-haiku55-k2-r1-p | correct | act |  |  |  | 78/99/111 | 545 | 3 | 0.0158 | ok |
+| B1-PAY-clean-2-R-haiku45-k2-r1-p | correct | act |  |  |  | 80/88/89 | 684 | 6 | 0.3372 | ok |
+| B1-PAY-clean-2-R-haiku55-k2-r1-p | correct | act |  |  |  | 80/88/93 | 697 | 6 | 0.0484 | ok |</pre>
+</body></html>

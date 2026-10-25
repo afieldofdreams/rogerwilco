@@ -1,0 +1,346 @@
+{
+ "id": "B6-CHGBANK-clean-1-C-llama3b-k2-r1",
+ "arm": "C",
+ "K": 2,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "delivered": {
+  "1": {
+   "from": "scheduler",
+   "to": "coordinator",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y // for the payer; add your part and pass it on",
+   "tokens": 73,
+   "when": "2026-10-02 09:32",
+   "reissued": null,
+   "final": "RW1 HO scheduler-1 from=scheduler to=coordinator item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y // for the payer; add your part and pass it on"
+  },
+  "2": {
+   "from": "coordinator",
+   "to": "desk",
+   "text": "RW1 HO coordinator-1 from=coordinator to=desk item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1",
+   "tokens": 69,
+   "when": "2026-10-02 09:34",
+   "reissued": null,
+   "final": "RW1 HO coordinator-1 from=coordinator to=desk item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1"
+  },
+  "3": {
+   "from": "desk",
+   "to": "payer",
+   "text": "RW1 HO desk-1 from=desk to=payer item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1 appr=OK",
+   "tokens": 71,
+   "when": "2026-10-02 09:36",
+   "reissued": null,
+   "final": "RW1 HO desk-1 from=desk to=payer item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1 appr=OK"
+  }
+ },
+ "traffic": [
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "deliver",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y // for the payer; add your part and pass it on",
+   "tokens": 73
+  },
+  {
+   "hop": 1,
+   "from": "coordinator",
+   "to": "scheduler",
+   "kind": "rb",
+   "text": "RW1 RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=80a47ed0d4b7 sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y",
+   "tokens": 74
+  },
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "an",
+   "text": "RW1 AN scheduler-51 re=coordinator-1 p=pay from=scheduler to=coordinator val=Y // readback correct; add your part and forward",
+   "tokens": 35
+  },
+  {
+   "hop": 2,
+   "from": "coordinator",
+   "to": "desk",
+   "kind": "deliver",
+   "text": "RW1 HO coordinator-1 from=coordinator to=desk item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1",
+   "tokens": 69
+  },
+  {
+   "hop": 2,
+   "from": "desk",
+   "to": "coordinator",
+   "kind": "rb",
+   "text": "RW1 RB desk-1 re=coordinator-1 from=desk to=coordinator item=sup:evergreen ask=CHGBANK due=20261003 pri=1 p=pay h=d45847a1c24a sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y",
+   "tokens": 81
+  },
+  {
+   "hop": 2,
+   "from": "coordinator",
+   "to": "desk",
+   "kind": "an",
+   "text": "RW1 AN coordinator-51 re=desk-1 p=pay from=coordinator to=desk val=Y // readback correct; add your part and forward",
+   "tokens": 34
+  },
+  {
+   "hop": 2,
+   "from": "desk",
+   "to": "payer",
+   "kind": "forward-refused",
+   "text": "RW1 HO desk-1 from=desk to=payer item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1",
+   "tokens": 68
+  },
+  {
+   "hop": 2,
+   "from": "pre-send check",
+   "to": "desk",
+   "kind": "refusal",
+   "text": "Your pre-send check refused the line you replied with before it went: record: HO does not carry appr (record has appr=OK). Reply with the corrected line, one line, carrying every slot of the HO you received with the same value, plus only what your role adds, addressed to the next agent. If the check says to ask instead, reply ASK and your question.",
+   "tokens": 77
+  },
+  {
+   "hop": 3,
+   "from": "desk",
+   "to": "payer",
+   "kind": "deliver",
+   "text": "RW1 HO desk-1 from=desk to=payer item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1 appr=OK",
+   "tokens": 71
+  },
+  {
+   "hop": 3,
+   "from": "payer",
+   "to": "desk",
+   "kind": "rb",
+   "text": "RW1 RB payer-1 re=desk-1 from=payer to=desk item=sup:evergreen ask=CHGBANK due=20261003 pri=1 p=pay h=29e1609a7a12 sup=evergreen appr=OK acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y",
+   "tokens": 83
+  },
+  {
+   "hop": 3,
+   "from": "desk",
+   "to": "payer",
+   "kind": "an",
+   "text": "RW1 AN desk-51 re=payer-1 p=pay from=desk to=payer val=Y // readback correct; proceed",
+   "tokens": 29
+  },
+  {
+   "hop": 3,
+   "from": "payer",
+   "to": "desk",
+   "kind": "act",
+   "text": "ACT\nact: CHGBANK\nsupplier: evergreen\nsort_code: 30-98-71\naccount: 60-83-71/44019482\neffective: 20261003\napproval: FD-0926",
+   "tokens": 48
+  },
+  {
+   "hop": 3,
+   "from": "code",
+   "to": "payer",
+   "kind": "act-refusal",
+   "text": "Your act block was refused: account='60-83-71/44019482' is not in the form the block accepts (\\d{8}). Nothing was executed. Reply with a corrected ACT block in the form your brief gives, one key: value per line, or reply ASK and your question.",
+   "tokens": 62
+  },
+  {
+   "hop": 3,
+   "from": "payer",
+   "to": "desk",
+   "kind": "act",
+   "text": "ACT\nact: CHGBANK\nsupplier: evergreen\nsort_code: 30-98-71\naccount: 44019482\neffective: 20261003\napproval: FD-0926",
+   "tokens": 42
+  }
+ ],
+ "checks": {
+  "1": {
+   "rb": {
+    "ok": true,
+    "problems": [],
+    "notes": [],
+    "kind": null,
+    "rb": "RW1 RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=80a47ed0d4b7 sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y",
+    "rb_id": "coordinator-1",
+    "by": "code",
+    "answer": "confirm"
+   },
+   "rb2": null,
+   "confirm": [
+    {
+     "answer": "confirm"
+    }
+   ],
+   "forward": [
+    {
+     "ok": true,
+     "problems": [],
+     "notes": [
+      "waived: ask CHGBANK is an irreversible act under profile pay: the HO must ask rb=exec",
+      "prev is in neither the HO nor the record; the receiver resolves it and the readback carries it"
+     ],
+     "kind": null,
+     "record": {
+      "from": "coordinator",
+      "to": "desk",
+      "item": "sup:evergreen",
+      "ask": "CHGBANK",
+      "p": "pay",
+      "rb": [
+       "all"
+      ],
+      "sup": "evergreen",
+      "acct": "60-83-71/44019482",
+      "eff": "20261003",
+      "apref": "FD-0926",
+      "x_cb": "Y",
+      "due": "20261003",
+      "pri": "1"
+     },
+     "reply": "",
+     "out": "RW1 HO coordinator-1 from=coordinator to=desk item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1"
+    }
+   ]
+  },
+  "2": {
+   "rb": {
+    "ok": true,
+    "problems": [],
+    "notes": [],
+    "kind": null,
+    "rb": "RW1 RB desk-1 re=coordinator-1 from=desk to=coordinator item=sup:evergreen ask=CHGBANK due=20261003 pri=1 p=pay h=d45847a1c24a sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y",
+    "rb_id": "desk-1",
+    "by": "code",
+    "answer": "confirm"
+   },
+   "rb2": null,
+   "confirm": [
+    {
+     "answer": "confirm"
+    }
+   ],
+   "forward": [
+    {
+     "ok": false,
+     "problems": [
+      "record: HO does not carry appr (record has appr=OK)"
+     ],
+     "notes": [
+      "waived: ask CHGBANK is an irreversible act under profile pay: the HO must ask rb=exec",
+      "prev is in neither the HO nor the record; the receiver resolves it and the readback carries it"
+     ],
+     "kind": "value",
+     "record": {
+      "from": "desk",
+      "to": "payer",
+      "item": "sup:evergreen",
+      "ask": "CHGBANK",
+      "p": "pay",
+      "rb": [
+       "all"
+      ],
+      "sup": "evergreen",
+      "acct": "60-83-71/44019482",
+      "eff": "20261003",
+      "apref": "FD-0926",
+      "x_cb": "Y",
+      "due": "20261003",
+      "pri": 1,
+      "appr": "OK"
+     },
+     "reply": "Your pre-send check refused the line you replied with before it went: record: HO does not carry appr (record has appr=OK). Reply with the corrected line, one line, carrying every slot of the HO you received with the same value, plus only what your role adds, addressed to the next agent. If the check says to ask instead, reply ASK and your question.",
+     "out": "RW1 HO desk-1 from=desk to=payer item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1"
+    },
+    {
+     "ok": true,
+     "problems": [],
+     "notes": [
+      "waived: ask CHGBANK is an irreversible act under profile pay: the HO must ask rb=exec",
+      "prev is in neither the HO nor the record; the receiver resolves it and the readback carries it"
+     ],
+     "kind": null,
+     "record": {
+      "from": "desk",
+      "to": "payer",
+      "item": "sup:evergreen",
+      "ask": "CHGBANK",
+      "p": "pay",
+      "rb": [
+       "all"
+      ],
+      "sup": "evergreen",
+      "acct": "60-83-71/44019482",
+      "eff": "20261003",
+      "apref": "FD-0926",
+      "x_cb": "Y",
+      "due": "20261003",
+      "pri": 1,
+      "appr": "OK"
+     },
+     "reply": "",
+     "out": "RW1 HO desk-1 from=desk to=payer item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1 appr=OK"
+    }
+   ]
+  },
+  "3": {
+   "rb": {
+    "ok": true,
+    "problems": [],
+    "notes": [],
+    "kind": null,
+    "rb": "RW1 RB payer-1 re=desk-1 from=payer to=desk item=sup:evergreen ask=CHGBANK due=20261003 pri=1 p=pay h=29e1609a7a12 sup=evergreen appr=OK acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y",
+    "rb_id": "payer-1",
+    "by": "code",
+    "answer": "confirm"
+   },
+   "rb2": null,
+   "confirm": [
+    {
+     "answer": "confirm"
+    }
+   ],
+   "forward": [],
+   "act": [
+    {
+     "values": {
+      "act": "CHGBANK",
+      "supplier": "evergreen",
+      "sort_code": "30-98-71",
+      "account": "60-83-71/44019482",
+      "effective": "20261003",
+      "approval": "FD-0926"
+     },
+     "result": {
+      "status": "REFUSED",
+      "reason": "account='60-83-71/44019482' is not in the form the block accepts (\\d{8})"
+     }
+    },
+    {
+     "values": {
+      "act": "CHGBANK",
+      "supplier": "evergreen",
+      "sort_code": "30-98-71",
+      "account": "44019482",
+      "effective": "20261003",
+      "approval": "FD-0926"
+     },
+     "result": {
+      "status": "REFUSED",
+      "reason": "effective='20261003' is not in the form the block accepts (\\d{4}-\\d\\d-\\d\\d)"
+     }
+    }
+   ]
+  }
+ },
+ "counters": {
+  "scheduler": 51,
+  "coordinator": 51,
+  "desk": 51
+ },
+ "ended": {
+  "hop": 3,
+  "how": "stalled",
+  "detail": "act block refused twice: effective='20261003' is not in the form the block accepts (\\d{4}-\\d\\d-\\d\\d)"
+ },
+ "status": "act block refused twice: effective='20261003' is not in the form the block accepts (\\d{4}-\\d\\d-\\d\\d)",
+ "flags": [],
+ "clock": 5
+}

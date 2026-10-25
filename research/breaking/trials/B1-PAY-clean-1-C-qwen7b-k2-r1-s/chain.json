@@ -1,0 +1,257 @@
+{
+ "id": "B1-PAY-clean-1-C-qwen7b-k2-r1-s",
+ "arm": "C",
+ "K": 2,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "delivered": {
+  "1": {
+   "from": "scheduler",
+   "to": "coordinator",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // for the payer; add your part and pass it on",
+   "tokens": 80,
+   "when": "2026-10-02 09:32",
+   "reissued": null,
+   "final": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // for the payer; add your part and pass it on"
+  },
+  "2": {
+   "from": "coordinator",
+   "to": "desk",
+   "text": "RW1 HO coordinator-1 re=scheduler-51 from=coordinator to=desk item=inv:MD-2026-057 ask=PAY p=pay due=20261002 pri=2 sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 rb=all",
+   "tokens": 81,
+   "when": "2026-10-02 09:34",
+   "reissued": null,
+   "final": "RW1 HO coordinator-1 re=scheduler-51 from=coordinator to=desk item=inv:MD-2026-057 ask=PAY p=pay due=20261002 pri=2 sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 rb=all"
+  }
+ },
+ "traffic": [
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "deliver",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=PAY p=pay rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 // for the payer; add your part and pass it on",
+   "tokens": 80
+  },
+  {
+   "hop": 1,
+   "from": "coordinator",
+   "to": "scheduler",
+   "kind": "rb",
+   "text": "RW1 RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=80a245f6ff76 sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929",
+   "tokens": 79
+  },
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "an",
+   "text": "RW1 AN scheduler-51 re=coordinator-1 p=pay from=scheduler to=coordinator val=Y // readback correct; add your part and forward",
+   "tokens": 35
+  },
+  {
+   "hop": 2,
+   "from": "coordinator",
+   "to": "desk",
+   "kind": "deliver",
+   "text": "RW1 HO coordinator-1 re=scheduler-51 from=coordinator to=desk item=inv:MD-2026-057 ask=PAY p=pay due=20261002 pri=2 sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 rb=all",
+   "tokens": 81
+  },
+  {
+   "hop": 2,
+   "from": "desk",
+   "to": "coordinator",
+   "kind": "rb",
+   "text": "RW1 RB desk-1 re=coordinator-1 from=desk to=coordinator item=inv:MD-2026-057 ask=PAY due=20261002 pri=2 p=pay h=8e3cc2046366 sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929",
+   "tokens": 88
+  },
+  {
+   "hop": 2,
+   "from": "coordinator",
+   "to": "desk",
+   "kind": "an",
+   "text": "RW1 AN coordinator-51 re=desk-1 p=pay from=coordinator to=desk val=Y // readback correct; add your part and forward",
+   "tokens": 34
+  },
+  {
+   "hop": 2,
+   "from": "desk",
+   "to": "payer",
+   "kind": "forward-refused",
+   "text": "RW1 DN desk-1 re=coordinator-21 from=desk to=payer item=inv:MD-2026-057 out=OK sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 dec=PAY appr=OK",
+   "tokens": 73
+  },
+  {
+   "hop": 2,
+   "from": "pre-send check",
+   "to": "desk",
+   "kind": "refusal",
+   "text": "Your pre-send check refused the line you replied with before it went: first line is DN, expected HO; added slot: out=OK is not in the HO you received and not what your role adds; added slot: dec=PAY is not in the HO you received and not what your role adds. Reply with the corrected line, one line, carrying every slot of the HO you received with the same value, plus only what your role adds, addressed to the next agent. If the check says to ask instead, reply ASK and your question.",
+   "tokens": 111
+  },
+  {
+   "hop": 2,
+   "from": "desk",
+   "to": "payer",
+   "kind": "forward-refused",
+   "text": "RW1 HO desk-1 re=coordinator-21 from=desk to=payer item=inv:MD-2026-057 ask=PAY rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929",
+   "tokens": 70
+  }
+ ],
+ "checks": {
+  "1": {
+   "rb": {
+    "ok": true,
+    "problems": [],
+    "notes": [],
+    "kind": null,
+    "rb": "RW1 RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=inv:MD-2026-057 ask=PAY p=pay h=80a245f6ff76 sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929",
+    "rb_id": "coordinator-1",
+    "by": "code",
+    "answer": "confirm"
+   },
+   "rb2": null,
+   "confirm": [
+    {
+     "answer": "confirm"
+    }
+   ],
+   "forward": [
+    {
+     "ok": true,
+     "problems": [],
+     "notes": [
+      "waived: ask PAY is an irreversible act under profile pay: the HO must ask rb=exec",
+      "acct is in neither the HO nor the record; the receiver resolves it and the readback carries it"
+     ],
+     "kind": null,
+     "record": {
+      "from": "coordinator",
+      "to": "desk",
+      "item": "inv:MD-2026-057",
+      "ask": "PAY",
+      "p": "pay",
+      "rb": [
+       "all"
+      ],
+      "sup": "marlow",
+      "amt": "5400.00",
+      "cur": "GBP",
+      "kind": "GROSS",
+      "paid": "20261002",
+      "ref": "MD-2026-057",
+      "apref": "FD-0929",
+      "due": "20261002",
+      "pri": "2"
+     },
+     "reply": "",
+     "out": "RW1 HO coordinator-1 re=scheduler-51 from=coordinator to=desk item=inv:MD-2026-057 ask=PAY p=pay due=20261002 pri=2 sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 rb=all"
+    }
+   ]
+  },
+  "2": {
+   "rb": {
+    "ok": true,
+    "problems": [],
+    "notes": [],
+    "kind": null,
+    "rb": "RW1 RB desk-1 re=coordinator-1 from=desk to=coordinator item=inv:MD-2026-057 ask=PAY due=20261002 pri=2 p=pay h=8e3cc2046366 sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929",
+    "rb_id": "desk-1",
+    "by": "code",
+    "answer": "confirm"
+   },
+   "rb2": null,
+   "confirm": [
+    {
+     "answer": "confirm"
+    }
+   ],
+   "forward": [
+    {
+     "ok": false,
+     "problems": [
+      "first line is DN, expected HO",
+      "added slot: out=OK is not in the HO you received and not what your role adds",
+      "added slot: dec=PAY is not in the HO you received and not what your role adds"
+     ],
+     "notes": [],
+     "kind": "value",
+     "record": {
+      "from": "desk",
+      "to": "payer",
+      "item": "inv:MD-2026-057",
+      "ask": "PAY",
+      "p": "pay",
+      "due": "20261002",
+      "pri": 2,
+      "sup": "marlow",
+      "amt": "5400.00",
+      "cur": "GBP",
+      "kind": "GROSS",
+      "paid": "20261002",
+      "ref": "MD-2026-057",
+      "apref": "FD-0929",
+      "rb": [
+       "all"
+      ],
+      "appr": "OK"
+     },
+     "reply": "Your pre-send check refused the line you replied with before it went: first line is DN, expected HO; added slot: out=OK is not in the HO you received and not what your role adds; added slot: dec=PAY is not in the HO you received and not what your role adds. Reply with the corrected line, one line, carrying every slot of the HO you received with the same value, plus only what your role adds, addressed to the next agent. If the check says to ask instead, reply ASK and your question.",
+     "out": "RW1 DN desk-1 re=coordinator-21 from=desk to=payer item=inv:MD-2026-057 out=OK sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929 dec=PAY appr=OK"
+    },
+    {
+     "ok": false,
+     "problems": [
+      "record: HO does not carry p (record has p=pay)",
+      "record: HO does not carry due (record has due=20261002)",
+      "record: HO does not carry pri (record has pri=2)",
+      "record: HO does not carry appr (record has appr=OK)"
+     ],
+     "notes": [
+      "waived: ask PAY is an irreversible act under profile pay: the HO must ask rb=exec",
+      "acct is in neither the HO nor the record; the receiver resolves it and the readback carries it"
+     ],
+     "kind": "value",
+     "record": {
+      "from": "desk",
+      "to": "payer",
+      "item": "inv:MD-2026-057",
+      "ask": "PAY",
+      "p": "pay",
+      "due": "20261002",
+      "pri": 2,
+      "sup": "marlow",
+      "amt": "5400.00",
+      "cur": "GBP",
+      "kind": "GROSS",
+      "paid": "20261002",
+      "ref": "MD-2026-057",
+      "apref": "FD-0929",
+      "rb": [
+       "all"
+      ],
+      "appr": "OK"
+     },
+     "reply": "Your pre-send check refused the line you replied with before it went: record: HO does not carry p (record has p=pay); record: HO does not carry due (record has due=20261002); record: HO does not carry pri (record has pri=2); record: HO does not carry appr (record has appr=OK). Reply with the corrected line, one line, carrying every slot of the HO you received with the same value, plus only what your role adds, addressed to the next agent. If the check says to ask instead, reply ASK and your question.",
+     "out": "RW1 HO desk-1 re=coordinator-21 from=desk to=payer item=inv:MD-2026-057 ask=PAY rb=all sup=marlow amt=5400.00 cur=GBP kind=GROSS paid=20261002 ref=MD-2026-057 apref=FD-0929"
+    }
+   ]
+  }
+ },
+ "counters": {
+  "scheduler": 51,
+  "coordinator": 51
+ },
+ "ended": {
+  "hop": 2,
+  "how": "held",
+  "detail": "held: hop 2 (desk): forwarded line refused twice"
+ },
+ "status": "held: hop 2 (desk): forwarded line refused twice",
+ "flags": [],
+ "clock": 3
+}

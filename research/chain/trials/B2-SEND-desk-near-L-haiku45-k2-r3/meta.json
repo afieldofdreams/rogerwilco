@@ -1,0 +1,43 @@
+{
+ "id": "B2-SEND-desk-near-L-haiku45-k2-r3",
+ "block": 2,
+ "act": "SEND",
+ "context": "desk-near",
+ "arm": "L",
+ "model": "haiku45",
+ "K": 2,
+ "repeat": 3,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "hops": {
+  "1": {
+   "agent": "coordinator",
+   "role": "coordinator",
+   "prev": "scheduler",
+   "next": "desk",
+   "brief": "data/briefs/L-coordinator-SEND.txt",
+   "context_file": "schedule.json"
+  },
+  "2": {
+   "agent": "desk",
+   "role": "desk",
+   "prev": "coordinator",
+   "next": "payer",
+   "brief": "data/briefs/L-desk-SEND.txt",
+   "context_file": "approvals.json"
+  },
+  "3": {
+   "agent": "payer",
+   "role": "payer",
+   "prev": "desk",
+   "next": null,
+   "brief": "data/briefs/L-payer-SEND.txt",
+   "context_file": "supplier_bank.json"
+  }
+ },
+ "harden": 1
+}

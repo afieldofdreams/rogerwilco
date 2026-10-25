@@ -1,0 +1,4 @@
+# Inbox for payer (oldest first, newest last)
+
+## 1. 2026-10-02 09:36 from desk to payer
+RW1 HO desk-1 from=coordinator to=payer item=inv:MD-2026-057 ask=SEND p=pay sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk due=20261002 pri=2 appr=OK // for the payer

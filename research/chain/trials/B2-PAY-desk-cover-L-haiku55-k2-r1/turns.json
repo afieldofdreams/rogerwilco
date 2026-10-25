@@ -1,0 +1,151 @@
+{
+ "status": "ok",
+ "ended": {
+  "hop": 2,
+  "how": "asked",
+  "detail": ""
+ },
+ "turns": [
+  {
+   "hop": 1,
+   "agent": "coordinator",
+   "turn": 1,
+   "result": "SENT",
+   "session": "f257fa9a-d4d3-4bae-bc65-abc9054fce50",
+   "usage": {
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 15077,
+    "cache_read_input_tokens": 156570,
+    "output_tokens": 2242,
+    "output_tokens_details": {
+     "thinking_tokens": 1356
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 15077,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 5,
+      "cache_read_input_tokens": 44356,
+      "cache_creation_input_tokens": 386,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 386
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1510,
+     "outputTokens": 2267,
+     "cacheReadInputTokens": 156570,
+     "cacheCreationInputTokens": 15077,
+     "webSearchRequests": 0,
+     "costUSD": 0.0058655999999999995,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1356,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.0058655999999999995,
+   "seconds": 18,
+   "denials": [],
+   "is_error": false,
+   "num_turns": 4
+  },
+  {
+   "hop": 2,
+   "agent": "desk",
+   "turn": 1,
+   "result": "ASKED",
+   "session": "f2ec293b-3b61-4088-9378-7ec0d266cbbc",
+   "usage": {
+    "input_tokens": 16,
+    "cache_creation_input_tokens": 17183,
+    "cache_read_input_tokens": 337954,
+    "output_tokens": 3097,
+    "output_tokens_details": {
+     "thinking_tokens": 1098
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 17183,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 6,
+      "cache_read_input_tokens": 46460,
+      "cache_creation_input_tokens": 371,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 371
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "models": {
+    "claude-haiku-5-5": {
+     "inputTokens": 1515,
+     "outputTokens": 3116,
+     "cacheReadInputTokens": 337954,
+     "cacheCreationInputTokens": 17183,
+     "webSearchRequests": 0,
+     "costUSD": 0.008525640000000001,
+     "contextWindow": 1000000,
+     "maxOutputTokens": 128000,
+     "thinkingTokens": 1098,
+     "canonicalModel": "claude-haiku-5-5",
+     "provider": "firstParty",
+     "costBasis": "list"
+    }
+   },
+   "cost": 0.008525640000000001,
+   "seconds": 25,
+   "denials": [
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_01BaYqCNfs6pLgdkr725ar2M",
+     "tool_input": {
+      "command": "python3 /home/user/rogerwilco/research/chain/tools/frozen/scripts/rogerwilco.py validate \"AQ desk-1 re=coordinator-1 from=desk to=scheduler item=inv:MD-2026-057 need=TEXT tail=FD-0929 in approvals.json covers Marlow MD-2026-061 1980.00 GBP gross, not MD-2026-057 5400.00 GBP. HO coordinator-1 is not approved; confirm the approval reference for MD-2026-057 before I forward.\" --profile pay; echo \"exit=$?\"",
+      "description": "Validate AQ line with the codec"
+     }
+    },
+    {
+     "tool_name": "Bash",
+     "tool_use_id": "toolu_018x1MGfVajQaJErMSsuUdHy",
+     "tool_input": {
+      "command": "printf '%s\\n' \"RW1 AQ desk-1 re=coordinator-1 from=desk to=scheduler item=inv:MD-2026-057 need=TEXT // FD-0929 in approvals.json covers Marlow MD-2026-061 1980.00 GBP gross, not MD-2026-057 5400.00 GBP. HO coordinator-1 is not approved; confirm the approval reference for MD-2026-057 before I forward.\" > question.txt && cat question.txt",
+      "description": "Write the question line to question.txt"
+     }
+    }
+   ],
+   "is_error": false,
+   "num_turns": 8
+  }
+ ]
+}

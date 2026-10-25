@@ -371,7 +371,7 @@ def test_home_page_lines_are_real(client):
 
 
 def test_every_page_carries_the_same_header(client):
-    pages = ["/", "/quickstart", "/demo", "/lines", "/about", "/research", "/research/readback"]
+    pages = ["/", "/quickstart", "/demo", "/lines", "/about", "/research", "/research/readback", "/research/chain"]
     heads = []
     for path in pages:
         text = client.get(path, headers={"Accept": "text/html"}).text
@@ -628,6 +628,15 @@ def test_index_page_numbers_match_the_studies():
         two_phase = [r for r in prep if r["arm"] in "PQ"]
         assert len(one_step) == 60 and sum(r["wrong_act"] for r in one_step) == 59 and sum(r["wrong_act"] for r in two_phase) == 0
     assert "59 to 0" in html and "of 60 wrong accounts and dates" in html and "14 to 0" in html and "0 of 378" in html
+    ch = root / "chain" / "results" / "summary.json"
+    if ch.is_file():   # the relay: block 1 on Haiku 5.5, checked lines against free prose; drift over the run; the retyped readback on Haiku 4.5
+        s = json.loads(ch.read_text(encoding="utf-8"))
+        r55, f55 = s["cells"]["B1-R-haiku55-k2"]["correct_act"], s["cells"]["B1-F-haiku55-k2"]["correct_act"]
+        assert (r55["k"], r55["n"], f55["k"], f55["n"]) == (45, 45, 37, 45) and "45 of 45 and 37 of 45" in research
+        assert s["chains"] == 792 and sum(1 for x in s["rows"] if x["any_drift"]) == 2 and "2 in 792" in research
+        rb45 = s["cells"]["B1-R-haiku45-k2"]["readback_false_alarms_over_readbacks"]
+        assert (rb45["k"], rb45["n"]) == (13, 128) and "13 of 128" in research
+        assert s["cells"]["B1-R-haiku55-k2"]["false_alarms_over_correct_forwards"]["k"] == 0 and "no false alarm in 90 forwards" in research
     tr = (root / "translation" / "results" / "summary.md").read_text(encoding="utf-8")
     sonnet = [c.strip() for c in [l for l in tr.splitlines() if l.startswith("| L-sonnet")][0].strip("|").split("|")]
     assert sonnet[2].startswith("0.997") and "99.7%" in research              # recall
@@ -802,7 +811,9 @@ def test_research_index_and_pages(client):
     r = client.get("/research")
     assert r.status_code == 200 and "text/html" in r.headers["content-type"]
     assert "Month-end close" in r.text and "/research/month-end" in r.text
-    for slug in ("wire-study", "pilot", "month-end", "translation", "readback"):
+    assert "The relay" in r.text and "/research/chain" in r.text and "Nine studies" in r.text
+    assert "The breaking point" in r.text and "/research/breaking" in r.text
+    for slug in ("wire-study", "pilot", "month-end", "translation", "readback", "plan-readback", "tool-prepare", "chain", "breaking"):
         page = client.get(f"/research/{slug}")
         assert page.status_code == 200, slug
         assert page.text.lstrip().startswith("<!doctype html>"), slug

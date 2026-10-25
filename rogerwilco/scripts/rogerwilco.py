@@ -8,7 +8,8 @@ Usage:
   rogerwilco.py make-rb "<HO line>" <rb-id> [--profile NAME] [--no-hash] [--acc "k:v+k:v"] [--do copy]
                                                     # build a readback; acc/do are the receiver's derived interpretation
   rogerwilco.py check-ho "<HO line>" '<record json>' [--profile NAME]
-                                                    # before sending: the HO against the record it was built from
+                                                    # before sending: the HO against the record it was built from; a relay
+                                                    # passes the HO it received, as slot values, as the record
   rogerwilco.py check-dn "<HO line>" "<DN line>" [--profile NAME] [--rb "<RB line>"]
                                                     # after the act: the done report against the plan
   rogerwilco.py check-thread FILE [--profile NAME] [--now YYYYMMDDTHHMMZ]
@@ -593,7 +594,8 @@ def check_ho(ho_line: str, record: dict, profile: str | None = None) -> tuple[li
     """The check before sending. Before an irreversible act the HO is built from the record by code or, where it was
     drafted, compared with the record before it goes: every value the record holds appears in the HO unchanged, and
     the HO asks rb=exec where the profile names execution slots for its ask. record maps slot names (and to, item,
-    ask) to values written as they are on the line. Returns (problems, notes); no problems means the HO may be sent."""
+    ask) to values written as they are on the line. A relay forwarding a handover it received passes that HO's slots,
+    with to= the next agent, as the record. Returns (problems, notes); no problems means the HO may be sent."""
     ho, errors, _ = parse(ho_line, profile)
     problems = [f"HO: {e}" for e in errors]
     notes: list[str] = []

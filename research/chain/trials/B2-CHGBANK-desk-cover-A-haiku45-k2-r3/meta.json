@@ -1,0 +1,43 @@
+{
+ "id": "B2-CHGBANK-desk-cover-A-haiku45-k2-r3",
+ "block": 2,
+ "act": "CHGBANK",
+ "context": "desk-cover",
+ "arm": "A",
+ "model": "haiku45",
+ "K": 2,
+ "repeat": 3,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "hops": {
+  "1": {
+   "agent": "coordinator",
+   "role": "coordinator",
+   "prev": "scheduler",
+   "next": "desk",
+   "brief": "data/briefs/A-coordinator-CHGBANK.txt",
+   "context_file": "schedule.json"
+  },
+  "2": {
+   "agent": "desk",
+   "role": "desk",
+   "prev": "coordinator",
+   "next": "payer",
+   "brief": "data/briefs/A-desk-CHGBANK.txt",
+   "context_file": "approvals.json"
+  },
+  "3": {
+   "agent": "payer",
+   "role": "payer",
+   "prev": "desk",
+   "next": null,
+   "brief": "data/briefs/A-payer-CHGBANK.txt",
+   "context_file": "supplier_bank.json"
+  }
+ },
+ "harden": 1
+}

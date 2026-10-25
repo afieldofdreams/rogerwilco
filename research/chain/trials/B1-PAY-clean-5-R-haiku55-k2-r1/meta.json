@@ -1,0 +1,43 @@
+{
+ "id": "B1-PAY-clean-5-R-haiku55-k2-r1",
+ "block": 1,
+ "act": "PAY",
+ "context": "clean-5",
+ "arm": "R",
+ "model": "haiku55",
+ "K": 2,
+ "repeat": 1,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "hops": {
+  "1": {
+   "agent": "coordinator",
+   "role": "coordinator",
+   "prev": "scheduler",
+   "next": "desk",
+   "brief": "data/briefs/R-coordinator-PAY.txt",
+   "context_file": "schedule.json"
+  },
+  "2": {
+   "agent": "desk",
+   "role": "desk",
+   "prev": "coordinator",
+   "next": "payer",
+   "brief": "data/briefs/R-desk-PAY.txt",
+   "context_file": "approvals.json"
+  },
+  "3": {
+   "agent": "payer",
+   "role": "payer",
+   "prev": "desk",
+   "next": null,
+   "brief": "data/briefs/R-payer-PAY.txt",
+   "context_file": "supplier_bank.json"
+  }
+ },
+ "harden": 1
+}

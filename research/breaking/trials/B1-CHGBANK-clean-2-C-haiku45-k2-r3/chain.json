@@ -1,0 +1,277 @@
+{
+ "id": "B1-CHGBANK-clean-2-C-haiku45-k2-r3",
+ "arm": "C",
+ "K": 2,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "delivered": {
+  "1": {
+   "from": "scheduler",
+   "to": "coordinator",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y // for the payer; add your part and pass it on",
+   "tokens": 73,
+   "when": "2026-10-02 09:32",
+   "reissued": null,
+   "final": "RW1 HO scheduler-1 from=scheduler to=coordinator item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y // for the payer; add your part and pass it on"
+  },
+  "2": {
+   "from": "coordinator",
+   "to": "desk",
+   "text": "RW1 HO coordinator-2 from=coordinator to=desk item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1 // scheduled for 3 Oct master-changes run",
+   "tokens": 79,
+   "when": "2026-10-02 09:34",
+   "reissued": null,
+   "final": "RW1 HO coordinator-2 from=coordinator to=desk item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1 // scheduled for 3 Oct master-changes run"
+  },
+  "3": {
+   "from": "desk",
+   "to": "payer",
+   "text": "RW1 HO desk-2 from=desk to=payer item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1 appr=OK // FD-0926 verified, bank change approved",
+   "tokens": 81,
+   "when": "2026-10-02 09:36",
+   "reissued": null,
+   "final": "RW1 HO desk-2 from=desk to=payer item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1 appr=OK // FD-0926 verified, bank change approved"
+  }
+ },
+ "traffic": [
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "deliver",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y // for the payer; add your part and pass it on",
+   "tokens": 73
+  },
+  {
+   "hop": 1,
+   "from": "coordinator",
+   "to": "scheduler",
+   "kind": "rb",
+   "text": "RW1 RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=80a47ed0d4b7 sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y",
+   "tokens": 74
+  },
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "an",
+   "text": "RW1 AN scheduler-51 re=coordinator-1 p=pay from=scheduler to=coordinator val=Y // readback correct; add your part and forward",
+   "tokens": 35
+  },
+  {
+   "hop": 2,
+   "from": "coordinator",
+   "to": "desk",
+   "kind": "deliver",
+   "text": "RW1 HO coordinator-2 from=coordinator to=desk item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1 // scheduled for 3 Oct master-changes run",
+   "tokens": 79
+  },
+  {
+   "hop": 2,
+   "from": "desk",
+   "to": "coordinator",
+   "kind": "rb",
+   "text": "RW1 RB desk-1 re=coordinator-2 from=desk to=coordinator item=sup:evergreen ask=CHGBANK due=20261003 pri=1 p=pay h=9092bdbc00bc sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y",
+   "tokens": 80
+  },
+  {
+   "hop": 2,
+   "from": "coordinator",
+   "to": "desk",
+   "kind": "an",
+   "text": "RW1 AN coordinator-51 re=desk-1 p=pay from=coordinator to=desk val=Y // readback correct; add your part and forward",
+   "tokens": 34
+  },
+  {
+   "hop": 3,
+   "from": "desk",
+   "to": "payer",
+   "kind": "deliver",
+   "text": "RW1 HO desk-2 from=desk to=payer item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1 appr=OK // FD-0926 verified, bank change approved",
+   "tokens": 81
+  },
+  {
+   "hop": 3,
+   "from": "payer",
+   "to": "desk",
+   "kind": "rb",
+   "text": "RW1 RB payer-1 re=desk-2 from=payer to=desk item=sup:evergreen ask=CHGBANK due=20261003 pri=1 p=pay h=2a8f3e9c5b62 sup=evergreen appr=OK acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y",
+   "tokens": 86
+  },
+  {
+   "hop": 3,
+   "from": "desk",
+   "to": "payer",
+   "kind": "an",
+   "text": "RW1 AN desk-51 re=payer-1 p=pay from=desk to=payer val=Y // readback correct; proceed",
+   "tokens": 29
+  },
+  {
+   "hop": 3,
+   "from": "payer",
+   "to": "desk",
+   "kind": "act",
+   "text": "ACT\nact: chgbank\nsupplier: Evergreen Office Supplies\nsort_code: 60-83-71\naccount: 44019482\neffective: 2026-10-03\napproval: FD-0926",
+   "tokens": 47
+  }
+ ],
+ "checks": {
+  "1": {
+   "rb": {
+    "ok": true,
+    "problems": [],
+    "notes": [],
+    "kind": null,
+    "rb": "RW1 RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=80a47ed0d4b7 sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y",
+    "rb_id": "coordinator-1",
+    "by": "code",
+    "answer": "confirm"
+   },
+   "rb2": null,
+   "confirm": [
+    {
+     "answer": "confirm"
+    }
+   ],
+   "forward": [
+    {
+     "ok": true,
+     "problems": [],
+     "notes": [
+      "waived: ask CHGBANK is an irreversible act under profile pay: the HO must ask rb=exec",
+      "prev is in neither the HO nor the record; the receiver resolves it and the readback carries it"
+     ],
+     "kind": null,
+     "record": {
+      "from": "coordinator",
+      "to": "desk",
+      "item": "sup:evergreen",
+      "ask": "CHGBANK",
+      "p": "pay",
+      "rb": [
+       "all"
+      ],
+      "sup": "evergreen",
+      "acct": "60-83-71/44019482",
+      "eff": "20261003",
+      "apref": "FD-0926",
+      "x_cb": "Y",
+      "due": "20261003",
+      "pri": "1"
+     },
+     "reply": "",
+     "out": "RW1 HO coordinator-2 from=coordinator to=desk item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1 // scheduled for 3 Oct master-changes run"
+    }
+   ]
+  },
+  "2": {
+   "rb": {
+    "ok": true,
+    "problems": [],
+    "notes": [],
+    "kind": null,
+    "rb": "RW1 RB desk-1 re=coordinator-2 from=desk to=coordinator item=sup:evergreen ask=CHGBANK due=20261003 pri=1 p=pay h=9092bdbc00bc sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y",
+    "rb_id": "desk-1",
+    "by": "code",
+    "answer": "confirm"
+   },
+   "rb2": null,
+   "confirm": [
+    {
+     "answer": "confirm"
+    }
+   ],
+   "forward": [
+    {
+     "ok": true,
+     "problems": [],
+     "notes": [
+      "waived: ask CHGBANK is an irreversible act under profile pay: the HO must ask rb=exec",
+      "prev is in neither the HO nor the record; the receiver resolves it and the readback carries it"
+     ],
+     "kind": null,
+     "record": {
+      "from": "desk",
+      "to": "payer",
+      "item": "sup:evergreen",
+      "ask": "CHGBANK",
+      "p": "pay",
+      "rb": [
+       "all"
+      ],
+      "sup": "evergreen",
+      "acct": "60-83-71/44019482",
+      "eff": "20261003",
+      "apref": "FD-0926",
+      "x_cb": "Y",
+      "due": "20261003",
+      "pri": 1,
+      "appr": "OK"
+     },
+     "reply": "",
+     "out": "RW1 HO desk-2 from=desk to=payer item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y due=20261003 pri=1 appr=OK // FD-0926 verified, bank change approved"
+    }
+   ]
+  },
+  "3": {
+   "rb": {
+    "ok": true,
+    "problems": [],
+    "notes": [],
+    "kind": null,
+    "rb": "RW1 RB payer-1 re=desk-2 from=payer to=desk item=sup:evergreen ask=CHGBANK due=20261003 pri=1 p=pay h=2a8f3e9c5b62 sup=evergreen appr=OK acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y",
+    "rb_id": "payer-1",
+    "by": "code",
+    "answer": "confirm"
+   },
+   "rb2": null,
+   "confirm": [
+    {
+     "answer": "confirm"
+    }
+   ],
+   "forward": [],
+   "act": [
+    {
+     "values": {
+      "act": "chgbank",
+      "supplier": "Evergreen Office Supplies",
+      "sort_code": "60-83-71",
+      "account": "44019482",
+      "effective": "2026-10-03",
+      "approval": "FD-0926"
+     },
+     "result": {
+      "status": "master updated",
+      "executed": {
+       "act": "CHGBANK",
+       "supplier": "Evergreen Office Supplies",
+       "sort_code": "60-83-71",
+       "account": "44019482",
+       "effective": "2026-10-03",
+       "approval": "FD-0926",
+       "previous": "30-98-71/22019483"
+      }
+     }
+    }
+   ]
+  }
+ },
+ "counters": {
+  "scheduler": 51,
+  "coordinator": 51,
+  "desk": 51
+ },
+ "ended": {
+  "hop": 3,
+  "how": "done",
+  "detail": ""
+ },
+ "status": "ok",
+ "flags": [],
+ "clock": 3
+}

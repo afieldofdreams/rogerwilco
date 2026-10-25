@@ -1,0 +1,77 @@
+{
+ "id": "B1-SEND-clean-5-A-haiku55-k2-r3",
+ "arm": "A",
+ "K": 2,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "delivered": {
+  "1": {
+   "from": "scheduler",
+   "to": "coordinator",
+   "text": "Hi coordinator,\n\nHandover for the payer. Please send the remittance advice to Marlow Design Partners LLP at their billing contact on file for invoice MD-2026-057: 5,400.00 GBP paid on 2 October 2026, reference MD-2026-057.\n\nThanks,\nscheduler",
+   "tokens": 64,
+   "when": "2026-10-02 09:32",
+   "reissued": null,
+   "final": "Hi coordinator,\n\nHandover for the payer. Please send the remittance advice to Marlow Design Partners LLP at their billing contact on file for invoice MD-2026-057: 5,400.00 GBP paid on 2 October 2026, reference MD-2026-057.\n\nThanks,\nscheduler"
+  },
+  "2": {
+   "from": "coordinator",
+   "to": "desk",
+   "text": "From: coordinator\nTo: desk\nIn reply to: scheduler, inbox item 9 (2026-10-02 09:32)\nKind: relay (remittance advice)\n\nPlease send the remittance advice to Marlow Design Partners LLP at their billing contact on file for invoice MD-2026-057: 5,400.00 GBP paid on 2 October 2026, reference MD-2026-057.\n\nDeadline: 2026-10-02\nPriority: 3\n\nSigned: coordinator",
+   "tokens": 107,
+   "when": "2026-10-02 09:34",
+   "reissued": null,
+   "final": "From: coordinator\nTo: desk\nIn reply to: scheduler, inbox item 9 (2026-10-02 09:32)\nKind: relay (remittance advice)\n\nPlease send the remittance advice to Marlow Design Partners LLP at their billing contact on file for invoice MD-2026-057: 5,400.00 GBP paid on 2 October 2026, reference MD-2026-057.\n\nDeadline: 2026-10-02\nPriority: 3\n\nSigned: coordinator"
+  }
+ },
+ "traffic": [
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "deliver",
+   "text": "Hi coordinator,\n\nHandover for the payer. Please send the remittance advice to Marlow Design Partners LLP at their billing contact on file for invoice MD-2026-057: 5,400.00 GBP paid on 2 October 2026, reference MD-2026-057.\n\nThanks,\nscheduler",
+   "tokens": 64
+  },
+  {
+   "hop": 2,
+   "from": "coordinator",
+   "to": "desk",
+   "kind": "deliver",
+   "text": "From: coordinator\nTo: desk\nIn reply to: scheduler, inbox item 9 (2026-10-02 09:32)\nKind: relay (remittance advice)\n\nPlease send the remittance advice to Marlow Design Partners LLP at their billing contact on file for invoice MD-2026-057: 5,400.00 GBP paid on 2 October 2026, reference MD-2026-057.\n\nDeadline: 2026-10-02\nPriority: 3\n\nSigned: coordinator",
+   "tokens": 107
+  },
+  {
+   "hop": 2,
+   "from": "desk",
+   "to": "coordinator",
+   "kind": "question",
+   "text": "To: scheduler\nFrom: desk\nIn reply to: coordinator, inbox item 9 (2026-10-02 09:34)\nRe: remittance advice, Marlow Design Partners LLP, MD-2026-057, 5,400.00 GBP\n\nNot forwarded. Two points need settling first:\n\n1. The handover says it replies to \"scheduler, inbox item 9 (2026-10-02 09:32)\". No scheduler message at 09:32 is in my inbox. Which message is it?\n2. The handover gives 5,400.00 GBP with no net or gross marker, and no payment handover for MD-2026-057 is in my inbox yet. Is the amount gross, as FD-0929 approves, and is the payment handover coming before the \"paid\" advice goes out?\n",
+   "tokens": 179
+  }
+ ],
+ "checks": {
+  "1": {
+   "rb": null,
+   "rb2": null,
+   "forward": []
+  },
+  "2": {
+   "rb": null,
+   "rb2": null,
+   "forward": []
+  }
+ },
+ "counters": {},
+ "ended": {
+  "hop": 2,
+  "how": "asked",
+  "detail": ""
+ },
+ "status": "ok",
+ "flags": []
+}

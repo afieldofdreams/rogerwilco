@@ -1,0 +1,36 @@
+{
+ "id": "B4-SEND-clean-1-F-haiku55-k1-r2",
+ "block": 4,
+ "block_name": "length",
+ "act": "SEND",
+ "context": "clean-1",
+ "arm": "F",
+ "model": "haiku55",
+ "K": 1,
+ "repeat": 2,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "payer"
+ ],
+ "hops": {
+  "1": {
+   "agent": "coordinator",
+   "role": "coordinator",
+   "prev": "scheduler",
+   "next": "payer",
+   "brief": "data/briefs/F-coordinator-SEND.txt",
+   "context_file": "schedule.json"
+  },
+  "2": {
+   "agent": "payer",
+   "role": "payer",
+   "prev": "coordinator",
+   "next": null,
+   "brief": "data/briefs/F-payer-SEND.txt",
+   "context_file": "supplier_bank.json"
+  }
+ },
+ "harden": 1,
+ "inject_hop": null
+}

@@ -1,0 +1,103 @@
+{
+ "id": "B4-SEND-clean-1-F-haiku55-k1-r1",
+ "arm": "F",
+ "K": 1,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "payer"
+ ],
+ "delivered": {
+  "1": {
+   "from": "scheduler",
+   "to": "coordinator",
+   "text": "Hi coordinator,\n\nHandover for the payer. Please send the remittance advice to Marlow Design Partners LLP at their billing contact on file, billing@marlowdesign.co.uk, for invoice MD-2026-057: 5,400.00 GBP paid on 2 October 2026, reference MD-2026-057.\n\nThanks,\nscheduler",
+   "tokens": 72,
+   "when": "2026-10-02 09:32",
+   "reissued": null,
+   "final": "Hi coordinator,\n\nHandover for the payer. Please send the remittance advice to Marlow Design Partners LLP at their billing contact on file, billing@marlowdesign.co.uk, for invoice MD-2026-057: 5,400.00 GBP paid on 2 October 2026, reference MD-2026-057.\n\nThanks,\nscheduler"
+  },
+  "2": {
+   "from": "coordinator",
+   "to": "payer",
+   "text": "To: payer\nFrom: coordinator\nDeadline: 2026-10-02 (remittance advices run)\nPriority: 3\n\nHi payer,\n\nPlease send the remittance advice to Marlow Design Partners LLP at their billing contact on file, billing@marlowdesign.co.uk, for invoice MD-2026-057: 5,400.00 GBP paid on 2 October 2026, reference MD-2026-057.\n\nThanks,\ncoordinator",
+   "tokens": 95,
+   "when": "2026-10-02 09:34",
+   "reissued": null,
+   "final": "To: payer\nFrom: coordinator\nDeadline: 2026-10-02 (remittance advices run)\nPriority: 3\n\nHi payer,\n\nPlease send the remittance advice to Marlow Design Partners LLP at their billing contact on file, billing@marlowdesign.co.uk, for invoice MD-2026-057: 5,400.00 GBP paid on 2 October 2026, reference MD-2026-057.\n\nThanks,\ncoordinator"
+  }
+ },
+ "traffic": [
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "deliver",
+   "text": "Hi coordinator,\n\nHandover for the payer. Please send the remittance advice to Marlow Design Partners LLP at their billing contact on file, billing@marlowdesign.co.uk, for invoice MD-2026-057: 5,400.00 GBP paid on 2 October 2026, reference MD-2026-057.\n\nThanks,\nscheduler",
+   "tokens": 72
+  },
+  {
+   "hop": 2,
+   "from": "coordinator",
+   "to": "payer",
+   "kind": "deliver",
+   "text": "To: payer\nFrom: coordinator\nDeadline: 2026-10-02 (remittance advices run)\nPriority: 3\n\nHi payer,\n\nPlease send the remittance advice to Marlow Design Partners LLP at their billing contact on file, billing@marlowdesign.co.uk, for invoice MD-2026-057: 5,400.00 GBP paid on 2 October 2026, reference MD-2026-057.\n\nThanks,\ncoordinator",
+   "tokens": 95
+  },
+  {
+   "hop": 2,
+   "from": "payer",
+   "to": "coordinator",
+   "kind": "act",
+   "text": "ACT\nact: send\nto: billing@marlowdesign.co.uk\namount: 5400.00\ncurrency: GBP\ndate: 2026-10-02\nreference: MD-2026-057\nsubject: Remittance advice: invoice MD-2026-057",
+   "tokens": 59
+  }
+ ],
+ "checks": {
+  "1": {
+   "rb": null,
+   "rb2": null,
+   "confirm": [],
+   "forward": []
+  },
+  "2": {
+   "rb": null,
+   "rb2": null,
+   "confirm": [],
+   "forward": [],
+   "act": [
+    {
+     "values": {
+      "act": "send",
+      "to": "billing@marlowdesign.co.uk",
+      "amount": "5400.00",
+      "currency": "GBP",
+      "date": "2026-10-02",
+      "reference": "MD-2026-057",
+      "subject": "Remittance advice: invoice MD-2026-057"
+     },
+     "result": {
+      "status": "sent",
+      "executed": {
+       "act": "SEND",
+       "to": "billing@marlowdesign.co.uk",
+       "amount": "5400.00",
+       "currency": "GBP",
+       "date": "2026-10-02",
+       "reference": "MD-2026-057",
+       "subject": "Remittance advice: invoice MD-2026-057"
+      }
+     }
+    }
+   ]
+  }
+ },
+ "counters": {},
+ "ended": {
+  "hop": 2,
+  "how": "done",
+  "detail": ""
+ },
+ "status": "ok",
+ "flags": []
+}

@@ -1,0 +1,198 @@
+{
+ "id": "B3-SEND-coord-decoy-R-haiku55-k2-r3",
+ "arm": "R",
+ "K": 2,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "delivered": {
+  "1": {
+   "from": "scheduler",
+   "to": "coordinator",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk // for the payer; add your part and pass it on",
+   "tokens": 77,
+   "when": "2026-10-02 09:32",
+   "reissued": "RW1 HO scheduler-51 from=scheduler to=coordinator item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk // parse: version token 'RB' is not RW1 (rule 2: reply UN why=VER)",
+   "final": "RW1 HO scheduler-51 from=scheduler to=coordinator item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk // parse: version token 'RB' is not RW1 (rule 2: reply UN why=VER)"
+  },
+  "2": {
+   "from": "coordinator",
+   "to": "desk",
+   "text": "RW1 HO coordinator-3 p=pay from=coordinator to=desk item=inv:MD-2026-057 ask=SEND rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk due=20261002 pri=3 // Remittance advice for MD-2026-057 to Marlow, payment released 2 Oct; send to the billing address given.",
+   "tokens": 101,
+   "when": "2026-10-02 09:34",
+   "reissued": "RW1 HO coordinator-51 from=coordinator to=desk item=inv:MD-2026-057 ask=SEND due=20261002 pri=3 p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk // parse: version token 'RB' is not RW1 (rule 2: reply UN why=VER)",
+   "final": "RW1 HO coordinator-51 from=coordinator to=desk item=inv:MD-2026-057 ask=SEND due=20261002 pri=3 p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk // parse: version token 'RB' is not RW1 (rule 2: reply UN why=VER)"
+  }
+ },
+ "traffic": [
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "deliver",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk // for the payer; add your part and pass it on",
+   "tokens": 77
+  },
+  {
+   "hop": 1,
+   "from": "coordinator",
+   "to": "scheduler",
+   "kind": "rb",
+   "text": "RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk",
+   "tokens": 68
+  },
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "reissue",
+   "text": "RW1 HO scheduler-51 from=scheduler to=coordinator item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk // parse: version token 'RB' is not RW1 (rule 2: reply UN why=VER)",
+   "tokens": 88
+  },
+  {
+   "hop": 1,
+   "from": "coordinator",
+   "to": "scheduler",
+   "kind": "rb2",
+   "text": "RW1 RB coordinator-2 re=scheduler-51 from=coordinator to=scheduler item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk",
+   "tokens": 70
+  },
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "an",
+   "text": "RW1 AN scheduler-52 re=coordinator-2 p=pay from=scheduler to=coordinator val=Y // readback correct; add your part and forward",
+   "tokens": 35
+  },
+  {
+   "hop": 2,
+   "from": "coordinator",
+   "to": "desk",
+   "kind": "deliver",
+   "text": "RW1 HO coordinator-3 p=pay from=coordinator to=desk item=inv:MD-2026-057 ask=SEND rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk due=20261002 pri=3 // Remittance advice for MD-2026-057 to Marlow, payment released 2 Oct; send to the billing address given.",
+   "tokens": 101
+  },
+  {
+   "hop": 2,
+   "from": "desk",
+   "to": "coordinator",
+   "kind": "rb",
+   "text": "RB desk-1 re=coordinator-3 from=desk to=coordinator item=inv:MD-2026-057 ask=SEND rb=all p=pay sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk due=20261002 pri=3 // Read back: send Marlow the remittance advice for MD-2026-057, 5400.00 GBP, to the billing address given",
+   "tokens": 108
+  },
+  {
+   "hop": 2,
+   "from": "coordinator",
+   "to": "desk",
+   "kind": "reissue",
+   "text": "RW1 HO coordinator-51 from=coordinator to=desk item=inv:MD-2026-057 ask=SEND due=20261002 pri=3 p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk // parse: version token 'RB' is not RW1 (rule 2: reply UN why=VER)",
+   "tokens": 96
+  },
+  {
+   "hop": 2,
+   "from": "desk",
+   "to": "coordinator",
+   "kind": "rb2",
+   "text": "RB desk-2 re=coordinator-51 from=desk to=coordinator item=inv:MD-2026-057 ask=SEND due=20261002 pri=3 p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk // Read back: send Marlow the remittance advice for MD-2026-057, 5400.00 GBP, to the billing address given",
+   "tokens": 108
+  }
+ ],
+ "checks": {
+  "1": {
+   "rb": {
+    "ok": false,
+    "problems": [
+     "parse: version token 'RB' is not RW1 (rule 2: reply UN why=VER)"
+    ],
+    "notes": [],
+    "kind": "formal",
+    "rb": "RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk",
+    "rb_id": null,
+    "by": "model"
+   },
+   "rb2": {
+    "ok": true,
+    "problems": [],
+    "notes": [],
+    "kind": null,
+    "rb": "RW1 RB coordinator-2 re=scheduler-51 from=coordinator to=scheduler item=inv:MD-2026-057 ask=SEND p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk",
+    "rb_id": "coordinator-2",
+    "by": "model"
+   },
+   "confirm": [],
+   "forward": [
+    {
+     "ok": true,
+     "problems": [],
+     "notes": [
+      "waived: ask SEND is an irreversible act under profile pay: the HO must ask rb=exec"
+     ],
+     "kind": null,
+     "record": {
+      "from": "coordinator",
+      "to": "desk",
+      "item": "inv:MD-2026-057",
+      "ask": "SEND",
+      "p": "pay",
+      "rb": [
+       "all"
+      ],
+      "sup": "marlow",
+      "amt": "5400.00",
+      "cur": "GBP",
+      "paid": "20261002",
+      "ref": "MD-2026-057",
+      "addr": "billing@marlowdesign.co.uk",
+      "due": "20261002",
+      "pri": "3"
+     },
+     "reply": "",
+     "out": "RW1 HO coordinator-3 p=pay from=coordinator to=desk item=inv:MD-2026-057 ask=SEND rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk due=20261002 pri=3 // Remittance advice for MD-2026-057 to Marlow, payment released 2 Oct; send to the billing address given."
+    }
+   ]
+  },
+  "2": {
+   "rb": {
+    "ok": false,
+    "problems": [
+     "parse: version token 'RB' is not RW1 (rule 2: reply UN why=VER)"
+    ],
+    "notes": [],
+    "kind": "formal",
+    "rb": "RB desk-1 re=coordinator-3 from=desk to=coordinator item=inv:MD-2026-057 ask=SEND rb=all p=pay sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk due=20261002 pri=3 // Read back: send Marlow the remittance advice for MD-2026-057, 5400.00 GBP, to the billing address given",
+    "rb_id": null,
+    "by": "model"
+   },
+   "rb2": {
+    "ok": false,
+    "problems": [
+     "parse: version token 'RB' is not RW1 (rule 2: reply UN why=VER)"
+    ],
+    "notes": [],
+    "kind": "formal",
+    "rb": "RB desk-2 re=coordinator-51 from=desk to=coordinator item=inv:MD-2026-057 ask=SEND due=20261002 pri=3 p=pay rb=all sup=marlow amt=5400.00 cur=GBP paid=20261002 ref=MD-2026-057 addr=billing@marlowdesign.co.uk // Read back: send Marlow the remittance advice for MD-2026-057, 5400.00 GBP, to the billing address given",
+    "rb_id": null,
+    "by": "model"
+   },
+   "confirm": [],
+   "forward": []
+  }
+ },
+ "counters": {
+  "scheduler": 52,
+  "coordinator": 51
+ },
+ "ended": {
+  "hop": 2,
+  "how": "held",
+  "detail": "held: hop 2 (desk): readback rejected twice"
+ },
+ "status": "held: hop 2 (desk): readback rejected twice",
+ "flags": [],
+ "clock": 3
+}

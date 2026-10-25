@@ -1,0 +1,83 @@
+{
+ "id": "B2-CHGBANK-desk-near-R-haiku45-k2-r2",
+ "arm": "R",
+ "K": 2,
+ "agents": [
+  "scheduler",
+  "coordinator",
+  "desk",
+  "payer"
+ ],
+ "delivered": {
+  "1": {
+   "from": "scheduler",
+   "to": "coordinator",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y // for the payer; add your part and pass it on",
+   "tokens": 73,
+   "when": "2026-10-02 09:32",
+   "reissued": "RW1 HO scheduler-51 re=coordinator-1 from=scheduler to=coordinator item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y // re coordinator-1: tier2 integrity: h=79e661808016 but digest of the HO is 80a47ed0d4b7",
+   "final": "RW1 HO scheduler-51 re=coordinator-1 from=scheduler to=coordinator item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y // re coordinator-1: tier2 integrity: h=79e661808016 but digest of the HO is 80a47ed0d4b7"
+  }
+ },
+ "traffic": [
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "deliver",
+   "text": "RW1 HO scheduler-1 from=scheduler to=coordinator item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y // for the payer; add your part and pass it on",
+   "tokens": 73
+  },
+  {
+   "hop": 1,
+   "from": "coordinator",
+   "to": "scheduler",
+   "kind": "rb",
+   "text": "RW1 RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=79e661808016 sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y",
+   "tokens": 70
+  },
+  {
+   "hop": 1,
+   "from": "scheduler",
+   "to": "coordinator",
+   "kind": "reissue",
+   "text": "RW1 HO scheduler-51 re=coordinator-1 from=scheduler to=coordinator item=sup:evergreen ask=CHGBANK p=pay rb=all sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y // re coordinator-1: tier2 integrity: h=79e661808016 but digest of the HO is 80a47ed0d4b7",
+   "tokens": 100
+  },
+  {
+   "hop": 1,
+   "from": "coordinator",
+   "to": "scheduler",
+   "kind": "question",
+   "text": "RW1 AQ coordinator-2 re=scheduler-51 from=coordinator to=scheduler need=TEXT item=sup:evergreen // digest mismatch: your HO has h=80a47ed0d4b7 but inbox shows h=79e661808016; which is correct?\n",
+   "tokens": 60
+  }
+ ],
+ "checks": {
+  "1": {
+   "rb": {
+    "ok": false,
+    "problems": [
+     "tier2 integrity: h=79e661808016 but digest of the HO is 80a47ed0d4b7"
+    ],
+    "notes": [],
+    "kind": "formal",
+    "rb": "RW1 RB coordinator-1 re=scheduler-1 from=coordinator to=scheduler item=sup:evergreen ask=CHGBANK p=pay h=79e661808016 sup=evergreen acct=60-83-71/44019482 eff=20261003 apref=FD-0926 x_cb=Y",
+    "rb_id": "coordinator-1"
+   },
+   "rb2": null,
+   "forward": []
+  }
+ },
+ "counters": {
+  "scheduler": 51
+ },
+ "ended": {
+  "hop": 1,
+  "how": "asked",
+  "detail": ""
+ },
+ "status": "ok",
+ "flags": [],
+ "clock": 1
+}
