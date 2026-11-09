@@ -76,12 +76,12 @@
     <div class="layers" role="table" aria-label="The five layers of aviation safety and their twins for agents">
       <div class="layer head" role="row"><span role="columnheader">Layer</span><span role="columnheader">In the cockpit</span><span role="columnheader">Between agents</span></div>
       <div class="layer" role="row"><h3 role="cell"><span class="n">1</span>Fixed words</h3><p role="cell">A closed vocabulary, so a word means one thing and nothing is said in two ways.</p><p role="cell">The job is one typed line, every fact in a labelled slot, so a program can read it like a form.</p></div>
-      <div class="layer" role="row"><h3 role="cell"><span class="n">2</span>Read back, listened to</h3><p role="cell">The pilot says the clearance back; the controller listens for the mistake.</p><p role="cell">The payer reads the job back as a line and a program compares it with the record. <b>Caught every typed mistake.</b></p></div>
-      <div class="layer" role="row"><h3 role="cell"><span class="n">3</span>Set it, check the window</h3><p role="cell">The new altitude goes in the window; the other pilot checks the window, not their memory.</p><p role="cell">The payment tool states exactly what it will do, and a program checks that before it does it. <b>Caught every tool mistake before the money moved.</b></p></div>
-      <div class="layer" role="row"><h3 role="cell"><span class="n">4</span>Watch the radar</h3><p role="cell">The tower sees what the aircraft actually does, so a mistake is seen early.</p><p role="cell">The tool reports what it actually did and a program compares it with the plan. <b>Caught every fault, after the money moved.</b></p></div>
-      <div class="layer" role="row"><h3 role="cell"><span class="n">5</span>The aircraft says no</h3><p role="cell">The flight computer will not fly the aircraft into the ground, whatever anyone says.</p><p role="cell">The tool will not pay until the program says yes, whatever any agent says. <b>Never paid early, in 378 tries.</b></p></div>
+      <div class="layer" role="row"><h3 role="cell"><span class="n">2</span>Read back, listened to</h3><p role="cell">The pilot says the clearance back; the controller listens for the mistake.</p><p role="cell">The payer reads the job back as a line and a program compares it with the record. <b>Caught every typed mistake on the strong models; on the weak one, 47 of 48 by echo and 48 of 48 when it read back its values.</b></p></div>
+      <div class="layer" role="row"><h3 role="cell"><span class="n">3</span>Set it, check the window</h3><p role="cell">The new altitude goes in the window; the other pilot checks the window, not their memory.</p><p role="cell">The payment tool states exactly what it will do, and a program checks that before it does it. <b>Caught every tool mistake made before it stated the payment.</b></p></div>
+      <div class="layer" role="row"><h3 role="cell"><span class="n">4</span>Watch the radar</h3><p role="cell">The tower sees what the aircraft actually does, so a mistake is seen early.</p><p role="cell">The tool reports what it actually did and a program compares it with the plan. <b>Caught every fault on the Claude models, and 25 of 27 on the weak one, after the money moved.</b></p></div>
+      <div class="layer" role="row"><h3 role="cell"><span class="n">5</span>The aircraft says no</h3><p role="cell">The flight computer will not fly the aircraft into the ground, whatever anyone says.</p><p role="cell">The tool will not pay until the program says yes, whatever any agent says. <b>No agent tried to pay early: 0 of 416 two-phase trials on Haiku, 0 of 378 on the weak model.</b></p></div>
     </div>
-    <p>rogerwilco is those layers written down for agents: three one-line messages, the checks a program runs on them, hosted here for any agent to call, and nine studies that planted mistakes to find out what each layer catches. The rest of this page is those studies, one test at a time. <em>Roger</em> means "I received it"; <em>wilco</em> means "I understood it and I will do it".</p>
+    <p>rogerwilco is those layers written down for agents: three one-line messages, the checks a program runs on them, hosted here for any agent to call, and nine studies that planted mistakes and traps to find out what each layer catches. The rest of this page is those studies, one test at a time. <em>Roger</em> means "I received it"; <em>wilco</em> means "I understood it and I will do it".</p>
   </section>
 
   <section>
@@ -161,7 +161,7 @@
 <line x1="469.0" y1="54" x2="469.0" y2="61" style="stroke:var(--bad);stroke-width:1;stroke-dasharray:2 3"/>
 </svg></div><figcaption>Test 1. The agents talk in ordinary sentences and nobody checks anything. A typed mistake sails straight through.</figcaption></figure>
     <div class="tiles">
-      <div class="tile"><b>15 of 48</b><span>typed mistakes became wrong payments on Sonnet, 14 of 48 on Haiku and 29 of 48 on each OpenAI model.</span></div>
+      <div class="tile"><b>17 of 48</b><span>typed mistakes became wrong payments on Sonnet, 14 of 48 on Haiku and 29 of 48 on each OpenAI model.</span></div>
       <div class="tile"><b>0 of 140</b><span>wrong payments on strong models when the job was right but the payer's files were full of traps. They did not fall for them.</span></div>
     </div>
     <p class="outcome is-bad"><span class="dot"></span>Did not work. Between a third and two thirds of typed mistakes went out as money. Strong models read well, so the danger is the sender's typing and the tool, not the reading.</p>
@@ -197,8 +197,8 @@
 <line x1="469.0" y1="54" x2="469.0" y2="61" style="stroke:var(--warn);stroke-width:1;stroke-dasharray:2 3"/>
 </svg></div><figcaption>Test 2. The payer says the job back in words and a second AI judges whether it matches the record. Better, but the judge waved through jobs addressed to the wrong agent because the numbers matched.</figcaption></figure>
     <div class="tiles">
-      <div class="tile"><b>8 of 48</b><span>typed mistakes still went out. Every one was a job addressed to the wrong agent; the numbers matched, so the judge said yes.</span></div>
-      <div class="tile"><b>38 of 190</b><span>correct readbacks the judge wrongly refused on the weak model, over details the record did not mention; 10 of 186 on gpt-5.5 and 1 of 215 on each Claude model.</span></div>
+      <div class="tile"><b>8 of 48</b><span>typed mistakes still went out, in a Sonnet run added after the main study. Every one was a job addressed to the wrong agent; the numbers matched, so the judge said yes.</span></div>
+      <div class="tile"><b>38 of 190</b><span>correct readbacks the judge wrongly refused on the weak model, over details the record did not mention; 10 of 186 on gpt-5.5, 1 of 215 on Sonnet and 1 of 212 on Haiku.</span></div>
     </div>
     <p class="outcome is-warn"><span class="dot"></span>Partly worked. An AI judge checks what it is asked to check, and it gets tired of details a program never misses.</p>
   </section>
@@ -364,7 +364,7 @@
       <div class="tile"><b>59 to 0</b><span>of 60 wrong accounts and dates the tool picked that became wrong payments on Haiku: 59 with the old tool, readback or not, and 0 with the window. On the weak model, 32 of 60 fell to 0 of 60.</span></div>
       <div class="tile"><b>14 to 0</b><span>of 129 wrong payments on the weak model: 14 with the echo, 0 with the window, which caught the old account and a fake address.</span></div>
       <div class="tile"><b>52 to 7</b><span>stalls on the weak model, because the tool writes the line and the model only hands it the values.</span></div>
-      <div class="tile"><b>0 of 378</b><span>payments made before the program said yes. But the weak model garbled the tool's words 51 times in 129 when passing them on, so the program reads the tool directly.</span></div>
+      <div class="tile"><b>0 of 378</b><span>two-phase trials on the weak model paid before the program said yes, and 0 of 416 on Haiku: no agent tried. But the weak model garbled the tool's words 51 times in 129 when passing them on, so the program reads the tool directly.</span></div>
     </div>
     <p class="outcome is-good"><span class="dot"></span>Worked best of all. A tool that lies at the very last moment still gets through, and the report afterwards still catches that: 30 of 30 on Haiku, 25 of 27 on the weak model.</p>
   </section>
@@ -374,15 +374,15 @@
     <div class="tw"><table>
       <thead><tr><th>How the agents worked</th><th>The sender typed it wrong</th><th>The payer read it wrong (weak model)</th><th>The tool picked the wrong account</th><th>The tool lied at the last moment</th></tr></thead>
       <tbody>
-        <tr><td>1. Prose, nothing checks</td><td class="no">15 of 48 paid wrong</td><td class="no">not caught</td><td class="no">not caught</td><td class="no">not caught</td></tr>
-        <tr><td>2. Prose, judged by an AI</td><td class="part">8 of 48 paid wrong</td><td class="part">4 of 140 paid wrong</td><td class="no">not caught</td><td class="no">not caught</td></tr>
+        <tr><td>1. Prose, nothing checks</td><td class="no">17 of 48 paid wrong</td><td class="no">not caught</td><td class="no">not caught</td><td class="no">not caught</td></tr>
+        <tr><td>2. Prose, judged by an AI</td><td class="part">8 of 48 paid wrong</td><td class="part">4 of 190 paid wrong</td><td class="no">not caught</td><td class="no">not caught</td></tr>
         <tr><td>3. Lines, echoed back</td><td class="yes">0 of 48 (weak model 1 of 48)</td><td class="no">14 of 129 paid wrong</td><td class="no">not caught</td><td class="no">not caught</td></tr>
         <tr><td>4. Lines, values read back</td><td class="yes">0 of 48</td><td class="part">0 wrong, 52 stalls</td><td class="no">not caught</td><td class="no">not caught</td></tr>
         <tr><td>5. The report afterwards</td><td></td><td></td><td class="part">caught after paying</td><td class="part">caught after paying</td></tr>
-        <tr><td>6. The window, plus the report</td><td class="yes">0 of 19</td><td class="yes">0 of 129, 7 stalls</td><td class="yes">0 of 60 paid wrong</td><td class="part">caught after paying</td></tr>
+        <tr><td>6. The window, plus the report</td><td class="yes">0 of 16</td><td class="yes">0 of 129, 7 stalls</td><td class="yes">0 of 60 paid wrong</td><td class="part">caught after paying</td></tr>
       </tbody>
     </table></div>
-    <p class="note">The check before sending, a program comparing the line with the record before it goes, catches the sender's typing on its own, with no round trip. It sits in front of every row from 3 down.</p>
+    <p class="note">The check before sending, a program comparing the line with the record before it goes, catches the sender's typing on its own, with no round trip. It sits in front of every row from 3 down. The second column counts every trial, clean and misleading: row 2 from study 6's 190 on the weak model, rows 3 to 6 from study 7's 129. Row 2's first cell is a Sonnet run added after study 6, and row 6's is study 7's regression check, 16 planted faults where the other rows have 48.</p>
   </section>
 
   <section>
@@ -484,7 +484,7 @@
     </ul>
   </section>
 
-  <p class="foot">Every study, log and grade is public in the <a href="https://github.com/afieldofdreams/rogerwilco">rogerwilco repository</a>, and <a href="/research">the research pages</a> tell each of the nine studies with every figure and its interval. Numbers above are from studies 6 and 7; the strong models were Claude Sonnet 5.5, Claude Haiku 5.5 and gpt-5.5, the weak one gpt-5.4-mini.</p>
+  <p class="foot">Every study, log and grade is public in the <a href="https://github.com/afieldofdreams/rogerwilco">rogerwilco repository</a>, and <a href="/research">the research pages</a> tell each of the nine studies; the four pre-registered ones, 6 to 9, carry every figure with its exact interval. Numbers above are from studies 6 and 7; the strong models were Claude Sonnet 5.5, Claude Haiku 5.5 and gpt-5.5, the weak one gpt-5.4-mini.</p>
 </main>
 <!-- site:footer -->
 <footer class="site-foot">

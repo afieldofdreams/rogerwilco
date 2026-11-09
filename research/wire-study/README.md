@@ -6,14 +6,14 @@ Dated 27 September 2026. Author: Adam Field, Croxio Ltd. Built with Lumos.
 
 ## Layout
 
-- `schemas/pform.json` — enums, message types, typed slots. Edit this to define a new domain.
-- `rogerwilco/codec.py` — `encode`/`decode` (keyed pipe form), `encode_tight`/`decode_tight` (positional METAR-style form with optional CRC), `validate`, `delta`, legends.
-- `rogerwilco/render.py` — English, JSON and glyph renderings of the same data, for comparison only.
-- `rogerwilco/synth.py` — synthetic handoff generator and the ground-truth receiver policy.
-- `measure.py` — token counts (tiktoken o200k and cl100k), round trip, corruption tests, delta example. Writes `results/measure.json`.
-- `parity_prep.py` — builds the five blind-receiver prompts in `data/prompt_*.txt` and `data/parity_truth.json`.
-- `results/parity_raw.json`, `results/parity.json` — receiver answers and scoring (Haiku 4.5 x2, Sonnet x1).
-- `report.html` — the working paper.
+- `schemas/pform.json`: enums, message types, typed slots. Edit this to define a new domain.
+- `rogerwilco/codec.py`: `encode`/`decode` (keyed pipe form), `encode_tight`/`decode_tight` (positional METAR-style form with optional CRC), `validate`, `delta`, legends.
+- `rogerwilco/render.py`: English, JSON and glyph renderings of the same data, for comparison only.
+- `rogerwilco/synth.py`: synthetic handoff generator and the ground-truth receiver policy.
+- `measure.py`: token counts (tiktoken o200k and cl100k), round trip, corruption tests, delta example. Writes `results/measure.json`.
+- `parity_prep.py`: builds the five blind-receiver prompts in `data/prompt_*.txt` and `data/parity_truth.json`.
+- `results/parity_raw.json`, `results/parity.json`: receiver answers and scoring (Haiku 4.5 x2, Sonnet x1).
+- `report.html`: the working paper.
 
 ## Run
 

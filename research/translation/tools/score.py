@@ -301,6 +301,17 @@ def main() -> None:
                             same_core += 1
                             if len({h["vals"] for h in hits}) == 1:
                                 stable += 1
+            # attribute confusions on matched pairs: how often the gold's value for a core attribute was written as another value
+            conf: dict[str, int] = {}
+            for r in runs:
+                for d in r:
+                    gm = {g["id"]: g for g in GOLD[str(d["doc"])]["assertions"]}
+                    for gid, h in d["per_gold"].items():
+                        g = gm[gid]
+                        for k, ev in zip(CORE, h["core"]):
+                            if g[k] != "*" and ev != g[k]:
+                                key = f"{k}: gold {g[k]}, written {ev}"
+                                conf[key] = conf.get(key, 0) + 1
             by_cell[cell] = {
                 "arm": arm, "model": model, "docs": len(flat), "gold": gold_total,
                 "recall": round(sum(d["found"] for d in flat) / gold_total, 3),
@@ -317,6 +328,7 @@ def main() -> None:
                 "tokens_vs_source": round(sum(d["tokens"] for d in flat) / sum(d["src_tokens"] for d in flat), 2),
                 "first_pass_rate": round(sum(d["first_pass"] for d in flat) / len(flat), 3), "first_errors_per_doc": mean([d["first_errors"] for d in flat]),
                 "first_error_cats": dict(sorted(first_cats.items(), key=lambda x: -x[1])), "attempts_mean": mean([d["attempts"] for d in flat]),
+                "confusions": dict(sorted(conf.items(), key=lambda x: (-x[1], x[0]))),
                 "repeat": {"gold": n_gold_hard, "extracted_in_all_three": extracted_all, "extracted_in_any": extracted_any, "same_item_name": same_item,
                            "same_core_attributes": same_core, "identical_including_values": stable,
                            "identical_rate_of_gold": round(stable / n_gold_hard, 3), "identical_rate_of_found_in_all": round(stable / extracted_all, 3) if extracted_all else None,

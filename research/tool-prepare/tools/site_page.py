@@ -95,6 +95,8 @@ def figures(results: Path = C.RESULTS) -> dict:
         f[f"{prefix}model_trials"] = f"{len(mrows):,}"
         f[f"{prefix}model_status_not_ok"] = str(sum(1 for x in mrows if x["status"] != "ok"))
         f[f"{prefix}model_held"] = str(sum(1 for x in mrows if x["held"]))
+        if any(x.get("cost_usd") is not None for x in mrows):
+            f[f"{prefix}model_cost"] = f"${sum(x.get('cost_usd') or 0 for x in mrows):,.0f}"
         if model == "gpt54mini":
             # the API runner records tokens and no price; the published rates for gpt-5.4-mini are $0.75 per million uncached
             # input tokens, $0.075 cached and $4.50 output (October 2026)

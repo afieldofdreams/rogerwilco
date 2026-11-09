@@ -153,6 +153,9 @@ def figures(results: Path = C.RESULTS) -> dict:
     f["wrong_acts_total"] = str(sum(1 for r in rows if r["acted"] and r["outcome"] == "wrong"))
     f["wrong_acts_anchors"] = str(sum(1 for r in rows if r["acted"] and r["outcome"] == "wrong" and r["model"].startswith("haiku")))
     f["wrong_acts_checked"] = str(sum(1 for r in rows if r["acted"] and r["outcome"] == "wrong" and r["arm"] in C.CHECKED_ARMS))
+    # the 51 split as the analysis amendment splits them: values that differ from the record, and the record's values past a log that did not cover the item
+    f["wrong_values_total"] = str(sum(1 for r in rows if r["acted"] and r["outcome"] == "wrong" and not r["act_correct"]))
+    f["uncovered_total"] = str(sum(1 for r in rows if r["acted"] and r["outcome"] == "wrong" and r["act_correct"]))
     f["chains_checked"] = f"{sum(1 for r in rows if r['arm'] in C.CHECKED_ARMS):,}"
     f["asked_elsewhere_total"] = str(sum(1 for r in rows if (not r["acted"]) and r["outcome"] == "wrong"))
     f["complied_total"] = str(sum(1 for r in rows if r["complied"]))
