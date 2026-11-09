@@ -50,7 +50,7 @@ def render(f: dict, fig) -> str:
 <!-- site:header -->
 <!-- /site:header -->
 <main class="report">
-<p class="mast"><span>Study 8 of 8</span><span>22 October 2026</span><span>Croxio Ltd</span><span>{g('chains')} chains, {g('chains_h55')} on Claude Haiku 5.5 and {g('chains_h45')} on Claude Haiku 4.5, pre-registered, after a pilot and a hardening ladder</span></p>
+<p class="mast"><span>Study 8</span><span>22 October 2026</span><span>Croxio Ltd</span><span>{g('chains')} chains, {g('chains_h55')} on Claude Haiku 5.5 and {g('chains_h45')} on Claude Haiku 4.5, pre-registered, after a pilot and a hardening ladder</span></p>
 <h1>When a handover passes through agents that do not act on it, how much arrives, and does a line checked at every hop stop the loss?</h1>
 <div class="answer">
 <p>Nearly all of it arrives, in every form, and no relay changed a value. Across {g('chains')} chains, both models, four forms and up to five relays, a record field reached a hop with a different value {g('drift_times')}, both named below, and neither became an act. Prose relays dropped a field {g('dropped_times')} in {g('chains')} chains, both times the call-back statement of a bank change, both on Haiku 4.5, and in both the payer changed the master without it. No line reached the payer short of a slot: {g('lines_short_at_payer')} of the {g('lines_reached_payer')} line chains that reached it. What prose loses across hops is not the facts. It is the address, the provenance, and size.</p>
@@ -181,7 +181,7 @@ def render(f: dict, fig) -> str:
 
 <h2>Where everything is</h2>
 <p>The protocol with its amendments, the pilot and the ladder with their chains, the frozen manifest, the main run's chains with every message as sent, the harness's state, the grades, the blind reading and <code>results/summary.json</code>: <code>research/chain</code> in the rogerwilco repository. The page you are reading is written from that JSON by <code>tools/site_page.py</code>, and <code>app/tests/test_research_figures.py</code> fails if any figure here differs from it.</p>
-<p class="foot">Study 8 of 8 · 22 October 2026 · {g('chains')} chains as headless Claude Code sessions, {g('chains_h55')} on Claude Haiku 5.5 and {g('chains_h45')} on Claude Haiku 4.5, pre-registered · a pilot of {g('pilot_chains')} chains and a two-step ladder · no judge · tiktoken o200k_base · graded in code</p>
+<p class="foot">Study 8 · 22 October 2026 · {g('chains')} chains as headless Claude Code sessions, {g('chains_h55')} on Claude Haiku 5.5 and {g('chains_h45')} on Claude Haiku 4.5, pre-registered · a pilot of {g('pilot_chains')} chains and a two-step ladder · no judge · tiktoken o200k_base · graded in code</p>
 </main>
 <!-- site:footer -->
 <!-- /site:footer -->

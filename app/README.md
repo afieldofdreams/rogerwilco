@@ -97,7 +97,7 @@ It is built on the official [`mcp`](https://pypi.org/project/mcp/) Python SDK, p
 | `legend` | `profile` | The legend to paste into another agent's prompt. |
 | `to_json` | `line`, `profile` | The line's JSON form. |
 
-All six are marked read-only. A tool error, such as an unknown profile, comes back as a result with `isError: true`, so the calling model can see it and correct itself.
+All eight are marked read-only. A tool error, such as an unknown profile, comes back as a result with `isError: true`, so the calling model can see it and correct itself.
 
 ### Add it to Claude Code
 
@@ -181,6 +181,6 @@ The tests cover every endpoint, the five readback tiers, the checks before and a
 
 ## The site
 
-The site is six pages, each a self-contained HTML file under `static/` with no build step: `/` (what it is and the three-message loop), `/demo` (one handover between two scripted agents, step by step, every check a live call to the API; its script is `demo.js`), `/quickstart` (four ways to start, each with a real request and reply), `/lines` (every message type with an example, and what a program checks), `/profiles` (the same loop in four kinds of work, and how to write a profile; the same path answers a program with the JSON list of profiles) and `/research` (the five studies in plain words, each with its full report).
+The site is seven pages and a page per study, each a self-contained HTML file under `static/` whose shared head, header and footer `app/tools/stamp.py` stamps on: `/` (the story one test at a time, written by `app/tools/home.py`), `/demo` (one handover between two scripted agents, step by step, every check a live call to the API; its script is `demo.js`), `/quickstart` (the integration guide, written by `app/tools/start.py` together with `/quickstart.md`, `/llms.txt` and `/llms-full.txt`), `/lines` (every message type with an example, and what a program checks), `/profiles` (the same loop in four kinds of work, and how to write a profile; the same path answers a program with the JSON list of profiles) `/research` (the nine studies in plain words, each with its own page) and `/about`.
 
-`/` is one self-contained page with no build step. It leads with what goes wrong in a handover, the control that catches it and the figure from the studies, then three panels. Paste a line and validate it, convert it to JSON, take its digest, or build the readback a receiver would send. The second panel is the sender's check: paste the HO and the RB, and it shows which of the four tiers passed. Roger is receipt and integrity, wilco is echo and comprehension. The third is the gate: paste a document and the lines that state facts from it, and it shows which pointers hold. All three open on a working example. The figures on the page are tested against the results tables under `research/`, so the page cannot drift from the studies.
+`/` tells the story one test at a time: the readback in aviation, the three places a handover can go wrong, six ways of handing a payment over with a picture of each and what it caught, the scorecard, and the three messages with the checks a program runs on them. Its figures are the ones on the research pages for studies 6 and 7. The pages for studies 6 to 9 are written from their results JSON by each study's `tools/site_page.py`, and `tests/test_research_figures.py` asserts that the committed pages match that JSON and that each JSON holds the trials of the run it names, so the figures cannot drift from the studies.

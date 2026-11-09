@@ -19,7 +19,7 @@ def render(f: dict, fig) -> str:
 <!-- site:header -->
 <!-- /site:header -->
 <main class="report">
-<p class="mast"><span>Study 6 of 6</span><span>10 and 11 October 2026</span><span>Croxio Ltd</span><span>{g('trials')} trials pre-registered on two Claude receivers, then {g('api_trials')} on two OpenAI receivers and a {g('ext_trials')}-trial extension</span></p>
+<p class="mast"><span>Study 6</span><span>10 and 11 October 2026</span><span>Croxio Ltd</span><span>{g('trials')} trials pre-registered on two Claude receivers, then {g('api_trials')} on two OpenAI receivers and a {g('ext_trials')}-trial extension</span></p>
 <h1>Before an act that cannot be undone, does reading back the plan catch what an echo cannot?</h1>
 <div class="answer">
 <p>Not on these receivers, because there was nothing to catch. We built contexts to make a receiver pay the wrong account, change the wrong row or email the wrong address: lookalike suppliers, superseded and pending rows in the master, decoy handovers, stale drafts, emails from lookalike domains giving new bank details. With no readback at all, Claude Sonnet 5.5 made a wrong act in {g('b2_A_sonnet_wrong')} such trials and Claude Haiku 5.5 in {g('b2_A_haiku_wrong')}; across the four levels of a pre-registered hardening ladder the count stood at {g('ladder_sonnet_pooled')} and {g('ladder_haiku_pooled')}, and a weaker Claude receiver, Haiku 4.5, at {g('haiku45_haiku45_wrong')}. They resolved the trap or stopped and asked.</p>
@@ -49,7 +49,7 @@ def render(f: dict, fig) -> str:
 <li>Built the case and the harness. The receiver is a headless Claude Code session with the brief as its system prompt, a supplier master and an inbox in its folder, and one way to act: a tool that validates what it is passed, executes once, prints what it executed and refuses a second act. Every arm's brief is the same length within 10%.</li>
 <li>Piloted the no-readback arm on block 2: 172 trials per level, twice. The first pilot found two defects in the case (an advice for a payment not yet released; conventions that implied every handover names a readback level) and they were fixed. The corrected pilot met the check at no level of the ladder, so block 2 ran at level 0 and reports bounds.</li>
 <li>Piloted blocks 1 and 3 and fixed three faults in the harness they exposed, each logged: the second readback checked against the wrong line, a tool that misread a master without a status field, and a judge prompt that read "does the note match the record" as "does the note report the record faithfully".</li>
-<li>Froze the tools, the data and the protocol at one commit, recorded in <code>results/manifest.json</code>, and ran the whole design at that commit: block 1 with three repeats, block 2 with five, block 3 with three. {g('trials')} trials, about {g('cost_total')} of model time, {g('status_not_ok')} trials ending in anything but the receiver's own last word.</li>
+<li>Froze the tools, the data and the protocol at one commit, recorded in <code>results/manifest.json</code>, and ran the whole design at that commit: block 1 with three repeats, block 2 with five, block 3 with three. {g('trials')} trials, about {g('cost_total')} of model time, and all but {g('status_not_ok')} of them ending in the receiver's own last word.</li>
 <li>Graded everything in code and compared a blind second reading on a sample. Every number on this page is read from <code>results/summary.json</code> by the script that writes the page, and a test in the app asserts they match.</li>
 </ol>
 
@@ -156,7 +156,7 @@ def render(f: dict, fig) -> str:
 
 <h2>Where everything is</h2>
 <p>The protocol with its amendments, every pilot with its trials and grades, the ladder, the Haiku 4.5 probe, the frozen manifest, the main run's trials, the sender's state, the grades and <code>results/summary.json</code>, the cross-vendor run under <code>results/api</code> and the extension under <code>results/extension</code>: <code>research/plan-readback</code> in the rogerwilco repository. The page you are reading is written from that JSON by <code>tools/site_page.py</code>, and <code>app/tests/test_research_figures.py</code> fails if any figure here differs from it.</p>
-<p class="foot">Study 6 of 6 · 10 and 11 October 2026 · {g('trials')} trials on Claude Sonnet 5.5 and Claude Haiku 5.5 as headless Claude Code sessions, pre-registered · {g('api_trials')} on gpt-5.5 and gpt-5.4-mini through the API harness, partial · {g('ext_trials')} in the extension · judge Claude Sonnet 5.5 · tiktoken o200k_base · graded in code</p>
+<p class="foot">Study 6 · 10 and 11 October 2026 · {g('trials')} trials on Claude Sonnet 5.5 and Claude Haiku 5.5 as headless Claude Code sessions, pre-registered · {g('api_trials')} on gpt-5.5 and gpt-5.4-mini through the API harness, partial · {g('ext_trials')} in the extension · judge Claude Sonnet 5.5 · tiktoken o200k_base · graded in code</p>
 </main>
 <!-- site:footer -->
 <!-- /site:footer -->

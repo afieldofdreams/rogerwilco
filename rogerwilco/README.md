@@ -12,7 +12,7 @@ Agents hand work to each other in prose today. Prose hides state, can't be valid
 
 The name is the radio call. *Roger*: received. *Wilco*: understood, and will comply. Those are two different claims, and the protocol makes the receiver prove both before the sender lets go of the work: the receipt tier is roger, the comprehension tier is wilco. A handoff whose readback passes is said to be wilco.
 
-It is content, not transport. It rides inside an MCP tool result, an A2A message part, a chat turn, a queue message or a log line. The receiving agent needs nothing installed: a 400-token legend in its prompt is enough to read and reply.
+It is content, not transport. It rides inside an MCP tool result, an A2A message part, a chat turn, a queue message or a log line. The receiving agent needs nothing installed: the legend in its prompt is enough to read and reply, about 940 tokens for the core vocabulary and about 1,960 with the pay profile (o200k, November 2026).
 
 ## Install and integrate
 
@@ -32,7 +32,7 @@ problems, notes = rw.check_dn(ho, dn, "pay", rb_line=statement)     # 3. what it
 
 Empty `problems` means go; anything else means stop. The integration guide, with a runnable two-phase payment tool and a
 brief to hand your coding agent, is at **https://rogerwilco.crox.io/quickstart**. For a model doing the integration:
-https://rogerwilco.crox.io/llms-full.txt. The evidence, seven pre-registered studies: https://rogerwilco.crox.io/research.
+https://rogerwilco.crox.io/llms-full.txt. The evidence, nine studies, four of them pre-registered: https://rogerwilco.crox.io/research.
 
 ## Use it with Claude
 
@@ -47,7 +47,7 @@ This repo is an [Agent Skill](https://docs.claude.com/en/docs/agents-and-tools/a
 | Path | What |
 |---|---|
 | `SKILL.md` | The instructions Claude follows. Short by design. |
-| `references/SPEC.md` | The protocol, version RW1 v0.1: grammar, nine message types, slots, codes, five rules, the five-tier readback, the checks before and after an irreversible act, JSON form, profiles. |
+| `references/SPEC.md` | The protocol, version RW1 v0.2: grammar, nine message types, slots, codes, five rules, the five-tier readback, the checks before and after an irreversible act, JSON form, profiles. |
 | `scripts/rogerwilco.py` | Reference codec, standard library only: validate, encode, JSON twin, `make-rb`, `check-rb`, `check-ho`, `check-dn`, digest, legend, lint. |
 | `profiles/core.json` | The core vocabulary. |
 | `profiles/pform.json` | An example domain profile (a knowledge-graph workflow). Copy it to make your own. `pay.json` (accounts payable, with execution slots) and `clin.json` (clinical assertions) are the profiles the studies used. |
@@ -76,11 +76,11 @@ They come from a 240-message study of five wire formats and from reading real ag
 
 ```
 python3 tests/test_conformance.py
-python3 tests/test_conformance.py --agent replies.jsonl   # score an agent's replies to the five agent cases
+python3 tests/test_conformance.py --agent replies.jsonl   # score an agent's replies to the six agent cases
 ```
 
 ## Status
 
-v0.1, draft. The core vocabulary is small on purpose; extend it through a profile, not by editing the core. Issues and profiles welcome.
+Draft. The protocol is RW1, spec v0.2 (12 October 2026); the Python package is 0.3.0. The core vocabulary is small on purpose; extend it through a profile, not by editing the core. Issues and profiles welcome.
 
 Apache License 2.0, copyright Croxio Ltd; see LICENSE and NOTICE. Built by Adam Field. Lineage: M-Form (medical-record compression, 2025) to P-Form (knowledge-graph handoffs, April 2026) to rogerwilco (September 2026).

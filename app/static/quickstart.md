@@ -243,7 +243,7 @@ cancelled: RW1 AN payer-3 re=scheduler-2 from=payer to=scheduler val=Y p=pay // 
 
 ## Teach the receiving model the format
 
-A model that has to read or write lines needs about 400 tokens of legend in its prompt and nothing installed. Pass the profile so it gets the domain's codes.
+A model that has to read or write lines needs the legend in its prompt and nothing installed: about 940 tokens for the core vocabulary, about 1,960 with the pay profile, and about 680 and 1,540 in the lean form (tiktoken o200k_base, November 2026). Pass the profile so it gets the domain's codes.
 
 ```python
 system_prompt += rw.legend("pay")

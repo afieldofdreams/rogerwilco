@@ -19,7 +19,7 @@ def render(f: dict, fig) -> str:
 <!-- site:header -->
 <!-- /site:header -->
 <main class="report">
-<p class="mast"><span>Study 7 of 7</span><span>11 and 12 October 2026</span><span>Croxio Ltd</span><span>{g('model_trials')} trials on Claude Haiku 5.5 and {g('g_model_trials')} on gpt-5.4-mini, pre-registered, each after a pilot</span></p>
+<p class="mast"><span>Study 7</span><span>11 and 12 October 2026</span><span>Croxio Ltd</span><span>{g('model_trials')} trials on Claude Haiku 5.5 and {g('g_model_trials')} on gpt-5.4-mini, pre-registered, each after a pilot</span></p>
 <h1>Before an act that cannot be undone, does a readback the tool composes catch what the model's cannot?</h1>
 <div class="answer">
 <p>Yes, for the fault that nothing before the act could see in study 6: the tool doing something other than what it was asked. With the one-step tool, a fault injected where the tool resolves the call became a wrong irreversible act in {g('b2_A_wrong_prepare')} trials with no readback and {g('b2_D_wrong_prepare')} with the execution readback, whose values were right. With the two-phase tool the same fault appeared in the tool's prepared statement and never reached an act: {g('b2_P_wrong_prepare')} wrong acts with the statement relayed by the model and {g('b2_Q_wrong_prepare')} with it read by the sender. In every one of those {g('b2_P_caught_prepare')} and {g('b2_Q_caught_prepare')} trials the catch came before the sender's check ran: Haiku read the statement the tool printed, saw that it differed from what it had passed, abandoned the transaction and asked.</p>
@@ -31,7 +31,7 @@ def render(f: dict, fig) -> str:
 <dt>The material</dt><dd>Study 6's fictional month-end, unchanged: the payer handed three acts it cannot take back, release a payment, change a supplier's bank details, send a remittance advice, with the account or the address to be resolved from a supplier master built to mislead.</dd>
 <dt>Three fault blocks</dt><dd>Block 1, the receiver and the call: study 6's 28 induced contexts and 15 clean ones. Block 2, the tool: study 6's fifteen injected tool faults, each applied at <code>prepare</code>, so the statement carries the fault, and at <code>commit</code>, so the act differs from the statement. Block 0, the sender's draft: study 5's sixteen planted faults and three clean handovers, as a regression check.</dd>
 <dt>Compared</dt><dd>No readback. The execution readback written by the model and checked by code, study 6's arm. The tool's prepared statement relayed by the model as its readback, with discipline keeping it from committing early. The tool's prepared statement read by the sender from the tool's log, with a commit the tool refuses until the sender has confirmed.</dd>
-<dt>Receiver</dt><dd>Claude Haiku 5.5 as headless sessions. No judge: every arm is checked by code. The OpenAI receiver the design named is parked; the harness keeps its arms for a later run.</dd>
+<dt>Receivers</dt><dd>Claude Haiku 5.5 as headless sessions, then gpt-5.4-mini through the API harness, the weak receiver the design was built for. No judge: every arm is checked by code.</dd>
 <dt>Graded by</dt><dd>Code: the act as the tool executed it against the record; the statement, the readback and the done report against the record and against the tool's log. Every proportion carries its exact 95% interval. The protocol, its amendments before the main run, the pilot and the frozen manifest are in the repository.</dd>
 </dl>
 
@@ -49,7 +49,7 @@ def render(f: dict, fig) -> str:
 <li>Wrote the protocol before building: the mechanism, the arms, the blocks, the measures, the hypotheses and their tests, the sizing, the pilot gate, what the study will not show. It is <code>research/tool-prepare/README.md</code>, with the amendments made before the main run appended.</li>
 <li>Built the tool and the harness from study 6's, with the codec frozen at study 6's commit so that the no-readback and execution-readback arms are study 6's arms, and smoke-tested the whole chain without a model: prepare, relay, check, confirm, commit, abandon, the done check and the grading.</li>
 <li>Piloted {g('pilot_trials')} trials of the two new arms on Haiku 5.5: every clean context, six induced ones, and the first two tool faults of each act at both points. {g('pilot_reached')} of {g('pilot_trials')} reached a commit or a refusal without a harness fault, against a gate of 90%; {g('pilot_wrong')} wrong acts, all faults at <code>commit</code>, which nothing before the act can see. The pilot cost {g('pilot_cost')} and is reported apart from the main run.</li>
-<li>Wrote the amendments the pilot called for, among them a path the protocol had not named: a receiver that reads the tool's statement, sees that it differs from what it passed, and refuses. Froze the tools, the data and the protocol at one commit, recorded in <code>results/manifest.json</code>, and ran the design: block 1 with three repeats, block 2 with two, block 0 once. {g('trials')} trials, {g('cost_total')} of model time, {g('status_not_ok')} ending in anything but the receiver's own last word.</li>
+<li>Wrote the amendments the pilot called for, among them a path the protocol had not named: a receiver that reads the tool's statement, sees that it differs from what it passed, and refuses. Froze the tools, the data and the protocol at one commit, recorded in <code>results/manifest.json</code>, and ran the design: block 1 with three repeats, block 2 with two, block 0 once. {g('model_trials')} trials on Haiku 5.5, {g('model_cost')} of model time, {g('model_status_not_ok')} ending in anything but the receiver's own last word. The gpt-5.4-mini run is reported below.</li>
 <li>Graded everything in code. Every number on this page is read from <code>results/summary.json</code> by the script that writes the page, and a test in the app asserts they match.</li>
 </ol>
 
@@ -130,7 +130,7 @@ def render(f: dict, fig) -> str:
 
 <h2>Where everything is</h2>
 <p>The protocol with its amendments, the pilot with its trials and grades, the frozen manifest, the main run's trials, the sender's state and the tool's logs, the grades and <code>results/summary.json</code>: <code>research/tool-prepare</code> in the rogerwilco repository. The page you are reading is written from that JSON by <code>tools/site_page.py</code>, and <code>app/tests/test_research_figures.py</code> fails if any figure here differs from it.</p>
-<p class="foot">Study 7 of 7 · 11 and 12 October 2026 · {g('model_trials')} trials on Claude Haiku 5.5 as headless Claude Code sessions and {g('g_model_trials')} on gpt-5.4-mini through the API harness, pre-registered · pilots of {g('pilot_trials')} and {g('gpilot_trials')} trials · no judge · tiktoken o200k_base · graded in code</p>
+<p class="foot">Study 7 · 11 and 12 October 2026 · {g('model_trials')} trials on Claude Haiku 5.5 as headless Claude Code sessions and {g('g_model_trials')} on gpt-5.4-mini through the API harness, pre-registered · pilots of {g('pilot_trials')} and {g('gpilot_trials')} trials · no judge · tiktoken o200k_base · graded in code</p>
 </main>
 <!-- site:footer -->
 <!-- /site:footer -->

@@ -209,7 +209,7 @@ held: [&#x27;tier5 execution: acct mismatch: HO 40-12-88/61102938 vs RB 40-12-88
 <pre class="code" data-lang="sh"><code>python examples/payment.py --cancel</code></pre>
 <pre class="reply">cancelled: RW1 AN payer-3 re=scheduler-2 from=payer to=scheduler val=Y p=pay // statement abandoned; nothing paid</pre>
 <h2 id="legend">Teach the receiving model the format</h2>
-<p>A model that has to read or write lines needs about 400 tokens of legend in its prompt and nothing installed. Pass the profile so it gets the domain's codes.</p>
+<p>A model that has to read or write lines needs the legend in its prompt and nothing installed: about 940 tokens for the core vocabulary, about 1,960 with the pay profile, and about 680 and 1,540 in the lean form (tiktoken o200k_base, November 2026). Pass the profile so it gets the domain's codes.</p>
 <pre class="code" data-lang="python"><code>system_prompt += rw.legend(&quot;pay&quot;)</code></pre>
 <pre class="reply">rogerwilco RW1. One line per message: RW1 &lt;TYPE&gt; &lt;id&gt; [re=&lt;id&gt;] from=&lt;agent&gt; to=&lt;agent&gt; [item=&lt;ref&gt;] key=value ... [// tail]. No spaces in values; lists join with +; dates YYYYMMDD; tail is free text, 300 chars max.
 HO handoff: requires from to item ask; optional re due pri conf keep art ctx rb acc keys exp sup po amt cur kind dec flag appr var n src net vat acct paid ref eff apref addr

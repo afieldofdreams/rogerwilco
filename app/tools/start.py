@@ -180,7 +180,7 @@ G: list[tuple] = [
     ("code", "sh", "python examples/payment.py --cancel"),
     ("out", RUN_CANCEL),
     ("h2", "Teach the receiving model the format", "legend"),
-    ("p", "A model that has to read or write lines needs about 400 tokens of legend in its prompt and nothing installed. "
+    ("p", "A model that has to read or write lines needs the legend in its prompt and nothing installed: about 940 tokens for the core vocabulary, about 1,960 with the pay profile, and about 680 and 1,540 in the lean form (tiktoken o200k_base, November 2026). "
           "Pass the profile so it gets the domain's codes."),
     ("code", "python", 'system_prompt += rw.legend("pay")'),
     ("out", LEGEND_HEAD),
@@ -339,7 +339,7 @@ Use it when an agent pays, changes bank details, sends an external email, delete
 ## Evidence
 
 - [The tests, one at a time]({SITE}/): what was tested and what each check caught
-- [Research]({SITE}/research): nine pre-registered studies, every figure with its interval
+- [Research]({SITE}/research): nine studies, four of them pre-registered, every figure read from the results tables
 
 ## Optional
 

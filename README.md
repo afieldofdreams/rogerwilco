@@ -26,7 +26,7 @@ Until the package is on PyPI: `pip install git+https://github.com/afieldofdreams
 |---|---|---|
 | [`rogerwilco/`](rogerwilco/) | The protocol as a Claude Agent Skill: `SKILL.md`, the spec, the reference codec (standard library only), profiles, conformance tests. Copy the folder into `.claude/skills/` or upload it as a skill. | [`rogerwilco/README.md`](rogerwilco/README.md) |
 | [`app/`](app/) | The hosted checks: REST endpoints, a remote MCP server (validate, gate, check_rb, make_rb, check_ho, check_dn, legend, to_json), the site and the docs. Runs at [rogerwilco.crox.io](https://rogerwilco.crox.io). Add the MCP server by URL to any agent that has no shell. | [`app/README.md`](app/README.md) |
-| [`research/`](research/) | The evidence: a five-format wire study, a readback pilot with planted faults, a multi-agent month-end close with human-in-the-loop escalation (28 runs), a clinical translation study (144 translations against 422 gold assertions), a readback and set-back study (114 trials) and a pre-registered execution readback study (2,762 trials). Corpora, harnesses, raw logs and results pages. | [`research/README.md`](research/README.md) |
+| [`research/`](research/) | The evidence: a five-format wire study, a readback pilot with planted faults, a multi-agent month-end close with human-in-the-loop escalation (28 runs), a clinical translation study (144 translations against 422 gold assertions), a readback and set-back study (114 trials), and four pre-registered studies: the execution readback (2,762 trials), prepare and confirm at the tool (1,808 trials on two receivers), the relay (792 chains) and the breaking point on local models down to 1.5B (1,585 chains). Corpora, harnesses, raw logs and results pages. | [`research/README.md`](research/README.md) |
 
 ## Quick start
 
@@ -41,7 +41,7 @@ python3 rogerwilco/scripts/rogerwilco.py check-rb "<HO line>" "<RB line>" --prof
 python3 rogerwilco/scripts/rogerwilco.py check-ho "<HO line>" '{"amt": "5400.00", "acct": "40-12-88/61102938"}' --profile pay
 python3 rogerwilco/scripts/rogerwilco.py check-dn "<HO line>" "<DN line>" --profile pay
 
-# legend for another agent's system prompt (about 400 tokens for core, more with a profile)
+# legend for another agent's system prompt (about 940 tokens for core, about 1,960 with the pay profile; --lean for less)
 python3 rogerwilco/scripts/rogerwilco.py legend --profile pay
 
 # conformance
@@ -53,6 +53,6 @@ pip install -r app/requirements.txt && uvicorn app.main:app --reload
 
 ## Status
 
-v0.1, draft. The core vocabulary is small on purpose; extend it through a profile, not by editing the core. Issues and profiles welcome.
+Draft. The protocol is RW1, spec v0.2 (12 October 2026); the Python package is 0.3.0. The core vocabulary is small on purpose; extend it through a profile, not by editing the core. Issues and profiles welcome.
 
 Apache License 2.0, copyright Croxio Ltd; see LICENSE and NOTICE. Built by Adam Field. Lineage: M-Form (medical-record compression, 2025) to P-Form (knowledge-graph handoffs, April 2026) to rogerwilco (September 2026).
