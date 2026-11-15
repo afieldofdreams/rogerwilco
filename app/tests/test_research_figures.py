@@ -1,7 +1,7 @@
 """Every figure on a generated research page is read from the study's results JSON, never typed.
 
 A page carries each number as <span data-fig="name">value</span>; this test recomputes the figures from the study's
-results/summary.json with the study's own generator and asserts the committed page matches. Studies 6, 7, 8 and 9 generate their
+results/summary.json with the study's own generator and asserts the committed page matches. Studies 6, 7, 8, 9 and 10 generate their
 pages this way. Skipped for a study whose results or page are not in the checkout. A second test asserts that each results JSON
 holds exactly the graded trials of the run it names, so a page cannot carry figures from the wrong trials and still match.
 """
@@ -14,7 +14,8 @@ from pathlib import Path
 import pytest
 
 REPO = Path(__file__).resolve().parents[2]
-STUDIES = [("plan-readback", "plan-readback.html"), ("tool-prepare", "tool-prepare.html"), ("chain", "chain.html"), ("breaking", "breaking.html")]
+STUDIES = [("plan-readback", "plan-readback.html"), ("tool-prepare", "tool-prepare.html"), ("chain", "chain.html"), ("breaking", "breaking.html"),
+           ("scheduler-judge", "scheduler-judge.html")]
 
 
 @pytest.mark.parametrize("folder,page_name", STUDIES)
@@ -31,7 +32,7 @@ def test_page_figures_match_results(folder, page_name):
         want = mod.figures()
     finally:
         sys.path.remove(str(study / "tools"))
-        for name in ("common", "analyse", "site_text"):
+        for name in ("common", "analyse", "site_text", "fixtures", "grade", "verify", "build"):
             sys.modules.pop(name, None)
     page = page_path.read_text()
     got = dict(re.findall(r'<span data-fig="([^"]+)">([^<]*)</span>', page))
@@ -45,6 +46,7 @@ def test_page_figures_match_results(folder, page_name):
 # ids end in the repeat number, a pilot's in its tag. A substring filter once swept 454 other trials into study 7's pilot summary
 # and the page then carried a 520-trial pilot that never ran; the figure test above passed, because the page matched the JSON.
 # So: every row id matches the run's pattern, and the ids are exactly the graded trials with that pattern, less any excluded by name.
+# Study 10 keeps each run's trials in a folder of its own under trials/, named as the fourth field.
 RUNS = [
     ("plan-readback", "results/summary.json", r"-(sonnet|haiku)-r\d+$"),
     ("plan-readback", "results/api/summary.json", r"-(gpt55|gpt54mini)-r\d+$"),
@@ -55,11 +57,13 @@ RUNS = [
     ("tool-prepare", "results/pilot-haiku45/summary.json", r"-w$"),
     ("chain", "results/summary.json", r"-k\d-r\d+$"),
     ("breaking", "results/summary.json", r"-k\d-r\d+$"),
+    ("scheduler-judge", "results/summary.json", r"^(prose|line)-J\d\d-(supplier|invoice|amount|currency|kind|account|date|c\d)-[a-z0-9]+-by-[a-z0-9]+$", "trials/main"),
+    ("scheduler-judge", "results/pilot/summary.json", r"^(prose|line)-J\d\d-[a-z]+\d?-p-[a-z0-9]+-by-[a-z0-9]+$", "trials/pilot"),
 ]
 
 
-@pytest.mark.parametrize("folder,results,pattern", RUNS)
-def test_results_hold_the_trials_of_their_run(folder, results, pattern):
+@pytest.mark.parametrize("folder,results,pattern,trials_dir", [r if len(r) == 4 else (*r, "trials") for r in RUNS])
+def test_results_hold_the_trials_of_their_run(folder, results, pattern, trials_dir):
     study = REPO / "research" / folder
     path = study / results
     if not path.exists():
@@ -69,7 +73,7 @@ def test_results_hold_the_trials_of_their_run(folder, results, pattern):
     pat = re.compile(pattern)
     strays = [i for i in ids if not pat.search(i)]
     assert not strays, f"{folder}/{results}: {len(strays)} ids outside the run, e.g. {strays[:3]}"
-    trials = study / "trials"
+    trials = study / trials_dir
     if not trials.is_dir():
         pytest.skip(f"{folder}: trials/ not in this checkout")
     excluded = set()

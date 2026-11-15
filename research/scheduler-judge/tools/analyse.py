@@ -89,7 +89,7 @@ def load(set_: str) -> dict:
     for t in p["trials"]:
         g = C.TRIALS / set_ / t["tid"] / "grade.json"
         if g.exists():
-            trials.append({**t, **C.read_json(g)})
+            trials.append({**t, **C.read_json(g), "answer_text": (g.parent / "answer.txt").read_text()})
     for rb in p["readbacks"]:
         f = C.READBACKS / set_ / f"{rb['rid']}.json"
         rbs.append({**rb, **(C.read_json(f) if f.exists() else {"attempts": [], "accepted": None, "missing": True})})
@@ -105,7 +105,7 @@ def cells(trials: list[dict]) -> dict:
         key = (t["fmt"], t["judge"], t["author"])
         c = out.setdefault(key, {"fmt": t["fmt"], "judge": t["judge"], "author": t["author"], "relation": t["relation"],
                                  "faulted": defaultdict(int), "clean": defaultdict(int), "miss_by_slot": defaultdict(int),
-                                 "n_by_slot": defaultdict(int)})
+                                 "n_by_slot": defaultdict(int), "false_alarm_details": defaultdict(int)})
         if t["faulted"]:
             c["faulted"][t["outcome"]] += 1
             c["n_by_slot"][t["slot"]] += 1
@@ -113,6 +113,27 @@ def cells(trials: list[dict]) -> dict:
                 c["miss_by_slot"][t["slot"]] += 1
         else:
             c["clean"][t["outcome"]] += 1
+            if t["outcome"] == "false_alarm":
+                c["false_alarm_details"][t["answer"].get("detail") or "not named"] += 1
+    return out
+
+
+def rows(trials: list[dict], rbs: list[dict]) -> list[dict]:
+    """One row per graded trial, with what the readback looked like: whether a prose readback wrote the supplier's name
+    exactly as it was given, whether a line echoed the handover's appr=, whether it carried its version token."""
+    by_rid = {r["rid"]: r for r in rbs if r.get("accepted") is not None}
+    out = []
+    for t in sorted(trials, key=lambda x: x["tid"]):
+        rb = by_rid.get(t["rid"], {})
+        text = rb.get("readback") or ""
+        got = F.plant(F.JOB[t["job"]], t["slot"]) if t["slot"] else F.JOB[t["job"]]
+        first = next((l.strip() for l in (t.get("answer_text") or "").splitlines() if l.strip()), "")
+        out.append({"id": t["tid"], "format": t["fmt"], "judge": t["judge"], "author": t["author"], "relation": t["relation"],
+                    "job": t["job"], "slot": t["slot"], "outcome": t["outcome"], "detail": t["answer"].get("detail"),
+                    "first_line": first[:120], "payment_date": got["payment_date"],
+                    "supplier_as_given": (got["supplier"] in text) if t["fmt"] == "prose" else None,
+                    "echoes_appr": ("appr=" in text) if t["fmt"] == "line" else None,
+                    "version_token": text.startswith("RW1 ") if t["fmt"] == "line" else None})
     return out
 
 
@@ -121,6 +142,7 @@ def cell_json(c: dict) -> dict:
     return {"format": c["fmt"], "judge": c["judge"], "author": c["author"], "relation": c["relation"],
             "faulted": {"n": nf, **{o: stat(c["faulted"].get(o, 0), nf) for o in OUTCOMES_F}},
             "clean": {"n": nc, **{o: stat(c["clean"].get(o, 0), nc) for o in OUTCOMES_C}},
+            "false_alarm_details": dict(c["false_alarm_details"]),
             "misses_by_slot": {s: stat(c["miss_by_slot"].get(s, 0), c["n_by_slot"].get(s, 0)) for s in F.FAULT_SLOTS}}
 
 
@@ -160,9 +182,14 @@ def fidelity(rbs: list[dict]) -> dict:
         if r.get("missing"):
             continue
         c = out.setdefault(f"{r['author']}|{r['fmt']}", {"author": r["author"], "format": r["fmt"], "n": 0, "first": 0, "later": 0,
-                                                          "dropped": 0, "attempts": 0, "line_alone": 0, "problems": defaultdict(int)})
+                                                          "dropped": 0, "attempts": 0, "line_alone": 0, "problems": defaultdict(int),
+                                                          "version_token_missing": 0, "accepted_on_recheck": 0})
         c["n"] += 1
         c["attempts"] += len(r["attempts"])
+        if r["accepted"] is not None and r["attempts"][r["accepted"]].get("version_token_missing"):
+            c["version_token_missing"] += 1
+        if "accepted_registered" in r and r["accepted_registered"] != r["accepted"]:
+            c["accepted_on_recheck"] += 1
         if r["accepted"] == 0:
             c["first"] += 1
         elif r["accepted"] is not None:
@@ -305,7 +332,7 @@ def summary(set_: str) -> dict:
     code = code_table(d["readbacks"])
     s = {"set": set_, "trials_graded": len(d["trials"]), "trials_planned": len(d["plan"]["trials"]),
          "readbacks_planned": len(d["plan"]["readbacks"]), "cells": cj, "code_check": code, "fidelity": fidelity(d["readbacks"]),
-         "cost": costs(d["ledger"])}
+         "cost": costs(d["ledger"]), "rows": rows(d["trials"], d["readbacks"])}
     if set_ == "main":
         s["hypotheses"] = hypotheses(d["trials"], code)
     return s
