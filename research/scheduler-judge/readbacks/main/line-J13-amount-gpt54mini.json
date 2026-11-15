@@ -1,0 +1,71 @@
+{
+ "rid": "line-J13-amount-gpt54mini",
+ "set": "main",
+ "fmt": "line",
+ "pair": "J13-amount",
+ "job": "J13",
+ "slot": "amount",
+ "clean_k": null,
+ "author": "gpt54mini",
+ "attempts": [
+  {
+   "reply": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:CS-20456 ask=PAY sup=coleridge amt=81.90 cur=GBP kind=GROSS acct=60-16-13/33981204 paid=20261006 ref=CS-20456 apref=FD-0927",
+   "problems": [],
+   "line": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:CS-20456 ask=PAY sup=coleridge amt=81.90 cur=GBP kind=GROSS acct=60-16-13/33981204 paid=20261006 ref=CS-20456 apref=FD-0927",
+   "reply_was_line_alone": true,
+   "version_token_missing": false,
+   "served": [
+    "gpt-5.4-mini-2026-03-17"
+   ],
+   "cost": 0.002112,
+   "usage": {
+    "prompt_tokens": 2336,
+    "completion_tokens": 80,
+    "cached_tokens": 0,
+    "cache_write_tokens": null,
+    "reasoning_tokens": 0,
+    "cost": null,
+    "estimated": false,
+    "finish_reason": "stop"
+   },
+   "error": null,
+   "seconds": 1.1,
+   "at": "2026-11-15T00:41:38Z",
+   "problems_registered": []
+  }
+ ],
+ "accepted": 0,
+ "brief": "data/briefs/payer-line.txt",
+ "brief_sha": "838debda04463bb0",
+ "user": "A handover from scheduler has just arrived:\n\nRW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:CS-20456 ask=PAY rb=exec sup=coleridge amt=81.90 cur=GBP kind=GROSS acct=60-16-13/33981204 paid=20261006 ref=CS-20456 apref=FD-0927 appr=OK\n\nWrite your readback now.",
+ "changed": {
+  "amount": [
+   "89.90",
+   "81.90"
+  ]
+ },
+ "readback": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:CS-20456 ask=PAY sup=coleridge amt=81.90 cur=GBP kind=GROSS acct=60-16-13/33981204 paid=20261006 ref=CS-20456 apref=FD-0927",
+ "accepted_registered": 0,
+ "code_check": {
+  "ho_sent": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:CS-20456 ask=PAY rb=exec sup=coleridge amt=89.90 cur=GBP kind=GROSS acct=60-16-13/33981204 paid=20261006 ref=CS-20456 apref=FD-0927 appr=OK",
+  "rb": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:CS-20456 ask=PAY sup=coleridge amt=81.90 cur=GBP kind=GROSS acct=60-16-13/33981204 paid=20261006 ref=CS-20456 apref=FD-0927",
+  "verdict": "MISMATCH",
+  "problems": [
+   "tier5 execution: amt mismatch: HO 89.90 vs RB 81.90"
+  ],
+  "notes": []
+ },
+ "code_grade": {
+  "rid": "line-J13-amount-gpt54mini",
+  "faulted": true,
+  "planted": "amount",
+  "verdict": "MISMATCH",
+  "details": [
+   "amount"
+  ],
+  "tiers": [
+   "tier5"
+  ],
+  "outcome": "caught"
+ }
+}

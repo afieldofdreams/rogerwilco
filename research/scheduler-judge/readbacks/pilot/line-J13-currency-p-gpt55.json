@@ -1,0 +1,71 @@
+{
+ "rid": "line-J13-currency-p-gpt55",
+ "set": "pilot",
+ "fmt": "line",
+ "pair": "J13-currency-p",
+ "job": "J13",
+ "slot": "currency",
+ "clean_k": null,
+ "author": "gpt55",
+ "attempts": [
+  {
+   "reply": "RW1 RB payer-1 re=scheduler-1 p=pay from=payer to=scheduler item=inv:CS-20456 ask=PAY sup=coleridge amt=89.90 cur=USD kind=GROSS acct=60-16-13/33981204 paid=20261006 ref=CS-20456 apref=FD-0927",
+   "problems": [],
+   "line": "RW1 RB payer-1 re=scheduler-1 p=pay from=payer to=scheduler item=inv:CS-20456 ask=PAY sup=coleridge amt=89.90 cur=USD kind=GROSS acct=60-16-13/33981204 paid=20261006 ref=CS-20456 apref=FD-0927",
+   "reply_was_line_alone": true,
+   "served": [
+    "gpt-5.5-2026-04-23"
+   ],
+   "cost": 0.01579,
+   "usage": {
+    "prompt_tokens": 2336,
+    "completion_tokens": 137,
+    "cached_tokens": 0,
+    "cache_write_tokens": null,
+    "reasoning_tokens": 51,
+    "cost": null,
+    "estimated": false,
+    "finish_reason": "stop"
+   },
+   "error": null,
+   "seconds": 2.6,
+   "at": "2026-11-14T19:37:26Z",
+   "problems_registered": [],
+   "version_token_missing": false
+  }
+ ],
+ "accepted": 0,
+ "brief": "data/briefs/payer-line.txt",
+ "brief_sha": "838debda04463bb0",
+ "user": "A handover from scheduler has just arrived:\n\nRW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:CS-20456 ask=PAY rb=exec sup=coleridge amt=89.90 cur=USD kind=GROSS acct=60-16-13/33981204 paid=20261006 ref=CS-20456 apref=FD-0927 appr=OK\n\nWrite your readback now.",
+ "changed": {
+  "currency": [
+   "GBP",
+   "USD"
+  ]
+ },
+ "readback": "RW1 RB payer-1 re=scheduler-1 p=pay from=payer to=scheduler item=inv:CS-20456 ask=PAY sup=coleridge amt=89.90 cur=USD kind=GROSS acct=60-16-13/33981204 paid=20261006 ref=CS-20456 apref=FD-0927",
+ "accepted_registered": 0,
+ "code_check": {
+  "ho_sent": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:CS-20456 ask=PAY rb=exec sup=coleridge amt=89.90 cur=GBP kind=GROSS acct=60-16-13/33981204 paid=20261006 ref=CS-20456 apref=FD-0927 appr=OK",
+  "rb": "RW1 RB payer-1 re=scheduler-1 p=pay from=payer to=scheduler item=inv:CS-20456 ask=PAY sup=coleridge amt=89.90 cur=USD kind=GROSS acct=60-16-13/33981204 paid=20261006 ref=CS-20456 apref=FD-0927",
+  "verdict": "MISMATCH",
+  "problems": [
+   "tier5 execution: cur mismatch: HO GBP vs RB USD"
+  ],
+  "notes": []
+ },
+ "code_grade": {
+  "rid": "line-J13-currency-p-gpt55",
+  "faulted": true,
+  "planted": "currency",
+  "verdict": "MISMATCH",
+  "details": [
+   "currency"
+  ],
+  "tiers": [
+   "tier5"
+  ],
+  "outcome": "caught"
+ }
+}

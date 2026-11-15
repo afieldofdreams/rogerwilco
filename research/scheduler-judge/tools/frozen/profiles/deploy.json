@@ -1,0 +1,30 @@
+{
+  "profile": "deploy",
+  "version": "0.1",
+  "extends": "RW1",
+  "description": "Releasing software: deploy a version to an environment, roll it back, run a migration. Example profile showing the same loop outside finance: the irreversible step is the deploy to production, and the human's answers are closed.",
+  "enums": {
+    "env": {"DEV": "development", "STAGE": "staging", "PROD": "production"},
+    "ans": {"APPROVE": "yes, proceed as asked", "DECLINE": "no, do not proceed", "HOLD": "wait; do nothing until told"},
+    "state": {"UP": "serving and healthy", "DEGRADED": "serving with errors", "DOWN": "not serving"}
+  },
+  "asks": {
+    "DEPLOY": "deploy the named version to the named environment in the change window",
+    "ROLLBACK": "return the environment to the previous version",
+    "MIGRATE": "run the named database migration; irreversible unless a down migration is named"
+  },
+  "slots": [
+    {"key": "env", "type": "enum:env", "desc": "target environment", "on": ["HO", "RB", "ST", "AQ", "AN", "DN", "UN", "FL"], "required": false},
+    {"key": "ver", "type": "token", "desc": "version or commit to deploy, e.g. v2.4.1 or 6ce3c90", "on": ["HO", "RB", "ST", "AQ", "AN", "DN", "FL"], "required": false},
+    {"key": "prev", "type": "token", "desc": "version running before the change", "on": ["HO", "RB", "ST", "DN"], "required": false},
+    {"key": "win", "type": "token", "desc": "change window as YYYYMMDDTHHMM-HHMM", "on": ["HO", "RB", "AQ", "AN", "DN"], "required": false},
+    {"key": "mig", "type": "token", "desc": "migration id", "on": ["HO", "RB", "ST", "AQ", "AN", "DN", "FL"], "required": false},
+    {"key": "down", "type": "bool", "desc": "whether a down migration exists (Y/N)", "on": ["HO", "RB", "AQ", "AN"], "required": false},
+    {"key": "state", "type": "enum:state", "desc": "health after the change", "on": ["ST", "DN", "FL"], "required": false},
+    {"key": "apref", "type": "token", "desc": "the change approval reference, e.g. CAB-0931", "on": ["HO", "RB", "ST", "AQ", "AN", "DN"], "required": false}
+  ],
+  "agents": ["release", "operator", "oncall"],
+  "item_namespace": "svc",
+  "item_examples": ["svc:api", "svc:web", "mig:0142"],
+  "asks_used": ["DEPLOY", "ROLLBACK", "MIGRATE", "REVIEW", "TEST"]
+}

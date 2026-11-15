@@ -1,0 +1,71 @@
+{
+ "rid": "line-J07-amount-gpt54mini",
+ "set": "main",
+ "fmt": "line",
+ "pair": "J07-amount",
+ "job": "J07",
+ "slot": "amount",
+ "clean_k": null,
+ "author": "gpt54mini",
+ "attempts": [
+  {
+   "reply": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:7731 ask=PAY sup=kestrel amt=969.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7731 apref=FD-0931",
+   "problems": [],
+   "line": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:7731 ask=PAY sup=kestrel amt=969.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7731 apref=FD-0931",
+   "reply_was_line_alone": true,
+   "version_token_missing": false,
+   "served": [
+    "gpt-5.4-mini-2026-03-17"
+   ],
+   "cost": 0.00207,
+   "usage": {
+    "prompt_tokens": 2328,
+    "completion_tokens": 72,
+    "cached_tokens": 0,
+    "cache_write_tokens": null,
+    "reasoning_tokens": 0,
+    "cost": null,
+    "estimated": false,
+    "finish_reason": "stop"
+   },
+   "error": null,
+   "seconds": 0.9,
+   "at": "2026-11-15T00:41:27Z",
+   "problems_registered": []
+  }
+ ],
+ "accepted": 0,
+ "brief": "data/briefs/payer-line.txt",
+ "brief_sha": "838debda04463bb0",
+ "user": "A handover from scheduler has just arrived:\n\nRW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:7731 ask=PAY rb=exec sup=kestrel amt=969.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7731 apref=FD-0931 appr=OK\n\nWrite your readback now.",
+ "changed": {
+  "amount": [
+   "960.00",
+   "969.00"
+  ]
+ },
+ "readback": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:7731 ask=PAY sup=kestrel amt=969.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7731 apref=FD-0931",
+ "accepted_registered": 0,
+ "code_check": {
+  "ho_sent": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:7731 ask=PAY rb=exec sup=kestrel amt=960.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7731 apref=FD-0931 appr=OK",
+  "rb": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:7731 ask=PAY sup=kestrel amt=969.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7731 apref=FD-0931",
+  "verdict": "MISMATCH",
+  "problems": [
+   "tier5 execution: amt mismatch: HO 960.00 vs RB 969.00"
+  ],
+  "notes": []
+ },
+ "code_grade": {
+  "rid": "line-J07-amount-gpt54mini",
+  "faulted": true,
+  "planted": "amount",
+  "verdict": "MISMATCH",
+  "details": [
+   "amount"
+  ],
+  "tiers": [
+   "tier5"
+  ],
+  "outcome": "caught"
+ }
+}

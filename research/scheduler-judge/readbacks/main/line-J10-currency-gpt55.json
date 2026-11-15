@@ -1,0 +1,71 @@
+{
+ "rid": "line-J10-currency-gpt55",
+ "set": "main",
+ "fmt": "line",
+ "pair": "J10-currency",
+ "job": "J10",
+ "slot": "currency",
+ "clean_k": null,
+ "author": "gpt55",
+ "attempts": [
+  {
+   "reply": "RW1 RB payer-1 re=scheduler-1 p=pay from=payer to=scheduler item=inv:BWM-3318 ask=PAY sup=brightwater amt=2750.00 cur=USD kind=GROSS acct=23-45-61/55120987 paid=20261002 ref=BWM-3318 apref=FD-0923",
+   "problems": [],
+   "line": "RW1 RB payer-1 re=scheduler-1 p=pay from=payer to=scheduler item=inv:BWM-3318 ask=PAY sup=brightwater amt=2750.00 cur=USD kind=GROSS acct=23-45-61/55120987 paid=20261002 ref=BWM-3318 apref=FD-0923",
+   "reply_was_line_alone": true,
+   "version_token_missing": false,
+   "served": [
+    "gpt-5.5-2026-04-23"
+   ],
+   "cost": 0.009106,
+   "usage": {
+    "prompt_tokens": 2336,
+    "completion_tokens": 183,
+    "cached_tokens": 1792,
+    "cache_write_tokens": null,
+    "reasoning_tokens": 97,
+    "cost": null,
+    "estimated": false,
+    "finish_reason": "stop"
+   },
+   "error": null,
+   "seconds": 3.2,
+   "at": "2026-11-15T00:42:39Z",
+   "problems_registered": []
+  }
+ ],
+ "accepted": 0,
+ "brief": "data/briefs/payer-line.txt",
+ "brief_sha": "838debda04463bb0",
+ "user": "A handover from scheduler has just arrived:\n\nRW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:BWM-3318 ask=PAY rb=exec sup=brightwater amt=2750.00 cur=USD kind=GROSS acct=23-45-61/55120987 paid=20261002 ref=BWM-3318 apref=FD-0923 appr=OK\n\nWrite your readback now.",
+ "changed": {
+  "currency": [
+   "GBP",
+   "USD"
+  ]
+ },
+ "readback": "RW1 RB payer-1 re=scheduler-1 p=pay from=payer to=scheduler item=inv:BWM-3318 ask=PAY sup=brightwater amt=2750.00 cur=USD kind=GROSS acct=23-45-61/55120987 paid=20261002 ref=BWM-3318 apref=FD-0923",
+ "accepted_registered": 0,
+ "code_check": {
+  "ho_sent": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:BWM-3318 ask=PAY rb=exec sup=brightwater amt=2750.00 cur=GBP kind=GROSS acct=23-45-61/55120987 paid=20261002 ref=BWM-3318 apref=FD-0923 appr=OK",
+  "rb": "RW1 RB payer-1 re=scheduler-1 p=pay from=payer to=scheduler item=inv:BWM-3318 ask=PAY sup=brightwater amt=2750.00 cur=USD kind=GROSS acct=23-45-61/55120987 paid=20261002 ref=BWM-3318 apref=FD-0923",
+  "verdict": "MISMATCH",
+  "problems": [
+   "tier5 execution: cur mismatch: HO GBP vs RB USD"
+  ],
+  "notes": []
+ },
+ "code_grade": {
+  "rid": "line-J10-currency-gpt55",
+  "faulted": true,
+  "planted": "currency",
+  "verdict": "MISMATCH",
+  "details": [
+   "currency"
+  ],
+  "tiers": [
+   "tier5"
+  ],
+  "outcome": "caught"
+ }
+}

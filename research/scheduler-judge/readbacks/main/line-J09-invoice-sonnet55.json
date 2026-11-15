@@ -1,0 +1,101 @@
+{
+ "rid": "line-J09-invoice-sonnet55",
+ "set": "main",
+ "fmt": "line",
+ "pair": "J09-invoice",
+ "job": "J09",
+ "slot": "invoice",
+ "clean_k": null,
+ "author": "sonnet55",
+ "attempts": [
+  {
+   "reply": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:EO-55230 ask=PAY sup=evergreen amt=1086.40 cur=GBP kind=GROSS acct=30-98-71/22019483 paid=20261002 ref=EO-55230 apref=FD-0922",
+   "problems": [],
+   "line": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:EO-55230 ask=PAY sup=evergreen amt=1086.40 cur=GBP kind=GROSS acct=30-98-71/22019483 paid=20261002 ref=EO-55230 apref=FD-0922",
+   "reply_was_line_alone": true,
+   "version_token_missing": false,
+   "served": [
+    "claude-sonnet-5-5"
+   ],
+   "cost": 0.0076077,
+   "usage": {
+    "input_tokens": 2,
+    "cache_creation_input_tokens": 945,
+    "cache_read_input_tokens": 3337,
+    "output_tokens": 349,
+    "output_tokens_details": {
+     "thinking_tokens": 231
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 945,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 349,
+      "cache_read_input_tokens": 3337,
+      "cache_creation_input_tokens": 945,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 945
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "error": null,
+   "seconds": 6.1,
+   "at": "2026-11-15T00:51:20Z",
+   "problems_registered": []
+  }
+ ],
+ "accepted": 0,
+ "brief": "data/briefs/payer-line.txt",
+ "brief_sha": "838debda04463bb0",
+ "user": "A handover from scheduler has just arrived:\n\nRW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:EO-55230 ask=PAY rb=exec sup=evergreen amt=1086.40 cur=GBP kind=GROSS acct=30-98-71/22019483 paid=20261002 ref=EO-55230 apref=FD-0922 appr=OK\n\nWrite your readback now.",
+ "changed": {
+  "item": [
+   "EO-55203",
+   "EO-55230"
+  ],
+  "reference": [
+   "EO-55203",
+   "EO-55230"
+  ]
+ },
+ "readback": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:EO-55230 ask=PAY sup=evergreen amt=1086.40 cur=GBP kind=GROSS acct=30-98-71/22019483 paid=20261002 ref=EO-55230 apref=FD-0922",
+ "accepted_registered": 0,
+ "code_check": {
+  "ho_sent": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:EO-55203 ask=PAY rb=exec sup=evergreen amt=1086.40 cur=GBP kind=GROSS acct=30-98-71/22019483 paid=20261002 ref=EO-55203 apref=FD-0922 appr=OK",
+  "rb": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:EO-55230 ask=PAY sup=evergreen amt=1086.40 cur=GBP kind=GROSS acct=30-98-71/22019483 paid=20261002 ref=EO-55230 apref=FD-0922",
+  "verdict": "MISMATCH",
+  "problems": [
+   "tier3 echo: item mismatch: HO inv:EO-55203 vs RB inv:EO-55230",
+   "tier5 execution: ref mismatch: HO EO-55203 vs RB EO-55230"
+  ],
+  "notes": []
+ },
+ "code_grade": {
+  "rid": "line-J09-invoice-sonnet55",
+  "faulted": true,
+  "planted": "invoice",
+  "verdict": "MISMATCH",
+  "details": [
+   "invoice"
+  ],
+  "tiers": [
+   "tier3",
+   "tier5"
+  ],
+  "outcome": "caught"
+ }
+}

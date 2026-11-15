@@ -1,0 +1,75 @@
+{
+ "rid": "line-J07-supplier-gpt55",
+ "set": "main",
+ "fmt": "line",
+ "pair": "J07-supplier",
+ "job": "J07",
+ "slot": "supplier",
+ "clean_k": null,
+ "author": "gpt55",
+ "attempts": [
+  {
+   "reply": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:7731 ask=PAY sup=kestrelcloud amt=960.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7731 apref=FD-0931",
+   "problems": [],
+   "line": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:7731 ask=PAY sup=kestrelcloud amt=960.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7731 apref=FD-0931",
+   "reply_was_line_alone": true,
+   "version_token_missing": false,
+   "served": [
+    "gpt-5.5-2026-04-23"
+   ],
+   "cost": 0.008741,
+   "usage": {
+    "prompt_tokens": 2329,
+    "completion_tokens": 172,
+    "cached_tokens": 1792,
+    "cache_write_tokens": null,
+    "reasoning_tokens": 93,
+    "cost": null,
+    "estimated": false,
+    "finish_reason": "stop"
+   },
+   "error": null,
+   "seconds": 2.5,
+   "at": "2026-11-15T00:42:22Z",
+   "problems_registered": []
+  }
+ ],
+ "accepted": 0,
+ "brief": "data/briefs/payer-line.txt",
+ "brief_sha": "838debda04463bb0",
+ "user": "A handover from scheduler has just arrived:\n\nRW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:7731 ask=PAY rb=exec sup=kestrelcloud amt=960.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7731 apref=FD-0931 appr=OK\n\nWrite your readback now.",
+ "changed": {
+  "sup": [
+   "kestrel",
+   "kestrelcloud"
+  ],
+  "supplier": [
+   "Kestrel Cloud Inc",
+   "Kestrel Cloud LLC"
+  ]
+ },
+ "readback": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:7731 ask=PAY sup=kestrelcloud amt=960.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7731 apref=FD-0931",
+ "accepted_registered": 0,
+ "code_check": {
+  "ho_sent": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:7731 ask=PAY rb=exec sup=kestrel amt=960.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7731 apref=FD-0931 appr=OK",
+  "rb": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:7731 ask=PAY sup=kestrelcloud amt=960.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7731 apref=FD-0931",
+  "verdict": "MISMATCH",
+  "problems": [
+   "tier5 execution: sup mismatch: HO kestrel vs RB kestrelcloud"
+  ],
+  "notes": []
+ },
+ "code_grade": {
+  "rid": "line-J07-supplier-gpt55",
+  "faulted": true,
+  "planted": "supplier",
+  "verdict": "MISMATCH",
+  "details": [
+   "supplier"
+  ],
+  "tiers": [
+   "tier5"
+  ],
+  "outcome": "caught"
+ }
+}

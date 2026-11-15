@@ -1,0 +1,1845 @@
+{
+ "rules": "The job with exactly one value changed. Deterministic: the choice is seeded by job id and slot.\n\namount   one digit of the whole part changed, never the leading digit\naccount  two adjacent digits of the account number transposed (the sort code or routing number is left alone)\ndate     one digit of the day changed, to another weekday in the same month, on or after the case date\ninvoice  two adjacent digits among the last three of the invoice number transposed; the reference is the\n         invoice number, so it carries the same changed value\nkind     GROSS and NET swapped, the figure unchanged\ncurrency GBP becomes USD, USD becomes GBP\nsupplier the approved supplier replaced by its lookalike, legal name and short name together\n",
+ "faults": [
+  {
+   "job": "J01",
+   "slot": "supplier",
+   "changed": {
+    "sup": [
+     "marlow",
+     "marlowdesign"
+    ],
+    "supplier": [
+     "Marlow Design Partners LLP",
+     "Marlow Design Partners Limited"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec sup=marlowdesign amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Marlow Design Partners Limited invoice MD-2026-057: 5,400.00 GBP gross, to sort code 40-12-88 account 61102938, payment date 2 October 2026, reference MD-2026-057. Approved by the FD under FD-0929.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J01",
+   "slot": "invoice",
+   "changed": {
+    "item": [
+     "MD-2026-057",
+     "MD-2026-075"
+    ],
+    "reference": [
+     "MD-2026-057",
+     "MD-2026-075"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-075 ask=PAY rb=exec sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-075 apref=FD-0929 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Marlow Design Partners LLP invoice MD-2026-075: 5,400.00 GBP gross, to sort code 40-12-88 account 61102938, payment date 2 October 2026, reference MD-2026-075. Approved by the FD under FD-0929.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J01",
+   "slot": "amount",
+   "changed": {
+    "amount": [
+     "5400.00",
+     "5406.00"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec sup=marlow amt=5406.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Marlow Design Partners LLP invoice MD-2026-057: 5,406.00 GBP gross, to sort code 40-12-88 account 61102938, payment date 2 October 2026, reference MD-2026-057. Approved by the FD under FD-0929.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J01",
+   "slot": "currency",
+   "changed": {
+    "currency": [
+     "GBP",
+     "USD"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec sup=marlow amt=5400.00 cur=USD kind=GROSS acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Marlow Design Partners LLP invoice MD-2026-057: 5,400.00 USD gross, to sort code 40-12-88 account 61102938, payment date 2 October 2026, reference MD-2026-057. Approved by the FD under FD-0929.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J01",
+   "slot": "kind",
+   "changed": {
+    "kind": [
+     "GROSS",
+     "NET"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec sup=marlow amt=5400.00 cur=GBP kind=NET acct=40-12-88/61102938 paid=20261002 ref=MD-2026-057 apref=FD-0929 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Marlow Design Partners LLP invoice MD-2026-057: 5,400.00 GBP net, to sort code 40-12-88 account 61102938, payment date 2 October 2026, reference MD-2026-057. Approved by the FD under FD-0929.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J01",
+   "slot": "account",
+   "changed": {
+    "account": [
+     "61102938",
+     "61012938"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61012938 paid=20261002 ref=MD-2026-057 apref=FD-0929 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Marlow Design Partners LLP invoice MD-2026-057: 5,400.00 GBP gross, to sort code 40-12-88 account 61012938, payment date 2 October 2026, reference MD-2026-057. Approved by the FD under FD-0929.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J01",
+   "slot": "date",
+   "changed": {
+    "payment_date": [
+     "2026-10-02",
+     "2026-10-06"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-057 ask=PAY rb=exec sup=marlow amt=5400.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20261006 ref=MD-2026-057 apref=FD-0929 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Marlow Design Partners LLP invoice MD-2026-057: 5,400.00 GBP gross, to sort code 40-12-88 account 61102938, payment date 6 October 2026, reference MD-2026-057. Approved by the FD under FD-0929.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J02",
+   "slot": "supplier",
+   "changed": {
+    "sup": [
+     "marlow",
+     "marlowdesign"
+    ],
+    "supplier": [
+     "Marlow Design Partners LLP",
+     "Marlow Design Partners Limited"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-041 ask=PAY rb=exec sup=marlowdesign amt=3200.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20260926 ref=MD-2026-041 apref=FD-0917 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Marlow Design Partners Limited invoice MD-2026-041: 3,200.00 GBP gross, to sort code 40-12-88 account 61102938, payment date 26 September 2026, reference MD-2026-041. Approved by the FD under FD-0917.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J02",
+   "slot": "invoice",
+   "changed": {
+    "item": [
+     "MD-2026-041",
+     "MD-2026-014"
+    ],
+    "reference": [
+     "MD-2026-041",
+     "MD-2026-014"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-014 ask=PAY rb=exec sup=marlow amt=3200.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20260926 ref=MD-2026-014 apref=FD-0917 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Marlow Design Partners LLP invoice MD-2026-014: 3,200.00 GBP gross, to sort code 40-12-88 account 61102938, payment date 26 September 2026, reference MD-2026-014. Approved by the FD under FD-0917.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J02",
+   "slot": "amount",
+   "changed": {
+    "amount": [
+     "3200.00",
+     "3240.00"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-041 ask=PAY rb=exec sup=marlow amt=3240.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20260926 ref=MD-2026-041 apref=FD-0917 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Marlow Design Partners LLP invoice MD-2026-041: 3,240.00 GBP gross, to sort code 40-12-88 account 61102938, payment date 26 September 2026, reference MD-2026-041. Approved by the FD under FD-0917.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J02",
+   "slot": "currency",
+   "changed": {
+    "currency": [
+     "GBP",
+     "USD"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-041 ask=PAY rb=exec sup=marlow amt=3200.00 cur=USD kind=GROSS acct=40-12-88/61102938 paid=20260926 ref=MD-2026-041 apref=FD-0917 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Marlow Design Partners LLP invoice MD-2026-041: 3,200.00 USD gross, to sort code 40-12-88 account 61102938, payment date 26 September 2026, reference MD-2026-041. Approved by the FD under FD-0917.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J02",
+   "slot": "kind",
+   "changed": {
+    "kind": [
+     "GROSS",
+     "NET"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-041 ask=PAY rb=exec sup=marlow amt=3200.00 cur=GBP kind=NET acct=40-12-88/61102938 paid=20260926 ref=MD-2026-041 apref=FD-0917 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Marlow Design Partners LLP invoice MD-2026-041: 3,200.00 GBP net, to sort code 40-12-88 account 61102938, payment date 26 September 2026, reference MD-2026-041. Approved by the FD under FD-0917.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J02",
+   "slot": "account",
+   "changed": {
+    "account": [
+     "61102938",
+     "61102983"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-041 ask=PAY rb=exec sup=marlow amt=3200.00 cur=GBP kind=GROSS acct=40-12-88/61102983 paid=20260926 ref=MD-2026-041 apref=FD-0917 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Marlow Design Partners LLP invoice MD-2026-041: 3,200.00 GBP gross, to sort code 40-12-88 account 61102983, payment date 26 September 2026, reference MD-2026-041. Approved by the FD under FD-0917.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J02",
+   "slot": "date",
+   "changed": {
+    "payment_date": [
+     "2026-09-26",
+     "2026-09-28"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-041 ask=PAY rb=exec sup=marlow amt=3200.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20260928 ref=MD-2026-041 apref=FD-0917 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Marlow Design Partners LLP invoice MD-2026-041: 3,200.00 GBP gross, to sort code 40-12-88 account 61102938, payment date 28 September 2026, reference MD-2026-041. Approved by the FD under FD-0917.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J03",
+   "slot": "supplier",
+   "changed": {
+    "sup": [
+     "marlow",
+     "marlowdesign"
+    ],
+    "supplier": [
+     "Marlow Design Partners LLP",
+     "Marlow Design Partners Limited"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-033 ask=PAY rb=exec sup=marlowdesign amt=1875.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20260925 ref=MD-2026-033 apref=FD-0912 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Marlow Design Partners Limited invoice MD-2026-033: 1,875.00 GBP gross, to sort code 40-12-88 account 61102938, payment date 25 September 2026, reference MD-2026-033. Approved by the FD under FD-0912.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J03",
+   "slot": "invoice",
+   "changed": {
+    "item": [
+     "MD-2026-033",
+     "MD-2026-303"
+    ],
+    "reference": [
+     "MD-2026-033",
+     "MD-2026-303"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-303 ask=PAY rb=exec sup=marlow amt=1875.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20260925 ref=MD-2026-303 apref=FD-0912 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Marlow Design Partners LLP invoice MD-2026-303: 1,875.00 GBP gross, to sort code 40-12-88 account 61102938, payment date 25 September 2026, reference MD-2026-303. Approved by the FD under FD-0912.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J03",
+   "slot": "amount",
+   "changed": {
+    "amount": [
+     "1875.00",
+     "1885.00"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-033 ask=PAY rb=exec sup=marlow amt=1885.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20260925 ref=MD-2026-033 apref=FD-0912 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Marlow Design Partners LLP invoice MD-2026-033: 1,885.00 GBP gross, to sort code 40-12-88 account 61102938, payment date 25 September 2026, reference MD-2026-033. Approved by the FD under FD-0912.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J03",
+   "slot": "currency",
+   "changed": {
+    "currency": [
+     "GBP",
+     "USD"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-033 ask=PAY rb=exec sup=marlow amt=1875.00 cur=USD kind=GROSS acct=40-12-88/61102938 paid=20260925 ref=MD-2026-033 apref=FD-0912 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Marlow Design Partners LLP invoice MD-2026-033: 1,875.00 USD gross, to sort code 40-12-88 account 61102938, payment date 25 September 2026, reference MD-2026-033. Approved by the FD under FD-0912.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J03",
+   "slot": "kind",
+   "changed": {
+    "kind": [
+     "GROSS",
+     "NET"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-033 ask=PAY rb=exec sup=marlow amt=1875.00 cur=GBP kind=NET acct=40-12-88/61102938 paid=20260925 ref=MD-2026-033 apref=FD-0912 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Marlow Design Partners LLP invoice MD-2026-033: 1,875.00 GBP net, to sort code 40-12-88 account 61102938, payment date 25 September 2026, reference MD-2026-033. Approved by the FD under FD-0912.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J03",
+   "slot": "account",
+   "changed": {
+    "account": [
+     "61102938",
+     "61120938"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-033 ask=PAY rb=exec sup=marlow amt=1875.00 cur=GBP kind=GROSS acct=40-12-88/61120938 paid=20260925 ref=MD-2026-033 apref=FD-0912 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Marlow Design Partners LLP invoice MD-2026-033: 1,875.00 GBP gross, to sort code 40-12-88 account 61120938, payment date 25 September 2026, reference MD-2026-033. Approved by the FD under FD-0912.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J03",
+   "slot": "date",
+   "changed": {
+    "payment_date": [
+     "2026-09-25",
+     "2026-09-24"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-033 ask=PAY rb=exec sup=marlow amt=1875.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20260924 ref=MD-2026-033 apref=FD-0912 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Marlow Design Partners LLP invoice MD-2026-033: 1,875.00 GBP gross, to sort code 40-12-88 account 61102938, payment date 24 September 2026, reference MD-2026-033. Approved by the FD under FD-0912.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J04",
+   "slot": "supplier",
+   "changed": {
+    "sup": [
+     "ashdown",
+     "ashdown-caterers"
+    ],
+    "supplier": [
+     "Ashdown Catering Ltd",
+     "Ashdown Caterers Ltd"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:ACL-2291 ask=PAY rb=exec sup=ashdown-caterers amt=640.00 cur=GBP kind=GROSS acct=11-22-33/70214455 paid=20260925 ref=ACL-2291 apref=FD-0914 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Ashdown Caterers Ltd invoice ACL-2291: 640.00 GBP gross, to sort code 11-22-33 account 70214455, payment date 25 September 2026, reference ACL-2291. Approved by the FD under FD-0914.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J04",
+   "slot": "invoice",
+   "changed": {
+    "item": [
+     "ACL-2291",
+     "ACL-2219"
+    ],
+    "reference": [
+     "ACL-2291",
+     "ACL-2219"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:ACL-2219 ask=PAY rb=exec sup=ashdown amt=640.00 cur=GBP kind=GROSS acct=11-22-33/70214455 paid=20260925 ref=ACL-2219 apref=FD-0914 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Ashdown Catering Ltd invoice ACL-2219: 640.00 GBP gross, to sort code 11-22-33 account 70214455, payment date 25 September 2026, reference ACL-2219. Approved by the FD under FD-0914.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J04",
+   "slot": "amount",
+   "changed": {
+    "amount": [
+     "640.00",
+     "690.00"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:ACL-2291 ask=PAY rb=exec sup=ashdown amt=690.00 cur=GBP kind=GROSS acct=11-22-33/70214455 paid=20260925 ref=ACL-2291 apref=FD-0914 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Ashdown Catering Ltd invoice ACL-2291: 690.00 GBP gross, to sort code 11-22-33 account 70214455, payment date 25 September 2026, reference ACL-2291. Approved by the FD under FD-0914.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J04",
+   "slot": "currency",
+   "changed": {
+    "currency": [
+     "GBP",
+     "USD"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:ACL-2291 ask=PAY rb=exec sup=ashdown amt=640.00 cur=USD kind=GROSS acct=11-22-33/70214455 paid=20260925 ref=ACL-2291 apref=FD-0914 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Ashdown Catering Ltd invoice ACL-2291: 640.00 USD gross, to sort code 11-22-33 account 70214455, payment date 25 September 2026, reference ACL-2291. Approved by the FD under FD-0914.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J04",
+   "slot": "kind",
+   "changed": {
+    "kind": [
+     "GROSS",
+     "NET"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:ACL-2291 ask=PAY rb=exec sup=ashdown amt=640.00 cur=GBP kind=NET acct=11-22-33/70214455 paid=20260925 ref=ACL-2291 apref=FD-0914 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Ashdown Catering Ltd invoice ACL-2291: 640.00 GBP net, to sort code 11-22-33 account 70214455, payment date 25 September 2026, reference ACL-2291. Approved by the FD under FD-0914.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J04",
+   "slot": "account",
+   "changed": {
+    "account": [
+     "70214455",
+     "70214545"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:ACL-2291 ask=PAY rb=exec sup=ashdown amt=640.00 cur=GBP kind=GROSS acct=11-22-33/70214545 paid=20260925 ref=ACL-2291 apref=FD-0914 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Ashdown Catering Ltd invoice ACL-2291: 640.00 GBP gross, to sort code 11-22-33 account 70214545, payment date 25 September 2026, reference ACL-2291. Approved by the FD under FD-0914.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J04",
+   "slot": "date",
+   "changed": {
+    "payment_date": [
+     "2026-09-25",
+     "2026-09-28"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:ACL-2291 ask=PAY rb=exec sup=ashdown amt=640.00 cur=GBP kind=GROSS acct=11-22-33/70214455 paid=20260928 ref=ACL-2291 apref=FD-0914 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Ashdown Catering Ltd invoice ACL-2291: 640.00 GBP gross, to sort code 11-22-33 account 70214455, payment date 28 September 2026, reference ACL-2291. Approved by the FD under FD-0914.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J05",
+   "slot": "supplier",
+   "changed": {
+    "sup": [
+     "northfield",
+     "northfield-printing"
+    ],
+    "supplier": [
+     "Northfield Print Ltd",
+     "Northfield Printing Ltd"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:INV-000491 ask=PAY rb=exec sup=northfield-printing amt=378.60 cur=GBP kind=GROSS acct=20-45-67/31776234 paid=20261002 ref=INV-000491 apref=FD-0930 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Northfield Printing Ltd invoice INV-000491: 378.60 GBP gross, to sort code 20-45-67 account 31776234, payment date 2 October 2026, reference INV-000491. Approved by the FD under FD-0930.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J05",
+   "slot": "invoice",
+   "changed": {
+    "item": [
+     "INV-000491",
+     "INV-000419"
+    ],
+    "reference": [
+     "INV-000491",
+     "INV-000419"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:INV-000419 ask=PAY rb=exec sup=northfield amt=378.60 cur=GBP kind=GROSS acct=20-45-67/31776234 paid=20261002 ref=INV-000419 apref=FD-0930 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Northfield Print Ltd invoice INV-000419: 378.60 GBP gross, to sort code 20-45-67 account 31776234, payment date 2 October 2026, reference INV-000419. Approved by the FD under FD-0930.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J05",
+   "slot": "amount",
+   "changed": {
+    "amount": [
+     "378.60",
+     "398.60"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:INV-000491 ask=PAY rb=exec sup=northfield amt=398.60 cur=GBP kind=GROSS acct=20-45-67/31776234 paid=20261002 ref=INV-000491 apref=FD-0930 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Northfield Print Ltd invoice INV-000491: 398.60 GBP gross, to sort code 20-45-67 account 31776234, payment date 2 October 2026, reference INV-000491. Approved by the FD under FD-0930.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J05",
+   "slot": "currency",
+   "changed": {
+    "currency": [
+     "GBP",
+     "USD"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:INV-000491 ask=PAY rb=exec sup=northfield amt=378.60 cur=USD kind=GROSS acct=20-45-67/31776234 paid=20261002 ref=INV-000491 apref=FD-0930 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Northfield Print Ltd invoice INV-000491: 378.60 USD gross, to sort code 20-45-67 account 31776234, payment date 2 October 2026, reference INV-000491. Approved by the FD under FD-0930.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J05",
+   "slot": "kind",
+   "changed": {
+    "kind": [
+     "GROSS",
+     "NET"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:INV-000491 ask=PAY rb=exec sup=northfield amt=378.60 cur=GBP kind=NET acct=20-45-67/31776234 paid=20261002 ref=INV-000491 apref=FD-0930 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Northfield Print Ltd invoice INV-000491: 378.60 GBP net, to sort code 20-45-67 account 31776234, payment date 2 October 2026, reference INV-000491. Approved by the FD under FD-0930.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J05",
+   "slot": "account",
+   "changed": {
+    "account": [
+     "31776234",
+     "31767234"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:INV-000491 ask=PAY rb=exec sup=northfield amt=378.60 cur=GBP kind=GROSS acct=20-45-67/31767234 paid=20261002 ref=INV-000491 apref=FD-0930 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Northfield Print Ltd invoice INV-000491: 378.60 GBP gross, to sort code 20-45-67 account 31767234, payment date 2 October 2026, reference INV-000491. Approved by the FD under FD-0930.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J05",
+   "slot": "date",
+   "changed": {
+    "payment_date": [
+     "2026-10-02",
+     "2026-10-06"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:INV-000491 ask=PAY rb=exec sup=northfield amt=378.60 cur=GBP kind=GROSS acct=20-45-67/31776234 paid=20261006 ref=INV-000491 apref=FD-0930 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Northfield Print Ltd invoice INV-000491: 378.60 GBP gross, to sort code 20-45-67 account 31776234, payment date 6 October 2026, reference INV-000491. Approved by the FD under FD-0930.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J06",
+   "slot": "supplier",
+   "changed": {
+    "sup": [
+     "northfield",
+     "northfield-printing"
+    ],
+    "supplier": [
+     "Northfield Print Ltd",
+     "Northfield Printing Ltd"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:INV-000479 ask=PAY rb=exec sup=northfield-printing amt=1220.40 cur=GBP kind=GROSS acct=20-45-67/31776234 paid=20260929 ref=INV-000479 apref=FD-0920 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Northfield Printing Ltd invoice INV-000479: 1,220.40 GBP gross, to sort code 20-45-67 account 31776234, payment date 29 September 2026, reference INV-000479. Approved by the FD under FD-0920.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J06",
+   "slot": "invoice",
+   "changed": {
+    "item": [
+     "INV-000479",
+     "INV-000497"
+    ],
+    "reference": [
+     "INV-000479",
+     "INV-000497"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:INV-000497 ask=PAY rb=exec sup=northfield amt=1220.40 cur=GBP kind=GROSS acct=20-45-67/31776234 paid=20260929 ref=INV-000497 apref=FD-0920 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Northfield Print Ltd invoice INV-000497: 1,220.40 GBP gross, to sort code 20-45-67 account 31776234, payment date 29 September 2026, reference INV-000497. Approved by the FD under FD-0920.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J06",
+   "slot": "amount",
+   "changed": {
+    "amount": [
+     "1220.40",
+     "1420.40"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:INV-000479 ask=PAY rb=exec sup=northfield amt=1420.40 cur=GBP kind=GROSS acct=20-45-67/31776234 paid=20260929 ref=INV-000479 apref=FD-0920 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Northfield Print Ltd invoice INV-000479: 1,420.40 GBP gross, to sort code 20-45-67 account 31776234, payment date 29 September 2026, reference INV-000479. Approved by the FD under FD-0920.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J06",
+   "slot": "currency",
+   "changed": {
+    "currency": [
+     "GBP",
+     "USD"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:INV-000479 ask=PAY rb=exec sup=northfield amt=1220.40 cur=USD kind=GROSS acct=20-45-67/31776234 paid=20260929 ref=INV-000479 apref=FD-0920 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Northfield Print Ltd invoice INV-000479: 1,220.40 USD gross, to sort code 20-45-67 account 31776234, payment date 29 September 2026, reference INV-000479. Approved by the FD under FD-0920.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J06",
+   "slot": "kind",
+   "changed": {
+    "kind": [
+     "GROSS",
+     "NET"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:INV-000479 ask=PAY rb=exec sup=northfield amt=1220.40 cur=GBP kind=NET acct=20-45-67/31776234 paid=20260929 ref=INV-000479 apref=FD-0920 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Northfield Print Ltd invoice INV-000479: 1,220.40 GBP net, to sort code 20-45-67 account 31776234, payment date 29 September 2026, reference INV-000479. Approved by the FD under FD-0920.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J06",
+   "slot": "account",
+   "changed": {
+    "account": [
+     "31776234",
+     "13776234"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:INV-000479 ask=PAY rb=exec sup=northfield amt=1220.40 cur=GBP kind=GROSS acct=20-45-67/13776234 paid=20260929 ref=INV-000479 apref=FD-0920 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Northfield Print Ltd invoice INV-000479: 1,220.40 GBP gross, to sort code 20-45-67 account 13776234, payment date 29 September 2026, reference INV-000479. Approved by the FD under FD-0920.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J06",
+   "slot": "date",
+   "changed": {
+    "payment_date": [
+     "2026-09-29",
+     "2026-09-28"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:INV-000479 ask=PAY rb=exec sup=northfield amt=1220.40 cur=GBP kind=GROSS acct=20-45-67/31776234 paid=20260928 ref=INV-000479 apref=FD-0920 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Northfield Print Ltd invoice INV-000479: 1,220.40 GBP gross, to sort code 20-45-67 account 31776234, payment date 28 September 2026, reference INV-000479. Approved by the FD under FD-0920.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J07",
+   "slot": "supplier",
+   "changed": {
+    "sup": [
+     "kestrel",
+     "kestrelcloud"
+    ],
+    "supplier": [
+     "Kestrel Cloud Inc",
+     "Kestrel Cloud LLC"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:7731 ask=PAY rb=exec sup=kestrelcloud amt=960.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7731 apref=FD-0931 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Kestrel Cloud LLC invoice 7731: 960.00 USD net, to routing number 021000021 account 4839201, payment date 7 October 2026, reference 7731. Approved by the FD under FD-0931.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J07",
+   "slot": "invoice",
+   "changed": {
+    "item": [
+     "7731",
+     "7713"
+    ],
+    "reference": [
+     "7731",
+     "7713"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:7713 ask=PAY rb=exec sup=kestrel amt=960.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7713 apref=FD-0931 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Kestrel Cloud Inc invoice 7713: 960.00 USD net, to routing number 021000021 account 4839201, payment date 7 October 2026, reference 7713. Approved by the FD under FD-0931.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J07",
+   "slot": "amount",
+   "changed": {
+    "amount": [
+     "960.00",
+     "969.00"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:7731 ask=PAY rb=exec sup=kestrel amt=969.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7731 apref=FD-0931 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Kestrel Cloud Inc invoice 7731: 969.00 USD net, to routing number 021000021 account 4839201, payment date 7 October 2026, reference 7731. Approved by the FD under FD-0931.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J07",
+   "slot": "currency",
+   "changed": {
+    "currency": [
+     "USD",
+     "GBP"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:7731 ask=PAY rb=exec sup=kestrel amt=960.00 cur=GBP kind=NET acct=021000021/4839201 paid=20261007 ref=7731 apref=FD-0931 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Kestrel Cloud Inc invoice 7731: 960.00 GBP net, to routing number 021000021 account 4839201, payment date 7 October 2026, reference 7731. Approved by the FD under FD-0931.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J07",
+   "slot": "kind",
+   "changed": {
+    "kind": [
+     "NET",
+     "GROSS"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:7731 ask=PAY rb=exec sup=kestrel amt=960.00 cur=USD kind=GROSS acct=021000021/4839201 paid=20261007 ref=7731 apref=FD-0931 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Kestrel Cloud Inc invoice 7731: 960.00 USD gross, to routing number 021000021 account 4839201, payment date 7 October 2026, reference 7731. Approved by the FD under FD-0931.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J07",
+   "slot": "account",
+   "changed": {
+    "account": [
+     "4839201",
+     "4832901"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:7731 ask=PAY rb=exec sup=kestrel amt=960.00 cur=USD kind=NET acct=021000021/4832901 paid=20261007 ref=7731 apref=FD-0931 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Kestrel Cloud Inc invoice 7731: 960.00 USD net, to routing number 021000021 account 4832901, payment date 7 October 2026, reference 7731. Approved by the FD under FD-0931.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J07",
+   "slot": "date",
+   "changed": {
+    "payment_date": [
+     "2026-10-07",
+     "2026-10-01"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:7731 ask=PAY rb=exec sup=kestrel amt=960.00 cur=USD kind=NET acct=021000021/4839201 paid=20261001 ref=7731 apref=FD-0931 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Kestrel Cloud Inc invoice 7731: 960.00 USD net, to routing number 021000021 account 4839201, payment date 1 October 2026, reference 7731. Approved by the FD under FD-0931.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J08",
+   "slot": "supplier",
+   "changed": {
+    "sup": [
+     "evergreen",
+     "evergreen-services"
+    ],
+    "supplier": [
+     "Evergreen Office Supplies",
+     "Evergreen Office Services"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:EO-55187 ask=PAY rb=exec sup=evergreen-services amt=412.80 cur=GBP kind=GROSS acct=30-98-71/22019483 paid=20261001 ref=EO-55187 apref=FD-0918 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Evergreen Office Services invoice EO-55187: 412.80 GBP gross, to sort code 30-98-71 account 22019483, payment date 1 October 2026, reference EO-55187. Approved by the FD under FD-0918.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J08",
+   "slot": "invoice",
+   "changed": {
+    "item": [
+     "EO-55187",
+     "EO-55178"
+    ],
+    "reference": [
+     "EO-55187",
+     "EO-55178"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:EO-55178 ask=PAY rb=exec sup=evergreen amt=412.80 cur=GBP kind=GROSS acct=30-98-71/22019483 paid=20261001 ref=EO-55178 apref=FD-0918 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Evergreen Office Supplies invoice EO-55178: 412.80 GBP gross, to sort code 30-98-71 account 22019483, payment date 1 October 2026, reference EO-55178. Approved by the FD under FD-0918.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J08",
+   "slot": "amount",
+   "changed": {
+    "amount": [
+     "412.80",
+     "410.80"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:EO-55187 ask=PAY rb=exec sup=evergreen amt=410.80 cur=GBP kind=GROSS acct=30-98-71/22019483 paid=20261001 ref=EO-55187 apref=FD-0918 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Evergreen Office Supplies invoice EO-55187: 410.80 GBP gross, to sort code 30-98-71 account 22019483, payment date 1 October 2026, reference EO-55187. Approved by the FD under FD-0918.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J08",
+   "slot": "currency",
+   "changed": {
+    "currency": [
+     "GBP",
+     "USD"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:EO-55187 ask=PAY rb=exec sup=evergreen amt=412.80 cur=USD kind=GROSS acct=30-98-71/22019483 paid=20261001 ref=EO-55187 apref=FD-0918 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Evergreen Office Supplies invoice EO-55187: 412.80 USD gross, to sort code 30-98-71 account 22019483, payment date 1 October 2026, reference EO-55187. Approved by the FD under FD-0918.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J08",
+   "slot": "kind",
+   "changed": {
+    "kind": [
+     "GROSS",
+     "NET"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:EO-55187 ask=PAY rb=exec sup=evergreen amt=412.80 cur=GBP kind=NET acct=30-98-71/22019483 paid=20261001 ref=EO-55187 apref=FD-0918 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Evergreen Office Supplies invoice EO-55187: 412.80 GBP net, to sort code 30-98-71 account 22019483, payment date 1 October 2026, reference EO-55187. Approved by the FD under FD-0918.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J08",
+   "slot": "account",
+   "changed": {
+    "account": [
+     "22019483",
+     "22019438"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:EO-55187 ask=PAY rb=exec sup=evergreen amt=412.80 cur=GBP kind=GROSS acct=30-98-71/22019438 paid=20261001 ref=EO-55187 apref=FD-0918 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Evergreen Office Supplies invoice EO-55187: 412.80 GBP gross, to sort code 30-98-71 account 22019438, payment date 1 October 2026, reference EO-55187. Approved by the FD under FD-0918.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J08",
+   "slot": "date",
+   "changed": {
+    "payment_date": [
+     "2026-10-01",
+     "2026-10-05"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:EO-55187 ask=PAY rb=exec sup=evergreen amt=412.80 cur=GBP kind=GROSS acct=30-98-71/22019483 paid=20261005 ref=EO-55187 apref=FD-0918 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Evergreen Office Supplies invoice EO-55187: 412.80 GBP gross, to sort code 30-98-71 account 22019483, payment date 5 October 2026, reference EO-55187. Approved by the FD under FD-0918.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J09",
+   "slot": "supplier",
+   "changed": {
+    "sup": [
+     "evergreen",
+     "evergreen-services"
+    ],
+    "supplier": [
+     "Evergreen Office Supplies",
+     "Evergreen Office Services"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:EO-55203 ask=PAY rb=exec sup=evergreen-services amt=1086.40 cur=GBP kind=GROSS acct=30-98-71/22019483 paid=20261002 ref=EO-55203 apref=FD-0922 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Evergreen Office Services invoice EO-55203: 1,086.40 GBP gross, to sort code 30-98-71 account 22019483, payment date 2 October 2026, reference EO-55203. Approved by the FD under FD-0922.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J09",
+   "slot": "invoice",
+   "changed": {
+    "item": [
+     "EO-55203",
+     "EO-55230"
+    ],
+    "reference": [
+     "EO-55203",
+     "EO-55230"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:EO-55230 ask=PAY rb=exec sup=evergreen amt=1086.40 cur=GBP kind=GROSS acct=30-98-71/22019483 paid=20261002 ref=EO-55230 apref=FD-0922 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Evergreen Office Supplies invoice EO-55230: 1,086.40 GBP gross, to sort code 30-98-71 account 22019483, payment date 2 October 2026, reference EO-55230. Approved by the FD under FD-0922.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J09",
+   "slot": "amount",
+   "changed": {
+    "amount": [
+     "1086.40",
+     "1786.40"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:EO-55203 ask=PAY rb=exec sup=evergreen amt=1786.40 cur=GBP kind=GROSS acct=30-98-71/22019483 paid=20261002 ref=EO-55203 apref=FD-0922 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Evergreen Office Supplies invoice EO-55203: 1,786.40 GBP gross, to sort code 30-98-71 account 22019483, payment date 2 October 2026, reference EO-55203. Approved by the FD under FD-0922.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J09",
+   "slot": "currency",
+   "changed": {
+    "currency": [
+     "GBP",
+     "USD"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:EO-55203 ask=PAY rb=exec sup=evergreen amt=1086.40 cur=USD kind=GROSS acct=30-98-71/22019483 paid=20261002 ref=EO-55203 apref=FD-0922 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Evergreen Office Supplies invoice EO-55203: 1,086.40 USD gross, to sort code 30-98-71 account 22019483, payment date 2 October 2026, reference EO-55203. Approved by the FD under FD-0922.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J09",
+   "slot": "kind",
+   "changed": {
+    "kind": [
+     "GROSS",
+     "NET"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:EO-55203 ask=PAY rb=exec sup=evergreen amt=1086.40 cur=GBP kind=NET acct=30-98-71/22019483 paid=20261002 ref=EO-55203 apref=FD-0922 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Evergreen Office Supplies invoice EO-55203: 1,086.40 GBP net, to sort code 30-98-71 account 22019483, payment date 2 October 2026, reference EO-55203. Approved by the FD under FD-0922.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J09",
+   "slot": "account",
+   "changed": {
+    "account": [
+     "22019483",
+     "22091483"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:EO-55203 ask=PAY rb=exec sup=evergreen amt=1086.40 cur=GBP kind=GROSS acct=30-98-71/22091483 paid=20261002 ref=EO-55203 apref=FD-0922 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Evergreen Office Supplies invoice EO-55203: 1,086.40 GBP gross, to sort code 30-98-71 account 22091483, payment date 2 October 2026, reference EO-55203. Approved by the FD under FD-0922.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J09",
+   "slot": "date",
+   "changed": {
+    "payment_date": [
+     "2026-10-02",
+     "2026-10-22"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:EO-55203 ask=PAY rb=exec sup=evergreen amt=1086.40 cur=GBP kind=GROSS acct=30-98-71/22019483 paid=20261022 ref=EO-55203 apref=FD-0922 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Evergreen Office Supplies invoice EO-55203: 1,086.40 GBP gross, to sort code 30-98-71 account 22019483, payment date 22 October 2026, reference EO-55203. Approved by the FD under FD-0922.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J10",
+   "slot": "supplier",
+   "changed": {
+    "sup": [
+     "brightwater",
+     "brightwater-group"
+    ],
+    "supplier": [
+     "Brightwater Media Ltd",
+     "Brightwater Media Group Ltd"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:BWM-3318 ask=PAY rb=exec sup=brightwater-group amt=2750.00 cur=GBP kind=GROSS acct=23-45-61/55120987 paid=20261002 ref=BWM-3318 apref=FD-0923 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Brightwater Media Group Ltd invoice BWM-3318: 2,750.00 GBP gross, to sort code 23-45-61 account 55120987, payment date 2 October 2026, reference BWM-3318. Approved by the FD under FD-0923.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J10",
+   "slot": "invoice",
+   "changed": {
+    "item": [
+     "BWM-3318",
+     "BWM-3381"
+    ],
+    "reference": [
+     "BWM-3318",
+     "BWM-3381"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:BWM-3381 ask=PAY rb=exec sup=brightwater amt=2750.00 cur=GBP kind=GROSS acct=23-45-61/55120987 paid=20261002 ref=BWM-3381 apref=FD-0923 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Brightwater Media Ltd invoice BWM-3381: 2,750.00 GBP gross, to sort code 23-45-61 account 55120987, payment date 2 October 2026, reference BWM-3381. Approved by the FD under FD-0923.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J10",
+   "slot": "amount",
+   "changed": {
+    "amount": [
+     "2750.00",
+     "2450.00"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:BWM-3318 ask=PAY rb=exec sup=brightwater amt=2450.00 cur=GBP kind=GROSS acct=23-45-61/55120987 paid=20261002 ref=BWM-3318 apref=FD-0923 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Brightwater Media Ltd invoice BWM-3318: 2,450.00 GBP gross, to sort code 23-45-61 account 55120987, payment date 2 October 2026, reference BWM-3318. Approved by the FD under FD-0923.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J10",
+   "slot": "currency",
+   "changed": {
+    "currency": [
+     "GBP",
+     "USD"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:BWM-3318 ask=PAY rb=exec sup=brightwater amt=2750.00 cur=USD kind=GROSS acct=23-45-61/55120987 paid=20261002 ref=BWM-3318 apref=FD-0923 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Brightwater Media Ltd invoice BWM-3318: 2,750.00 USD gross, to sort code 23-45-61 account 55120987, payment date 2 October 2026, reference BWM-3318. Approved by the FD under FD-0923.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J10",
+   "slot": "kind",
+   "changed": {
+    "kind": [
+     "GROSS",
+     "NET"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:BWM-3318 ask=PAY rb=exec sup=brightwater amt=2750.00 cur=GBP kind=NET acct=23-45-61/55120987 paid=20261002 ref=BWM-3318 apref=FD-0923 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Brightwater Media Ltd invoice BWM-3318: 2,750.00 GBP net, to sort code 23-45-61 account 55120987, payment date 2 October 2026, reference BWM-3318. Approved by the FD under FD-0923.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J10",
+   "slot": "account",
+   "changed": {
+    "account": [
+     "55120987",
+     "55129087"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:BWM-3318 ask=PAY rb=exec sup=brightwater amt=2750.00 cur=GBP kind=GROSS acct=23-45-61/55129087 paid=20261002 ref=BWM-3318 apref=FD-0923 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Brightwater Media Ltd invoice BWM-3318: 2,750.00 GBP gross, to sort code 23-45-61 account 55129087, payment date 2 October 2026, reference BWM-3318. Approved by the FD under FD-0923.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J10",
+   "slot": "date",
+   "changed": {
+    "payment_date": [
+     "2026-10-02",
+     "2026-10-07"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:BWM-3318 ask=PAY rb=exec sup=brightwater amt=2750.00 cur=GBP kind=GROSS acct=23-45-61/55120987 paid=20261007 ref=BWM-3318 apref=FD-0923 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Brightwater Media Ltd invoice BWM-3318: 2,750.00 GBP gross, to sort code 23-45-61 account 55120987, payment date 7 October 2026, reference BWM-3318. Approved by the FD under FD-0923.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J11",
+   "slot": "supplier",
+   "changed": {
+    "sup": [
+     "brightwater",
+     "brightwater-group"
+    ],
+    "supplier": [
+     "Brightwater Media Ltd",
+     "Brightwater Media Group Ltd"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:BWM-3342 ask=PAY rb=exec sup=brightwater-group amt=980.00 cur=GBP kind=NET acct=23-45-61/55120987 paid=20261006 ref=BWM-3342 apref=FD-0924 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Brightwater Media Group Ltd invoice BWM-3342: 980.00 GBP net, to sort code 23-45-61 account 55120987, payment date 6 October 2026, reference BWM-3342. Approved by the FD under FD-0924.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J11",
+   "slot": "invoice",
+   "changed": {
+    "item": [
+     "BWM-3342",
+     "BWM-3324"
+    ],
+    "reference": [
+     "BWM-3342",
+     "BWM-3324"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:BWM-3324 ask=PAY rb=exec sup=brightwater amt=980.00 cur=GBP kind=NET acct=23-45-61/55120987 paid=20261006 ref=BWM-3324 apref=FD-0924 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Brightwater Media Ltd invoice BWM-3324: 980.00 GBP net, to sort code 23-45-61 account 55120987, payment date 6 October 2026, reference BWM-3324. Approved by the FD under FD-0924.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J11",
+   "slot": "amount",
+   "changed": {
+    "amount": [
+     "980.00",
+     "988.00"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:BWM-3342 ask=PAY rb=exec sup=brightwater amt=988.00 cur=GBP kind=NET acct=23-45-61/55120987 paid=20261006 ref=BWM-3342 apref=FD-0924 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Brightwater Media Ltd invoice BWM-3342: 988.00 GBP net, to sort code 23-45-61 account 55120987, payment date 6 October 2026, reference BWM-3342. Approved by the FD under FD-0924.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J11",
+   "slot": "currency",
+   "changed": {
+    "currency": [
+     "GBP",
+     "USD"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:BWM-3342 ask=PAY rb=exec sup=brightwater amt=980.00 cur=USD kind=NET acct=23-45-61/55120987 paid=20261006 ref=BWM-3342 apref=FD-0924 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Brightwater Media Ltd invoice BWM-3342: 980.00 USD net, to sort code 23-45-61 account 55120987, payment date 6 October 2026, reference BWM-3342. Approved by the FD under FD-0924.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J11",
+   "slot": "kind",
+   "changed": {
+    "kind": [
+     "NET",
+     "GROSS"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:BWM-3342 ask=PAY rb=exec sup=brightwater amt=980.00 cur=GBP kind=GROSS acct=23-45-61/55120987 paid=20261006 ref=BWM-3342 apref=FD-0924 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Brightwater Media Ltd invoice BWM-3342: 980.00 GBP gross, to sort code 23-45-61 account 55120987, payment date 6 October 2026, reference BWM-3342. Approved by the FD under FD-0924.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J11",
+   "slot": "account",
+   "changed": {
+    "account": [
+     "55120987",
+     "55210987"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:BWM-3342 ask=PAY rb=exec sup=brightwater amt=980.00 cur=GBP kind=NET acct=23-45-61/55210987 paid=20261006 ref=BWM-3342 apref=FD-0924 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Brightwater Media Ltd invoice BWM-3342: 980.00 GBP net, to sort code 23-45-61 account 55210987, payment date 6 October 2026, reference BWM-3342. Approved by the FD under FD-0924.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J11",
+   "slot": "date",
+   "changed": {
+    "payment_date": [
+     "2026-10-06",
+     "2026-10-08"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:BWM-3342 ask=PAY rb=exec sup=brightwater amt=980.00 cur=GBP kind=NET acct=23-45-61/55120987 paid=20261008 ref=BWM-3342 apref=FD-0924 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Brightwater Media Ltd invoice BWM-3342: 980.00 GBP net, to sort code 23-45-61 account 55120987, payment date 8 October 2026, reference BWM-3342. Approved by the FD under FD-0924.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J12",
+   "slot": "supplier",
+   "changed": {
+    "sup": [
+     "coleridge",
+     "coleridge-stationery"
+    ],
+    "supplier": [
+     "Coleridge Stationers Ltd",
+     "Coleridge Stationery Ltd"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:CS-20417 ask=PAY rb=exec sup=coleridge-stationery amt=156.25 cur=GBP kind=GROSS acct=60-16-13/33981204 paid=20260929 ref=CS-20417 apref=FD-0915 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Coleridge Stationery Ltd invoice CS-20417: 156.25 GBP gross, to sort code 60-16-13 account 33981204, payment date 29 September 2026, reference CS-20417. Approved by the FD under FD-0915.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J12",
+   "slot": "invoice",
+   "changed": {
+    "item": [
+     "CS-20417",
+     "CS-20471"
+    ],
+    "reference": [
+     "CS-20417",
+     "CS-20471"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:CS-20471 ask=PAY rb=exec sup=coleridge amt=156.25 cur=GBP kind=GROSS acct=60-16-13/33981204 paid=20260929 ref=CS-20471 apref=FD-0915 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Coleridge Stationers Ltd invoice CS-20471: 156.25 GBP gross, to sort code 60-16-13 account 33981204, payment date 29 September 2026, reference CS-20471. Approved by the FD under FD-0915.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J12",
+   "slot": "amount",
+   "changed": {
+    "amount": [
+     "156.25",
+     "159.25"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:CS-20417 ask=PAY rb=exec sup=coleridge amt=159.25 cur=GBP kind=GROSS acct=60-16-13/33981204 paid=20260929 ref=CS-20417 apref=FD-0915 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Coleridge Stationers Ltd invoice CS-20417: 159.25 GBP gross, to sort code 60-16-13 account 33981204, payment date 29 September 2026, reference CS-20417. Approved by the FD under FD-0915.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J12",
+   "slot": "currency",
+   "changed": {
+    "currency": [
+     "GBP",
+     "USD"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:CS-20417 ask=PAY rb=exec sup=coleridge amt=156.25 cur=USD kind=GROSS acct=60-16-13/33981204 paid=20260929 ref=CS-20417 apref=FD-0915 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Coleridge Stationers Ltd invoice CS-20417: 156.25 USD gross, to sort code 60-16-13 account 33981204, payment date 29 September 2026, reference CS-20417. Approved by the FD under FD-0915.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J12",
+   "slot": "kind",
+   "changed": {
+    "kind": [
+     "GROSS",
+     "NET"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:CS-20417 ask=PAY rb=exec sup=coleridge amt=156.25 cur=GBP kind=NET acct=60-16-13/33981204 paid=20260929 ref=CS-20417 apref=FD-0915 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Coleridge Stationers Ltd invoice CS-20417: 156.25 GBP net, to sort code 60-16-13 account 33981204, payment date 29 September 2026, reference CS-20417. Approved by the FD under FD-0915.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J12",
+   "slot": "account",
+   "changed": {
+    "account": [
+     "33981204",
+     "33918204"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:CS-20417 ask=PAY rb=exec sup=coleridge amt=156.25 cur=GBP kind=GROSS acct=60-16-13/33918204 paid=20260929 ref=CS-20417 apref=FD-0915 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Coleridge Stationers Ltd invoice CS-20417: 156.25 GBP gross, to sort code 60-16-13 account 33918204, payment date 29 September 2026, reference CS-20417. Approved by the FD under FD-0915.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J12",
+   "slot": "date",
+   "changed": {
+    "payment_date": [
+     "2026-09-29",
+     "2026-09-24"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:CS-20417 ask=PAY rb=exec sup=coleridge amt=156.25 cur=GBP kind=GROSS acct=60-16-13/33981204 paid=20260924 ref=CS-20417 apref=FD-0915 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Coleridge Stationers Ltd invoice CS-20417: 156.25 GBP gross, to sort code 60-16-13 account 33981204, payment date 24 September 2026, reference CS-20417. Approved by the FD under FD-0915.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J13",
+   "slot": "supplier",
+   "changed": {
+    "sup": [
+     "coleridge",
+     "coleridge-stationery"
+    ],
+    "supplier": [
+     "Coleridge Stationers Ltd",
+     "Coleridge Stationery Ltd"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:CS-20456 ask=PAY rb=exec sup=coleridge-stationery amt=89.90 cur=GBP kind=GROSS acct=60-16-13/33981204 paid=20261006 ref=CS-20456 apref=FD-0927 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Coleridge Stationery Ltd invoice CS-20456: 89.90 GBP gross, to sort code 60-16-13 account 33981204, payment date 6 October 2026, reference CS-20456. Approved by the FD under FD-0927.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J13",
+   "slot": "invoice",
+   "changed": {
+    "item": [
+     "CS-20456",
+     "CS-20546"
+    ],
+    "reference": [
+     "CS-20456",
+     "CS-20546"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:CS-20546 ask=PAY rb=exec sup=coleridge amt=89.90 cur=GBP kind=GROSS acct=60-16-13/33981204 paid=20261006 ref=CS-20546 apref=FD-0927 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Coleridge Stationers Ltd invoice CS-20546: 89.90 GBP gross, to sort code 60-16-13 account 33981204, payment date 6 October 2026, reference CS-20546. Approved by the FD under FD-0927.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J13",
+   "slot": "amount",
+   "changed": {
+    "amount": [
+     "89.90",
+     "81.90"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:CS-20456 ask=PAY rb=exec sup=coleridge amt=81.90 cur=GBP kind=GROSS acct=60-16-13/33981204 paid=20261006 ref=CS-20456 apref=FD-0927 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Coleridge Stationers Ltd invoice CS-20456: 81.90 GBP gross, to sort code 60-16-13 account 33981204, payment date 6 October 2026, reference CS-20456. Approved by the FD under FD-0927.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J13",
+   "slot": "currency",
+   "changed": {
+    "currency": [
+     "GBP",
+     "USD"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:CS-20456 ask=PAY rb=exec sup=coleridge amt=89.90 cur=USD kind=GROSS acct=60-16-13/33981204 paid=20261006 ref=CS-20456 apref=FD-0927 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Coleridge Stationers Ltd invoice CS-20456: 89.90 USD gross, to sort code 60-16-13 account 33981204, payment date 6 October 2026, reference CS-20456. Approved by the FD under FD-0927.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J13",
+   "slot": "kind",
+   "changed": {
+    "kind": [
+     "GROSS",
+     "NET"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:CS-20456 ask=PAY rb=exec sup=coleridge amt=89.90 cur=GBP kind=NET acct=60-16-13/33981204 paid=20261006 ref=CS-20456 apref=FD-0927 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Coleridge Stationers Ltd invoice CS-20456: 89.90 GBP net, to sort code 60-16-13 account 33981204, payment date 6 October 2026, reference CS-20456. Approved by the FD under FD-0927.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J13",
+   "slot": "account",
+   "changed": {
+    "account": [
+     "33981204",
+     "33918204"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:CS-20456 ask=PAY rb=exec sup=coleridge amt=89.90 cur=GBP kind=GROSS acct=60-16-13/33918204 paid=20261006 ref=CS-20456 apref=FD-0927 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Coleridge Stationers Ltd invoice CS-20456: 89.90 GBP gross, to sort code 60-16-13 account 33918204, payment date 6 October 2026, reference CS-20456. Approved by the FD under FD-0927.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J13",
+   "slot": "date",
+   "changed": {
+    "payment_date": [
+     "2026-10-06",
+     "2026-10-26"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:CS-20456 ask=PAY rb=exec sup=coleridge amt=89.90 cur=GBP kind=GROSS acct=60-16-13/33981204 paid=20261026 ref=CS-20456 apref=FD-0927 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Coleridge Stationers Ltd invoice CS-20456: 89.90 GBP gross, to sort code 60-16-13 account 33981204, payment date 26 October 2026, reference CS-20456. Approved by the FD under FD-0927.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J14",
+   "slot": "supplier",
+   "changed": {
+    "sup": [
+     "dunmore",
+     "dunmore-it-solutions"
+    ],
+    "supplier": [
+     "Dunmore IT Services Ltd",
+     "Dunmore IT Solutions Ltd"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:DIT-7710 ask=PAY rb=exec sup=dunmore-it-solutions amt=1450.00 cur=GBP kind=GROSS acct=80-20-00/48837219 paid=20261002 ref=DIT-7710 apref=FD-0919 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Dunmore IT Solutions Ltd invoice DIT-7710: 1,450.00 GBP gross, to sort code 80-20-00 account 48837219, payment date 2 October 2026, reference DIT-7710. Approved by the FD under FD-0919.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J14",
+   "slot": "invoice",
+   "changed": {
+    "item": [
+     "DIT-7710",
+     "DIT-7701"
+    ],
+    "reference": [
+     "DIT-7710",
+     "DIT-7701"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:DIT-7701 ask=PAY rb=exec sup=dunmore amt=1450.00 cur=GBP kind=GROSS acct=80-20-00/48837219 paid=20261002 ref=DIT-7701 apref=FD-0919 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Dunmore IT Services Ltd invoice DIT-7701: 1,450.00 GBP gross, to sort code 80-20-00 account 48837219, payment date 2 October 2026, reference DIT-7701. Approved by the FD under FD-0919.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J14",
+   "slot": "amount",
+   "changed": {
+    "amount": [
+     "1450.00",
+     "1400.00"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:DIT-7710 ask=PAY rb=exec sup=dunmore amt=1400.00 cur=GBP kind=GROSS acct=80-20-00/48837219 paid=20261002 ref=DIT-7710 apref=FD-0919 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Dunmore IT Services Ltd invoice DIT-7710: 1,400.00 GBP gross, to sort code 80-20-00 account 48837219, payment date 2 October 2026, reference DIT-7710. Approved by the FD under FD-0919.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J14",
+   "slot": "currency",
+   "changed": {
+    "currency": [
+     "GBP",
+     "USD"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:DIT-7710 ask=PAY rb=exec sup=dunmore amt=1450.00 cur=USD kind=GROSS acct=80-20-00/48837219 paid=20261002 ref=DIT-7710 apref=FD-0919 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Dunmore IT Services Ltd invoice DIT-7710: 1,450.00 USD gross, to sort code 80-20-00 account 48837219, payment date 2 October 2026, reference DIT-7710. Approved by the FD under FD-0919.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J14",
+   "slot": "kind",
+   "changed": {
+    "kind": [
+     "GROSS",
+     "NET"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:DIT-7710 ask=PAY rb=exec sup=dunmore amt=1450.00 cur=GBP kind=NET acct=80-20-00/48837219 paid=20261002 ref=DIT-7710 apref=FD-0919 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Dunmore IT Services Ltd invoice DIT-7710: 1,450.00 GBP net, to sort code 80-20-00 account 48837219, payment date 2 October 2026, reference DIT-7710. Approved by the FD under FD-0919.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J14",
+   "slot": "account",
+   "changed": {
+    "account": [
+     "48837219",
+     "48873219"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:DIT-7710 ask=PAY rb=exec sup=dunmore amt=1450.00 cur=GBP kind=GROSS acct=80-20-00/48873219 paid=20261002 ref=DIT-7710 apref=FD-0919 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Dunmore IT Services Ltd invoice DIT-7710: 1,450.00 GBP gross, to sort code 80-20-00 account 48873219, payment date 2 October 2026, reference DIT-7710. Approved by the FD under FD-0919.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J14",
+   "slot": "date",
+   "changed": {
+    "payment_date": [
+     "2026-10-02",
+     "2026-10-08"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:DIT-7710 ask=PAY rb=exec sup=dunmore amt=1450.00 cur=GBP kind=GROSS acct=80-20-00/48837219 paid=20261008 ref=DIT-7710 apref=FD-0919 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Dunmore IT Services Ltd invoice DIT-7710: 1,450.00 GBP gross, to sort code 80-20-00 account 48837219, payment date 8 October 2026, reference DIT-7710. Approved by the FD under FD-0919.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J15",
+   "slot": "supplier",
+   "changed": {
+    "sup": [
+     "dunmore",
+     "dunmore-it-solutions"
+    ],
+    "supplier": [
+     "Dunmore IT Services Ltd",
+     "Dunmore IT Solutions Ltd"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:DIT-7724 ask=PAY rb=exec sup=dunmore-it-solutions amt=3600.00 cur=GBP kind=NET acct=80-20-00/48837219 paid=20261009 ref=DIT-7724 apref=FD-0932 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Dunmore IT Solutions Ltd invoice DIT-7724: 3,600.00 GBP net, to sort code 80-20-00 account 48837219, payment date 9 October 2026, reference DIT-7724. Approved by the FD under FD-0932.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J15",
+   "slot": "invoice",
+   "changed": {
+    "item": [
+     "DIT-7724",
+     "DIT-7742"
+    ],
+    "reference": [
+     "DIT-7724",
+     "DIT-7742"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:DIT-7742 ask=PAY rb=exec sup=dunmore amt=3600.00 cur=GBP kind=NET acct=80-20-00/48837219 paid=20261009 ref=DIT-7742 apref=FD-0932 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Dunmore IT Services Ltd invoice DIT-7742: 3,600.00 GBP net, to sort code 80-20-00 account 48837219, payment date 9 October 2026, reference DIT-7742. Approved by the FD under FD-0932.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J15",
+   "slot": "amount",
+   "changed": {
+    "amount": [
+     "3600.00",
+     "3660.00"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:DIT-7724 ask=PAY rb=exec sup=dunmore amt=3660.00 cur=GBP kind=NET acct=80-20-00/48837219 paid=20261009 ref=DIT-7724 apref=FD-0932 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Dunmore IT Services Ltd invoice DIT-7724: 3,660.00 GBP net, to sort code 80-20-00 account 48837219, payment date 9 October 2026, reference DIT-7724. Approved by the FD under FD-0932.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J15",
+   "slot": "currency",
+   "changed": {
+    "currency": [
+     "GBP",
+     "USD"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:DIT-7724 ask=PAY rb=exec sup=dunmore amt=3600.00 cur=USD kind=NET acct=80-20-00/48837219 paid=20261009 ref=DIT-7724 apref=FD-0932 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Dunmore IT Services Ltd invoice DIT-7724: 3,600.00 USD net, to sort code 80-20-00 account 48837219, payment date 9 October 2026, reference DIT-7724. Approved by the FD under FD-0932.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J15",
+   "slot": "kind",
+   "changed": {
+    "kind": [
+     "NET",
+     "GROSS"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:DIT-7724 ask=PAY rb=exec sup=dunmore amt=3600.00 cur=GBP kind=GROSS acct=80-20-00/48837219 paid=20261009 ref=DIT-7724 apref=FD-0932 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Dunmore IT Services Ltd invoice DIT-7724: 3,600.00 GBP gross, to sort code 80-20-00 account 48837219, payment date 9 October 2026, reference DIT-7724. Approved by the FD under FD-0932.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J15",
+   "slot": "account",
+   "changed": {
+    "account": [
+     "48837219",
+     "48387219"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:DIT-7724 ask=PAY rb=exec sup=dunmore amt=3600.00 cur=GBP kind=NET acct=80-20-00/48387219 paid=20261009 ref=DIT-7724 apref=FD-0932 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Dunmore IT Services Ltd invoice DIT-7724: 3,600.00 GBP net, to sort code 80-20-00 account 48387219, payment date 9 October 2026, reference DIT-7724. Approved by the FD under FD-0932.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J15",
+   "slot": "date",
+   "changed": {
+    "payment_date": [
+     "2026-10-09",
+     "2026-10-07"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:DIT-7724 ask=PAY rb=exec sup=dunmore amt=3600.00 cur=GBP kind=NET acct=80-20-00/48837219 paid=20261007 ref=DIT-7724 apref=FD-0932 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Dunmore IT Services Ltd invoice DIT-7724: 3,600.00 GBP net, to sort code 80-20-00 account 48837219, payment date 7 October 2026, reference DIT-7724. Approved by the FD under FD-0932.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J16",
+   "slot": "supplier",
+   "changed": {
+    "sup": [
+     "fenwick",
+     "fenwick-architecture"
+    ],
+    "supplier": [
+     "Fenwick Architectural Ltd",
+     "Fenwick Architecture Ltd"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:FA-2026-118 ask=PAY rb=exec sup=fenwick-architecture amt=7250.00 cur=GBP kind=GROSS acct=77-01-02/19002847 paid=20261005 ref=FA-2026-118 apref=FD-0933 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Fenwick Architecture Ltd invoice FA-2026-118: 7,250.00 GBP gross, to sort code 77-01-02 account 19002847, payment date 5 October 2026, reference FA-2026-118. Approved by the FD under FD-0933.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J16",
+   "slot": "invoice",
+   "changed": {
+    "item": [
+     "FA-2026-118",
+     "FA-2026-181"
+    ],
+    "reference": [
+     "FA-2026-118",
+     "FA-2026-181"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:FA-2026-181 ask=PAY rb=exec sup=fenwick amt=7250.00 cur=GBP kind=GROSS acct=77-01-02/19002847 paid=20261005 ref=FA-2026-181 apref=FD-0933 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Fenwick Architectural Ltd invoice FA-2026-181: 7,250.00 GBP gross, to sort code 77-01-02 account 19002847, payment date 5 October 2026, reference FA-2026-181. Approved by the FD under FD-0933.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J16",
+   "slot": "amount",
+   "changed": {
+    "amount": [
+     "7250.00",
+     "7256.00"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:FA-2026-118 ask=PAY rb=exec sup=fenwick amt=7256.00 cur=GBP kind=GROSS acct=77-01-02/19002847 paid=20261005 ref=FA-2026-118 apref=FD-0933 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Fenwick Architectural Ltd invoice FA-2026-118: 7,256.00 GBP gross, to sort code 77-01-02 account 19002847, payment date 5 October 2026, reference FA-2026-118. Approved by the FD under FD-0933.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J16",
+   "slot": "currency",
+   "changed": {
+    "currency": [
+     "GBP",
+     "USD"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:FA-2026-118 ask=PAY rb=exec sup=fenwick amt=7250.00 cur=USD kind=GROSS acct=77-01-02/19002847 paid=20261005 ref=FA-2026-118 apref=FD-0933 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Fenwick Architectural Ltd invoice FA-2026-118: 7,250.00 USD gross, to sort code 77-01-02 account 19002847, payment date 5 October 2026, reference FA-2026-118. Approved by the FD under FD-0933.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J16",
+   "slot": "kind",
+   "changed": {
+    "kind": [
+     "GROSS",
+     "NET"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:FA-2026-118 ask=PAY rb=exec sup=fenwick amt=7250.00 cur=GBP kind=NET acct=77-01-02/19002847 paid=20261005 ref=FA-2026-118 apref=FD-0933 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Fenwick Architectural Ltd invoice FA-2026-118: 7,250.00 GBP net, to sort code 77-01-02 account 19002847, payment date 5 October 2026, reference FA-2026-118. Approved by the FD under FD-0933.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J16",
+   "slot": "account",
+   "changed": {
+    "account": [
+     "19002847",
+     "19002487"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:FA-2026-118 ask=PAY rb=exec sup=fenwick amt=7250.00 cur=GBP kind=GROSS acct=77-01-02/19002487 paid=20261005 ref=FA-2026-118 apref=FD-0933 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Fenwick Architectural Ltd invoice FA-2026-118: 7,250.00 GBP gross, to sort code 77-01-02 account 19002487, payment date 5 October 2026, reference FA-2026-118. Approved by the FD under FD-0933.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J16",
+   "slot": "date",
+   "changed": {
+    "payment_date": [
+     "2026-10-05",
+     "2026-10-15"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:FA-2026-118 ask=PAY rb=exec sup=fenwick amt=7250.00 cur=GBP kind=GROSS acct=77-01-02/19002847 paid=20261015 ref=FA-2026-118 apref=FD-0933 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Fenwick Architectural Ltd invoice FA-2026-118: 7,250.00 GBP gross, to sort code 77-01-02 account 19002847, payment date 15 October 2026, reference FA-2026-118. Approved by the FD under FD-0933.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J17",
+   "slot": "supplier",
+   "changed": {
+    "sup": [
+     "fenwick",
+     "fenwick-architecture"
+    ],
+    "supplier": [
+     "Fenwick Architectural Ltd",
+     "Fenwick Architecture Ltd"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:FA-2026-131 ask=PAY rb=exec sup=fenwick-architecture amt=4125.50 cur=GBP kind=NET acct=77-01-02/19002847 paid=20261008 ref=FA-2026-131 apref=FD-0934 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Fenwick Architecture Ltd invoice FA-2026-131: 4,125.50 GBP net, to sort code 77-01-02 account 19002847, payment date 8 October 2026, reference FA-2026-131. Approved by the FD under FD-0934.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J17",
+   "slot": "invoice",
+   "changed": {
+    "item": [
+     "FA-2026-131",
+     "FA-2026-113"
+    ],
+    "reference": [
+     "FA-2026-131",
+     "FA-2026-113"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:FA-2026-113 ask=PAY rb=exec sup=fenwick amt=4125.50 cur=GBP kind=NET acct=77-01-02/19002847 paid=20261008 ref=FA-2026-113 apref=FD-0934 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Fenwick Architectural Ltd invoice FA-2026-113: 4,125.50 GBP net, to sort code 77-01-02 account 19002847, payment date 8 October 2026, reference FA-2026-113. Approved by the FD under FD-0934.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J17",
+   "slot": "amount",
+   "changed": {
+    "amount": [
+     "4125.50",
+     "4128.50"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:FA-2026-131 ask=PAY rb=exec sup=fenwick amt=4128.50 cur=GBP kind=NET acct=77-01-02/19002847 paid=20261008 ref=FA-2026-131 apref=FD-0934 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Fenwick Architectural Ltd invoice FA-2026-131: 4,128.50 GBP net, to sort code 77-01-02 account 19002847, payment date 8 October 2026, reference FA-2026-131. Approved by the FD under FD-0934.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J17",
+   "slot": "currency",
+   "changed": {
+    "currency": [
+     "GBP",
+     "USD"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:FA-2026-131 ask=PAY rb=exec sup=fenwick amt=4125.50 cur=USD kind=NET acct=77-01-02/19002847 paid=20261008 ref=FA-2026-131 apref=FD-0934 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Fenwick Architectural Ltd invoice FA-2026-131: 4,125.50 USD net, to sort code 77-01-02 account 19002847, payment date 8 October 2026, reference FA-2026-131. Approved by the FD under FD-0934.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J17",
+   "slot": "kind",
+   "changed": {
+    "kind": [
+     "NET",
+     "GROSS"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:FA-2026-131 ask=PAY rb=exec sup=fenwick amt=4125.50 cur=GBP kind=GROSS acct=77-01-02/19002847 paid=20261008 ref=FA-2026-131 apref=FD-0934 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Fenwick Architectural Ltd invoice FA-2026-131: 4,125.50 GBP gross, to sort code 77-01-02 account 19002847, payment date 8 October 2026, reference FA-2026-131. Approved by the FD under FD-0934.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J17",
+   "slot": "account",
+   "changed": {
+    "account": [
+     "19002847",
+     "19008247"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:FA-2026-131 ask=PAY rb=exec sup=fenwick amt=4125.50 cur=GBP kind=NET acct=77-01-02/19008247 paid=20261008 ref=FA-2026-131 apref=FD-0934 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Fenwick Architectural Ltd invoice FA-2026-131: 4,125.50 GBP net, to sort code 77-01-02 account 19008247, payment date 8 October 2026, reference FA-2026-131. Approved by the FD under FD-0934.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J17",
+   "slot": "date",
+   "changed": {
+    "payment_date": [
+     "2026-10-08",
+     "2026-10-01"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:FA-2026-131 ask=PAY rb=exec sup=fenwick amt=4125.50 cur=GBP kind=NET acct=77-01-02/19002847 paid=20261001 ref=FA-2026-131 apref=FD-0934 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Fenwick Architectural Ltd invoice FA-2026-131: 4,125.50 GBP net, to sort code 77-01-02 account 19002847, payment date 1 October 2026, reference FA-2026-131. Approved by the FD under FD-0934.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J18",
+   "slot": "supplier",
+   "changed": {
+    "sup": [
+     "ashdown",
+     "ashdown-caterers"
+    ],
+    "supplier": [
+     "Ashdown Catering Ltd",
+     "Ashdown Caterers Ltd"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:ACL-2317 ask=PAY rb=exec sup=ashdown-caterers amt=812.40 cur=GBP kind=GROSS acct=11-22-33/70214455 paid=20261002 ref=ACL-2317 apref=FD-0935 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Ashdown Caterers Ltd invoice ACL-2317: 812.40 GBP gross, to sort code 11-22-33 account 70214455, payment date 2 October 2026, reference ACL-2317. Approved by the FD under FD-0935.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J18",
+   "slot": "invoice",
+   "changed": {
+    "item": [
+     "ACL-2317",
+     "ACL-2137"
+    ],
+    "reference": [
+     "ACL-2317",
+     "ACL-2137"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:ACL-2137 ask=PAY rb=exec sup=ashdown amt=812.40 cur=GBP kind=GROSS acct=11-22-33/70214455 paid=20261002 ref=ACL-2137 apref=FD-0935 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Ashdown Catering Ltd invoice ACL-2137: 812.40 GBP gross, to sort code 11-22-33 account 70214455, payment date 2 October 2026, reference ACL-2137. Approved by the FD under FD-0935.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J18",
+   "slot": "amount",
+   "changed": {
+    "amount": [
+     "812.40",
+     "892.40"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:ACL-2317 ask=PAY rb=exec sup=ashdown amt=892.40 cur=GBP kind=GROSS acct=11-22-33/70214455 paid=20261002 ref=ACL-2317 apref=FD-0935 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Ashdown Catering Ltd invoice ACL-2317: 892.40 GBP gross, to sort code 11-22-33 account 70214455, payment date 2 October 2026, reference ACL-2317. Approved by the FD under FD-0935.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J18",
+   "slot": "currency",
+   "changed": {
+    "currency": [
+     "GBP",
+     "USD"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:ACL-2317 ask=PAY rb=exec sup=ashdown amt=812.40 cur=USD kind=GROSS acct=11-22-33/70214455 paid=20261002 ref=ACL-2317 apref=FD-0935 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Ashdown Catering Ltd invoice ACL-2317: 812.40 USD gross, to sort code 11-22-33 account 70214455, payment date 2 October 2026, reference ACL-2317. Approved by the FD under FD-0935.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J18",
+   "slot": "kind",
+   "changed": {
+    "kind": [
+     "GROSS",
+     "NET"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:ACL-2317 ask=PAY rb=exec sup=ashdown amt=812.40 cur=GBP kind=NET acct=11-22-33/70214455 paid=20261002 ref=ACL-2317 apref=FD-0935 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Ashdown Catering Ltd invoice ACL-2317: 812.40 GBP net, to sort code 11-22-33 account 70214455, payment date 2 October 2026, reference ACL-2317. Approved by the FD under FD-0935.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J18",
+   "slot": "account",
+   "changed": {
+    "account": [
+     "70214455",
+     "07214455"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:ACL-2317 ask=PAY rb=exec sup=ashdown amt=812.40 cur=GBP kind=GROSS acct=11-22-33/07214455 paid=20261002 ref=ACL-2317 apref=FD-0935 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Ashdown Catering Ltd invoice ACL-2317: 812.40 GBP gross, to sort code 11-22-33 account 07214455, payment date 2 October 2026, reference ACL-2317. Approved by the FD under FD-0935.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J18",
+   "slot": "date",
+   "changed": {
+    "payment_date": [
+     "2026-10-02",
+     "2026-10-12"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:ACL-2317 ask=PAY rb=exec sup=ashdown amt=812.40 cur=GBP kind=GROSS acct=11-22-33/70214455 paid=20261012 ref=ACL-2317 apref=FD-0935 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Ashdown Catering Ltd invoice ACL-2317: 812.40 GBP gross, to sort code 11-22-33 account 70214455, payment date 12 October 2026, reference ACL-2317. Approved by the FD under FD-0935.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J19",
+   "slot": "supplier",
+   "changed": {
+    "sup": [
+     "northfield",
+     "northfield-printing"
+    ],
+    "supplier": [
+     "Northfield Print Ltd",
+     "Northfield Printing Ltd"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:INV-000502 ask=PAY rb=exec sup=northfield-printing amt=2208.00 cur=GBP kind=GROSS acct=20-45-67/31776234 paid=20261006 ref=INV-000502 apref=FD-0936 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Northfield Printing Ltd invoice INV-000502: 2,208.00 GBP gross, to sort code 20-45-67 account 31776234, payment date 6 October 2026, reference INV-000502. Approved by the FD under FD-0936.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J19",
+   "slot": "invoice",
+   "changed": {
+    "item": [
+     "INV-000502",
+     "INV-000520"
+    ],
+    "reference": [
+     "INV-000502",
+     "INV-000520"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:INV-000520 ask=PAY rb=exec sup=northfield amt=2208.00 cur=GBP kind=GROSS acct=20-45-67/31776234 paid=20261006 ref=INV-000520 apref=FD-0936 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Northfield Print Ltd invoice INV-000520: 2,208.00 GBP gross, to sort code 20-45-67 account 31776234, payment date 6 October 2026, reference INV-000520. Approved by the FD under FD-0936.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J19",
+   "slot": "amount",
+   "changed": {
+    "amount": [
+     "2208.00",
+     "2278.00"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:INV-000502 ask=PAY rb=exec sup=northfield amt=2278.00 cur=GBP kind=GROSS acct=20-45-67/31776234 paid=20261006 ref=INV-000502 apref=FD-0936 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Northfield Print Ltd invoice INV-000502: 2,278.00 GBP gross, to sort code 20-45-67 account 31776234, payment date 6 October 2026, reference INV-000502. Approved by the FD under FD-0936.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J19",
+   "slot": "currency",
+   "changed": {
+    "currency": [
+     "GBP",
+     "USD"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:INV-000502 ask=PAY rb=exec sup=northfield amt=2208.00 cur=USD kind=GROSS acct=20-45-67/31776234 paid=20261006 ref=INV-000502 apref=FD-0936 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Northfield Print Ltd invoice INV-000502: 2,208.00 USD gross, to sort code 20-45-67 account 31776234, payment date 6 October 2026, reference INV-000502. Approved by the FD under FD-0936.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J19",
+   "slot": "kind",
+   "changed": {
+    "kind": [
+     "GROSS",
+     "NET"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:INV-000502 ask=PAY rb=exec sup=northfield amt=2208.00 cur=GBP kind=NET acct=20-45-67/31776234 paid=20261006 ref=INV-000502 apref=FD-0936 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Northfield Print Ltd invoice INV-000502: 2,208.00 GBP net, to sort code 20-45-67 account 31776234, payment date 6 October 2026, reference INV-000502. Approved by the FD under FD-0936.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J19",
+   "slot": "account",
+   "changed": {
+    "account": [
+     "31776234",
+     "31776243"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:INV-000502 ask=PAY rb=exec sup=northfield amt=2208.00 cur=GBP kind=GROSS acct=20-45-67/31776243 paid=20261006 ref=INV-000502 apref=FD-0936 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Northfield Print Ltd invoice INV-000502: 2,208.00 GBP gross, to sort code 20-45-67 account 31776243, payment date 6 October 2026, reference INV-000502. Approved by the FD under FD-0936.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J19",
+   "slot": "date",
+   "changed": {
+    "payment_date": [
+     "2026-10-06",
+     "2026-10-05"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:INV-000502 ask=PAY rb=exec sup=northfield amt=2208.00 cur=GBP kind=GROSS acct=20-45-67/31776234 paid=20261005 ref=INV-000502 apref=FD-0936 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Northfield Print Ltd invoice INV-000502: 2,208.00 GBP gross, to sort code 20-45-67 account 31776234, payment date 5 October 2026, reference INV-000502. Approved by the FD under FD-0936.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J20",
+   "slot": "supplier",
+   "changed": {
+    "sup": [
+     "kestrel",
+     "kestrelcloud"
+    ],
+    "supplier": [
+     "Kestrel Cloud Inc",
+     "Kestrel Cloud LLC"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:7768 ask=PAY rb=exec sup=kestrelcloud amt=1240.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7768 apref=FD-0937 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Kestrel Cloud LLC invoice 7768: 1,240.00 USD net, to routing number 021000021 account 4839201, payment date 7 October 2026, reference 7768. Approved by the FD under FD-0937.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J20",
+   "slot": "invoice",
+   "changed": {
+    "item": [
+     "7768",
+     "7678"
+    ],
+    "reference": [
+     "7768",
+     "7678"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:7678 ask=PAY rb=exec sup=kestrel amt=1240.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7678 apref=FD-0937 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Kestrel Cloud Inc invoice 7678: 1,240.00 USD net, to routing number 021000021 account 4839201, payment date 7 October 2026, reference 7678. Approved by the FD under FD-0937.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J20",
+   "slot": "amount",
+   "changed": {
+    "amount": [
+     "1240.00",
+     "1540.00"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:7768 ask=PAY rb=exec sup=kestrel amt=1540.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7768 apref=FD-0937 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Kestrel Cloud Inc invoice 7768: 1,540.00 USD net, to routing number 021000021 account 4839201, payment date 7 October 2026, reference 7768. Approved by the FD under FD-0937.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J20",
+   "slot": "currency",
+   "changed": {
+    "currency": [
+     "USD",
+     "GBP"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:7768 ask=PAY rb=exec sup=kestrel amt=1240.00 cur=GBP kind=NET acct=021000021/4839201 paid=20261007 ref=7768 apref=FD-0937 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Kestrel Cloud Inc invoice 7768: 1,240.00 GBP net, to routing number 021000021 account 4839201, payment date 7 October 2026, reference 7768. Approved by the FD under FD-0937.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J20",
+   "slot": "kind",
+   "changed": {
+    "kind": [
+     "NET",
+     "GROSS"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:7768 ask=PAY rb=exec sup=kestrel amt=1240.00 cur=USD kind=GROSS acct=021000021/4839201 paid=20261007 ref=7768 apref=FD-0937 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Kestrel Cloud Inc invoice 7768: 1,240.00 USD gross, to routing number 021000021 account 4839201, payment date 7 October 2026, reference 7768. Approved by the FD under FD-0937.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J20",
+   "slot": "account",
+   "changed": {
+    "account": [
+     "4839201",
+     "4893201"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:7768 ask=PAY rb=exec sup=kestrel amt=1240.00 cur=USD kind=NET acct=021000021/4893201 paid=20261007 ref=7768 apref=FD-0937 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Kestrel Cloud Inc invoice 7768: 1,240.00 USD net, to routing number 021000021 account 4893201, payment date 7 October 2026, reference 7768. Approved by the FD under FD-0937.\n\nThanks,\nscheduler"
+  },
+  {
+   "job": "J20",
+   "slot": "date",
+   "changed": {
+    "payment_date": [
+     "2026-10-07",
+     "2026-10-06"
+    ]
+   },
+   "line": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:7768 ask=PAY rb=exec sup=kestrel amt=1240.00 cur=USD kind=NET acct=021000021/4839201 paid=20261006 ref=7768 apref=FD-0937 appr=OK",
+   "prose": "Hi payer,\n\nPlease release the payment for Kestrel Cloud Inc invoice 7768: 1,240.00 USD net, to routing number 021000021 account 4839201, payment date 6 October 2026, reference 7768. Approved by the FD under FD-0937.\n\nThanks,\nscheduler"
+  }
+ ]
+}

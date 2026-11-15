@@ -1,0 +1,71 @@
+{
+ "rid": "line-J02-amount-p-gpt54mini",
+ "set": "pilot",
+ "fmt": "line",
+ "pair": "J02-amount-p",
+ "job": "J02",
+ "slot": "amount",
+ "clean_k": null,
+ "author": "gpt54mini",
+ "attempts": [
+  {
+   "reply": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-041 ask=PAY sup=marlow amt=3240.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20260926 ref=MD-2026-041 apref=FD-0917",
+   "problems": [],
+   "line": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-041 ask=PAY sup=marlow amt=3240.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20260926 ref=MD-2026-041 apref=FD-0917",
+   "reply_was_line_alone": true,
+   "served": [
+    "gpt-5.4-mini-2026-03-17"
+   ],
+   "cost": 0.00212775,
+   "usage": {
+    "prompt_tokens": 2339,
+    "completion_tokens": 83,
+    "cached_tokens": 0,
+    "cache_write_tokens": null,
+    "reasoning_tokens": 0,
+    "cost": null,
+    "estimated": false,
+    "finish_reason": "stop"
+   },
+   "error": null,
+   "seconds": 0.9,
+   "at": "2026-11-14T19:37:38Z",
+   "problems_registered": [],
+   "version_token_missing": false
+  }
+ ],
+ "accepted": 0,
+ "brief": "data/briefs/payer-line.txt",
+ "brief_sha": "838debda04463bb0",
+ "user": "A handover from scheduler has just arrived:\n\nRW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-041 ask=PAY rb=exec sup=marlow amt=3240.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20260926 ref=MD-2026-041 apref=FD-0917 appr=OK\n\nWrite your readback now.",
+ "changed": {
+  "amount": [
+   "3200.00",
+   "3240.00"
+  ]
+ },
+ "readback": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-041 ask=PAY sup=marlow amt=3240.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20260926 ref=MD-2026-041 apref=FD-0917",
+ "accepted_registered": 0,
+ "code_check": {
+  "ho_sent": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:MD-2026-041 ask=PAY rb=exec sup=marlow amt=3200.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20260926 ref=MD-2026-041 apref=FD-0917 appr=OK",
+  "rb": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:MD-2026-041 ask=PAY sup=marlow amt=3240.00 cur=GBP kind=GROSS acct=40-12-88/61102938 paid=20260926 ref=MD-2026-041 apref=FD-0917",
+  "verdict": "MISMATCH",
+  "problems": [
+   "tier5 execution: amt mismatch: HO 3200.00 vs RB 3240.00"
+  ],
+  "notes": []
+ },
+ "code_grade": {
+  "rid": "line-J02-amount-p-gpt54mini",
+  "faulted": true,
+  "planted": "amount",
+  "verdict": "MISMATCH",
+  "details": [
+   "amount"
+  ],
+  "tiers": [
+   "tier5"
+  ],
+  "outcome": "caught"
+ }
+}

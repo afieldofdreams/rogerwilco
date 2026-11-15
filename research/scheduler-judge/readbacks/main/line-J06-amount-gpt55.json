@@ -1,0 +1,71 @@
+{
+ "rid": "line-J06-amount-gpt55",
+ "set": "main",
+ "fmt": "line",
+ "pair": "J06-amount",
+ "job": "J06",
+ "slot": "amount",
+ "clean_k": null,
+ "author": "gpt55",
+ "attempts": [
+  {
+   "reply": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:INV-000479 ask=PAY sup=northfield amt=1420.40 cur=GBP kind=GROSS acct=20-45-67/31776234 paid=20260929 ref=INV-000479 apref=FD-0920",
+   "problems": [],
+   "line": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:INV-000479 ask=PAY sup=northfield amt=1420.40 cur=GBP kind=GROSS acct=20-45-67/31776234 paid=20260929 ref=INV-000479 apref=FD-0920",
+   "reply_was_line_alone": true,
+   "version_token_missing": false,
+   "served": [
+    "gpt-5.5-2026-04-23"
+   ],
+   "cost": 0.009766,
+   "usage": {
+    "prompt_tokens": 2336,
+    "completion_tokens": 205,
+    "cached_tokens": 1792,
+    "cache_write_tokens": null,
+    "reasoning_tokens": 119,
+    "cost": null,
+    "estimated": false,
+    "finish_reason": "stop"
+   },
+   "error": null,
+   "seconds": 3.9,
+   "at": "2026-11-15T00:42:19Z",
+   "problems_registered": []
+  }
+ ],
+ "accepted": 0,
+ "brief": "data/briefs/payer-line.txt",
+ "brief_sha": "838debda04463bb0",
+ "user": "A handover from scheduler has just arrived:\n\nRW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:INV-000479 ask=PAY rb=exec sup=northfield amt=1420.40 cur=GBP kind=GROSS acct=20-45-67/31776234 paid=20260929 ref=INV-000479 apref=FD-0920 appr=OK\n\nWrite your readback now.",
+ "changed": {
+  "amount": [
+   "1220.40",
+   "1420.40"
+  ]
+ },
+ "readback": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:INV-000479 ask=PAY sup=northfield amt=1420.40 cur=GBP kind=GROSS acct=20-45-67/31776234 paid=20260929 ref=INV-000479 apref=FD-0920",
+ "accepted_registered": 0,
+ "code_check": {
+  "ho_sent": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:INV-000479 ask=PAY rb=exec sup=northfield amt=1220.40 cur=GBP kind=GROSS acct=20-45-67/31776234 paid=20260929 ref=INV-000479 apref=FD-0920 appr=OK",
+  "rb": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:INV-000479 ask=PAY sup=northfield amt=1420.40 cur=GBP kind=GROSS acct=20-45-67/31776234 paid=20260929 ref=INV-000479 apref=FD-0920",
+  "verdict": "MISMATCH",
+  "problems": [
+   "tier5 execution: amt mismatch: HO 1220.40 vs RB 1420.40"
+  ],
+  "notes": []
+ },
+ "code_grade": {
+  "rid": "line-J06-amount-gpt55",
+  "faulted": true,
+  "planted": "amount",
+  "verdict": "MISMATCH",
+  "details": [
+   "amount"
+  ],
+  "tiers": [
+   "tier5"
+  ],
+  "outcome": "caught"
+ }
+}
