@@ -1,0 +1,24 @@
+{
+  "profile": "pform",
+  "version": "0.1",
+  "extends": "RW1",
+  "description": "Pensive knowledge-graph handoffs between Lumos stances. Example domain profile.",
+  "enums": {
+    "stage": {"DIA": "diagnose", "REV": "review", "OPT": "options", "DEC": "decide", "ACT": "action", "FIN": "done"},
+    "os": {"NOW": "now", "HOLD": "waiting", "SCH": "scheduled", "SOME": "someday", "NONE": "none", "NOTDO": "not doing", "BLK": "blocked", "FIN": "done"},
+    "heat": {"COLD": "cold", "WARM": "warm", "HOT": "hot"}
+  },
+  "asks": {"SCORE4": "run 4-axis scoring (capability, values, user value, revenue)", "ENRICH": "fill missing fields", "PRUNE": "retire or merge the node", "STALE": "decide on a stale node"},
+  "slots": [
+    {"key": "stg", "type": "enum:stage", "on": ["HO", "ST"], "required": false},
+    {"key": "os", "type": "enum:os", "on": ["HO", "ST"], "required": false},
+    {"key": "imp", "type": "int:1-10", "on": ["HO", "ST"], "required": false},
+    {"key": "heat", "type": "enum:heat", "on": ["HO", "ST"], "required": false},
+    {"key": "stall", "type": "days", "on": ["HO", "ST"], "required": false},
+    {"key": "touch", "type": "date", "on": ["HO", "ST"], "required": false},
+    {"key": "src", "type": "int:0-9999", "on": ["HO"], "required": false},
+    {"key": "asg", "type": "list:agent", "on": ["ST"], "required": false}
+  ],
+  "agents": ["TRI", "STR", "ARC", "BLD", "QAR", "CPY", "GRD", "DAT", "MKT", "SCT", "IDE", "LUM"],
+  "item_namespace": "pensive"
+}

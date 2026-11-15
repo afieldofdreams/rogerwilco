@@ -1,0 +1,76 @@
+{
+ "rid": "line-J20-supplier-gpt54mini",
+ "set": "main",
+ "fmt": "line",
+ "pair": "J20-supplier",
+ "job": "J20",
+ "slot": "supplier",
+ "clean_k": null,
+ "author": "gpt54mini",
+ "attempts": [
+  {
+   "reply": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:7768 ask=PAY sup=kestrelcloud amt=1240.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7768 apref=FD-0937 do=PAY readback for payment instruction",
+   "problems": [],
+   "line": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:7768 ask=PAY sup=kestrelcloud amt=1240.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7768 apref=FD-0937 do=PAY readback for payment instruction",
+   "reply_was_line_alone": true,
+   "version_token_missing": false,
+   "served": [
+    "gpt-5.4-mini-2026-03-17"
+   ],
+   "cost": 0.0021165,
+   "usage": {
+    "prompt_tokens": 2330,
+    "completion_tokens": 82,
+    "cached_tokens": 0,
+    "cache_write_tokens": null,
+    "reasoning_tokens": 0,
+    "cost": null,
+    "estimated": false,
+    "finish_reason": "stop"
+   },
+   "error": null,
+   "seconds": 1.0,
+   "at": "2026-11-15T00:41:50Z",
+   "problems_registered": []
+  }
+ ],
+ "accepted": 0,
+ "brief": "data/briefs/payer-line.txt",
+ "brief_sha": "838debda04463bb0",
+ "user": "A handover from scheduler has just arrived:\n\nRW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:7768 ask=PAY rb=exec sup=kestrelcloud amt=1240.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7768 apref=FD-0937 appr=OK\n\nWrite your readback now.",
+ "changed": {
+  "sup": [
+   "kestrel",
+   "kestrelcloud"
+  ],
+  "supplier": [
+   "Kestrel Cloud Inc",
+   "Kestrel Cloud LLC"
+  ]
+ },
+ "readback": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:7768 ask=PAY sup=kestrelcloud amt=1240.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7768 apref=FD-0937 do=PAY readback for payment instruction",
+ "accepted_registered": 0,
+ "code_check": {
+  "ho_sent": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:7768 ask=PAY rb=exec sup=kestrel amt=1240.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7768 apref=FD-0937 appr=OK",
+  "rb": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:7768 ask=PAY sup=kestrelcloud amt=1240.00 cur=USD kind=NET acct=021000021/4839201 paid=20261007 ref=7768 apref=FD-0937 do=PAY readback for payment instruction",
+  "verdict": "MISMATCH",
+  "problems": [
+   "RB: 'readback': expected key=value (positional slots are only RW1, TYPE and id)",
+   "RB: 'for': expected key=value (positional slots are only RW1, TYPE and id)",
+   "RB: 'payment': expected key=value (positional slots are only RW1, TYPE and id)",
+   "RB: 'instruction': expected key=value (positional slots are only RW1, TYPE and id)"
+  ],
+  "notes": []
+ },
+ "code_grade": {
+  "rid": "line-J20-supplier-gpt54mini",
+  "faulted": true,
+  "planted": "supplier",
+  "verdict": "MISMATCH",
+  "details": [],
+  "tiers": [
+   "form"
+  ],
+  "outcome": "slot_not_named"
+ }
+}

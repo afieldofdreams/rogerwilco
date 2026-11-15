@@ -1,0 +1,71 @@
+{
+ "rid": "line-J18-date-gpt54mini",
+ "set": "main",
+ "fmt": "line",
+ "pair": "J18-date",
+ "job": "J18",
+ "slot": "date",
+ "clean_k": null,
+ "author": "gpt54mini",
+ "attempts": [
+  {
+   "reply": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:ACL-2317 ask=PAY sup=ashdown amt=812.40 cur=GBP kind=GROSS acct=11-22-33/70214455 paid=20261012 ref=ACL-2317 apref=FD-0935",
+   "problems": [],
+   "line": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:ACL-2317 ask=PAY sup=ashdown amt=812.40 cur=GBP kind=GROSS acct=11-22-33/70214455 paid=20261012 ref=ACL-2317 apref=FD-0935",
+   "reply_was_line_alone": true,
+   "version_token_missing": false,
+   "served": [
+    "gpt-5.4-mini-2026-03-17"
+   ],
+   "cost": 0.00063795,
+   "usage": {
+    "prompt_tokens": 2335,
+    "completion_tokens": 79,
+    "cached_tokens": 2176,
+    "cache_write_tokens": null,
+    "reasoning_tokens": 0,
+    "cost": null,
+    "estimated": false,
+    "finish_reason": "stop"
+   },
+   "error": null,
+   "seconds": 1.0,
+   "at": "2026-11-15T00:41:47Z",
+   "problems_registered": []
+  }
+ ],
+ "accepted": 0,
+ "brief": "data/briefs/payer-line.txt",
+ "brief_sha": "838debda04463bb0",
+ "user": "A handover from scheduler has just arrived:\n\nRW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:ACL-2317 ask=PAY rb=exec sup=ashdown amt=812.40 cur=GBP kind=GROSS acct=11-22-33/70214455 paid=20261012 ref=ACL-2317 apref=FD-0935 appr=OK\n\nWrite your readback now.",
+ "changed": {
+  "payment_date": [
+   "2026-10-02",
+   "2026-10-12"
+  ]
+ },
+ "readback": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:ACL-2317 ask=PAY sup=ashdown amt=812.40 cur=GBP kind=GROSS acct=11-22-33/70214455 paid=20261012 ref=ACL-2317 apref=FD-0935",
+ "accepted_registered": 0,
+ "code_check": {
+  "ho_sent": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:ACL-2317 ask=PAY rb=exec sup=ashdown amt=812.40 cur=GBP kind=GROSS acct=11-22-33/70214455 paid=20261002 ref=ACL-2317 apref=FD-0935 appr=OK",
+  "rb": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:ACL-2317 ask=PAY sup=ashdown amt=812.40 cur=GBP kind=GROSS acct=11-22-33/70214455 paid=20261012 ref=ACL-2317 apref=FD-0935",
+  "verdict": "MISMATCH",
+  "problems": [
+   "tier5 execution: paid mismatch: HO 20261002 vs RB 20261012"
+  ],
+  "notes": []
+ },
+ "code_grade": {
+  "rid": "line-J18-date-gpt54mini",
+  "faulted": true,
+  "planted": "date",
+  "verdict": "MISMATCH",
+  "details": [
+   "date"
+  ],
+  "tiers": [
+   "tier5"
+  ],
+  "outcome": "caught"
+ }
+}

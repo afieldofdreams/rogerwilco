@@ -7,7 +7,7 @@ Prose first, then the line. What we were testing, the two ways a job can be said
 says what to whom and where a planted mistake was or was not caught, the scorecard, the flow that works with its three
 messages, how to use it, what not to do. The diagrams are inline SVG laid out from small specs below, so every test's
 picture shares one geometry and the colours come from site.css tokens (style attributes take var()). The figures are
-the ones on the research pages, studies 6 and 7, both receivers; when a study is re-run, change them here and
+the ones on the research pages, studies 6, 7 and 10; when a study is re-run, change them here and
 regenerate. The three lines are real: the app's tests validate them and check the readback against the hand-over.
 """
 from __future__ import annotations
@@ -170,7 +170,7 @@ HTML = f"""<!doctype html>
       <div class="layer" role="row"><h3 role="cell"><span class="n">4</span>Watch the radar</h3><p role="cell">The tower sees what the aircraft actually does, so a mistake is seen early.</p><p role="cell">The tool reports what it actually did and a program compares it with the plan. <b>Caught every fault on the Claude models, and 25 of 27 on the weak one, after the money moved.</b></p></div>
       <div class="layer" role="row"><h3 role="cell"><span class="n">5</span>The aircraft says no</h3><p role="cell">The flight computer will not fly the aircraft into the ground, whatever anyone says.</p><p role="cell">The tool will not pay until the program says yes, whatever any agent says. <b>No agent tried to pay early: 0 of 416 two-phase trials on Haiku, 0 of 378 on the weak model.</b></p></div>
     </div>
-    <p>rogerwilco is those layers written down for agents: three one-line messages, the checks a program runs on them, hosted here for any agent to call, and nine studies that planted mistakes and traps to find out what each layer catches. The rest of this page is those studies, one test at a time. <em>Roger</em> means "I received it"; <em>wilco</em> means "I understood it and I will do it".</p>
+    <p>rogerwilco is those layers written down for agents: three one-line messages, the checks a program runs on them, hosted here for any agent to call, and ten studies that planted mistakes and traps to find out what each layer catches. The rest of this page is those studies, one test at a time. <em>Roger</em> means "I received it"; <em>wilco</em> means "I understood it and I will do it".</p>
   </section>
 
   <section>
@@ -210,6 +210,7 @@ HTML = f"""<!doctype html>
     <div class="tiles">
       <div class="tile"><b>8 of 48</b><span>typed mistakes still went out, in a Sonnet run added after the main study. Every one was a job addressed to the wrong agent; the numbers matched, so the judge said yes.</span></div>
       <div class="tile"><b>38 of 190</b><span>correct readbacks the judge wrongly refused on the weak model, over details the record did not mention; 10 of 186 on gpt-5.5, 1 of 215 on Sonnet and 1 of 212 on Haiku.</span></div>
+      <div class="tile"><b>12 of 80</b><span>lookalike payees passed by GPT-5.4 mini as the judge, measured on its own in study 10. Haiku 5.5 passed none but stopped 70 of 560 correct readbacks; Sonnet 5.5 and GPT-5.5 passed none and stopped one between them.</span></div>
     </div>
     <p class="outcome is-warn"><span class="dot"></span>Partly worked. An AI judge checks what it is asked to check, and it gets tired of details a program never misses.</p>
   </section>
@@ -330,7 +331,7 @@ HTML = f"""<!doctype html>
     <h2>What not to do</h2>
     <ul>
       <li><b>Do not treat "the agent said it back" as the safety net.</b> On strong models it caught almost nothing, because they read well. On the weak model the echo was worse than nothing.</li>
-      <li><b>Do not use another AI to judge a prose readback before a payment.</b> It passed jobs addressed to the wrong agent because the numbers matched, and raised alarms over details that did not matter.</li>
+      <li><b>Do not use another AI to judge a prose readback before a payment.</b> It passed jobs addressed to the wrong agent because the numbers matched, and raised alarms over details that did not matter. Measured on its own, a large model judged one wrong value as well as code did; the small ones passed the lookalike payee or held good payments.</li>
       <li><b>Do not let an agent retype or hand-copy what the tool said.</b> Give the tool the job by its id, and let the program read the tool.</li>
       <li><b>Do not skip the report afterwards.</b> It is the only thing that catches a tool that says one thing and does another at the last moment.</li>
       <li><b>Do not switch to lines to save money.</b> They save little. Switch because a program can check them.</li>
@@ -338,7 +339,7 @@ HTML = f"""<!doctype html>
     </ul>
   </section>
 
-  <p class="foot">Every study, log and grade is public in the <a href="https://github.com/afieldofdreams/rogerwilco">rogerwilco repository</a>, and <a href="/research">the research pages</a> tell each of the nine studies; the four pre-registered ones, 6 to 9, carry every figure with its exact interval. Numbers above are from studies 6 and 7; the strong models were Claude Sonnet 5.5, Claude Haiku 5.5 and gpt-5.5, the weak one gpt-5.4-mini.</p>
+  <p class="foot">Every study, log and grade is public in the <a href="https://github.com/afieldofdreams/rogerwilco">rogerwilco repository</a>, and <a href="/research">the research pages</a> tell each of the ten studies; the five pre-registered ones, 6 to 10, carry every figure with its exact interval. Numbers above are from studies 6 and 7; the strong models were Claude Sonnet 5.5, Claude Haiku 5.5 and gpt-5.5, the weak one gpt-5.4-mini.</p>
 </main>
 <!-- site:footer -->
 <!-- /site:footer -->

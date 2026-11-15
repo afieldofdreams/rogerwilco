@@ -1,0 +1,71 @@
+{
+ "rid": "line-J17-currency-gpt54mini",
+ "set": "main",
+ "fmt": "line",
+ "pair": "J17-currency",
+ "job": "J17",
+ "slot": "currency",
+ "clean_k": null,
+ "author": "gpt54mini",
+ "attempts": [
+  {
+   "reply": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:FA-2026-131 ask=PAY sup=fenwick amt=4125.50 cur=USD kind=NET acct=77-01-02/19002847 paid=20261008 ref=FA-2026-131 apref=FD-0934",
+   "problems": [],
+   "line": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:FA-2026-131 ask=PAY sup=fenwick amt=4125.50 cur=USD kind=NET acct=77-01-02/19002847 paid=20261008 ref=FA-2026-131 apref=FD-0934",
+   "reply_was_line_alone": true,
+   "version_token_missing": false,
+   "served": [
+    "gpt-5.4-mini-2026-03-17"
+   ],
+   "cost": 0.00065895,
+   "usage": {
+    "prompt_tokens": 2339,
+    "completion_tokens": 83,
+    "cached_tokens": 2176,
+    "cache_write_tokens": null,
+    "reasoning_tokens": 0,
+    "cost": null,
+    "estimated": false,
+    "finish_reason": "stop"
+   },
+   "error": null,
+   "seconds": 1.1,
+   "at": "2026-11-15T00:41:45Z",
+   "problems_registered": []
+  }
+ ],
+ "accepted": 0,
+ "brief": "data/briefs/payer-line.txt",
+ "brief_sha": "838debda04463bb0",
+ "user": "A handover from scheduler has just arrived:\n\nRW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:FA-2026-131 ask=PAY rb=exec sup=fenwick amt=4125.50 cur=USD kind=NET acct=77-01-02/19002847 paid=20261008 ref=FA-2026-131 apref=FD-0934 appr=OK\n\nWrite your readback now.",
+ "changed": {
+  "currency": [
+   "GBP",
+   "USD"
+  ]
+ },
+ "readback": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:FA-2026-131 ask=PAY sup=fenwick amt=4125.50 cur=USD kind=NET acct=77-01-02/19002847 paid=20261008 ref=FA-2026-131 apref=FD-0934",
+ "accepted_registered": 0,
+ "code_check": {
+  "ho_sent": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:FA-2026-131 ask=PAY rb=exec sup=fenwick amt=4125.50 cur=GBP kind=NET acct=77-01-02/19002847 paid=20261008 ref=FA-2026-131 apref=FD-0934 appr=OK",
+  "rb": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:FA-2026-131 ask=PAY sup=fenwick amt=4125.50 cur=USD kind=NET acct=77-01-02/19002847 paid=20261008 ref=FA-2026-131 apref=FD-0934",
+  "verdict": "MISMATCH",
+  "problems": [
+   "tier5 execution: cur mismatch: HO GBP vs RB USD"
+  ],
+  "notes": []
+ },
+ "code_grade": {
+  "rid": "line-J17-currency-gpt54mini",
+  "faulted": true,
+  "planted": "currency",
+  "verdict": "MISMATCH",
+  "details": [
+   "currency"
+  ],
+  "tiers": [
+   "tier5"
+  ],
+  "outcome": "caught"
+ }
+}

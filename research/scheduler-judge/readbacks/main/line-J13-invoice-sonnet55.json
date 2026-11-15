@@ -1,0 +1,101 @@
+{
+ "rid": "line-J13-invoice-sonnet55",
+ "set": "main",
+ "fmt": "line",
+ "pair": "J13-invoice",
+ "job": "J13",
+ "slot": "invoice",
+ "clean_k": null,
+ "author": "sonnet55",
+ "attempts": [
+  {
+   "reply": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:CS-20546 ask=PAY sup=coleridge amt=89.90 cur=GBP kind=GROSS acct=60-16-13/33981204 paid=20261006 ref=CS-20546 apref=FD-0927",
+   "problems": [],
+   "line": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:CS-20546 ask=PAY sup=coleridge amt=89.90 cur=GBP kind=GROSS acct=60-16-13/33981204 paid=20261006 ref=CS-20546 apref=FD-0927",
+   "reply_was_line_alone": true,
+   "version_token_missing": false,
+   "served": [
+    "claude-sonnet-5-5"
+   ],
+   "cost": 0.0079297,
+   "usage": {
+    "input_tokens": 2,
+    "cache_creation_input_tokens": 943,
+    "cache_read_input_tokens": 3337,
+    "output_tokens": 382,
+    "output_tokens_details": {
+     "thinking_tokens": 265
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 943,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 2,
+      "output_tokens": 382,
+      "cache_read_input_tokens": 3337,
+      "cache_creation_input_tokens": 943,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 943
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "error": null,
+   "seconds": 6.2,
+   "at": "2026-11-15T00:52:07Z",
+   "problems_registered": []
+  }
+ ],
+ "accepted": 0,
+ "brief": "data/briefs/payer-line.txt",
+ "brief_sha": "838debda04463bb0",
+ "user": "A handover from scheduler has just arrived:\n\nRW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:CS-20546 ask=PAY rb=exec sup=coleridge amt=89.90 cur=GBP kind=GROSS acct=60-16-13/33981204 paid=20261006 ref=CS-20546 apref=FD-0927 appr=OK\n\nWrite your readback now.",
+ "changed": {
+  "item": [
+   "CS-20456",
+   "CS-20546"
+  ],
+  "reference": [
+   "CS-20456",
+   "CS-20546"
+  ]
+ },
+ "readback": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:CS-20546 ask=PAY sup=coleridge amt=89.90 cur=GBP kind=GROSS acct=60-16-13/33981204 paid=20261006 ref=CS-20546 apref=FD-0927",
+ "accepted_registered": 0,
+ "code_check": {
+  "ho_sent": "RW1 HO scheduler-1 p=pay from=scheduler to=payer item=inv:CS-20456 ask=PAY rb=exec sup=coleridge amt=89.90 cur=GBP kind=GROSS acct=60-16-13/33981204 paid=20261006 ref=CS-20456 apref=FD-0927 appr=OK",
+  "rb": "RW1 RB payer-1 p=pay re=scheduler-1 from=payer to=scheduler item=inv:CS-20546 ask=PAY sup=coleridge amt=89.90 cur=GBP kind=GROSS acct=60-16-13/33981204 paid=20261006 ref=CS-20546 apref=FD-0927",
+  "verdict": "MISMATCH",
+  "problems": [
+   "tier3 echo: item mismatch: HO inv:CS-20456 vs RB inv:CS-20546",
+   "tier5 execution: ref mismatch: HO CS-20456 vs RB CS-20546"
+  ],
+  "notes": []
+ },
+ "code_grade": {
+  "rid": "line-J13-invoice-sonnet55",
+  "faulted": true,
+  "planted": "invoice",
+  "verdict": "MISMATCH",
+  "details": [
+   "invoice"
+  ],
+  "tiers": [
+   "tier3",
+   "tier5"
+  ],
+  "outcome": "caught"
+ }
+}

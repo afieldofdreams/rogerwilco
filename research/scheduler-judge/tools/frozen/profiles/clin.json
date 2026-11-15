@@ -1,0 +1,268 @@
+{
+  "profile": "clin",
+  "version": "RW1",
+  "extends": "core",
+  "description": "Clinical assertions: one ST line per statement a clinical document makes, with what kind of statement it is, whether it is affirmed or negated, how certain, about whom, when, the value if there is one, and a pointer to the exact words that support it. The lines are the record; the document stays the evidence.",
+  "enums": {
+    "act": {
+      "OBS": "observed, examined or measured by the author",
+      "RPT": "reported by the patient or a third party, not verified by the author",
+      "ASSESS": "the author's assessment, diagnosis or impression",
+      "ORD": "ordered or requested: a test, a referral, an action asked of someone else",
+      "DONE": "carried out: a procedure, treatment or action that happened",
+      "RX": "a medicine prescribed, continued or changed by the author; chg says how",
+      "PLAN": "the author's intention or a scheduled next step",
+      "ADV": "advice or information given to the patient or carer"
+    },
+    "pol": {
+      "POS": "present or affirmed",
+      "NEG": "absent, denied or negated"
+    },
+    "cert": {
+      "CERT": "stated as fact",
+      "POSS": "possible, likely, suspected or queried",
+      "COND": "conditional on something else happening",
+      "HYPO": "hypothetical: a warning, a risk or a possibility discussed"
+    },
+    "subj": {
+      "PT": "the patient",
+      "FAM": "a family member",
+      "OTH": "someone else"
+    },
+    "time": {
+      "CUR": "current at the time of the document, including ongoing conditions",
+      "PAST": "before the document: history, a past event, resolved",
+      "FUT": "after the document: planned or expected"
+    },
+    "route": {
+      "PO": "by mouth",
+      "IV": "intravenous",
+      "IM": "intramuscular",
+      "SC": "subcutaneous",
+      "TOP": "topical",
+      "INH": "inhaled",
+      "NEB": "nebulised",
+      "PR": "rectal",
+      "SL": "sublingual",
+      "OTH": "another route, as quoted"
+    },
+    "freq": {
+      "OD": "once a day",
+      "BD": "twice a day",
+      "TDS": "three times a day",
+      "QDS": "four times a day",
+      "PRN": "as required",
+      "NOCTE": "at night",
+      "MANE": "in the morning",
+      "WKLY": "weekly",
+      "MTHLY": "monthly",
+      "STAT": "once, now",
+      "OTH": "another frequency, as quoted"
+    },
+    "chg": {
+      "START": "started or newly prescribed",
+      "STOP": "stopped",
+      "INC": "dose increased",
+      "DEC": "dose decreased",
+      "CONT": "continued unchanged",
+      "SWITCH": "replaced by another medicine",
+      "HOLD": "withheld for now",
+      "CHG": "changed in another way: route, formulation, frequency"
+    },
+    "who": {
+      "CLIN": "the author or another clinician",
+      "PT": "the patient",
+      "REL": "a relative or carer",
+      "OTH": "another source: a laboratory, another service, unknown"
+    }
+  },
+  "asks": {},
+  "slots": [
+    {
+      "key": "act",
+      "type": "enum:act",
+      "desc": "what kind of statement this is",
+      "on": [
+        "ST"
+      ],
+      "required": true
+    },
+    {
+      "key": "pol",
+      "type": "enum:pol",
+      "desc": "affirmed or negated",
+      "on": [
+        "ST"
+      ],
+      "required": true
+    },
+    {
+      "key": "cert",
+      "type": "enum:cert",
+      "desc": "how certain the document is",
+      "on": [
+        "ST"
+      ],
+      "required": true
+    },
+    {
+      "key": "subj",
+      "type": "enum:subj",
+      "desc": "who the statement is about",
+      "on": [
+        "ST"
+      ],
+      "required": true
+    },
+    {
+      "key": "time",
+      "type": "enum:time",
+      "desc": "when, relative to the document",
+      "on": [
+        "ST"
+      ],
+      "required": true
+    },
+    {
+      "key": "src",
+      "type": "token",
+      "desc": "where the words are: doc:<id>#l<n> or doc:<id>#l<n>-<m>, the numbered line(s) of the source; exactly one per line",
+      "on": [
+        "ST",
+        "HO",
+        "DN"
+      ],
+      "required": false
+    },
+    {
+      "key": "res",
+      "type": "num",
+      "desc": "the measured or reported value as written, no units (7.2, 148/92, 3/10)",
+      "on": [
+        "ST"
+      ],
+      "required": false
+    },
+    {
+      "key": "unit",
+      "type": "token",
+      "desc": "unit of res as written, no spaces (mmol/L, mmHg, kg, %)",
+      "on": [
+        "ST"
+      ],
+      "required": false
+    },
+    {
+      "key": "dose",
+      "type": "token",
+      "desc": "medicine dose as written, no spaces (500mg, 1g, 2puffs)",
+      "on": [
+        "ST"
+      ],
+      "required": false
+    },
+    {
+      "key": "route",
+      "type": "enum:route",
+      "desc": "medicine route",
+      "on": [
+        "ST"
+      ],
+      "required": false
+    },
+    {
+      "key": "freq",
+      "type": "list:enum:freq",
+      "desc": "medicine frequency; several join with + (QDS+PRN)",
+      "on": [
+        "ST"
+      ],
+      "required": false
+    },
+    {
+      "key": "chg",
+      "type": "enum:chg",
+      "desc": "what happened to a medicine at this encounter",
+      "on": [
+        "ST"
+      ],
+      "required": false
+    },
+    {
+      "key": "site",
+      "type": "token",
+      "desc": "body site or laterality, lowercase, hyphens (left-knee, right-iliac-fossa)",
+      "on": [
+        "ST"
+      ],
+      "required": false
+    },
+    {
+      "key": "who",
+      "type": "enum:who",
+      "desc": "who said or did it; omit when it is the author",
+      "on": [
+        "ST"
+      ],
+      "required": false
+    },
+    {
+      "key": "when",
+      "type": "token",
+      "desc": "date or interval as written, no spaces (2009, 20260914, 6w, 3d, 10y)",
+      "on": [
+        "ST"
+      ],
+      "required": false
+    },
+    {
+      "key": "n",
+      "type": "int:0-9999",
+      "desc": "count of lines",
+      "on": [
+        "HO",
+        "DN",
+        "ST"
+      ],
+      "required": false
+    }
+  ],
+  "agents": [
+    "extractor",
+    "reviewer",
+    "record"
+  ],
+  "item_namespace": "kind:concept",
+  "item_examples": [
+    "sym:chest-pain",
+    "dx:type-2-diabetes",
+    "med:metformin",
+    "proc:appendicectomy",
+    "meas:hba1c",
+    "alg:penicillin",
+    "ref:cardiology",
+    "soc:smoking",
+    "func:walking",
+    "fu:review"
+  ],
+  "item_kinds": {
+    "sym": "symptom, sign, examination or investigation finding",
+    "dx": "diagnosis, condition or problem",
+    "med": "medicine",
+    "proc": "procedure, operation, investigation or intervention",
+    "meas": "measurement with a value: vital sign, test result, score",
+    "alg": "allergy or intolerance",
+    "ref": "referral",
+    "soc": "social or lifestyle fact",
+    "func": "functional status, mobility, exercise tolerance",
+    "fu": "follow-up, review or appointment"
+  },
+  "asks_used": [
+    "EXTRACT",
+    "REVIEW",
+    "FIX"
+  ],
+  "translation": {
+    "note": "The lines are the record. One ST line per statement the document makes, never merged: item=<kind>:<concept> with the concept in lowercase hyphenated words, generic names, no abbreviations; act pol cert subj time on every line; exactly one src= naming the numbered line(s) the words are on; the tail is the shortest verbatim quote from those lines that supports the statement, nothing else. A statement that corrects an earlier one carries re=<id of the line it replaces>. A statement made twice gets one line, the first occurrence. Checked in code: src line exists, the tail is found in it, one src per line, item kind is one of the ten."
+  }
+}
