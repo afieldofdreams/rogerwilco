@@ -24,7 +24,7 @@ def version() -> str:
     """A short digest of the stylesheet and the script, appended to their URLs so a deploy is never served stale
     styles from a cache between the server and the browser."""
     h = hashlib.sha256()
-    for name in ("site.css", "site.js"):
+    for name in ("site.css", "site.js", "posthog.js"):
         h.update((STATIC / name).read_bytes())
     return h.hexdigest()[:8]
 
@@ -61,6 +61,9 @@ def head(page: str = "", path: str = "/") -> str:
             '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=DM+Mono:wght@400;500&display=swap">\n'
             f'<link rel="stylesheet" href="/static/site.css?v={v}">\n'
             f'<script src="/static/site.js?v={v}" defer></script>\n'
+            '<script async src="https://flight-deck.crox.io/static/track.js"></script>\n'
+            f'<script src="/static/posthog.js?v={v}"></script>\n'
+            '<script async src="https://crox.io/conversion.js"></script>\n'
             '<noscript><style>.site-nav{display:flex!important}.nav-toggle{display:none!important}</style></noscript>\n'
             '<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 32 32\'%3E%3Crect width=\'32\' height=\'32\' rx=\'6\' fill=\'%23B8402A\'/%3E%3Cpath d=\'M8 17l5 5 11-12\' fill=\'none\' stroke=\'%23fff\' stroke-width=\'3.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'/%3E%3C/svg%3E">')
 

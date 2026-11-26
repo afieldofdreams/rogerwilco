@@ -862,6 +862,29 @@ def test_security_headers(client):
     assert api.headers["x-content-type-options"] == "nosniff" and "content-security-policy" not in api.headers
 
 
+def test_every_page_runs_the_crox_tracking_block_in_order(client):
+    """track.js, then the PostHog init, then the conversion beacon: the init must exist before the beacon runs or the
+    beacon starts a second client and every pageview counts twice. The init is a file, so script-src stays free of
+    'unsafe-inline', and the CSP admits exactly the hosts the block talks to."""
+    from pathlib import Path
+    static = Path(__file__).resolve().parents[1] / "static"
+    track, init, beacon = "flight-deck.crox.io/static/track.js", "/static/posthog.js", "crox.io/conversion.js\""
+    for f in sorted(static.rglob("*.html")):
+        html = f.read_text()
+        assert html.count(track) == html.count(init) == html.count(beacon) == 1, f
+        assert html.index(track) < html.index(init) < html.index(beacon), f
+        assert "posthog.init" not in html, f
+    assert (static / "posthog.js").read_text().count("posthog.init(") == 1
+    csp = client.get("/").headers["content-security-policy"]
+    script_src = csp.split("script-src")[1].split(";")[0]
+    assert "'unsafe-inline'" not in script_src
+    for host in ("https://flight-deck.crox.io", "https://crox.io", "https://eu-assets.i.posthog.com"):
+        assert host in script_src
+    connect_src = csp.split("connect-src")[1].split(";")[0]
+    for host in ("https://eu.i.posthog.com", "https://flight-deck.crox.io"):
+        assert host in connect_src
+
+
 def test_gate_bounds_one_citation():
     from app import service as svc
     doc = "\n".join("word " * 20 for _ in range(300))

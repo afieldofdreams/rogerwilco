@@ -264,8 +264,8 @@ MAX_BODY = 1_000_000
 
 # The site loads its own script and stylesheet and Google Fonts, and uses inline styles; it has no inline script. The
 # interactive API docs at /docs load Swagger UI from a CDN with an inline script, so they are left without the policy.
-CSP = ("default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
-       "font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; "
+CSP = ("default-src 'self'; script-src 'self' https://flight-deck.crox.io https://crox.io https://eu-assets.i.posthog.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+       "font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://eu.i.posthog.com https://eu-assets.i.posthog.com https://flight-deck.crox.io; object-src 'none'; "
        "base-uri 'self'; form-action 'self'; frame-ancestors 'none'")
 SECURITY_HEADERS = [(b"x-content-type-options", b"nosniff"), (b"referrer-policy", b"strict-origin-when-cross-origin"),
                     (b"x-frame-options", b"DENY"), (b"permissions-policy", b"camera=(), microphone=(), geolocation=()")]
