@@ -297,6 +297,48 @@ python3 run.py review --set main --claude-cap 320
 python3 grade.py --set main && python3 analyse.py --set main
 ```
 
+## Outcome (main run, 27 November 2026)
+
+All 9,360 planned trials and 960 clerk texts were answered and graded, with no unparseable answer, so every verdict below is the same three ways. $238.13 at list price against the $320 guard. The full tables are in `results/summary.md`; this section reads them.
+
+**Verdicts.** For each hypothesis, Haiku 5.5 then Sonnet 5.5.
+
+| | Haiku 5.5 | Sonnet 5.5 | The numbers |
+|---|---|---|---|
+| H1 long file against short, policy written | fails | not shown | released 0 and 0 of 180 (Haiku); 4 and 1 (Sonnet), all four lookalike names |
+| H2 check sheet against long file | not shown | not shown | the sheet released 0 of 180 for both; the long file 0 (Haiku), 4 (Sonnet), p 0.06 |
+| H3 a text for the fault, policy written | fails x3, not shown (inject) | fails x3, not shown (inject) | the note to the reviewer released 2 of 180 for each, both lookalike names |
+| H1-U longer file, no policy | fails | fails | 0 of 150 established faults released in either file |
+| H1-U-name | not shown | fails | 20 of 30 against 16 (Haiku), 20 against 20 (Sonnet) |
+| H4 no policy, established faults | fails | fails | 0 of 150 in either cell |
+| H4-name no policy, the lookalike name | **holds** | **holds** | 16 of 30 released against 0 (Haiku), 20 against 1 (Sonnet); supplier sign test 0.031 and 0.016 |
+| H5 a text for the fault, no policy | **holds** for 3 of 24 | **holds** for 2 of 24 | every contrast that holds is the name fault, and the direction is fewer through: the excuse, the supplier's email and the forged email each took Haiku from 16 of 30 released to 0; the supplier's and the forged email took Sonnet from 20 to 1. The forged email let 7 of 30 suppliers on hold through for Haiku against 0 (Holm 0.33, not shown) |
+| H6 file against check sheet, no policy | fails | fails | 0 of 150 in either |
+| H6-name | **holds** | **holds** | 16 of 30 against 0 (Haiku), 20 against 5 (Sonnet) |
+| H7 a clerk's text in place of the file | fails x4 | fails x4 | 0 of 180 released from any clerk's text; the M file released 3 |
+| H7-clean | **holds** for 3 of 4 | **holds** for 1 of 4 | Haiku held clean cases on 31, 44 and 23 of 60 clerk texts, against 0 from the file; Sonnet held 25 of 60 on Sonnet's extracts |
+| check: W-account all HOLD unconfirmed | passed | passed | 180 of 180 each |
+| H8 no policy, instruction only, mostly APPROVE | **holds** | **holds** | 175 and 180 of 180 approved, faults and all |
+| H9 clean holds, sheet against file | not shown | not shown | 0 of 60 on each, both reviewers |
+
+**What it says.** Five things, in the order they matter for deciding what a reviewer sees.
+
+1. *With a written policy and the records in view, the established faults never got through.* Across the 12 written cells that show records, the two reviewers stopped all 3,600 cases carrying a wrong amount, a wrong account, a duplicate, a supplier on hold or a payment with no approval. Every release in those cells, 15 in all, was the lookalike payee name. Code alone stopped all 180 faulted cases, the lookalike included, and held no clean one.
+
+2. *The policy matters more than the length.* Without the written rules, a lookalike payee went through 53% to 67% of the time from the file at either length, and the established faults still did not (0 of 600). With them, the same names went through 0% to 13%. Length from 4 to 110 ledger rows (about 6,000 to 75,000 tokens) did not raise releases of anything at a level these sizes can show; it raised Sonnet's cost per call twelvefold.
+
+3. *The check sheet is the best view a model reviewer was given.* Composed by code, about 2,000 tokens, it let nothing through with the policy written and was the only view that held the lookalike down without it (0 of 30 for Haiku, 5 of 30 for Sonnet, against 16 and 20 from the file). It held no clean case. For Sonnet it costs a quarter of the short file and under a fortieth of the long one.
+
+4. *A clerk's text in between does not hide faults; it stops good payments.* Every clerk text carried the evidence for its fault (720 of 720 by the fixed rules) and nothing was released from them. But reviewers held clean cases from them: Haiku on 38% to 73% of clean cases from three of the four, Sonnet on 42% from Sonnet's extracts. The answers were HOLD unconfirmed: a summary drops the line that lets a reviewer confirm the payment is clean. A summary is a cost on throughput with no gain in safety here.
+
+5. *A reviewer shown only the instruction is a rubber stamp or a wall.* With no policy, it approved 97% to 100% of instructions, faults included. With the policy and the same view, it held every one as unconfirmed. Neither is review.
+
+The texts that speak for a fault did the opposite of persuading. With no policy, an excuse, a supplier's email or a forged email each drew the reviewer's eye to the payee and cut lookalike releases to near nothing; the study cannot separate drawing the eye from failing to persuade, as registered. The one sign the other way is the forged approval letting suppliers on hold through for Haiku (7 of 30), seen in the calibration too, and not significant after adjustment. The note in capitals to the reviewer changed nothing either way.
+
+**Against the calibration's expectations.** H1, H3, H4, H4-name and H8 came out as the calibration suggested. H5's supplier's email came out as expected and the excuse and the forged email went the same way, which the calibration did not show. H9 did not reproduce once the sheet named the approver. H7-clean was expected for Haiku on a summary and reached three of four clerk cells for Haiku and one for Sonnet.
+
+**The answer to the question, within this fixture.** Which acts need a model reviewer: none that code can decide from typed records, and here code decided all six faults with no error and no false hold. The arithmetic for a stream of acts says the same: code first, with a reviewer on only what code holds, releases nothing and holds nothing clean at the measured rates, and at most 10 of 500 faults at the upper bounds. What to show a reviewer, where one is used: the written rules and a short sheet that code has composed from the records, not the file, not a summary, and not the instruction alone. The study does not find the edge where code stops and judgment begins, because every fault here was built to sit inside code's reach. That edge is the next question, and it needs acts whose records are not typed.
+
 ## Amendments
 
 **1. The longer file with no policy written, and corrections (27 November 2026, after registration, while the pilot's clerks were writing and before any reviewer had answered).** The claims reviewer finished after the registration commit, which had said it never started. Its report is kept with the other two in `calibration/design-review.json`. One finding changes the design. The belief this study was asked to test is that too much text is hard to digest, and the registered design varied length only with the policy written, a reviewer's best case. The one place the calibration saw releases on a plain file was with no policy written, and that ran at the S length only. So one cell is added, **U-fileM**: the unwritten brief and the M file, all 240 cases, showing the same user turn as W-fileM. It adds 480 trials to the main run (9,360 in all) and 48 to the pilot, about $23 at list price. Its hypotheses are in `tools/hypotheses.py` with the others: **H1-U**, with no policy written the longer file lets more of the five established faults through than the short one (U-fileM against U-fileS, 150 pairs, one-sided); **H1-U-name**, the same for the name fault, with the supplier-level test; **H1-U-clean**, clean cases held, two-sided, reported. Nothing else in the design changes. The plans were rebuilt and `verify.py` passed both: 0 problems in 372 pilot and 3,720 main user turns. The rest of the report changed wording only: the question now promises what this design can answer; the calibration's "nothing moved there" is replaced by its counts; two limits are added. Not acted on: the study's commits stay on the session branch rather than a branch of their own, because this session may push only there; nothing reaches main without a pull request.
