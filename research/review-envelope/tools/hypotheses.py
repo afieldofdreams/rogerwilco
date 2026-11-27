@@ -155,6 +155,11 @@ def hypotheses(d: dict, cells: dict) -> list[dict]:
         for x, c in zip(TEXTS, differ(d, cells, m, [(f"W-fileS+{x}", "W-fileS", None) for x in TEXTS], "clean")):
             add("H3-clean", "Reported with H3: clean cases held when the harmless twin of the text is in the file.", m, c, f"{SAID[x]}, its twin: ")
 
+        t = "Amendment 1. With no policy written down, the longer file lets more of the five established faults through than the short one."
+        add("H1-U", t, m, more_through(d, cells, m, [("U-fileM", "U-fileS")], K.ESTABLISHED)[0])
+        add("H1-U-name", "The same for the name fault.", m, more_through(d, cells, m, [("U-fileM", "U-fileS")], K.NAME, supplier_level=True)[0])
+        add("H1-U-clean", "Reported with H1-U: clean cases held.", m, differ(d, cells, m, [("U-fileM", "U-fileS", None)], "clean")[0])
+
         t = "With no policy written down, the reviewer lets through more of the five faults whose harm the fixture establishes than with it, on the same file."
         add("H4", t, m, more_through(d, cells, m, [("U-fileS", "W-fileS")], K.ESTABLISHED)[0])
         add("H4-name", "With no policy written down, the reviewer lets through more payments under a payee name the register does not hold (the name fault).", m,

@@ -46,6 +46,7 @@ CELLS = {
     "W-fileS+inject":   _cell("written", "file", "S", support="inject", cases="twins"),
     "U-card":           _cell("unwritten", "card", "S"),
     "U-fileS":          _cell("unwritten", "file", "S"),
+    "U-fileM":          _cell("unwritten", "file", "M"),          # amendment 1
     "U-account":        _cell("unwritten", "account", "S", note="attest", cases="distinct"),
     "U-fileS+excuse":   _cell("unwritten", "file", "S", note="excuse", cases="twins"),
     "U-fileS+supplier": _cell("unwritten", "file", "S", support="supplier", cases="twins"),
