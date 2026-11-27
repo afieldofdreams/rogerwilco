@@ -885,6 +885,16 @@ def test_every_page_runs_the_crox_tracking_block_in_order(client):
         assert host in connect_src
 
 
+def test_api_docs_page_runs_the_tracking_block_once(client):
+    """/docs is rendered by FastAPI, not stamped, and it is in the nav of every page: without the block here a visit to
+    the API reference went uncounted. Same rule as the stamped pages: one of each tag, in order."""
+    html = client.get("/docs").text
+    track, init, beacon = "flight-deck.crox.io/static/track.js", "/static/posthog.js", "crox.io/conversion.js\""
+    assert html.count(track) == html.count(init) == html.count(beacon) == 1
+    assert html.index(track) < html.index(init) < html.index(beacon) < html.index("swagger-ui-bundle.js")
+    assert "/openapi.json" in html
+
+
 def test_gate_bounds_one_citation():
     from app import service as svc
     doc = "\n".join("word " * 20 for _ in range(300))
