@@ -2,13 +2,15 @@
 
 Run from the repo root:  uvicorn app.main:app --reload
 """
+import hashlib
 import json
 from contextlib import asynccontextmanager
 
 from fastapi import APIRouter, FastAPI, HTTPException, Query, Request
 from fastapi.exceptions import RequestValidationError
+from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse, Response
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -333,6 +335,16 @@ def _error(status: int, message: str, headers=None) -> JSONResponse:
     return JSONResponse({"error": message}, status_code=status, headers=headers)
 
 
+# The crox.io tracking block, in the order every stamped page carries it (see app/tools/stamp.py): track.js, the
+# PostHog init, then the conversion beacon, which finds window.posthog and starts no second client. /docs is the one
+# HTML page FastAPI renders rather than stamp.py, and it is "api" in the nav of every page, so it carries the block
+# here. Change the block in stamp.py and here together; a test holds /docs to the same one-of-each, in-order rule.
+_PH_VERSION = hashlib.sha256((svc.APP_DIR / "static" / "posthog.js").read_bytes()).hexdigest()[:8]
+TRACKING = ('<script async src="https://flight-deck.crox.io/static/track.js"></script>\n'
+            f'<script src="/static/posthog.js?v={_PH_VERSION}"></script>\n'
+            '<script async src="https://crox.io/conversion.js"></script>\n')
+
+
 def create_app() -> FastAPI:
     """A new app with its own MCP server. Build one per test run; the MCP session manager starts once per app."""
     mcp_routes, mcp_run = rw_mcp.create()
@@ -342,7 +354,8 @@ def create_app() -> FastAPI:
         async with mcp_run():
             yield
 
-    app = FastAPI(title="rogerwilco", version="0.1.0", description=DESCRIPTION, lifespan=lifespan, redoc_url=None)
+    app = FastAPI(title="rogerwilco", version="0.1.0", description=DESCRIPTION, lifespan=lifespan, redoc_url=None,
+                  docs_url=None)
     app.add_middleware(
         CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"],
         expose_headers=["Mcp-Session-Id", "Mcp-Protocol-Version"],
@@ -367,6 +380,11 @@ def create_app() -> FastAPI:
     @app.exception_handler(Exception)
     async def unexpected(_request: Request, _exc: Exception):
         return _error(500, "internal error")
+
+    @app.get("/docs", include_in_schema=False)
+    async def docs() -> HTMLResponse:
+        page = get_swagger_ui_html(openapi_url=app.openapi_url, title=f"{app.title} - Swagger UI").body.decode()
+        return HTMLResponse(page.replace("<head>", "<head>\n" + TRACKING, 1))
 
     app.add_middleware(Guard)   # added last, so it runs first: the cap applies before CORS or any route reads
     app.include_router(router)
