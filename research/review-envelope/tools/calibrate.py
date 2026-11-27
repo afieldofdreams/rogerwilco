@@ -4,8 +4,10 @@ effects could be seen at all. Nothing here is part of the registered pilot or ma
 
     python3 calibrate.py <name> --models haiku55,sonnet55 --cells "card::12,file:S:12,file:M:12,file:M:12:attest" [--jobs 8]
 
-A cell is view:length:targets[:note][:faults]; targets is how many target payments, each used once clean and once
-per fault kind; faults is a plus-joined subset of the fault kinds, or "none" for clean cases only.
+A cell is view:length:targets[:note][:faults][:support][:policy]; policy is written (the default) or unwritten; targets is how many target payments, each used once clean and
+once per fault kind; faults is a plus-joined subset of the fault kinds, or "none" for clean cases only; support is one
+of supplier, forged, inject (a document in the file that speaks for the fault). For the summary and extract views clerk
+(Sonnet 5.5) is called first and its text is kept in ../calibration/<name>.stage1.jsonl.
 Writes ../calibration/<name>.jsonl, one line per call, resumable.
 """
 from __future__ import annotations
@@ -64,15 +66,19 @@ def build(cells: list[str], models: list[str]) -> list[dict]:
         parts = cell.split(":")
         view, length, n = parts[0], (parts[1] or "S"), int(parts[2])
         note = parts[3] if len(parts) > 3 and parts[3] else None
-        faults = parts[4].split("+") if len(parts) > 4 else ["none"] + K.FAULTS
+        faults = parts[4].split("+") if len(parts) > 4 and parts[4] else ["none"] + K.FAULTS
+        support = parts[5] if len(parts) > 5 and parts[5] else None
+        policy = parts[6] if len(parts) > 6 and parts[6] else "written"
         for t in targets(n):
             for f in faults:
                 fault = None if f == "none" else f
                 case = K.make_case(t, fault, length, f"cal:{t['id']}:{length}")
-                user = K.render(case, view, note) + K.USER_TAIL
+                if support and fault is None:
+                    continue
+                user = None if view in ("summary", "extract") else K.render(case, view, note, support=support) + K.USER_TAIL
                 for m in models:
-                    out.append({"tid": f"{view}-{length}-{note or 'nonote'}-{t['id']}-{f}-{m}", "view": view, "length": length, "note": note,
-                                "job": t["id"], "fault": fault, "model": m, "system": K.brief(view), "user": user})
+                    out.append({"tid": f"{view}-{length}-{note or 'nonote'}-{support or 'nosup'}-{policy}-{t['id']}-{f}-{m}", "view": view, "length": length, "note": note,
+                                "support": support, "policy": policy, "job": t["id"], "fault": fault, "model": m, "system": K.brief(view, policy), "user": user, "_case": case})
     return out
 
 
@@ -89,12 +95,42 @@ def main() -> None:
     plan = [t for t in build(a.cells.split(","), a.models.split(",")) if t["tid"] not in done]
     lock = threading.Lock()
 
+    s1path = OUT / f"{a.name}.stage1.jsonl"
+    s1 = {json.loads(ln)["key"]: json.loads(ln) for ln in s1path.read_text().splitlines() if ln.strip()} if s1path.exists() else {}
+    s1lock = threading.Lock()
+    s1locks: dict = {}
+
+    def stage1(t):
+        import grade as G
+        key = f"{t['view']}:{t['job']}:{t['fault']}:{t['length']}"
+        with s1lock:
+            lk = s1locks.setdefault(key, threading.Lock())
+        with lk:
+            if key in s1:
+                return s1[key]["text"]
+            r = C.call_claude("sonnet55", K.clerk_brief(t["view"]), K.view_file(t["_case"]) + K.CLERK_TAIL[t["view"]])
+            if r.get("text") is None:
+                return None
+            rec = {"key": key, "view": t["view"], "job": t["job"], "fault": t["fault"], "text": r["text"], "cost": r.get("cost"),
+                   "evidence": G.carries(r["text"], t["_case"]), "words": len(r["text"].split())}
+            with lock:
+                with s1path.open("a") as fh:
+                    fh.write(json.dumps(rec) + "\n")
+            s1[key] = rec
+            return rec["text"]
+
     def one(t):
+        if t["user"] is None:
+            text = stage1(t)
+            if text is None:
+                return "error"
+            t["user"] = K.render(t["_case"], t["view"], stage1=text) + K.USER_TAIL
+            t["carries"] = s1[f"{t['view']}:{t['job']}:{t['fault']}:{t['length']}"]["evidence"].get("carries")
         r = C.call_claude(t["model"], t["system"], t["user"])
         if r.get("text") is None:
             return "error"
         ans = parse(r.get("text"))
-        row = {k: v for k, v in t.items() if k not in ("system", "user")}
+        row = {k: v for k, v in t.items() if k not in ("system", "user", "_case")}
         row.update({"chars": len(t["user"]), "answer": r.get("text"), **ans, "outcome": grade(ans, t["fault"]), "cost": r.get("cost"),
                     "seconds": r.get("seconds"), "served": r.get("served"),
                     "tokens": {k: (r.get("usage") or {}).get(k) for k in ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens", "output_tokens")}})
