@@ -34,7 +34,7 @@ def cases() -> list[dict]:
     out = []
     for i, (t, f) in enumerate(zip(held, FAULTS)):
         c = K.make_case(t, f, "XS", f"human:{t['id']}")
-        out.append({"n": i + 1, "fault": f, "reason": K.REASON_OF_FAULT.get(f) if f else None,
+        out.append({"n": i + 1, "fault": f, "reason": sorted(K.REASONS_OF_FAULT[f])[0] if f else None,
                     "sheet": K.view_card(c), "file": K.view_file(c), "words_file": len(K.view_file(c).split())})
     order = list(range(8))
     random.Random("human-order").shuffle(order)

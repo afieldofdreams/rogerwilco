@@ -4,14 +4,15 @@
   run.py stage1 --set pilot|main [--jobs N] [--claude-cap DOLLARS]
   run.py review --set pilot|main [--reviewers a,b] [--cells c1,c2] [--jobs N] [--claude-cap DOLLARS] [--limit N]
 
-stage1: for each summary or extract in the plan, clerk is given its brief (data/briefs/clerk-<kind>.txt) as the system
-prompt and the whole file of the case, the instruction at its end, as the user turn. One call; the reply is kept as
-written in summaries/<set>/<kind>.jsonl. Nothing is checked or written again: grade.py classes each text afterwards.
+stage1: for each summary or extract in the plan, a clerk model is given its brief (data/briefs/clerk-<kind>.txt) as the
+system prompt and, as the user turn, the whole file of the case WITHOUT payer's instruction, then the number of the
+invoice being paid. One call; the reply is kept as written in summaries/<set>/<kind>.<clerk>.jsonl. Nothing is checked
+or written again: grade.py classes each text afterwards.
 
 review: for each trial, the reviewer model is given data/briefs/reviewer-<view>.txt as the system prompt and the view of
 the case as the user turn. One call; a call is repeated only on a provider error. trials/<set>/<cell>.<model>.jsonl
 holds one line per trial: the answer as written, the served model, tokens, cost, and the hash and length of the user
-turn. The user turn itself is not stored when it is long: it is rebuilt from the case by code (`run.py prompt <tid>`)
+turn. A trial id that is recorded twice stops the run and the grading. The user turn itself is not stored when it is long: it is rebuilt from the case by code (`run.py prompt <tid>`)
 and its hash is checked against the stored one.
 
 Every model call is written to results/ledger.jsonl. Claude runs through `claude -p` on the account's plan; its cost
@@ -56,20 +57,36 @@ def append(path, row: dict) -> None:
             fh.write(json.dumps(row, ensure_ascii=False) + "\n")
 
 
-def stage1_path(set_: str, kind: str):
-    return C.SUMMARIES / set_ / f"{kind}.jsonl"
+def stage1_path(set_: str, kind: str, author: str):
+    return C.SUMMARIES / set_ / f"{kind}.{author}.jsonl"
 
 
 def trial_path(t: dict):
     return C.TRIALS / t["set"] / f"{t['cell']}.{t['reviewer']}.jsonl"
 
 
+def keyed(rows: list[dict], key: str, where: str) -> dict:
+    """One row per id. Two rows with one id would mean a trial was called twice; that is refused, not resolved."""
+    out: dict = {}
+    for r in rows:
+        if r[key] in out:
+            raise SystemExit(f"{where}: {r[key]} is recorded twice; one call per trial is the rule. Remove the later line by hand and say so in the README.")
+        out[r[key]] = r
+    return out
+
+
 def load_stage1(set_: str) -> dict:
-    return {r["sid"]: r for kind in ("summary", "extract") for r in read_lines(stage1_path(set_, kind))}
+    rows = [r for kind in ("summary", "extract") for a in B.CLERKS for r in read_lines(stage1_path(set_, kind, a))]
+    return keyed(rows, "sid", f"summaries/{set_}")
+
+
+def load_answers(set_: str, p: dict) -> dict:
+    rows = [r for cell in p["cells"] for m in p["reviewers"] for r in read_lines(C.TRIALS / set_ / f"{cell}.{m}.jsonl")]
+    return keyed(rows, "tid", f"trials/{set_}")
 
 
 def stage1_user(st: dict) -> str:
-    return K.view_file(B.case_of(st)) + K.CLERK_TAIL[st["kind"]]
+    return K.clerk_user(B.case_of(st), st["kind"])
 
 
 def review_user(t: dict, s1: dict) -> str | None:
@@ -88,7 +105,7 @@ def write_stage1(st: dict, ledger: C.Ledger) -> str:
     r = C.call(st["author"], K.clerk_brief(st["kind"]), user, ledger, f"stage1-{st['kind']}", st["sid"])
     if r.get("text") is None:
         return "error"
-    append(stage1_path(st["set"], st["kind"]), {**st, "text": r["text"], "served": r.get("served"), "cost": r.get("cost"), "usage": r.get("usage"),
+    append(stage1_path(st["set"], st["kind"], st["author"]), {**st, "text": r["text"], "served": r.get("served"), "cost": r.get("cost"), "usage": r.get("usage"),
                                                  "seconds": r.get("seconds"), "attempts": r.get("attempts"), "at": C.now(),
                                                  "user_sha": C.sha(user), "user_chars": len(user), "brief_sha": C.sha(K.clerk_brief(st["kind"]))})
     return "written"
@@ -121,7 +138,7 @@ def stamp_manifest(set_: str, cmd: str, cap) -> None:
         "tools_sha": {f.name: C.sha(f) for f in sorted(C.HERE.glob("*.py"))},
         "briefs_sha": {f.stem: C.sha(f) for f in sorted(C.BRIEFS.glob("*.txt"))},
         "plan_sha": C.sha(C.DATA / f"plan-{set_}.json"), "claude_cli": C.claude_version(),
-        "models": {k: v for k, v in C.MODELS.items() if k in set(B.REVIEWERS) | {B.CLERK}},
+        "models": {k: v for k, v in C.MODELS.items() if k in set(B.REVIEWERS) | set(B.CLERKS)},
         "env_not_passed_to_claude": list(C.DROP_ENV),
     })
     C.write_json(path, man)
@@ -193,16 +210,13 @@ def main() -> int:
         done = set(load_stage1(a.set))
         items = [st for st in p["stage1"] if st["sid"] not in done]
         if a.limit:
-            items = [st for kind in ("summary", "extract") for st in [x for x in items if x["kind"] == kind][: a.limit]]
+            items = [st for cell in p["cells"] for st in [x for x in items if x["cell"] == cell][: a.limit]]
         counts = run_pool(lambda st: write_stage1(st, ledger), items, a.jobs, "stage1")
     else:
         s1 = load_stage1(a.set)
         want_r = set(filter(None, a.reviewers.split(","))) or set(p["reviewers"])
         want_c = set(filter(None, a.cells.split(","))) or set(p["cells"])
-        done = set()
-        for cell in p["cells"]:
-            for m in p["reviewers"]:
-                done |= {r["tid"] for r in read_lines(C.TRIALS / a.set / f"{cell}.{m}.jsonl")}
+        done = set(load_answers(a.set, p))
         items = [t for t in p["trials"] if t["reviewer"] in want_r and t["cell"] in want_c and t["tid"] not in done]
         if a.limit:
             seen: dict = {}
