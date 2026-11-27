@@ -80,7 +80,7 @@ def review_user(t: dict, s1: dict) -> str | None:
         if rec is None:
             return None
         text = rec["text"]
-    return K.render(case, t["view"], t["note"], stage1=text) + K.USER_TAIL
+    return K.render(case, t["view"], t["note"], stage1=text, support=t["support"]) + K.USER_TAIL
 
 
 def write_stage1(st: dict, ledger: C.Ledger) -> str:
@@ -98,14 +98,14 @@ def review_trial(t: dict, s1: dict, ledger: C.Ledger) -> str:
     user = review_user(t, s1)
     if user is None:
         return "no stage-1 text"
-    system = K.brief(t["view"])
+    system = K.brief(t["view"], t["policy"])
     r = C.call(t["reviewer"], system, user, ledger, f"review-{t['cell']}", t["tid"])
     if r.get("text") is None:
         return "error"
     usage = r.get("usage") or {}
     row = {**t, "answer": r["text"], "served": r.get("served"), "cost": r.get("cost"), "seconds": r.get("seconds"), "attempts": r.get("attempts"),
            "tokens": {k: usage.get(k) for k in ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens", "output_tokens")},
-           "at": C.now(), "user_sha": C.sha(user), "user_chars": len(user), "brief": f"reviewer-{t['view']}", "brief_sha": C.sha(system)}
+           "at": C.now(), "user_sha": C.sha(user), "user_chars": len(user), "brief": f"reviewer-{t['view']}" if t["policy"] == "written" else f"reviewer-unwritten-{t['view']}", "brief_sha": C.sha(system)}
     if len(user) < STORE_PROMPT_UNDER:
         row["user"] = user
     append(trial_path(t), row)

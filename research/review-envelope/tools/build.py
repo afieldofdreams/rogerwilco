@@ -16,26 +16,39 @@ import random
 import casefile as K
 import common as C
 
-# cell -> view, length of the file behind it, payer's note, which cases
-#   cases "all": every clean and every faulted case. "faulted": faulted cases only (the note differs from the attest
-#   cell only on faulted cases, so the clean cases of fileM+attest stand for both).
+# cell -> what the reviewer is told (policy), what it is shown (view, length of the file behind it), what speaks for the
+# fault (payer's note, a planted document), and which cases it holds.
+#   policy   W: the payment policy P1 to P5 is in the reviewer's brief. U: no policy is written down.
+#   cases    "all": every clean and every faulted case. "faulted": faulted cases only, because what speaks for a fault
+#            exists only where there is one.
+def _cell(policy, view, length, note=None, support=None, cases="all"):
+    return {"policy": policy, "view": view, "length": length, "note": note, "support": support, "cases": cases}
+
+
 CELLS = {
-    "card":         {"view": "card",     "length": "M", "note": None,     "cases": "all"},
-    "fileS":        {"view": "file",     "length": "S", "note": None,     "cases": "all"},
-    "fileM":        {"view": "file",     "length": "M", "note": None,     "cases": "all"},
-    "fileL":        {"view": "file",     "length": "L", "note": None,     "cases": "all"},
-    "cardfileM":    {"view": "cardfile", "length": "M", "note": None,     "cases": "all"},
-    "fileM+attest": {"view": "file",     "length": "M", "note": "attest", "cases": "all"},
-    "fileM+excuse": {"view": "file",     "length": "M", "note": "excuse", "cases": "faulted"},
-    "card+excuse":  {"view": "card",     "length": "M", "note": "excuse", "cases": "faulted"},
-    "account":      {"view": "account",  "length": "M", "note": "attest", "cases": "all"},
-    "summaryM":     {"view": "summary",  "length": "M", "note": None,     "cases": "all"},
-    "extractM":     {"view": "extract",  "length": "M", "note": None,     "cases": "all"},
+    "W-card":           _cell("written", "card", "S"),
+    "W-fileS":          _cell("written", "file", "S"),
+    "W-fileM":          _cell("written", "file", "M"),
+    "W-fileL":          _cell("written", "file", "L"),
+    "W-account":        _cell("written", "account", "S", note="attest"),
+    "W-summary":        _cell("written", "summary", "M"),
+    "W-extract":        _cell("written", "extract", "M"),
+    "W-fileS+excuse":   _cell("written", "file", "S", note="excuse", cases="faulted"),
+    "W-fileS+supplier": _cell("written", "file", "S", support="supplier", cases="faulted"),
+    "W-fileS+forged":   _cell("written", "file", "S", support="forged", cases="faulted"),
+    "W-fileS+inject":   _cell("written", "file", "S", support="inject", cases="faulted"),
+    "U-card":           _cell("unwritten", "card", "S"),
+    "U-fileS":          _cell("unwritten", "file", "S"),
+    "U-fileS+excuse":   _cell("unwritten", "file", "S", note="excuse", cases="faulted"),
+    "U-fileS+supplier": _cell("unwritten", "file", "S", support="supplier", cases="faulted"),
+    "U-fileS+forged":   _cell("unwritten", "file", "S", support="forged", cases="faulted"),
+    "U-fileS+inject":   _cell("unwritten", "file", "S", support="inject", cases="faulted"),
 }
+STAGE1 = {"summary": "W-summary", "extract": "W-extract"}        # clerk's two kinds of text and the cell each feeds
 REVIEWERS = ["haiku55", "sonnet55"]
 CLERK = "sonnet55"                       # one clerk writes every summary and extract
-N_FAULT_TARGETS = {"main": 40, "pilot": 6}       # each is used clean and with each of the six faults
-N_CLEAN_TARGETS = {"main": 40, "pilot": 6}       # used clean only, so that false holds have their own cases
+N_FAULT_TARGETS = {"main": 30, "pilot": 3}       # each is used clean and with each of the six faults
+N_CLEAN_TARGETS = {"main": 30, "pilot": 3}       # used clean only, so that false holds have their own cases
 N_CALIBRATION_HELD_OUT = 40              # the first payments of the calibration order are never used in pilot or main
 
 
@@ -73,8 +86,8 @@ def plan(set_: str) -> dict:
     t = targets()[set_]
     cases = [{"job": j, "fault": f} for j in t["fault"] for f in [None] + K.FAULTS] + [{"job": j, "fault": None} for j in t["clean"]]
     stage1, trials = [], []
-    for kind in ("summary", "extract"):
-        cell = CELLS[f"{kind}M"]
+    for kind, cname in STAGE1.items():
+        cell = CELLS[cname]
         for c in cases:
             stage1.append({"sid": f"{kind}-{case_id(c['job'], c['fault'], set_)}", "set": set_, "kind": kind, "job": c["job"], "fault": c["fault"],
                            "length": cell["length"], "author": CLERK})
@@ -84,8 +97,8 @@ def plan(set_: str) -> dict:
                 continue
             cid = case_id(c["job"], c["fault"], set_)
             for m in REVIEWERS:
-                trials.append({"tid": f"{name}-{cid}-{m}", "set": set_, "cell": name, "view": cell["view"], "length": cell["length"],
-                               "note": cell["note"], "case": cid, "job": c["job"], "fault": c["fault"],
+                trials.append({"tid": f"{name}-{cid}-{m}", "set": set_, "cell": name, "policy": cell["policy"], "view": cell["view"], "length": cell["length"],
+                               "note": cell["note"], "support": cell["support"], "case": cid, "job": c["job"], "fault": c["fault"],
                                "fault_class": None if c["fault"] is None else ("literal" if c["fault"] in K.LITERAL else "record"),
                                "paired_target": c["job"] in t["fault"], "reviewer": m,
                                "stage1": f"{cell['view']}-{cid}" if cell["view"] in ("summary", "extract") else None})
@@ -93,7 +106,8 @@ def plan(set_: str) -> dict:
 
 
 def briefs() -> dict[str, str]:
-    out = {f"reviewer-{v}": K.brief(v) for v in sorted(K.SHOWN)}
+    out = {f"reviewer-{v}": K.brief(v) for v in ("card", "file", "account", "summary", "extract")}
+    out.update({f"reviewer-unwritten-{v}": K.brief(v, "unwritten") for v in ("card", "file")})
     out["clerk-summary"] = K.clerk_brief("summary")
     out["clerk-extract"] = K.clerk_brief("extract")
     return out

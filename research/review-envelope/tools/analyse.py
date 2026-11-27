@@ -163,7 +163,7 @@ def stage1_tables(d: dict) -> dict:
             sub = [r for r in faulted if r["fault"] == f]
             tab["carried_by_fault"][f] = stat(sum(bool(r["carries"]) for r in sub), len(sub))
         for m in d["plan"]["reviewers"]:
-            gs = [g for g in d["grades"] if g["cell"] == f"{kind}M" and g["reviewer"] == m and g["fault"]]
+            gs = [g for g in d["grades"] if g["cell"] == f"W-{kind}" and g["reviewer"] == m and g["fault"]]
             yes = [g for g in gs if s1.get(f"{kind}-{g['case']}", {}).get("carries")]
             no = [g for g in gs if not s1.get(f"{kind}-{g['case']}", {}).get("carries")]
             tab["reviewers"][m] = {"stopped_when_carried": stat(sum(stopped(g) for g in yes), len(yes)), "released_when_carried": stat(sum(g["outcome"] == "miss" for g in yes), len(yes)),
@@ -194,7 +194,7 @@ def envelope(cells: dict, reviewer: str, per: int = 10000, fault_rates=(0.001, 0
                                               releases p*per*(1 - stop rate on the check sheet), holds no clean act, reads p*per acts
     The second line rests on the fixture: here code decides all six fault kinds from the typed records exactly."""
     out = []
-    f, c = cells.get(("fileM", reviewer)), cells.get(("card", reviewer))
+    f, c = cells.get(("W-fileM", reviewer)), cells.get(("W-card", reviewer))
     if not f or not c or not f["faulted"]["n"] or not c["faulted"]["n"]:
         return out
     sf, hf = f["faulted"]["stopped"]["rate"], f["clean"]["false_holds"]["rate"] or 0.0
