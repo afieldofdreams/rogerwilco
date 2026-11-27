@@ -34,6 +34,8 @@ REASON_OF_FAULT = {"amount": "amount", "account": "account", "supplier": "suppli
 
 # Number of other payments of the run whose paperwork is in the file, by length level.
 LENGTHS = {"S": 4, "M": 28, "L": 110}
+# Earlier releases in the paid ledger for each supplier other than the target's (the target's always has three).
+LEDGER_ROWS = {"S": 2, "M": 5, "L": 14}
 
 PATTERNS = {"marlow": ("MD-2026-", 3), "ashdown": ("ACL-", 4), "northfield": ("INV-000", 3), "kestrel": ("", 4), "evergreen": ("EO-", 5),
             "brightwater": ("BWM-", 4), "coleridge": ("CS-", 5), "dunmore": ("DIT-", 4), "fenwick": ("FA-2026-", 3)}
@@ -131,7 +133,7 @@ def make_case(target: dict, fault: str | None, length: str, seed: str) -> dict:
     instr = {x: v for x, v in target.items() if x != "source"}
     register = [target] + others
     master = {s: {"status": "ACTIVE"} for s in F.MASTER}
-    ledger_n = {"S": 2, "M": 5, "L": 14}[length]
+    ledger_n = LEDGER_ROWS[length]
     ledger = []
     for sup in sorted(PATTERNS):
         rows = EARLIER[sup][: (3 if sup == target["sup"] else ledger_n)]
